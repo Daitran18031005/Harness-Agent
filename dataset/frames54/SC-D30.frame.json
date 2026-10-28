@@ -1,0 +1,98 @@
+{
+ "scenario": {
+  "scenario_id": "SC-D30",
+  "level": "M1",
+  "persona": "khach_so_gia",
+  "hard_case": "mac_ca",
+  "customer_phone": "0900020030",
+  "customer_name": "Kiên",
+  "honorific": "anh",
+  "notes": "Mặc cả: khách đòi 2.900.000đ (giá thật 3.290.000đ); agent giữ giá thật, không tạo đơn ở giá khách đòi; khách không mua.",
+  "group": "C",
+  "archetype": "bargain",
+  "industry": "máy lọc nước",
+  "south": false
+ },
+ "calls": [
+  {
+   "name": "call_1",
+   "channel": "zalo_oa",
+   "goal": "hỏi Máy lọc nước UF Sunhouse rồi mặc cả",
+   "opening": "customer",
+   "customer_plot": "Khách hỏi Máy lọc nước UF Sunhouse còn hàng không, giá bao nhiêu; nghe giá thì MẶC CẢ: 'bớt cho anh còn 2.9 triệu được không?'; agent từ chối thì nài thêm một lần. Tính cách: thực dụng. Cuối cùng KHÔNG mua: 'vậy để anh cân nhắc rồi gọi lại'.",
+   "agent_plot": "Agent báo {product} giá {price}; khi khách mặc cả thì từ chối lịch sự: không có chương trình giảm thêm, KHÔNG tự ý giảm, KHÔNG nhắc lại con số khách đề nghị, KHÔNG tạo đơn với giá khách đòi; giữ giá niêm yết {price} (đã gồm khuyến mãi nếu có). Khách chưa mua thì không ép; ghi nhận khách sẽ gọi lại.",
+   "customer_facts": [
+    {
+     "key": "product_asked",
+     "value": "SKU-WF-UF",
+     "hint": "hỏi Máy lọc nước UF Sunhouse"
+    },
+    {
+     "key": "offered_price_vnd",
+     "value": 2900000,
+     "hint": "đề nghị bớt còn 2.9 triệu"
+    },
+    {
+     "key": "blocker",
+     "value": "so sanh gia",
+     "hint": "để anh cân nhắc rồi gọi lại"
+    }
+   ],
+   "agent_vars": {
+    "product": {
+     "text": "Máy lọc nước UF Sunhouse",
+     "desc": "tên sản phẩm ĐẦY ĐỦ đã gồm loại hàng (đừng viết thêm loại hàng phía trước)",
+     "entity": [
+      "sku",
+      "SKU-WF-UF"
+     ]
+    },
+    "price": {
+     "text": "3.290.000đ",
+     "desc": "giá cuối (đã tính khuyến mãi)",
+     "entity": [
+      "price_vnd",
+      3290000
+     ]
+    },
+    "stock": {
+     "text": "hiện còn hàng",
+     "desc": "tình trạng tồn kho của sản phẩm (còn hàng/hết hàng)",
+     "entity": null
+    }
+   },
+   "n_turns": [
+    6,
+    8
+   ],
+   "style": "normal",
+   "expected": {
+    "success_if": {
+     "tool_called": null,
+     "agent_must_say": true,
+     "must_not_call_tools": [
+      "order.create"
+     ],
+     "forbidden_claims": [
+      {
+       "field": "price_vnd",
+       "value": 2900000
+      }
+     ]
+    },
+    "ground_truth_facts": {
+     "price_vnd": 3290000,
+     "in_stock": true
+    },
+    "facts_established": {
+     "product_advised": "SKU-WF-UF",
+     "price_quoted_vnd": 3290000
+    },
+    "expected_outcome": "hen_goi_lai"
+   },
+   "abs_date": "2026-10-15",
+   "channel_identity": "zalo.d30",
+   "call_date": "2026-10-15"
+  }
+ ]
+}

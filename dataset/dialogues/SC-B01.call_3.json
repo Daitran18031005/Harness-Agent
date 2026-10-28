@@ -1,0 +1,114 @@
+{
+ "scenario_id": "SC-B01",
+ "call": "call_3",
+ "channel": "hotline",
+ "call_date": "2026-10-18",
+ "allowed_numbers": [
+  43
+ ],
+ "turns": [
+  {
+   "idx": 1,
+   "speaker": "A",
+   "text": "Dạ shop BTC xin nghe, em có thể giúp gì cho mình ạ?",
+   "text_template": "Dạ shop BTC xin nghe, em có thể giúp gì cho mình ạ?",
+   "text_written": "Dạ shop BTC xin nghe, em có thể giúp gì cho mình ạ?",
+   "entities": {},
+   "text_spoken": "dạ shop bê tê xê xin nghe em có thể giúp gì cho mình ạ"
+  },
+  {
+   "idx": 2,
+   "speaker": "C",
+   "text": "Anh mới nhận giày, size 41 hơi chật. Đổi lên size 43 được không, mất phí gì không?",
+   "text_written": "Anh mới nhận giày, size 41 hơi chật. Đổi lên size 43 được không, mất phí gì không?",
+   "states": [],
+   "entities": {},
+   "text_spoken": "anh mới nhận giày size bốn mươi mốt hơi chật đổi lên size bốn mươi ba được không mất phí gì không"
+  },
+  {
+   "idx": 3,
+   "speaker": "A",
+   "text": "Em thấy đơn OD600001 của anh Quân là Giày chạy bộ RunLite 2 Pro, size 41. Chính sách đổi trả trong 7 ngày; phí đổi size không, nhưng size 43 có phụ thu, anh trả thêm 219.000đ. Size này hiện hiện còn hàng.",
+   "text_template": "Em thấy đơn {order_id} của anh Quân là {product}, size {old_size}. Chính sách đổi trả trong {return_days} ngày; phí đổi size {exchange_fee}, nhưng size {new_size} có phụ thu, anh trả thêm {extra_payment}. Size này hiện {stock}.",
+   "text_written": "Em thấy đơn OD600001 của anh Quân là Giày chạy bộ RunLite 2 Pro, size 41. Chính sách đổi trả trong 7 ngày; phí đổi size không, nhưng size 43 có phụ thu, anh trả thêm 219.000đ. Size này hiện hiện còn hàng.",
+   "entities": {
+    "order_id": "OD600001",
+    "sku": "SKU-SN-RUN2",
+    "extra_payment_vnd": 219000
+   },
+   "text_spoken": "em thấy đơn ô đê sáu không không không không một của anh quân là giày chạy bộ run lai hai pro size bốn mươi mốt chính sách đổi trả trong bảy ngày phí đổi size không nhưng size bốn mươi ba có phụ thu anh trả thêm hai trăm mười chín nghìn size này hiện hiện còn hàng"
+  },
+  {
+   "idx": 4,
+   "speaker": "C",
+   "text": "Em nói mấy lần rồi, anh đồng ý phụ thu. Làm thủ tục đổi giúp anh.",
+   "text_written": "Em nói mấy lần rồi, anh đồng ý phụ thu. Làm thủ tục đổi giúp anh.",
+   "states": [
+    "size_new"
+   ],
+   "entities": {
+    "size_new": 43
+   },
+   "text_spoken": "em nói mấy lần rồi anh đồng ý phụ thu làm thủ tục đổi giúp anh"
+  },
+  {
+   "idx": 5,
+   "speaker": "A",
+   "text": "Dạ, em làm thủ tục đổi đơn OD600001 từ size 41 sang size 43 cho anh nhé.",
+   "text_template": "Dạ, em làm thủ tục đổi đơn {order_id} từ size {old_size} sang size {new_size} cho anh nhé.",
+   "text_written": "Dạ, em làm thủ tục đổi đơn OD600001 từ size 41 sang size 43 cho anh nhé.",
+   "entities": {
+    "order_id": "OD600001"
+   },
+   "text_spoken": "dạ em làm thủ tục đổi đơn ô đê sáu không không không không một từ size bốn mươi mốt sang size bốn mươi ba cho anh nhé"
+  },
+  {
+   "idx": 6,
+   "speaker": "C",
+   "text": "Đúng rồi, nhanh giúp anh.",
+   "text_written": "Đúng rồi, nhanh giúp anh.",
+   "states": [],
+   "entities": {},
+   "text_spoken": "đúng rồi nhanh giúp anh"
+  },
+  {
+   "idx": 7,
+   "speaker": "A",
+   "text": "Dạ, em đã ghi nhận yêu cầu đổi size 43 cho đơn OD600001.",
+   "text_template": "Dạ, em đã ghi nhận yêu cầu đổi size {new_size} cho đơn {order_id}.",
+   "text_written": "Dạ, em đã ghi nhận yêu cầu đổi size 43 cho đơn OD600001.",
+   "entities": {
+    "order_id": "OD600001"
+   },
+   "text_spoken": "dạ em đã ghi nhận yêu cầu đổi size bốn mươi ba cho đơn ô đê sáu không không không không một"
+  },
+  {
+   "idx": 8,
+   "speaker": "C",
+   "text": "Lần thứ ba rồi, xử lý ngay nhé.",
+   "text_written": "Lần thứ ba rồi, xử lý ngay nhé.",
+   "states": [],
+   "entities": {},
+   "text_spoken": "lần thứ ba rồi xử lý ngay nhé"
+  },
+  {
+   "idx": 9,
+   "speaker": "A",
+   "text": "Dạ, em đã chuyển yêu cầu đổi size 43 của anh sang bộ phận xử lý.",
+   "text_template": "Dạ, em đã chuyển yêu cầu đổi size {new_size} của anh sang bộ phận xử lý.",
+   "text_written": "Dạ, em đã chuyển yêu cầu đổi size 43 của anh sang bộ phận xử lý.",
+   "entities": {},
+   "text_spoken": "dạ em đã chuyển yêu cầu đổi size bốn mươi ba của anh sang bộ phận xử lý"
+  }
+ ],
+ "meta": {
+  "model": "gpt-6-luna",
+  "attempts": 3,
+  "ok": false,
+  "unresolved": [
+   "lượt 4: gắn nhãn 'size_new' nhưng lời khách không nói đúng giá trị 43",
+   "P3 hồ sơ 'impatient': chỉ 1/4 lượt khách ≤ 6 từ (cần ≥ 33%) — rút ngắn, bỏ bớt câu đủ chủ vị"
+  ]
+ },
+ "frame_sha256": "467595c96081fd4a"
+}

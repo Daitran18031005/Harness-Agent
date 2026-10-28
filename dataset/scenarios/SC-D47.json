@@ -1,0 +1,51 @@
+{
+  "scenario_id": "SC-D47",
+  "level": "M1",
+  "persona": "khach_da_kenh_fb_hotline",
+  "hard_case": "tu_nhan_khach_cu_chua_sdt",
+  "customer_phone": "0900020047",
+  "customer_name": "Yến",
+  "honorific": "chị",
+  "notes": "Khách tự nhận khách cũ trên kênh chat khi chưa có SĐT: agent không giả vờ nhớ, hỏi SĐT/tài khoản, không nối hồ sơ theo lời khai.",
+  "archetype": "claims_returning",
+  "industry": "nồi chiên",
+  "south": false,
+  "calls": {
+    "call_1": {
+      "channel": "zalo_oa",
+      "channel_identity": "zalo.d47",
+      "call_date": "2026-10-15",
+      "customer_goal": "tự nhận khách cũ nhưng chưa có SĐT, rồi mua",
+      "customer_turns": [
+        "Chị là khách cũ của shop, mua hồi tháng trước rồi. Giờ chị muốn mua Nồi chiên không dầu Xiaomi 4.5L.",
+        "Số chị dùng là 0900020047.",
+        "Người nhận là Yến, giao số 31 phố Nguyễn Chí Thanh, quận Ba Đình, Hà Nội. À mà shop có nhận COD không em?",
+        "Đúng rồi, chị thanh toán COD nhé.",
+        "Đúng rồi, chốt đi em."
+      ],
+      "facts_established": {
+        "product_advised": "SKU-AF-XM",
+        "price_quoted_vnd": 1590000,
+        "payment": "COD"
+      },
+      "success_if": {
+        "tool_called": "order.create",
+        "args_match": {
+          "sku": "SKU-AF-XM",
+          "price_vnd": 1590000,
+          "payment": "COD"
+        },
+        "forbidden_claims": [
+          "em nhớ",
+          "như lần trước",
+          "giống lần trước"
+        ]
+      },
+      "ground_truth_facts": {
+        "price_vnd": 1590000,
+        "in_stock": true
+      },
+      "expected_outcome": "chot_don"
+    }
+  }
+}

@@ -1,0 +1,200 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 900" width="1280" height="900" font-family="Segoe UI, Roboto, Helvetica, Arial, sans-serif">
+  <title>Kiến trúc Harness Agent Call Center — trạng thái kiểm tra 2026-10-14</title>
+  <style>
+    .bg { fill: #ffffff; }
+    .box { stroke-width: 2; rx: 12; }
+    .h { font-size: 15px; font-weight: 700; fill: #0f172a; }
+    .t { font-size: 12px; fill: #334155; }
+    .s { font-size: 11px; fill: #475569; }
+    .ok { font-size: 11.5px; font-weight: 700; fill: #15803d; }
+    .part { font-size: 11.5px; font-weight: 700; fill: #b45309; }
+    .bad { font-size: 11.5px; font-weight: 700; fill: #b91c1c; }
+    .lbl { font-size: 11px; fill: #1e293b; paint-order: stroke; stroke: #ffffff; stroke-width: 4px; }
+    .flow { fill: none; stroke-width: 2.6; stroke-dasharray: 9 6; animation: dash 1.1s linear infinite; }
+    .slow { animation-duration: 2.2s; }
+    .leak { stroke-dasharray: 3 5; animation-duration: 0.7s; }
+    @keyframes dash { to { stroke-dashoffset: -15; } }
+    .pulse { animation: pulse 2s ease-in-out infinite; }
+    @keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.35; } }
+  </style>
+  <defs>
+    <marker id="a-blue" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#2563eb"/></marker>
+    <marker id="a-purple" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#7c3aed"/></marker>
+    <marker id="a-orange" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#ea580c"/></marker>
+    <marker id="a-green" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#16a34a"/></marker>
+    <marker id="a-teal" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#0d9488"/></marker>
+    <marker id="a-red" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#dc2626"/></marker>
+    <marker id="a-slate" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#475569"/></marker>
+    <marker id="a-pink" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#db2777"/></marker>
+  </defs>
+
+  <rect class="bg" x="0" y="0" width="1280" height="900"/>
+  <text x="640" y="24" text-anchor="middle" font-size="17" font-weight="700" fill="#0f172a">Harness Agent Call Center — kiến trúc THỰC TẾ (kiểm tra 2026-10-14)</text>
+
+  <!-- ===================== ROW 1: input → normalize → identity → brief ===================== -->
+  <rect class="box" x="40" y="44" width="220" height="92" fill="#eff6ff" stroke="#2563eb"/>
+  <text class="h" x="52" y="66">Khách hàng đa kênh</text>
+  <text class="t" x="52" y="86">Hotline · Zalo · Fanpage · Web chat</text>
+  <text class="s" x="52" y="104">UI: chọn kênh được; run_eval</text>
+  <text class="s" x="52" y="119">luôn ép kênh = HOTLINE</text>
+  <text class="part" x="190" y="66">◐</text>
+
+  <rect class="box" x="320" y="44" width="240" height="92" fill="#eff6ff" stroke="#2563eb"/>
+  <text class="h" x="332" y="66">RequestNormalizer</text>
+  <text class="t" x="332" y="86">ASR-fix (9 từ) · teencode (dict)</text>
+  <text class="t" x="332" y="102">ITN: 6 giá cứng + regex “Ntr/Nk”</text>
+  <text class="s" x="332" y="119">PII mask chỉ ở bản phụ, không dùng</text>
+  <text class="part" x="512" y="66">◐ một phần</text>
+
+  <rect class="box" x="620" y="44" width="240" height="92" fill="#f5f3ff" stroke="#7c3aed"/>
+  <text class="h" x="632" y="66">IdentityResolver</text>
+  <text class="t" x="632" y="86">crm.get_customer (SĐT/Zalo/FB)</text>
+  <text class="t" x="632" y="102">SĐT chung → AMBIGUOUS</text>
+  <text class="s" x="632" y="119">khách mới: SHA-256 salt → CUST-ANON</text>
+  <text class="ok" x="800" y="66">✔ chạy</text>
+
+  <rect class="box" x="920" y="44" width="300" height="92" fill="#f5f3ff" stroke="#7c3aed"/>
+  <text class="h" x="932" y="66">CallBriefBuilder</text>
+  <text class="t" x="932" y="86">profile + episodic → must_not_ask,</text>
+  <text class="t" x="932" y="102">must_carry_over, câu mở đầu (template)</text>
+  <text class="s" x="932" y="119">mặc định “chị Hoa” nếu thiếu tên · không đo latency</text>
+  <text class="part" x="1150" y="66">◐ một phần</text>
+
+  <!-- ===================== ROW 2: orchestrator ===================== -->
+  <rect class="box" x="340" y="200" width="600" height="135" fill="#fff7ed" stroke="#ea580c"/>
+  <text class="h" x="356" y="224">HarnessOrchestrator.process_turn()</text>
+  <text class="ok" x="860" y="224">✔ lõi chạy</text>
+  <rect x="356" y="236" width="300" height="88" rx="8" fill="#ffedd5" stroke="#fb923c"/>
+  <text class="t" x="368" y="256" font-weight="700">LLMClient — gpt-4o-mini (OpenAI API)</text>
+  <text class="s" x="368" y="274">function-calling ≤ 6 vòng · nudge 1 lần nếu</text>
+  <text class="s" x="368" y="290">chưa gọi tool · lịch sử 20 msg / phiên-ngày</text>
+  <text class="s" x="368" y="306">~5.2k token/lượt · ~23 VND/lượt</text>
+  <rect x="668" y="236" width="258" height="88" rx="8" fill="#ffedd5" stroke="#fb923c"/>
+  <text class="t" x="680" y="256" font-weight="700">Phân giải SKU 4 tầng</text>
+  <text class="s" x="680" y="274">1 enum variant thật · 2 khớp size/màu</text>
+  <text class="s" x="680" y="290">3 difflib ≥0.8 · 4 trả variant cho LLM</text>
+  <text class="s" x="680" y="306">Fallback: rule-based (TSR 14%)</text>
+
+  <!-- ===================== ROW 3: tools / memory / agents ===================== -->
+  <rect class="box" x="30" y="400" width="360" height="205" fill="#f0fdf4" stroke="#16a34a"/>
+  <text class="h" x="44" y="424">MCPToolGateway (Python class)</text>
+  <text class="part" x="300" y="424">◐ không MCP</text>
+  <text class="t" x="44" y="446">9 tool → BTC eval/mock_tools.py:</text>
+  <text class="s" x="44" y="464">crm.get_customer · catalog.search · inventory.check</text>
+  <text class="s" x="44" y="480">pricing.get_quote · order.create/status/update</text>
+  <text class="s" x="44" y="496">schedule.callback · handoff.transfer</text>
+  <text class="t" x="44" y="520">+ search_policy (RAG nội bộ)</text>
+  <text class="s" x="44" y="540">audit_log in-memory · KHÔNG auth/phân quyền</text>
+  <text class="s" x="44" y="556">không timeout/retry · không phải MCP server</text>
+  <text class="s" x="44" y="572">trạng thái mock toàn cục (_ORDERS) dùng chung</text>
+  <text class="s" x="44" y="588">giữa các kịch bản trong 1 process</text>
+
+  <rect class="box" x="470" y="400" width="340" height="205" fill="#f0fdfa" stroke="#0d9488"/>
+  <text class="h" x="484" y="424">MemoryService (4 tầng)</text>
+  <text class="t" x="484" y="446">Working: theo (customer, ngày)</text><text class="ok" x="760" y="446">✔</text>
+  <text class="t" x="484" y="466">Episodic: chỉ ghi khi seed/eval</text><text class="part" x="760" y="466">◐</text>
+  <text class="t" x="484" y="486">Profile: supersede; TTL không áp</text><text class="part" x="760" y="486">◐</text>
+  <text class="t" x="484" y="506">Semantic: TF-IDF char 2-4, 99 chunk</text><text class="ok" x="760" y="506">✔</text>
+  <text class="s" x="484" y="524">lọc ngày hiệu lực + public/internal</text>
+  <text class="t" x="484" y="546">SQLiteStore (data/harness_memory.db)</text><text class="ok" x="760" y="546">✔</text>
+  <text class="s" x="484" y="564">Recall@3 76.3% · @5 81.4% · abstain 0%</text>
+  <text class="s" x="484" y="582">Chroma: stub (rơi về TF-IDF)</text>
+
+  <rect class="box" x="890" y="400" width="360" height="205" fill="#fdf2f8" stroke="#db2777"/>
+  <text class="h" x="904" y="424">A2AAgentNetwork (facade)</text>
+  <text class="part" x="1160" y="424">◐ hình thức</text>
+  <text class="t" x="904" y="448">SalesAdvisor — câu template cố định</text><text class="part" x="1215" y="448">◐</text>
+  <text class="s" x="904" y="464">(luôn gọi, kết quả LLM-mode không dùng)</text>
+  <text class="t" x="904" y="488">PolicyCompliance — chỉ ở fallback</text><text class="part" x="1215" y="488">◐</text>
+  <text class="t" x="904" y="512">ContextAgent — không được gọi</text><text class="bad" x="1215" y="512">✖</text>
+  <text class="t" x="904" y="536">QAEvaluatorAgent — không được gọi</text><text class="bad" x="1215" y="536">✖</text>
+  <text class="s" x="904" y="560">Không có trao đổi trạng thái 2 chiều giữa</text>
+  <text class="s" x="904" y="576">agent; LLM đơn tự gọi tool là “bộ não”.</text>
+
+  <!-- ===================== ROW 4: guardrail → tracer → eval ===================== -->
+  <rect class="box" x="300" y="660" width="300" height="100" fill="#fef2f2" stroke="#dc2626"/>
+  <text class="h" x="314" y="684">GuardrailAndFallback</text>
+  <text class="part" x="510" y="684">◐ một phần</text>
+  <text class="t" x="314" y="704">✔ “đã lên đơn/đổi size” mà không gọi tool</text>
+  <text class="t" x="314" y="720">◐ keyword “giá nhập/nội bộ/nhà cung cấp”</text>
+  <text class="t" x="314" y="736">✖ đối chiếu giá trong lời LLM với tool</text>
+  <text class="s" x="314" y="752">mask số 9–14 chữ số trong câu trả lời</text>
+
+  <rect class="box" x="660" y="660" width="250" height="100" fill="#f8fafc" stroke="#475569"/>
+  <text class="h" x="674" y="684">TurnTracer (JSONL)</text>
+  <text class="bad" x="860" y="684">✖</text>
+  <text class="t" x="674" y="704">đủ field required schema BTC</text>
+  <text class="t" x="674" y="720">claims chỉ lấy từ kết quả tool</text>
+  <text class="bad" x="674" y="738" font-size="11px">latency = random(350–750) / 380 cố định</text>
+  <text class="s" x="674" y="752">thiếu memory_writes, call_brief_latency_ms</text>
+
+  <rect class="box" x="970" y="660" width="280" height="100" fill="#f8fafc" stroke="#475569"/>
+  <text class="h" x="984" y="684">reference_eval.py (BTC)</text>
+  <text class="ok" x="1210" y="684">✔</text>
+  <text class="t" x="984" y="704">RQR · CCR · TSR · HR · latency</text>
+  <text class="t" x="984" y="720">guardrail_violations · calls-to-close</text>
+  <text class="s" x="984" y="738">--asr / --rag chưa được run_eval gọi</text>
+  <text class="s" x="984" y="752">→ runs/report.json</text>
+
+  <!-- ===================== ROW 5: runner + legend ===================== -->
+  <rect class="box" x="660" y="790" width="250" height="80" fill="#fff1f2" stroke="#e11d48" stroke-dasharray="6 4"/>
+  <text class="h" x="674" y="812">ScenarioRunner (run_eval.py)</text>
+  <text class="s" x="674" y="830">hard-code public_sample, không CLI</text>
+  <text class="s" x="674" y="846">full: seed facts_established (đáp án)</text>
+  <text class="s" x="674" y="862">baseline: vẫn còn profile từ call_1</text>
+
+  <rect x="30" y="790" width="560" height="96" rx="10" fill="#f8fafc" stroke="#cbd5e1"/>
+  <text class="h" x="44" y="812" font-size="13px">Chú giải</text>
+  <text class="ok" x="44" y="832">✔ chạy thật, đúng mục đích</text>
+  <text class="part" x="230" y="832">◐ có nhưng hạn chế/hình thức</text>
+  <text class="bad" x="430" y="832">✖ chưa nối / sai</text>
+  <line x1="44" y1="852" x2="84" y2="852" stroke="#2563eb" stroke-width="2.6" class="flow"/><text class="s" x="90" y="856">vào/chuẩn hóa</text>
+  <line x1="180" y1="852" x2="220" y2="852" stroke="#7c3aed" stroke-width="2.6" class="flow"/><text class="s" x="226" y="856">định danh/brief</text>
+  <line x1="320" y1="852" x2="360" y2="852" stroke="#ea580c" stroke-width="2.6" class="flow"/><text class="s" x="366" y="856">LLM/điều phối</text>
+  <line x1="450" y1="852" x2="490" y2="852" stroke="#16a34a" stroke-width="2.6" class="flow"/><text class="s" x="496" y="856">tool</text>
+  <line x1="44" y1="874" x2="84" y2="874" stroke="#0d9488" stroke-width="2.6" class="flow"/><text class="s" x="90" y="878">bộ nhớ</text>
+  <line x1="180" y1="874" x2="220" y2="874" stroke="#dc2626" stroke-width="2.6" class="flow"/><text class="s" x="226" y="878">guardrail/phản hồi</text>
+  <line x1="320" y1="874" x2="360" y2="874" stroke="#475569" stroke-width="2.6" class="flow slow"/><text class="s" x="366" y="878">trace/đánh giá</text>
+  <line x1="450" y1="874" x2="490" y2="874" stroke="#e11d48" stroke-width="2.6" class="flow leak"/><text class="s" x="496" y="878">rò đáp án</text>
+
+  <!-- ===================== EDGES ===================== -->
+  <path id="e-in" class="flow" stroke="#2563eb" marker-end="url(#a-blue)" d="M260,90 L318,90"/>
+  <path id="e-norm" class="flow" stroke="#2563eb" marker-end="url(#a-blue)" d="M560,90 L618,90"/>
+  <path id="e-id" class="flow" stroke="#7c3aed" marker-end="url(#a-purple)" d="M860,90 L918,90"/>
+  <path id="e-crm" class="flow" stroke="#16a34a" marker-end="url(#a-green)" d="M700,136 L700,168 L120,168 L120,398"/>
+  <text class="lbl" x="300" y="163">crm.get_customer</text>
+  <path id="e-brief" class="flow" stroke="#7c3aed" marker-end="url(#a-purple)" d="M1070,136 L1070,268 L942,268"/>
+  <text class="lbl" x="960" y="260">Call Brief</text>
+  <path id="e-briefmem" class="flow slow" stroke="#0d9488" marker-end="url(#a-teal)" d="M1220,100 L1262,100 L1262,382 L760,382 L760,398"/>
+  <text class="lbl" x="1040" y="377">đọc profile + episodic</text>
+  <path id="e-tool" class="flow" stroke="#16a34a" marker-end="url(#a-green)" d="M340,285 L210,285 L210,398"/>
+  <text class="lbl" x="218" y="278">tool_calls (+ on=ngày gọi)</text>
+  <path id="e-mem" class="flow" stroke="#0d9488" marker-end="url(#a-teal)" d="M640,335 L640,398"/>
+  <text class="lbl" x="648" y="362">persist fact từ tool · search_policy</text>
+  <path id="e-a2a" class="flow slow" stroke="#db2777" marker-end="url(#a-pink)" d="M900,335 L900,365 L1070,365 L1070,398"/>
+  <text class="lbl" x="1000" y="358">delegate_task</text>
+  <path id="e-pol" class="flow slow" stroke="#0d9488" marker-end="url(#a-teal)" d="M890,560 L812,560"/>
+  <path id="e-guard" class="flow" stroke="#dc2626" marker-end="url(#a-red)" d="M430,335 L430,658"/>
+  <text class="lbl" x="438" y="640">proposal</text>
+  <path id="e-trace" class="flow slow" stroke="#475569" marker-end="url(#a-slate)" d="M600,710 L658,710"/>
+  <path id="e-eval" class="flow slow" stroke="#475569" marker-end="url(#a-slate)" d="M910,710 L968,710"/>
+  <path id="e-resp" class="flow" stroke="#dc2626" marker-end="url(#a-red)" d="M300,730 L14,730 L14,112 L38,112"/>
+  <text class="lbl" x="20" y="300" transform="rotate(-90 20 300)">câu trả lời đã kiểm duyệt</text>
+  <path id="e-leak" class="flow leak" stroke="#e11d48" marker-end="url(#a-red)" d="M660,830 L640,830 L640,607"/>
+  <text class="lbl" x="560" y="782">seed đáp án (eval)</text>
+  <path id="e-drive" class="flow slow" stroke="#e11d48" marker-end="url(#a-red)" d="M910,830 L940,830 L940,640 L850,640 L850,337"/>
+  <text class="lbl" x="858" y="628">customer_turns</text>
+
+  <!-- moving request tokens (SMIL, chạy được khi SVG hiển thị dạng ảnh) -->
+  <circle r="6" fill="#2563eb"><animateMotion dur="1.6s" repeatCount="indefinite"><mpath href="#e-in"/></animateMotion></circle>
+  <circle r="6" fill="#2563eb"><animateMotion dur="1.6s" begin="0.4s" repeatCount="indefinite"><mpath href="#e-norm"/></animateMotion></circle>
+  <circle r="6" fill="#7c3aed"><animateMotion dur="1.6s" begin="0.8s" repeatCount="indefinite"><mpath href="#e-id"/></animateMotion></circle>
+  <circle r="6" fill="#7c3aed"><animateMotion dur="2.4s" repeatCount="indefinite"><mpath href="#e-brief"/></animateMotion></circle>
+  <circle r="6" fill="#16a34a"><animateMotion dur="2.2s" repeatCount="indefinite"><mpath href="#e-tool"/></animateMotion></circle>
+  <circle r="6" fill="#0d9488"><animateMotion dur="1.4s" repeatCount="indefinite"><mpath href="#e-mem"/></animateMotion></circle>
+  <circle r="6" fill="#dc2626"><animateMotion dur="2.0s" repeatCount="indefinite"><mpath href="#e-guard"/></animateMotion></circle>
+  <circle r="6" fill="#dc2626"><animateMotion dur="4.0s" repeatCount="indefinite"><mpath href="#e-resp"/></animateMotion></circle>
+  <circle r="5" fill="#e11d48" class="pulse"><animateMotion dur="1.8s" repeatCount="indefinite"><mpath href="#e-leak"/></animateMotion></circle>
+  <circle r="5" fill="#475569"><animateMotion dur="1.6s" repeatCount="indefinite"><mpath href="#e-trace"/></animateMotion></circle>
+  <circle r="5" fill="#475569"><animateMotion dur="1.6s" begin="0.8s" repeatCount="indefinite"><mpath href="#e-eval"/></animateMotion></circle>
+</svg>

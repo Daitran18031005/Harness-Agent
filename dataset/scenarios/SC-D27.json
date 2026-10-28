@@ -1,0 +1,49 @@
+{
+  "scenario_id": "SC-D27",
+  "level": "M1",
+  "persona": "khach_mua_nhieu_mon",
+  "hard_case": "het_hang_bien_the",
+  "customer_phone": "0900020027",
+  "customer_name": "Tâm",
+  "honorific": "chị",
+  "notes": "Hết hàng đúng biến thể size M màu đen: agent nói đúng tình trạng và gợi ý màu be (còn hàng) thay vì xin địa chỉ.",
+  "archetype": "variant_oos",
+  "industry": "áo khoác",
+  "south": false,
+  "calls": {
+    "call_1": {
+      "channel": "hotline",
+      "call_date": "2026-10-15",
+      "customer_goal": "hỏi size M màu đen đã HẾT → nhận biến thể thay thế",
+      "customer_turns": [
+        "Áo phao lông vũ Warmly size M màu đen còn hàng không?",
+        "Ừ, màu be. COD nhé.",
+        "Tâm, số 9 phố Bạch Mai, quận Hai Bà Trưng, Hà Nội.",
+        "Đúng rồi.",
+        "Ừ, chốt đi."
+      ],
+      "facts_established": {
+        "product_advised": "SKU-JK-DWN",
+        "variant_sku": "SKU-JK-DWN-M-BE",
+        "price_quoted_vnd": 1490000,
+        "payment": "COD",
+        "size": "M",
+        "color": "be"
+      },
+      "success_if": {
+        "tool_called": "order.create",
+        "args_match": {
+          "sku": "SKU-JK-DWN-M-BE",
+          "price_vnd": 1490000,
+          "payment": "COD"
+        }
+      },
+      "ground_truth_facts": {
+        "price_vnd": 1490000,
+        "in_stock": true,
+        "requested_variant_in_stock": false
+      },
+      "expected_outcome": "chot_don"
+    }
+  }
+}

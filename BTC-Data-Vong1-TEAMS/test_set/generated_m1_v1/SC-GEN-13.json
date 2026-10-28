@@ -1,0 +1,32 @@
+{
+  "scenario_id": "SC-GEN-13",
+  "level": "M1",
+  "persona": "khach_so_gia",
+  "hard_case": "trade_in_dieu_kien",
+  "customer_phone": "0985003703",
+  "customer_name": "Oanh",
+  "honorific": "chị",
+  "notes": "Khách C031 đã sở hữu AirPure X bản 2024 (SKU-AP-X-2024, đơn OD188213 delivered) — đủ điều kiện TRADE-IN-AP (trừ 400.000đ khi đổi sang AirPure X/Y/Pro). pricing.get_quote với customer_phone thật phải tự áp dụng đúng promo này.",
+  "calls": {
+    "call_1": {
+      "call_date": "2026-10-15",
+      "customer_turns": [
+        "Em ơi chị có máy AirPure X đời 2024 rồi, giờ muốn đổi lên AirPure Pro, có ưu đãi thu cũ đổi mới không?",
+        "Vậy giá sau ưu đãi là bao nhiêu, lên đơn cho chị luôn."
+      ],
+      "must_not_ask": [],
+      "success_if": {
+        "tool_called": "order.create",
+        "args_match": {
+          "sku": "SKU-AP-PRO"
+        }
+      },
+      "ground_truth_facts": {
+        "promo_code": "TRADE-IN-AP",
+        "discount_vnd": 400000,
+        "final_price_vnd": 7590000
+      },
+      "expected_outcome": "chot_don"
+    }
+  }
+}

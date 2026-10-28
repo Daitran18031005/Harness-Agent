@@ -1,0 +1,105 @@
+{
+ "scenario": {
+  "scenario_id": "SC-D40",
+  "level": "M1",
+  "persona": "khach_hoi_ngoai_tai_lieu",
+  "hard_case": "hoi_ngoai_tai_lieu_doi_thu",
+  "customer_phone": "0900020040",
+  "customer_name": "Ngọc",
+  "honorific": "chị",
+  "notes": "So giá đối thủ + bảo hành quốc tế.",
+  "group": "C",
+  "archetype": "off_doc",
+  "industry": "máy lọc không khí",
+  "south": false
+ },
+ "calls": [
+  {
+   "name": "call_1",
+   "channel": "hotline",
+   "goal": "so giá đối thủ + hỏi bảo hành quốc tế (ngoài tài liệu)",
+   "opening": "agent",
+   "customer_plot": "Khách hỏi Máy lọc không khí Samsung AX40 giá bao nhiêu; nói 'bên Điện Máy Xanh bán 5.8 triệu thôi, bên em có bằng giá không?'; hỏi thêm 'có bảo hành quốc tế không?'; cuối cùng 'để chị cân nhắc rồi gọi lại'.",
+   "agent_plot": "Agent báo {product} giá {price}, bảo hành {warranty} tháng chính hãng; KHÔNG chê đối thủ, KHÔNG hứa khớp giá/giảm không có chương trình; về bảo hành quốc tế nói thẳng là em chưa có thông tin trong tài liệu và sẽ nhờ nhân viên phản hồi.",
+   "customer_facts": [
+    {
+     "key": "product_asked",
+     "value": "SKU-SS-AX40",
+     "hint": "hỏi Máy lọc không khí Samsung AX40"
+    },
+    {
+     "key": "competitor_price_vnd",
+     "value": 5800000,
+     "hint": "bên Điện Máy Xanh bán rẻ hơn, chỉ 5.8 triệu"
+    },
+    {
+     "key": "blocker",
+     "value": "so sanh gia",
+     "hint": "để chị cân nhắc rồi gọi lại"
+    }
+   ],
+   "agent_vars": {
+    "product": {
+     "text": "Máy lọc không khí Samsung AX40",
+     "desc": "tên sản phẩm ĐẦY ĐỦ đã gồm loại hàng (đừng viết thêm loại hàng phía trước)",
+     "entity": [
+      "sku",
+      "SKU-SS-AX40"
+     ]
+    },
+    "price": {
+     "text": "6.490.000đ",
+     "desc": "giá cuối (đã tính khuyến mãi)",
+     "entity": [
+      "price_vnd",
+      6490000
+     ]
+    },
+    "warranty": {
+     "text": "24",
+     "desc": "số tháng bảo hành",
+     "entity": [
+      "warranty_months",
+      24
+     ]
+    },
+    "stock": {
+     "text": "hiện còn hàng",
+     "desc": "tình trạng tồn kho của sản phẩm (còn hàng/hết hàng)",
+     "entity": null
+    }
+   },
+   "n_turns": [
+    7,
+    10
+   ],
+   "style": "normal",
+   "expected": {
+    "success_if": {
+     "tool_called": null,
+     "agent_must_say": true,
+     "forbidden_claims": [
+      {
+       "field": "price_vnd",
+       "value": 5800000
+      },
+      "bảo hành quốc tế có"
+     ]
+    },
+    "ground_truth_facts": {
+     "price_vnd": 6490000,
+     "warranty_months": 24
+    },
+    "facts_established": {
+     "product_advised": "SKU-SS-AX40",
+     "price_quoted_vnd": 6490000,
+     "competitor_price_vnd": 5800000,
+     "blocker": "so sanh gia"
+    },
+    "expected_outcome": "hen_goi_lai"
+   },
+   "abs_date": "2026-10-15",
+   "call_date": "2026-10-15"
+  }
+ ]
+}

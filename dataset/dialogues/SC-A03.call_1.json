@@ -1,0 +1,100 @@
+{
+ "scenario_id": "SC-A03",
+ "call": "call_1",
+ "channel": "zalo_oa",
+ "call_date": "2026-10-10",
+ "allowed_numbers": [],
+ "turns": [
+  {
+   "idx": 1,
+   "speaker": "C",
+   "text": "Chị hỏi máy hút sữa Spectra S1 giá bao nhiêu, có tặng túi trữ sữa không?",
+   "text_written": "Chị hỏi máy hút sữa Spectra S1 giá bao nhiêu, có tặng túi trữ sữa không?",
+   "states": [
+    "product_asked"
+   ],
+   "entities": {
+    "sku": "SKU-MB-PUMP1"
+   },
+   "text_spoken": "chị hỏi máy hút sữa xpec tra ét một giá bao nhiêu có tặng túi trữ sữa không"
+  },
+  {
+   "idx": 2,
+   "speaker": "A",
+   "text": "Dạ chị Mai, Máy hút sữa điện đôi Spectra S1 hiện có giá 4.290.000đ, còn hàng hiện còn hàng và được tặng Túi trữ sữa Sunmum 50 túi đến hết 13/10. Chị muốn em nhờ hotline liên hệ lại không ạ?",
+   "text_template": "Dạ chị Mai, {product} hiện có giá {price}, còn hàng {stock} và được tặng {gift} đến hết {promo_end}. Chị muốn em nhờ hotline liên hệ lại không ạ?",
+   "text_written": "Dạ chị Mai, Máy hút sữa điện đôi Spectra S1 hiện có giá 4.290.000đ, còn hàng hiện còn hàng và được tặng Túi trữ sữa Sunmum 50 túi đến hết 13/10. Chị muốn em nhờ hotline liên hệ lại không ạ?",
+   "entities": {
+    "sku": "SKU-MB-PUMP1",
+    "price_vnd": 4290000,
+    "promo_expiry": "2026-10-13"
+   },
+   "text_spoken": "dạ chị mai máy hút sữa điện đôi xpec tra ét một hiện có giá bốn triệu hai trăm chín mươi nghìn còn hàng hiện còn hàng và được tặng túi trữ sữa san mum năm mươi túi đến hết mười ba tháng mười chị muốn em nhờ hotline liên hệ lại không ạ"
+  },
+  {
+   "idx": 3,
+   "speaker": "C",
+   "text": "Ờ, để chị suy nghĩ đã, hơi phân vân một chút...",
+   "text_written": "Ờ, để chị suy nghĩ đã, hơi phân vân một chút...",
+   "states": [],
+   "entities": {},
+   "text_spoken": "ờ để chị suy nghĩ đã hơi phân vân một chút"
+  },
+  {
+   "idx": 4,
+   "speaker": "A",
+   "text": "Dạ, nếu chị muốn hotline liên hệ lại thì chị cho em xin số điện thoại nhé.",
+   "text_template": "Dạ, nếu chị muốn hotline liên hệ lại thì chị cho em xin số điện thoại nhé.",
+   "text_written": "Dạ, nếu chị muốn hotline liên hệ lại thì chị cho em xin số điện thoại nhé.",
+   "entities": {},
+   "text_spoken": "dạ nếu chị muốn hotline liên hệ lại thì chị cho em xin số điện thoại nhé"
+  },
+  {
+   "idx": 5,
+   "speaker": "C",
+   "text": "Ừm, chị đọc số 0900010003. Để chị xem thêm rồi gọi hotline.",
+   "text_written": "Ừm, chị đọc số 0900010003. Để chị xem thêm rồi gọi hotline.",
+   "states": [
+    "phone_provided"
+   ],
+   "entities": {
+    "phone": "0900010003"
+   },
+   "text_spoken": "ừm chị đọc số không chín không không không một không không không ba để chị xem thêm rồi gọi hotline"
+  },
+  {
+   "idx": 6,
+   "speaker": "A",
+   "text": "Dạ, em ghi nhận số điện thoại chị Mai vừa cung cấp để hotline liên hệ lại ạ.",
+   "text_template": "Dạ, em ghi nhận số điện thoại chị Mai vừa cung cấp để hotline liên hệ lại ạ.",
+   "text_written": "Dạ, em ghi nhận số điện thoại chị Mai vừa cung cấp để hotline liên hệ lại ạ.",
+   "entities": {},
+   "text_spoken": "dạ em ghi nhận số điện thoại chị mai vừa cung cấp để hotline liên hệ lại ạ"
+  },
+  {
+   "idx": 7,
+   "speaker": "C",
+   "text": "À, chị cân nhắc thêm đã.",
+   "text_written": "À, chị cân nhắc thêm đã.",
+   "states": [],
+   "entities": {},
+   "text_spoken": "à chị cân nhắc thêm đã"
+  },
+  {
+   "idx": 8,
+   "speaker": "A",
+   "text": "Dạ chị Mai cứ suy nghĩ thêm nhé, khi cần chị nhắn BTC ạ.",
+   "text_template": "Dạ chị Mai cứ suy nghĩ thêm nhé, khi cần chị nhắn BTC ạ.",
+   "text_written": "Dạ chị Mai cứ suy nghĩ thêm nhé, khi cần chị nhắn BTC ạ.",
+   "entities": {},
+   "text_spoken": "dạ chị mai cứ suy nghĩ thêm nhé khi cần chị nhắn bê tê xê ạ"
+  }
+ ],
+ "meta": {
+  "model": "gpt-6-luna",
+  "attempts": 1,
+  "ok": true,
+  "unresolved": []
+ },
+ "frame_sha256": "67ef0c9d6a5fb954"
+}

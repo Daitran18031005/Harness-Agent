@@ -1,0 +1,30 @@
+{
+  "scenario_id": "SC-GEN-09",
+  "level": "M1",
+  "persona": "khach_thay_doi_y_dinh",
+  "hard_case": null,
+  "customer_phone": "0928144976",
+  "customer_name": "Trung",
+  "honorific": "anh",
+  "notes": "Khách ban đầu hỏi AirPure Mini, sau đó đổi ý sang AirPure X trong CÙNG cuộc gọi — profile memory phải supersede đúng (không giữ cả 2 giá trị product_advised).",
+  "calls": {
+    "call_1": {
+      "call_date": "2026-10-15",
+      "customer_turns": [
+        "Em ơi máy lọc AirPure Mini giá bao nhiêu?",
+        "À thôi anh đổi ý, lấy AirPure X cho chắc, giá sao em?",
+        "Ok lên đơn AirPure X cho anh, COD."
+      ],
+      "success_if": {
+        "tool_called": "order.create",
+        "args_match": {
+          "sku": "SKU-AP-X"
+        }
+      },
+      "ground_truth_facts": {
+        "final_product_advised": "SKU-AP-X"
+      },
+      "expected_outcome": "chot_don"
+    }
+  }
+}

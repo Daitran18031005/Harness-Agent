@@ -1,0 +1,151 @@
+{
+ "scenario": {
+  "scenario_id": "SC-D36",
+  "level": "M1",
+  "persona": "khach_so_gia",
+  "hard_case": "doi_y_giua_cuoc",
+  "customer_phone": "0900020036",
+  "customer_name": "Hiếu",
+  "honorific": "anh",
+  "notes": "Đổi ý giữa cuộc: Nồi chiên không dầu Philips 6.2L → Nồi chiên không dầu Xiaomi 4.5L; đơn phải đúng sản phẩm CUỐI.",
+  "group": "C",
+  "archetype": "change_mind",
+  "industry": "nồi chiên",
+  "south": true
+ },
+ "calls": [
+  {
+   "name": "call_1",
+   "channel": "hotline",
+   "goal": "hỏi mẫu cao cấp rồi ĐỔI Ý sang mẫu rẻ hơn",
+   "opening": "agent",
+   "customer_plot": "Khách hỏi Nồi chiên không dầu Philips 6.2L; nghe giá thì thấy đắt và ĐỔI Ý: 'thôi cho anh cái rẻ hơn'; chọn mẫu agent gợi ý, COD, giao về số 35 đường Hùng Vương, quận Ninh Kiều, Cần Thơ.",
+   "agent_plot": "Agent báo {product_first} giá {price_first}; khi khách đổi ý thì gợi ý MỘT mẫu rẻ hơn cùng loại là {product} giá {price}; theo quy trình đặt đơn rồi chốt {product}, mã đơn {order_id}, giao {delivery_days} ngày. KHÔNG đặt đơn mẫu đầu.",
+   "customer_facts": [
+    {
+     "key": "product_asked",
+     "value": "SKU-AF-6L",
+     "hint": "hỏi Nồi chiên không dầu Philips 6.2L"
+    },
+    {
+     "key": "payment",
+     "value": "COD",
+     "hint": "COD"
+    },
+    {
+     "key": "address",
+     "value": "số 35 đường Hùng Vương, quận Ninh Kiều, Cần Thơ",
+     "hint": "giao về số 35 đường Hùng Vương, quận Ninh Kiều, Cần Thơ"
+    },
+    {
+     "key": "recipient_name",
+     "value": "Hiếu",
+     "hint": "nói tên người nhận là Hiếu"
+    }
+   ],
+   "agent_vars": {
+    "product_first": {
+     "text": "Nồi chiên không dầu Philips 6.2L",
+     "desc": "sản phẩm khách hỏi ban đầu",
+     "entity": [
+      "sku",
+      "SKU-AF-6L"
+     ]
+    },
+    "price_first": {
+     "text": "3.990.000đ",
+     "desc": "giá cuối sản phẩm đầu tiên",
+     "entity": [
+      "price_vnd",
+      3990000
+     ]
+    },
+    "product": {
+     "text": "Nồi chiên không dầu Xiaomi 4.5L",
+     "desc": "sản phẩm rẻ hơn agent gợi ý và khách chọn",
+     "entity": [
+      "sku",
+      "SKU-AF-XM"
+     ]
+    },
+    "price": {
+     "text": "1.590.000đ",
+     "desc": "giá cuối sản phẩm khách chọn",
+     "entity": [
+      "price_vnd",
+      1590000
+     ]
+    },
+    "order_id": {
+     "text": "OD600001",
+     "desc": "mã đơn",
+     "entity": [
+      "order_id",
+      "OD600001"
+     ]
+    },
+    "delivery_days": {
+     "text": "3",
+     "desc": "số ngày giao",
+     "entity": null
+    },
+    "address": {
+     "text": "số 35 đường Hùng Vương, quận Ninh Kiều, Cần Thơ",
+     "desc": "địa chỉ giao (khách vừa đọc) — CHỈ dùng sau khi khách đã đọc địa chỉ",
+     "entity": null,
+     "after": "address"
+    },
+    "readback_total": {
+     "text": "1.590.000đ",
+     "desc": "tổng tiền cả đơn (giá × số lượng) — dùng khi ĐỌC LẠI ĐƠN",
+     "entity": null
+    },
+    "payment_label": {
+     "text": "thanh toán khi nhận hàng (COD)",
+     "desc": "hình thức thanh toán chốt của đơn — dùng khi ĐỌC LẠI ĐƠN",
+     "entity": null
+    },
+    "recipient_name": {
+     "text": "Hiếu",
+     "desc": "tên người nhận — CHỈ dùng sau khi khách đã nói tên",
+     "entity": null,
+     "after": "recipient_name"
+    },
+    "caller_phone": {
+     "text": "0900020036",
+     "desc": "SĐT nhận hàng (số khách đang gọi/nhắn) — đọc lại để xác nhận",
+     "entity": [
+      "phone",
+      "0900020036"
+     ]
+    }
+   },
+   "n_turns": [
+    11,
+    15
+   ],
+   "style": "normal",
+   "expected": {
+    "success_if": {
+     "tool_called": "order.create",
+     "args_match": {
+      "sku": "SKU-AF-XM",
+      "price_vnd": 1590000
+     }
+    },
+    "ground_truth_facts": {
+     "price_vnd": 1590000,
+     "in_stock": true
+    },
+    "facts_established": {
+     "product_advised": "SKU-AF-XM",
+     "price_quoted_vnd": 1590000
+    },
+    "expected_outcome": "chot_don"
+   },
+   "abs_date": "2026-10-15",
+   "call_date": "2026-10-15",
+   "order_flow": true
+  }
+ ]
+}

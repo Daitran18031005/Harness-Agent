@@ -1,0 +1,113 @@
+{
+ "scenario_id": "SC-A01",
+ "call": "call_1",
+ "channel": "chat_fanpage",
+ "call_date": "2026-10-15",
+ "meta": {
+  "model": "gpt-6-luna",
+  "attempts": 2,
+  "ok": true,
+  "unresolved": [],
+  "rebuilt": true
+ },
+ "frame_sha256": "30d360de090cd12c",
+ "allowed_numbers": [
+  5,
+  25,
+  5000000
+ ],
+ "turns": [
+  {
+   "idx": 1,
+   "speaker": "C",
+   "text": "Chào em, chị muốn hỏi máy lọc không khí cho phòng ngủ có bé nhỏ.",
+   "text_written": "Chào em, chị muốn hỏi máy lọc không khí cho phòng ngủ có bé nhỏ.",
+   "states": [],
+   "entities": {},
+   "text_spoken": "chào em chị muốn hỏi máy lọc không khí cho phòng ngủ có bé nhỏ"
+  },
+  {
+   "idx": 2,
+   "speaker": "A",
+   "text": "Em chào chị Thu. Phòng ngủ nhà mình khoảng bao nhiêu mét vuông, và nhà mình có bé nhỏ không ạ?",
+   "text_template": "Em chào chị Thu. Phòng ngủ nhà mình khoảng bao nhiêu mét vuông, và nhà mình có bé nhỏ không ạ?",
+   "text_written": "Em chào chị Thu. Phòng ngủ nhà mình khoảng bao nhiêu mét vuông, và nhà mình có bé nhỏ không ạ?",
+   "entities": {},
+   "text_spoken": "em chào chị thu phòng ngủ nhà mình khoảng bao nhiêu mét vuông và nhà mình có bé nhỏ không ạ"
+  },
+  {
+   "idx": 3,
+   "speaker": "C",
+   "text": "Phòng khoảng 25m², nhà có bé 2 tuổi. Ngân sách tầm 5 triệu thôi em.",
+   "text_written": "Phòng khoảng 25m², nhà có bé 2 tuổi. Ngân sách tầm 5 triệu thôi em.",
+   "states": [
+    "room_area_m2",
+    "has_children",
+    "budget_vnd"
+   ],
+   "entities": {
+    "room_area_m2": 25,
+    "has_children": true,
+    "budget_vnd": 5000000
+   },
+   "text_spoken": "phòng khoảng hai mươi lăm mét vuông nhà có bé hai tuổi ngân sách tầm năm triệu thôi em"
+  },
+  {
+   "idx": 4,
+   "speaker": "A",
+   "text": "Với phòng của chị Thu, em đề xuất Máy lọc không khí AirPure Y, giá cuối 5.200.000đ, vượt ngân sách của chị 4%. Sản phẩm có khóa an toàn trẻ em nên phù hợp nhà mình; hiện hiện còn hàng. Mình còn được tặng Màng lọc thay thế AirPure X/Y đến hết 22/10 ạ.",
+   "text_template": "Với phòng của chị Thu, em đề xuất {product}, giá cuối {price}, vượt ngân sách của chị {overage}. Sản phẩm có khóa an toàn trẻ em nên phù hợp nhà mình; hiện {stock}. Mình còn được tặng {gift} đến hết {promo_end} ạ.",
+   "text_written": "Với phòng của chị Thu, em đề xuất Máy lọc không khí AirPure Y, giá cuối 5.200.000đ, vượt ngân sách của chị 4%. Sản phẩm có khóa an toàn trẻ em nên phù hợp nhà mình; hiện hiện còn hàng. Mình còn được tặng Màng lọc thay thế AirPure X/Y đến hết 22/10 ạ.",
+   "entities": {
+    "sku": "SKU-AP-Y",
+    "price_vnd": 5200000,
+    "promo_expiry": "2026-10-22"
+   },
+   "text_spoken": "với phòng của chị thu em đề xuất máy lọc không khí e pia y giá cuối năm triệu hai trăm nghìn vượt ngân sách của chị bốn phần trăm sản phẩm có khóa an toàn trẻ em nên phù hợp nhà mình hiện hiện còn hàng mình còn được tặng màng lọc thay thế e pia x y đến hết hai mươi hai tháng mười ạ"
+  },
+  {
+   "idx": 5,
+   "speaker": "C",
+   "text": "Ờ, giá hơi vượt ngân sách, để chị hỏi chồng đã...",
+   "text_written": "Ờ, giá hơi vượt ngân sách, để chị hỏi chồng đã...",
+   "states": [
+    "blocker"
+   ],
+   "entities": {
+    "blocker": "can hoi chong"
+   },
+   "text_spoken": "ờ giá hơi vượt ngân sách để chị hỏi chồng đã"
+  },
+  {
+   "idx": 6,
+   "speaker": "A",
+   "text": "Dạ, chị cứ trao đổi với chồng nhé. Chị cho em xin số điện thoại để hotline gọi lại tư vấn thêm được không ạ?",
+   "text_template": "Dạ, chị cứ trao đổi với chồng nhé. Chị cho em xin số điện thoại để hotline gọi lại tư vấn thêm được không ạ?",
+   "text_written": "Dạ, chị cứ trao đổi với chồng nhé. Chị cho em xin số điện thoại để hotline gọi lại tư vấn thêm được không ạ?",
+   "entities": {},
+   "text_spoken": "dạ chị cứ trao đổi với chồng nhé chị cho em xin số điện thoại để hotline gọi lại tư vấn thêm được không ạ"
+  },
+  {
+   "idx": 7,
+   "speaker": "C",
+   "text": "Ừm, 0900010001 nhé.",
+   "text_written": "Ừm, 0900010001 nhé.",
+   "states": [
+    "phone_provided"
+   ],
+   "entities": {
+    "phone": "0900010001"
+   },
+   "text_spoken": "ừm không chín không không không một không không không một nhé"
+  },
+  {
+   "idx": 8,
+   "speaker": "A",
+   "text": "Em ghi nhận số của chị Thu để hotline liên hệ lại ạ. Chị cứ hỏi chồng, khi nào cần thêm thông tin thì nhắn em nhé.",
+   "text_template": "Em ghi nhận số của chị Thu để hotline liên hệ lại ạ. Chị cứ hỏi chồng, khi nào cần thêm thông tin thì nhắn em nhé.",
+   "text_written": "Em ghi nhận số của chị Thu để hotline liên hệ lại ạ. Chị cứ hỏi chồng, khi nào cần thêm thông tin thì nhắn em nhé.",
+   "entities": {},
+   "text_spoken": "em ghi nhận số của chị thu để hotline liên hệ lại ạ chị cứ hỏi chồng khi nào cần thêm thông tin thì nhắn em nhé"
+  }
+ ]
+}

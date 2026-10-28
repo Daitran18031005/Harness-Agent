@@ -1,0 +1,146 @@
+{
+ "scenario_id": "SC-D24",
+ "call": "call_1",
+ "channel": "hotline",
+ "call_date": "2026-10-15",
+ "meta": {
+  "model": "gpt-6-luna",
+  "attempts": 1,
+  "ok": true,
+  "unresolved": [],
+  "rebuilt": true
+ },
+ "frame_sha256": "e13e6115bb7eefc5",
+ "allowed_numbers": [
+  38
+ ],
+ "turns": [
+  {
+   "idx": 1,
+   "speaker": "A",
+   "text": "Dạ shop BTC xin nghe, em có thể giúp gì cho mình ạ?",
+   "text_template": "Dạ shop BTC xin nghe, em có thể giúp gì cho mình ạ?",
+   "text_written": "Dạ shop BTC xin nghe, em có thể giúp gì cho mình ạ?",
+   "entities": {},
+   "text_spoken": "dạ shop bê tê xê xin nghe em có thể giúp gì cho mình ạ"
+  },
+  {
+   "idx": 2,
+   "speaker": "C",
+   "text": "Giày chạy bộ RunLite 2 Pro, 38 đen còn hàng không?",
+   "text_written": "Giày chạy bộ RunLite 2 Pro, 38 đen còn hàng không?",
+   "states": [
+    "product_asked",
+    "size",
+    "color"
+   ],
+   "entities": {
+    "sku": "SKU-SN-RUN2",
+    "size": 38,
+    "color": "den"
+   },
+   "text_spoken": "giày chạy bộ run lai hai pro ba mươi tám đen còn hàng không"
+  },
+  {
+   "idx": 3,
+   "speaker": "A",
+   "text": "Dạ, biến thể size 38 màu đen còn hiện còn hàng ạ. Giá 1.521.000đ. Em xin tên người nhận được không ạ?",
+   "text_template": "Dạ, biến thể size 38 màu đen còn {stock} ạ. Giá {price}. Em xin tên người nhận được không ạ?",
+   "text_written": "Dạ, biến thể size 38 màu đen còn hiện còn hàng ạ. Giá 1.521.000đ. Em xin tên người nhận được không ạ?",
+   "entities": {
+    "price_vnd": 1521000
+   },
+   "text_spoken": "dạ biến thể size ba mươi tám màu đen còn hiện còn hàng ạ giá một triệu năm trăm hai mươi mốt nghìn em xin tên người nhận được không ạ"
+  },
+  {
+   "idx": 4,
+   "speaker": "C",
+   "text": "Nam.",
+   "text_written": "Nam.",
+   "states": [
+    "recipient_name"
+   ],
+   "entities": {},
+   "text_spoken": "nam"
+  },
+  {
+   "idx": 5,
+   "speaker": "A",
+   "text": "Dạ anh Nam cho em xin địa chỉ giao hàng ạ?",
+   "text_template": "Dạ anh Nam cho em xin địa chỉ giao hàng ạ?",
+   "text_written": "Dạ anh Nam cho em xin địa chỉ giao hàng ạ?",
+   "entities": {},
+   "text_spoken": "dạ anh nam cho em xin địa chỉ giao hàng ạ"
+  },
+  {
+   "idx": 6,
+   "speaker": "C",
+   "text": "Số 5 đường Phạm Văn Đồng, quận Bắc Từ Liêm, Hà Nội.",
+   "text_written": "Số 5 đường Phạm Văn Đồng, quận Bắc Từ Liêm, Hà Nội.",
+   "states": [
+    "address"
+   ],
+   "entities": {
+    "address": "số 5 đường Phạm Văn Đồng, quận Bắc Từ Liêm, Hà Nội"
+   },
+   "text_spoken": "số năm đường phạm văn đồng quận bắc từ liêm hà nội"
+  },
+  {
+   "idx": 7,
+   "speaker": "A",
+   "text": "Dạ, số điện thoại nhận hàng là 0900020024, đúng không ạ? Anh muốn thanh toán COD hay chuyển khoản ạ?",
+   "text_template": "Dạ, số điện thoại nhận hàng là {caller_phone}, đúng không ạ? Anh muốn thanh toán COD hay chuyển khoản ạ?",
+   "text_written": "Dạ, số điện thoại nhận hàng là 0900020024, đúng không ạ? Anh muốn thanh toán COD hay chuyển khoản ạ?",
+   "entities": {
+    "phone": "0900020024"
+   },
+   "text_spoken": "dạ số điện thoại nhận hàng là không chín không không không hai không không hai bốn đúng không ạ anh muốn thanh toán cê ô đê hay chuyển khoản ạ"
+  },
+  {
+   "idx": 8,
+   "speaker": "C",
+   "text": "Đúng số này. COD.",
+   "text_written": "Đúng số này. COD.",
+   "states": [
+    "payment"
+   ],
+   "entities": {
+    "payment": "COD"
+   },
+   "text_spoken": "đúng số này cê ô đê"
+  },
+  {
+   "idx": 9,
+   "speaker": "A",
+   "text": "Em đọc lại đơn: Giày chạy bộ RunLite 2 Pro, giá 1.521.000đ, tổng 1.521.000đ, giao cho Nam, SĐT 0900020024, địa chỉ số 5 đường Phạm Văn Đồng, quận Bắc Từ Liêm, Hà Nội, hình thức thanh toán khi nhận hàng (COD). Anh xác nhận đặt đơn này chứ ạ?",
+   "text_template": "Em đọc lại đơn: {product}, giá {price}, tổng {readback_total}, giao cho {recipient_name}, SĐT {caller_phone}, địa chỉ {address}, hình thức {payment_label}. Anh xác nhận đặt đơn này chứ ạ?",
+   "text_written": "Em đọc lại đơn: Giày chạy bộ RunLite 2 Pro, giá 1.521.000đ, tổng 1.521.000đ, giao cho Nam, SĐT 0900020024, địa chỉ số 5 đường Phạm Văn Đồng, quận Bắc Từ Liêm, Hà Nội, hình thức thanh toán khi nhận hàng (COD). Anh xác nhận đặt đơn này chứ ạ?",
+   "entities": {
+    "sku": "SKU-SN-RUN2",
+    "price_vnd": 1521000,
+    "phone": "0900020024"
+   },
+   "text_spoken": "em đọc lại đơn giày chạy bộ run lai hai pro giá một triệu năm trăm hai mươi mốt nghìn tổng một triệu năm trăm hai mươi mốt nghìn giao cho nam số điện thoại không chín không không không hai không không hai bốn địa chỉ số năm đường phạm văn đồng quận bắc từ liêm hà nội hình thức thanh toán khi nhận hàng cê ô đê anh xác nhận đặt đơn này chứ ạ"
+  },
+  {
+   "idx": 10,
+   "speaker": "C",
+   "text": "Ừ, chốt đi.",
+   "text_written": "Ừ, chốt đi.",
+   "states": [],
+   "entities": {},
+   "text_spoken": "ừ chốt đi"
+  },
+  {
+   "idx": 11,
+   "speaker": "A",
+   "text": "Dạ, mã đơn OD600001, dự kiến giao trong 2 ngày ạ.",
+   "text_template": "Dạ, mã đơn {order_id}, dự kiến giao trong {delivery_days} ngày ạ.",
+   "text_written": "Dạ, mã đơn OD600001, dự kiến giao trong 2 ngày ạ.",
+   "entities": {
+    "order_id": "OD600001"
+   },
+   "text_spoken": "dạ mã đơn ô đê sáu không không không không một dự kiến giao trong hai ngày ạ"
+  }
+ ]
+}

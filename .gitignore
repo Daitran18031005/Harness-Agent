@@ -1,0 +1,37 @@
+# Bí mật
+.env
+.env.*
+!.env.example
+
+# Dữ liệu runtime / bản sao lưu
+data/*.db
+data/*.db-wal
+data/*.db-shm
+backup_*/
+runs/demo.jsonl
+runs/ui_session.jsonl
+
+# Python
+__pycache__/
+*.pyc
+.pytest_cache/
+
+# Trọng số model ASR (≈ 73 MB) — tải riêng theo README, không đưa vào git
+models/
+model_ASR/
+asr/audio_real/consent.csv
+
+# Đã chuyển khỏi dự án (xem ../NotRelated/MANIFEST.md); đặt ở đây phòng khi thư mục này nằm trong repo
+NotRelated/
+
+# Cấu hình trình soạn thảo, bản sao lưu DB
+.vscode/
+data/*.bak
+
+# runs/: log và trace chạy thật (~28 MB) không đưa lên GitHub; chỉ giữ báo cáo chính của từng lần chạy GĐ2
+runs/*
+!runs/gd2_run*/
+runs/gd2_run*/*
+!runs/gd2_run*/gd2_report.md
+!runs/gd2_run*/gd2_report.json
+!runs/gd2_run*/failures_*.txt

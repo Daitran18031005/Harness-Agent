@@ -1,0 +1,90 @@
+{
+ "scenario": {
+  "scenario_id": "SC-D50",
+  "level": "M1",
+  "persona": "khach_hoi_nhieu_khong_mua",
+  "hard_case": null,
+  "customer_phone": "0900020050",
+  "customer_name": "Dũng",
+  "honorific": "anh",
+  "notes": "Chỉ hỏi Máy lọc nước RO Karofi 9 lõi (còn hàng), không mua, hẹn gọi lại.",
+  "group": "C",
+  "archetype": "inquiry_only",
+  "industry": "máy lọc nước",
+  "south": false
+ },
+ "calls": [
+  {
+   "name": "call_1",
+   "channel": "hotline",
+   "goal": "hỏi Máy lọc nước RO Karofi 9 lõi (chỉ tham khảo)",
+   "opening": "agent",
+   "customer_plot": "Khách hỏi Máy lọc nước RO Karofi 9 lõi: còn hàng không, giá bao nhiêu, bảo hành mấy tháng; nghe xong nói 'để anh tham khảo thêm rồi gọi lại'. Tính cách: hỏi tuần tự từng ý.",
+   "agent_plot": "Agent trả lời ĐỦ cả ba câu hỏi (còn hàng/giá/bảo hành) bằng ô trống; không ép mua; ghi nhận khách sẽ gọi lại.",
+   "customer_facts": [
+    {
+     "key": "product_asked",
+     "value": "SKU-WF-RO9",
+     "hint": "hỏi Máy lọc nước RO Karofi 9 lõi"
+    }
+   ],
+   "agent_vars": {
+    "product": {
+     "text": "Máy lọc nước RO Karofi 9 lõi",
+     "desc": "tên sản phẩm ĐẦY ĐỦ đã gồm loại hàng (đừng viết thêm loại hàng phía trước)",
+     "entity": [
+      "sku",
+      "SKU-WF-RO9"
+     ]
+    },
+    "price": {
+     "text": "5.990.000đ",
+     "desc": "giá cuối (đã tính khuyến mãi)",
+     "entity": [
+      "price_vnd",
+      5990000
+     ]
+    },
+    "warranty": {
+     "text": "36",
+     "desc": "số tháng bảo hành",
+     "entity": [
+      "warranty_months",
+      36
+     ]
+    },
+    "stock": {
+     "text": "hiện còn hàng",
+     "desc": "tình trạng tồn kho của sản phẩm (còn hàng/hết hàng)",
+     "entity": null
+    }
+   },
+   "n_turns": [
+    6,
+    8
+   ],
+   "style": "normal",
+   "expected": {
+    "success_if": {
+     "tool_called": null,
+     "agent_must_say": true,
+     "must_not_call_tools": [
+      "order.create"
+     ]
+    },
+    "ground_truth_facts": {
+     "price_vnd": 5990000,
+     "warranty_months": 36,
+     "in_stock": true
+    },
+    "facts_established": {
+     "product_advised": "SKU-WF-RO9",
+     "price_quoted_vnd": 5990000
+    },
+    "expected_outcome": "hen_goi_lai"
+   },
+   "abs_date": "2026-10-15",
+   "call_date": "2026-10-15"
+  }
+ ]
+}

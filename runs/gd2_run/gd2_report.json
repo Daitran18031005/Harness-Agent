@@ -1,0 +1,438 @@
+{
+  "root": "runs/gd2_run",
+  "scenarios": {
+    "all": 22,
+    "sample": 7,
+    "gen": 15
+  },
+  "per_seed": {
+    "1": {
+      "all": {
+        "tsr": 45.5,
+        "tsr_hard": 45.5,
+        "rqr": 0.0,
+        "ccr": 53.6,
+        "hr_price_promo": 25.0,
+        "hr_all": 25.0,
+        "avg_turns_per_call": 2.87,
+        "calls_to_close": 1.14,
+        "guardrail_violations": 0,
+        "ttft_p95_ms": 10380,
+        "total_p95_ms": 12553,
+        "n_turns": 89,
+        "call_brief_p95_ms": 65,
+        "base_tsr": 45.5,
+        "base_rqr": 6.1,
+        "base_ccr": 3.6,
+        "base_hr_price_promo": 43.5,
+        "base_total_p95_ms": 14790,
+        "rqr_relative_reduction_pct": 100.0,
+        "meets_rqr_threshold_40pct": true,
+        "meets_tsr_70pct": false,
+        "meets_hr_price_5pct": false
+      },
+      "sample": {
+        "tsr": 14.3,
+        "tsr_hard": 33.3,
+        "rqr": 0.0,
+        "ccr": 52.4,
+        "hr_price_promo": 0.0,
+        "hr_all": 0.0,
+        "avg_turns_per_call": 3,
+        "calls_to_close": null,
+        "guardrail_violations": 0,
+        "ttft_p95_ms": 8440,
+        "total_p95_ms": 10137,
+        "n_turns": 39,
+        "call_brief_p95_ms": 65,
+        "base_tsr": 14.3,
+        "base_rqr": 8.0,
+        "base_ccr": 4.8,
+        "base_hr_price_promo": 53.8,
+        "base_total_p95_ms": 9626,
+        "rqr_relative_reduction_pct": 100.0,
+        "meets_rqr_threshold_40pct": true,
+        "meets_tsr_70pct": false,
+        "meets_hr_price_5pct": true
+      },
+      "gen": {
+        "tsr": 60.0,
+        "tsr_hard": 50.0,
+        "rqr": 0.0,
+        "ccr": 57.1,
+        "hr_price_promo": 40.0,
+        "hr_all": 47.6,
+        "avg_turns_per_call": 2.78,
+        "calls_to_close": 1.14,
+        "guardrail_violations": 0,
+        "ttft_p95_ms": 13275,
+        "total_p95_ms": 13275,
+        "n_turns": 50,
+        "call_brief_p95_ms": 64,
+        "base_tsr": 60.0,
+        "base_rqr": 0.0,
+        "base_ccr": 0.0,
+        "base_hr_price_promo": 30.0,
+        "base_total_p95_ms": 19728,
+        "rqr_relative_reduction_pct": null,
+        "meets_rqr_threshold_40pct": false,
+        "meets_tsr_70pct": false,
+        "meets_hr_price_5pct": false
+      }
+    },
+    "2": {
+      "all": {
+        "tsr": 54.5,
+        "tsr_hard": 54.5,
+        "rqr": 0.0,
+        "ccr": 53.6,
+        "hr_price_promo": 29.2,
+        "hr_all": 23.7,
+        "avg_turns_per_call": 2.94,
+        "calls_to_close": 1.12,
+        "guardrail_violations": 0,
+        "ttft_p95_ms": 20128,
+        "total_p95_ms": 21242,
+        "n_turns": 91,
+        "call_brief_p95_ms": 58,
+        "base_tsr": 54.5,
+        "base_rqr": 5.9,
+        "base_ccr": 3.6,
+        "base_hr_price_promo": 36.4,
+        "base_total_p95_ms": 19635,
+        "rqr_relative_reduction_pct": 100.0,
+        "meets_rqr_threshold_40pct": true,
+        "meets_tsr_70pct": false,
+        "meets_hr_price_5pct": false
+      },
+      "sample": {
+        "tsr": 14.3,
+        "tsr_hard": 33.3,
+        "rqr": 0.0,
+        "ccr": 52.4,
+        "hr_price_promo": 0.0,
+        "hr_all": 0.0,
+        "avg_turns_per_call": 3,
+        "calls_to_close": null,
+        "guardrail_violations": 0,
+        "ttft_p95_ms": 20128,
+        "total_p95_ms": 21242,
+        "n_turns": 39,
+        "call_brief_p95_ms": 58,
+        "base_tsr": 14.3,
+        "base_rqr": 8.3,
+        "base_ccr": 4.8,
+        "base_hr_price_promo": 53.8,
+        "base_total_p95_ms": 11348,
+        "rqr_relative_reduction_pct": 100.0,
+        "meets_rqr_threshold_40pct": true,
+        "meets_tsr_70pct": false,
+        "meets_hr_price_5pct": true
+      },
+      "gen": {
+        "tsr": 73.3,
+        "tsr_hard": 62.5,
+        "rqr": 0.0,
+        "ccr": 57.1,
+        "hr_price_promo": 43.8,
+        "hr_all": 42.9,
+        "avg_turns_per_call": 2.89,
+        "calls_to_close": 1.12,
+        "guardrail_violations": 0,
+        "ttft_p95_ms": 29662,
+        "total_p95_ms": 30222,
+        "n_turns": 52,
+        "call_brief_p95_ms": 23,
+        "base_tsr": 73.3,
+        "base_rqr": 0.0,
+        "base_ccr": 0.0,
+        "base_hr_price_promo": 11.1,
+        "base_total_p95_ms": 21188,
+        "rqr_relative_reduction_pct": null,
+        "meets_rqr_threshold_40pct": false,
+        "meets_tsr_70pct": true,
+        "meets_hr_price_5pct": false
+      }
+    },
+    "3": {
+      "all": {
+        "tsr": 50.0,
+        "tsr_hard": 54.5,
+        "rqr": 0.0,
+        "ccr": 53.6,
+        "hr_price_promo": 39.1,
+        "hr_all": 35.1,
+        "avg_turns_per_call": 2.87,
+        "calls_to_close": 1.14,
+        "guardrail_violations": 0,
+        "ttft_p95_ms": 8298,
+        "total_p95_ms": 10110,
+        "n_turns": 89,
+        "call_brief_p95_ms": 61,
+        "base_tsr": 59.1,
+        "base_rqr": 11.4,
+        "base_ccr": 3.6,
+        "base_hr_price_promo": 46.4,
+        "base_total_p95_ms": 10750,
+        "rqr_relative_reduction_pct": 100.0,
+        "meets_rqr_threshold_40pct": true,
+        "meets_tsr_70pct": false,
+        "meets_hr_price_5pct": false
+      },
+      "sample": {
+        "tsr": 14.3,
+        "tsr_hard": 33.3,
+        "rqr": 0.0,
+        "ccr": 52.4,
+        "hr_price_promo": 25.0,
+        "hr_all": 12.5,
+        "avg_turns_per_call": 3,
+        "calls_to_close": null,
+        "guardrail_violations": 0,
+        "ttft_p95_ms": 6485,
+        "total_p95_ms": 8482,
+        "n_turns": 39,
+        "call_brief_p95_ms": 61,
+        "base_tsr": 14.3,
+        "base_rqr": 16.0,
+        "base_ccr": 4.8,
+        "base_hr_price_promo": 53.8,
+        "base_total_p95_ms": 10601,
+        "rqr_relative_reduction_pct": 100.0,
+        "meets_rqr_threshold_40pct": true,
+        "meets_tsr_70pct": false,
+        "meets_hr_price_5pct": false
+      },
+      "gen": {
+        "tsr": 66.7,
+        "tsr_hard": 62.5,
+        "rqr": 0.0,
+        "ccr": 57.1,
+        "hr_price_promo": 46.7,
+        "hr_all": 52.4,
+        "avg_turns_per_call": 2.78,
+        "calls_to_close": 1.14,
+        "guardrail_violations": 0,
+        "ttft_p95_ms": 9197,
+        "total_p95_ms": 12567,
+        "n_turns": 50,
+        "call_brief_p95_ms": 56,
+        "base_tsr": 80.0,
+        "base_rqr": 0.0,
+        "base_ccr": 0.0,
+        "base_hr_price_promo": 40.0,
+        "base_total_p95_ms": 11664,
+        "rqr_relative_reduction_pct": null,
+        "meets_rqr_threshold_40pct": false,
+        "meets_tsr_70pct": false,
+        "meets_hr_price_5pct": false
+      }
+    }
+  },
+  "aggregate": {
+    "avg_turns_per_call": {
+      "mean": 2.89,
+      "std": 0.04,
+      "n": 3,
+      "values": [
+        2.87,
+        2.94,
+        2.87
+      ]
+    },
+    "base_ccr": {
+      "mean": 3.6,
+      "std": 0.0,
+      "n": 3,
+      "values": [
+        3.6,
+        3.6,
+        3.6
+      ]
+    },
+    "base_hr_price_promo": {
+      "mean": 42.1,
+      "std": 5.14,
+      "n": 3,
+      "values": [
+        43.5,
+        36.4,
+        46.4
+      ]
+    },
+    "base_rqr": {
+      "mean": 7.8,
+      "std": 3.12,
+      "n": 3,
+      "values": [
+        6.1,
+        5.9,
+        11.4
+      ]
+    },
+    "base_total_p95_ms": {
+      "mean": 15058.33,
+      "std": 4448.57,
+      "n": 3,
+      "values": [
+        14790,
+        19635,
+        10750
+      ]
+    },
+    "base_tsr": {
+      "mean": 53.03,
+      "std": 6.92,
+      "n": 3,
+      "values": [
+        45.5,
+        54.5,
+        59.1
+      ]
+    },
+    "call_brief_p95_ms": {
+      "mean": 61.33,
+      "std": 3.51,
+      "n": 3,
+      "values": [
+        65,
+        58,
+        61
+      ]
+    },
+    "calls_to_close": {
+      "mean": 1.13,
+      "std": 0.01,
+      "n": 3,
+      "values": [
+        1.14,
+        1.12,
+        1.14
+      ]
+    },
+    "ccr": {
+      "mean": 53.6,
+      "std": 0.0,
+      "n": 3,
+      "values": [
+        53.6,
+        53.6,
+        53.6
+      ]
+    },
+    "guardrail_violations": {
+      "mean": 0,
+      "std": 0.0,
+      "n": 3,
+      "values": [
+        0,
+        0,
+        0
+      ]
+    },
+    "hr_all": {
+      "mean": 27.93,
+      "std": 6.24,
+      "n": 3,
+      "values": [
+        25.0,
+        23.7,
+        35.1
+      ]
+    },
+    "hr_price_promo": {
+      "mean": 31.1,
+      "std": 7.24,
+      "n": 3,
+      "values": [
+        25.0,
+        29.2,
+        39.1
+      ]
+    },
+    "meets_hr_price_5pct": null,
+    "meets_rqr_threshold_40pct": null,
+    "meets_tsr_70pct": null,
+    "n_turns": {
+      "mean": 89.67,
+      "std": 1.15,
+      "n": 3,
+      "values": [
+        89,
+        91,
+        89
+      ]
+    },
+    "rqr": {
+      "mean": 0.0,
+      "std": 0.0,
+      "n": 3,
+      "values": [
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    "rqr_relative_reduction_pct": {
+      "mean": 100.0,
+      "std": 0.0,
+      "n": 3,
+      "values": [
+        100.0,
+        100.0,
+        100.0
+      ]
+    },
+    "total_p95_ms": {
+      "mean": 14635,
+      "std": 5850.76,
+      "n": 3,
+      "values": [
+        12553,
+        21242,
+        10110
+      ]
+    },
+    "tsr": {
+      "mean": 50.0,
+      "std": 4.5,
+      "n": 3,
+      "values": [
+        45.5,
+        54.5,
+        50.0
+      ]
+    },
+    "tsr_hard": {
+      "mean": 51.5,
+      "std": 5.2,
+      "n": 3,
+      "values": [
+        45.5,
+        54.5,
+        54.5
+      ]
+    },
+    "ttft_p95_ms": {
+      "mean": 12935.33,
+      "std": 6315.42,
+      "n": 3,
+      "values": [
+        10380,
+        20128,
+        8298
+      ]
+    }
+  },
+  "verdict": {
+    "seeds": 3,
+    "turns_per_seed": 89,
+    "rqr_reduction_pct_mean": 100.0,
+    "meets_rqr_40pct": true,
+    "meets_tsr_70pct": false,
+    "meets_hr_price_5pct": false,
+    "better_than_baseline_tsr": false,
+    "ttft_p95_ms_mean": 12935.33,
+    "ttft_p95_target_ms": 3000
+  }
+}

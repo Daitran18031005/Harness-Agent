@@ -1,0 +1,87 @@
+{
+ "scenario_id": "SC-B01",
+ "call": "call_1",
+ "channel": "chat_fanpage",
+ "call_date": "2026-10-15",
+ "meta": {
+  "model": "gpt-6-luna",
+  "attempts": 1,
+  "ok": true,
+  "unresolved": [],
+  "rebuilt": true
+ },
+ "frame_sha256": "a15b62078e28a6c6",
+ "allowed_numbers": [
+  41
+ ],
+ "turns": [
+  {
+   "idx": 1,
+   "speaker": "C",
+   "text": "RunLite 2 Pro size 41 màu đen, giá? Có giảm không?",
+   "text_written": "RunLite 2 Pro size 41 màu đen, giá? Có giảm không?",
+   "states": [
+    "size",
+    "color"
+   ],
+   "entities": {
+    "size": 41,
+    "color": "den"
+   },
+   "text_spoken": "run lai hai pro size bốn mươi mốt màu đen giá có giảm không"
+  },
+  {
+   "idx": 2,
+   "speaker": "A",
+   "text": "Dạ anh Quân, Giày chạy bộ RunLite 2 Pro size 41 màu đen hiện giá 1.521.000đ, đã giảm 10% đến 25/10. Sản phẩm còn hiện còn hàng. Anh cho em xin số điện thoại để tiện liên hệ nhé.",
+   "text_template": "Dạ anh Quân, {product} size 41 màu đen hiện giá {price}, đã giảm {discount} đến {promo_end}. Sản phẩm còn {stock}. Anh cho em xin số điện thoại để tiện liên hệ nhé.",
+   "text_written": "Dạ anh Quân, Giày chạy bộ RunLite 2 Pro size 41 màu đen hiện giá 1.521.000đ, đã giảm 10% đến 25/10. Sản phẩm còn hiện còn hàng. Anh cho em xin số điện thoại để tiện liên hệ nhé.",
+   "entities": {
+    "sku": "SKU-SN-RUN2",
+    "price_vnd": 1521000,
+    "promo_expiry": "2026-10-25"
+   },
+   "text_spoken": "dạ anh quân giày chạy bộ run lai hai pro size bốn mươi mốt màu đen hiện giá một triệu năm trăm hai mươi mốt nghìn đã giảm mười phần trăm đến hai mươi lăm tháng mười sản phẩm còn hiện còn hàng anh cho em xin số điện thoại để tiện liên hệ nhé"
+  },
+  {
+   "idx": 3,
+   "speaker": "C",
+   "text": "0900010004",
+   "text_written": "0900010004",
+   "states": [
+    "phone_provided"
+   ],
+   "entities": {
+    "phone": "0900010004"
+   },
+   "text_spoken": "không chín không không không một không không không bốn"
+  },
+  {
+   "idx": 4,
+   "speaker": "A",
+   "text": "Em ghi nhận số điện thoại của anh Quân rồi ạ. Anh cứ nhắn em khi tiện nhé.",
+   "text_template": "Em ghi nhận số điện thoại của anh Quân rồi ạ. Anh cứ nhắn em khi tiện nhé.",
+   "text_written": "Em ghi nhận số điện thoại của anh Quân rồi ạ. Anh cứ nhắn em khi tiện nhé.",
+   "entities": {},
+   "text_spoken": "em ghi nhận số điện thoại của anh quân rồi ạ anh cứ nhắn em khi tiện nhé"
+  },
+  {
+   "idx": 5,
+   "speaker": "C",
+   "text": "Tối anh nhắn chốt.",
+   "text_written": "Tối anh nhắn chốt.",
+   "states": [],
+   "entities": {},
+   "text_spoken": "tối anh nhắn chốt"
+  },
+  {
+   "idx": 6,
+   "speaker": "A",
+   "text": "Dạ, em chờ tin nhắn của anh Quân ạ.",
+   "text_template": "Dạ, em chờ tin nhắn của anh Quân ạ.",
+   "text_written": "Dạ, em chờ tin nhắn của anh Quân ạ.",
+   "entities": {},
+   "text_spoken": "dạ em chờ tin nhắn của anh quân ạ"
+  }
+ ]
+}

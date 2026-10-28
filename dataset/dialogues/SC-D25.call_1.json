@@ -1,0 +1,157 @@
+{
+ "scenario_id": "SC-D25",
+ "call": "call_1",
+ "channel": "chat_fanpage",
+ "call_date": "2026-10-15",
+ "meta": {
+  "model": "gpt-6-luna",
+  "attempts": 2,
+  "ok": true,
+  "unresolved": [],
+  "rebuilt": true
+ },
+ "frame_sha256": "8c68a07b3ff129ee",
+ "allowed_numbers": [
+  1400000
+ ],
+ "turns": [
+  {
+   "idx": 1,
+   "speaker": "C",
+   "text": "Chào em, nồi chiên không dầu Xiaomi 4.5L còn hàng không, giá bao nhiêu?",
+   "text_written": "Chào em, nồi chiên không dầu Xiaomi 4.5L còn hàng không, giá bao nhiêu?",
+   "states": [
+    "product_asked"
+   ],
+   "entities": {
+    "sku": "SKU-AF-XM"
+   },
+   "text_spoken": "chào em nồi chiên không dầu xiao mi bốn phẩy năm lít còn hàng không giá bao nhiêu"
+  },
+  {
+   "idx": 2,
+   "speaker": "A",
+   "text": "Dạ chị Phương, Nồi chiên không dầu Xiaomi 4.5L hiện hiện còn hàng, giá 1.590.000đ ạ.",
+   "text_template": "Dạ chị Phương, {product} hiện {stock}, giá {price} ạ.",
+   "text_written": "Dạ chị Phương, Nồi chiên không dầu Xiaomi 4.5L hiện hiện còn hàng, giá 1.590.000đ ạ.",
+   "entities": {
+    "sku": "SKU-AF-XM",
+    "price_vnd": 1590000
+   },
+   "text_spoken": "dạ chị phương nồi chiên không dầu xiao mi bốn phẩy năm lít hiện hiện còn hàng giá một triệu năm trăm chín mươi nghìn ạ"
+  },
+  {
+   "idx": 3,
+   "speaker": "C",
+   "text": "Ờ, bớt cho chị còn 1.4 triệu được không?",
+   "text_written": "Ờ, bớt cho chị còn 1.4 triệu được không?",
+   "states": [
+    "offered_price_vnd"
+   ],
+   "entities": {},
+   "text_spoken": "ờ bớt cho chị còn một triệu bốn trăm nghìn được không"
+  },
+  {
+   "idx": 4,
+   "speaker": "A",
+   "text": "Dạ em xin phép giữ giá niêm yết 1.590.000đ ạ, hiện không có chương trình giảm thêm.",
+   "text_template": "Dạ em xin phép giữ giá niêm yết {price} ạ, hiện không có chương trình giảm thêm.",
+   "text_written": "Dạ em xin phép giữ giá niêm yết 1.590.000đ ạ, hiện không có chương trình giảm thêm.",
+   "entities": {
+    "price_vnd": 1590000
+   },
+   "text_spoken": "dạ em xin phép giữ giá niêm yết một triệu năm trăm chín mươi nghìn ạ hiện không có chương trình giảm thêm"
+  },
+  {
+   "idx": 5,
+   "speaker": "C",
+   "text": "Hơi phân vân… em xem giúp chị thêm lần nữa được không?",
+   "text_written": "Hơi phân vân… em xem giúp chị thêm lần nữa được không?",
+   "states": [],
+   "entities": {},
+   "text_spoken": "hơi phân vân em xem giúp chị thêm lần nữa được không"
+  },
+  {
+   "idx": 6,
+   "speaker": "A",
+   "text": "Em hiểu ạ, nhưng bên em chưa có ưu đãi giảm thêm, giá sản phẩm vẫn là 1.590.000đ chị nhé.",
+   "text_template": "Em hiểu ạ, nhưng bên em chưa có ưu đãi giảm thêm, giá sản phẩm vẫn là {price} chị nhé.",
+   "text_written": "Em hiểu ạ, nhưng bên em chưa có ưu đãi giảm thêm, giá sản phẩm vẫn là 1.590.000đ chị nhé.",
+   "entities": {
+    "price_vnd": 1590000
+   },
+   "text_spoken": "em hiểu ạ nhưng bên em chưa có ưu đãi giảm thêm giá sản phẩm vẫn là một triệu năm trăm chín mươi nghìn chị nhé"
+  },
+  {
+   "idx": 7,
+   "speaker": "C",
+   "text": "Ừm, được rồi, chị lấy. Người nhận là Phương, giao về số 56 đường Võ Văn Tần, quận 3, TP.HCM nhé.",
+   "text_written": "Ừm, được rồi, chị lấy. Người nhận là Phương, giao về số 56 đường Võ Văn Tần, quận 3, TP.HCM nhé.",
+   "states": [
+    "recipient_name",
+    "address"
+   ],
+   "entities": {
+    "address": "số 56 đường Võ Văn Tần, quận 3, TP.HCM"
+   },
+   "text_spoken": "ừm được rồi chị lấy người nhận là phương giao về số năm mươi sáu đường võ văn tần quận ba tp hcm nhé"
+  },
+  {
+   "idx": 8,
+   "speaker": "A",
+   "text": "Dạ, chị cho em xin số điện thoại nhận hàng và hình thức thanh toán ạ.",
+   "text_template": "Dạ, chị cho em xin số điện thoại nhận hàng và hình thức thanh toán ạ.",
+   "text_written": "Dạ, chị cho em xin số điện thoại nhận hàng và hình thức thanh toán ạ.",
+   "entities": {},
+   "text_spoken": "dạ chị cho em xin số điện thoại nhận hàng và hình thức thanh toán ạ"
+  },
+  {
+   "idx": 9,
+   "speaker": "C",
+   "text": "0900020025, COD nhé.",
+   "text_written": "0900020025, COD nhé.",
+   "states": [
+    "phone_provided",
+    "payment"
+   ],
+   "entities": {
+    "phone": "0900020025",
+    "payment": "COD"
+   },
+   "text_spoken": "không chín không không không hai không không hai năm cê ô đê nhé"
+  },
+  {
+   "idx": 10,
+   "speaker": "A",
+   "text": "Em đọc lại đơn: Nồi chiên không dầu Xiaomi 4.5L, giá 1.590.000đ, tổng 1.590.000đ, giao cho Phương, SĐT 0900020025, địa chỉ số 56 đường Võ Văn Tần, quận 3, TP.HCM, hình thức thanh toán khi nhận hàng (COD). Chị xác nhận đặt đơn này chứ ạ?",
+   "text_template": "Em đọc lại đơn: {product}, giá {price}, tổng {readback_total}, giao cho {recipient_name}, SĐT {caller_phone}, địa chỉ {address}, hình thức {payment_label}. Chị xác nhận đặt đơn này chứ ạ?",
+   "text_written": "Em đọc lại đơn: Nồi chiên không dầu Xiaomi 4.5L, giá 1.590.000đ, tổng 1.590.000đ, giao cho Phương, SĐT 0900020025, địa chỉ số 56 đường Võ Văn Tần, quận 3, TP.HCM, hình thức thanh toán khi nhận hàng (COD). Chị xác nhận đặt đơn này chứ ạ?",
+   "entities": {
+    "sku": "SKU-AF-XM",
+    "price_vnd": 1590000,
+    "phone": "0900020025"
+   },
+   "text_spoken": "em đọc lại đơn nồi chiên không dầu xiao mi bốn phẩy năm lít giá một triệu năm trăm chín mươi nghìn tổng một triệu năm trăm chín mươi nghìn giao cho phương số điện thoại không chín không không không hai không không hai năm địa chỉ số năm mươi sáu đường võ văn tần quận ba tp hcm hình thức thanh toán khi nhận hàng cê ô đê chị xác nhận đặt đơn này chứ ạ"
+  },
+  {
+   "idx": 11,
+   "speaker": "C",
+   "text": "Đúng rồi.",
+   "text_written": "Đúng rồi.",
+   "states": [],
+   "entities": {},
+   "text_spoken": "đúng rồi"
+  },
+  {
+   "idx": 12,
+   "speaker": "A",
+   "text": "Dạ, em chốt đơn OD600001, dự kiến giao trong 3 ngày ạ.",
+   "text_template": "Dạ, em chốt đơn {order_id}, dự kiến giao trong {delivery_days} ngày ạ.",
+   "text_written": "Dạ, em chốt đơn OD600001, dự kiến giao trong 3 ngày ạ.",
+   "entities": {
+    "order_id": "OD600001"
+   },
+   "text_spoken": "dạ em chốt đơn ô đê sáu không không không không một dự kiến giao trong ba ngày ạ"
+  }
+ ]
+}

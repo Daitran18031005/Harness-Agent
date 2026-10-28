@@ -1,0 +1,168 @@
+{
+ "scenario_id": "SC-C01",
+ "call": "call_1",
+ "channel": "hotline",
+ "call_date": "2026-10-15",
+ "allowed_numbers": [
+  5,
+  25,
+  5000000
+ ],
+ "turns": [
+  {
+   "idx": 1,
+   "speaker": "A",
+   "text": "Dạ shop BTC xin nghe, em có thể giúp gì cho mình ạ?",
+   "text_template": "Dạ shop BTC xin nghe, em có thể giúp gì cho mình ạ?",
+   "text_written": "Dạ shop BTC xin nghe, em có thể giúp gì cho mình ạ?",
+   "entities": {},
+   "text_spoken": "dạ shop bê tê xê xin nghe em có thể giúp gì cho mình ạ"
+  },
+  {
+   "idx": 2,
+   "speaker": "C",
+   "text": "Anh hỏi máy AirPure Pro, phòng 25 mét vuông dùng được không?",
+   "text_written": "Anh hỏi máy AirPure Pro, phòng 25 mét vuông dùng được không?",
+   "states": [
+    "product_asked",
+    "room_area_m2"
+   ],
+   "entities": {
+    "sku": "SKU-AP-PRO",
+    "room_area_m2": 25
+   },
+   "text_spoken": "anh hỏi máy e pia pro phòng hai mươi lăm mét vuông dùng được không"
+  },
+  {
+   "idx": 3,
+   "speaker": "A",
+   "text": "Dạ, AirPure Pro giá 7.690.000đ ạ.",
+   "text_template": "Dạ, AirPure Pro giá {price_pro} ạ.",
+   "text_written": "Dạ, AirPure Pro giá 7.690.000đ ạ.",
+   "entities": {
+    "price_vnd": 7690000
+   },
+   "text_spoken": "dạ e pia pro giá bảy triệu sáu trăm chín mươi nghìn ạ"
+  },
+  {
+   "idx": 4,
+   "speaker": "C",
+   "text": "Ờ, giá đó hơi đắt. Thôi cho anh cái rẻ hơn, tầm 5 triệu.",
+   "text_written": "Ờ, giá đó hơi đắt. Thôi cho anh cái rẻ hơn, tầm 5 triệu.",
+   "states": [
+    "budget_vnd"
+   ],
+   "entities": {
+    "budget_vnd": 5000000
+   },
+   "text_spoken": "ờ giá đó hơi đắt thôi cho anh cái rẻ hơn tầm năm triệu"
+  },
+  {
+   "idx": 5,
+   "speaker": "A",
+   "text": "Dạ, em gợi ý Máy lọc không khí AirPure X, dùng đủ cho phòng 25 mét vuông, giá 4.890.000đ. Mẫu này tặng Màng lọc thay thế AirPure X/Y đến 22/10 ạ.",
+   "text_template": "Dạ, em gợi ý {product}, dùng đủ cho phòng 25 mét vuông, giá {price}. Mẫu này tặng {gift} đến {promo_end} ạ.",
+   "text_written": "Dạ, em gợi ý Máy lọc không khí AirPure X, dùng đủ cho phòng 25 mét vuông, giá 4.890.000đ. Mẫu này tặng Màng lọc thay thế AirPure X/Y đến 22/10 ạ.",
+   "entities": {
+    "sku": "SKU-AP-X",
+    "price_vnd": 4890000,
+    "promo_expiry": "2026-10-22"
+   },
+   "text_spoken": "dạ em gợi ý máy lọc không khí e pia x dùng đủ cho phòng hai mươi lăm mét vuông giá bốn triệu tám trăm chín mươi nghìn mẫu này tặng màng lọc thay thế e pia x y đến hai mươi hai tháng mười ạ"
+  },
+  {
+   "idx": 6,
+   "speaker": "C",
+   "text": "Ừm, để anh xem… lấy mẫu đó.",
+   "text_written": "Ừm, để anh xem… lấy mẫu đó.",
+   "states": [],
+   "entities": {},
+   "text_spoken": "ừm để anh xem lấy mẫu đó"
+  },
+  {
+   "idx": 7,
+   "speaker": "A",
+   "text": "Dạ, em xin hình thức thanh toán và tên người nhận của anh nhé.",
+   "text_template": "Dạ, em xin hình thức thanh toán và tên người nhận của anh nhé.",
+   "text_written": "Dạ, em xin hình thức thanh toán và tên người nhận của anh nhé.",
+   "entities": {},
+   "text_spoken": "dạ em xin hình thức thanh toán và tên người nhận của anh nhé"
+  },
+  {
+   "idx": 8,
+   "speaker": "C",
+   "text": "COD nhé, người nhận tên Dũng.",
+   "text_written": "COD nhé, người nhận tên Dũng.",
+   "states": [
+    "payment",
+    "recipient_name"
+   ],
+   "entities": {
+    "payment": "COD"
+   },
+   "text_spoken": "cê ô đê nhé người nhận tên dũng"
+  },
+  {
+   "idx": 9,
+   "speaker": "A",
+   "text": "Dạ, anh cho em địa chỉ giao hàng, và xác nhận giúp em số đang gọi là số nhận hàng nhé.",
+   "text_template": "Dạ, anh cho em địa chỉ giao hàng, và xác nhận giúp em số đang gọi là số nhận hàng nhé.",
+   "text_written": "Dạ, anh cho em địa chỉ giao hàng, và xác nhận giúp em số đang gọi là số nhận hàng nhé.",
+   "entities": {},
+   "text_spoken": "dạ anh cho em địa chỉ giao hàng và xác nhận giúp em số đang gọi là số nhận hàng nhé"
+  },
+  {
+   "idx": 10,
+   "speaker": "C",
+   "text": "Giao về số 71 phố Lê Thanh Nghị, quận Hai Bà Trưng, Hà Nội. Số đang gọi đúng rồi.",
+   "text_written": "Giao về số 71 phố Lê Thanh Nghị, quận Hai Bà Trưng, Hà Nội. Số đang gọi đúng rồi.",
+   "states": [
+    "address"
+   ],
+   "entities": {
+    "address": "số 71 phố Lê Thanh Nghị, quận Hai Bà Trưng, Hà Nội"
+   },
+   "text_spoken": "giao về số bảy mươi mốt phố lê thanh nghị quận hai bà trưng hà nội số đang gọi đúng rồi"
+  },
+  {
+   "idx": 11,
+   "speaker": "A",
+   "text": "Em đọc lại đơn: Máy lọc không khí AirPure X, giá 4.890.000đ, tổng 4.890.000đ, giao cho Dũng, SĐT 0900010006, địa chỉ số 71 phố Lê Thanh Nghị, quận Hai Bà Trưng, Hà Nội, hình thức thanh toán khi nhận hàng (COD). Mình xác nhận đặt đơn này chứ ạ?",
+   "text_template": "Em đọc lại đơn: {product}, giá {price}, tổng {readback_total}, giao cho {recipient_name}, SĐT {caller_phone}, địa chỉ {address}, hình thức {payment_label}. Mình xác nhận đặt đơn này chứ ạ?",
+   "text_written": "Em đọc lại đơn: Máy lọc không khí AirPure X, giá 4.890.000đ, tổng 4.890.000đ, giao cho Dũng, SĐT 0900010006, địa chỉ số 71 phố Lê Thanh Nghị, quận Hai Bà Trưng, Hà Nội, hình thức thanh toán khi nhận hàng (COD). Mình xác nhận đặt đơn này chứ ạ?",
+   "entities": {
+    "sku": "SKU-AP-X",
+    "price_vnd": 4890000,
+    "phone": "0900010006"
+   },
+   "text_spoken": "em đọc lại đơn máy lọc không khí e pia x giá bốn triệu tám trăm chín mươi nghìn tổng bốn triệu tám trăm chín mươi nghìn giao cho dũng số điện thoại không chín không không không một không không không sáu địa chỉ số bảy mươi mốt phố lê thanh nghị quận hai bà trưng hà nội hình thức thanh toán khi nhận hàng cê ô đê mình xác nhận đặt đơn này chứ ạ"
+  },
+  {
+   "idx": 12,
+   "speaker": "C",
+   "text": "Vâng, chốt đi em.",
+   "text_written": "Vâng, chốt đi em.",
+   "states": [],
+   "entities": {},
+   "text_spoken": "vâng chốt đi em"
+  },
+  {
+   "idx": 13,
+   "speaker": "A",
+   "text": "Dạ, đơn OD600001 giao trong 2 ngày ạ.",
+   "text_template": "Dạ, đơn {order_id} giao trong {delivery_days} ngày ạ.",
+   "text_written": "Dạ, đơn OD600001 giao trong 2 ngày ạ.",
+   "entities": {
+    "order_id": "OD600001"
+   },
+   "text_spoken": "dạ đơn ô đê sáu không không không không một giao trong hai ngày ạ"
+  }
+ ],
+ "meta": {
+  "model": "gpt-6-luna",
+  "attempts": 3,
+  "ok": true,
+  "unresolved": []
+ },
+ "frame_sha256": "50fcbb76087804ec"
+}

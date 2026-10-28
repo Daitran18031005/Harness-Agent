@@ -1,0 +1,156 @@
+{
+ "scenario_id": "SC-A01",
+ "call": "call_2",
+ "channel": "hotline",
+ "call_date": "2026-10-17",
+ "allowed_numbers": [],
+ "turns": [
+  {
+   "idx": 1,
+   "speaker": "A",
+   "text": "Dạ shop BTC xin nghe, em có thể giúp gì cho mình ạ?",
+   "text_template": "Dạ shop BTC xin nghe, em có thể giúp gì cho mình ạ?",
+   "text_written": "Dạ shop BTC xin nghe, em có thể giúp gì cho mình ạ?",
+   "entities": {},
+   "text_spoken": "dạ shop bê tê xê xin nghe em có thể giúp gì cho mình ạ"
+  },
+  {
+   "idx": 2,
+   "speaker": "C",
+   "text": "Chị vừa nhắn Facebook hỏi máy lọc không khí. Chồng chị đồng ý rồi, giá còn như cũ không em?",
+   "text_written": "Chị vừa nhắn Facebook hỏi máy lọc không khí. Chồng chị đồng ý rồi, giá còn như cũ không em?",
+   "states": [
+    "blocker_resolved"
+   ],
+   "entities": {},
+   "text_spoken": "chị vừa nhắn facebook hỏi máy lọc không khí chồng chị đồng ý rồi giá còn như cũ không em"
+  },
+  {
+   "idx": 3,
+   "speaker": "A",
+   "text": "Dạ, em nhận ra chị Thu từ Fanpage ạ. Máy lọc không khí AirPure Y hiện giá 5.200.000đ, còn quà Màng lọc thay thế AirPure X/Y đến 22/10.",
+   "text_template": "Dạ, em nhận ra chị Thu từ Fanpage ạ. {product} hiện giá {price}, còn quà {gift} đến {promo_end}.",
+   "text_written": "Dạ, em nhận ra chị Thu từ Fanpage ạ. Máy lọc không khí AirPure Y hiện giá 5.200.000đ, còn quà Màng lọc thay thế AirPure X/Y đến 22/10.",
+   "entities": {
+    "sku": "SKU-AP-Y",
+    "price_vnd": 5200000,
+    "promo_expiry": "2026-10-22"
+   },
+   "text_spoken": "dạ em nhận ra chị thu từ fanpage ạ máy lọc không khí e pia y hiện giá năm triệu hai trăm nghìn còn quà màng lọc thay thế e pia x y đến hai mươi hai tháng mười"
+  },
+  {
+   "idx": 4,
+   "speaker": "C",
+   "text": "À, còn hàng không em? Quà đó vẫn được tặng chứ?",
+   "text_written": "À, còn hàng không em? Quà đó vẫn được tặng chứ?",
+   "states": [],
+   "entities": {},
+   "text_spoken": "à còn hàng không em quà đó vẫn được tặng chứ"
+  },
+  {
+   "idx": 5,
+   "speaker": "A",
+   "text": "Dạ còn hàng hiện còn hàng, quà Màng lọc thay thế AirPure X/Y vẫn áp dụng đến 22/10 ạ. Chị cho em xin địa chỉ giao hàng nhé?",
+   "text_template": "Dạ còn hàng {stock}, quà {gift} vẫn áp dụng đến {promo_end} ạ. Chị cho em xin địa chỉ giao hàng nhé?",
+   "text_written": "Dạ còn hàng hiện còn hàng, quà Màng lọc thay thế AirPure X/Y vẫn áp dụng đến 22/10 ạ. Chị cho em xin địa chỉ giao hàng nhé?",
+   "entities": {
+    "promo_expiry": "2026-10-22"
+   },
+   "text_spoken": "dạ còn hàng hiện còn hàng quà màng lọc thay thế e pia x y vẫn áp dụng đến hai mươi hai tháng mười ạ chị cho em xin địa chỉ giao hàng nhé"
+  },
+  {
+   "idx": 6,
+   "speaker": "C",
+   "text": "Ờ, để chị xem... giao về số 12 đường Nguyễn Trãi, quận Thanh Xuân, Hà Nội nhé.",
+   "text_written": "Ờ, để chị xem... giao về số 12 đường Nguyễn Trãi, quận Thanh Xuân, Hà Nội nhé.",
+   "states": [
+    "address"
+   ],
+   "entities": {
+    "address": "số 12 đường Nguyễn Trãi, quận Thanh Xuân, Hà Nội"
+   },
+   "text_spoken": "ờ để chị xem giao về số mười hai đường nguyễn trãi quận thanh xuân hà nội nhé"
+  },
+  {
+   "idx": 7,
+   "speaker": "A",
+   "text": "Dạ, em xin tên người nhận và hình thức thanh toán của chị ạ.",
+   "text_template": "Dạ, em xin tên người nhận và hình thức thanh toán của chị ạ.",
+   "text_written": "Dạ, em xin tên người nhận và hình thức thanh toán của chị ạ.",
+   "entities": {},
+   "text_spoken": "dạ em xin tên người nhận và hình thức thanh toán của chị ạ"
+  },
+  {
+   "idx": 8,
+   "speaker": "C",
+   "text": "Tên người nhận là Thu, thanh toán khi nhận hàng (COD) em nhé.",
+   "text_written": "Tên người nhận là Thu, thanh toán khi nhận hàng (COD) em nhé.",
+   "states": [
+    "recipient_name",
+    "payment"
+   ],
+   "entities": {
+    "payment": "COD"
+   },
+   "text_spoken": "tên người nhận là thu thanh toán khi nhận hàng cê ô đê em nhé"
+  },
+  {
+   "idx": 9,
+   "speaker": "A",
+   "text": "Dạ, số điện thoại nhận hàng là số chị đang gọi cho em, đúng không ạ?",
+   "text_template": "Dạ, số điện thoại nhận hàng là số chị đang gọi cho em, đúng không ạ?",
+   "text_written": "Dạ, số điện thoại nhận hàng là số chị đang gọi cho em, đúng không ạ?",
+   "entities": {},
+   "text_spoken": "dạ số điện thoại nhận hàng là số chị đang gọi cho em đúng không ạ"
+  },
+  {
+   "idx": 10,
+   "speaker": "C",
+   "text": "Đúng rồi em.",
+   "text_written": "Đúng rồi em.",
+   "states": [],
+   "entities": {},
+   "text_spoken": "đúng rồi em"
+  },
+  {
+   "idx": 11,
+   "speaker": "A",
+   "text": "Dạ, em đọc lại đơn: Máy lọc không khí AirPure Y, giá 5.200.000đ, tổng 5.200.000đ, giao cho Thu, SĐT 0900010001, địa chỉ số 12 đường Nguyễn Trãi, quận Thanh Xuân, Hà Nội, hình thức thanh toán khi nhận hàng (COD). Chị xác nhận đặt đơn này chứ ạ?",
+   "text_template": "Dạ, em đọc lại đơn: {product}, giá {price}, tổng {readback_total}, giao cho {recipient_name}, SĐT {caller_phone}, địa chỉ {address}, hình thức {payment_label}. Chị xác nhận đặt đơn này chứ ạ?",
+   "text_written": "Dạ, em đọc lại đơn: Máy lọc không khí AirPure Y, giá 5.200.000đ, tổng 5.200.000đ, giao cho Thu, SĐT 0900010001, địa chỉ số 12 đường Nguyễn Trãi, quận Thanh Xuân, Hà Nội, hình thức thanh toán khi nhận hàng (COD). Chị xác nhận đặt đơn này chứ ạ?",
+   "entities": {
+    "sku": "SKU-AP-Y",
+    "price_vnd": 5200000,
+    "phone": "0900010001"
+   },
+   "text_spoken": "dạ em đọc lại đơn máy lọc không khí e pia y giá năm triệu hai trăm nghìn tổng năm triệu hai trăm nghìn giao cho thu số điện thoại không chín không không không một không không không một địa chỉ số mười hai đường nguyễn trãi quận thanh xuân hà nội hình thức thanh toán khi nhận hàng cê ô đê chị xác nhận đặt đơn này chứ ạ"
+  },
+  {
+   "idx": 12,
+   "speaker": "C",
+   "text": "Vâng, chốt đi em.",
+   "text_written": "Vâng, chốt đi em.",
+   "states": [],
+   "entities": {},
+   "text_spoken": "vâng chốt đi em"
+  },
+  {
+   "idx": 13,
+   "speaker": "A",
+   "text": "Dạ, đơn hàng của chị là OD600001, dự kiến giao trong 2 ngày ạ.",
+   "text_template": "Dạ, đơn hàng của chị là {order_id}, dự kiến giao trong {delivery_days} ngày ạ.",
+   "text_written": "Dạ, đơn hàng của chị là OD600001, dự kiến giao trong 2 ngày ạ.",
+   "entities": {
+    "order_id": "OD600001"
+   },
+   "text_spoken": "dạ đơn hàng của chị là ô đê sáu không không không không một dự kiến giao trong hai ngày ạ"
+  }
+ ],
+ "meta": {
+  "model": "gpt-6-luna",
+  "attempts": 2,
+  "ok": true,
+  "unresolved": []
+ },
+ "frame_sha256": "f083189b2da37f05"
+}

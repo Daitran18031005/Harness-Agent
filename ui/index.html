@@ -1,0 +1,313 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Harness Agent Call Center</title>
+<style>
+  :root { --bg:#f6f7f9; --panel:#fff; --ink:#1c2230; --muted:#667085; --line:#e3e6ec; --accent:#2b6cb0; --accent-ink:#fff;
+          --me:#e8f0fb; --bot:#f1f3f6; --warn:#b54708; --warn-bg:#fff4e5; --ok:#067647; --err:#b42318; }
+  @media (prefers-color-scheme: dark) { :root { --bg:#12151b; --panel:#1b2029; --ink:#e7eaf0; --muted:#9aa3b2; --line:#2b3240; --accent:#5b9bd5;
+          --accent-ink:#0c1118; --me:#22324a; --bot:#262c38; --warn:#f5a54a; --warn-bg:#3a2a12; --ok:#4cc38a; --err:#ff8a80; } }
+  * { box-sizing:border-box; }
+  body { margin:0; background:var(--bg); color:var(--ink); font:15px/1.5 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif; }
+  header { display:flex; align-items:center; gap:12px; padding:10px 16px; background:var(--panel); border-bottom:1px solid var(--line); flex-wrap:wrap; }
+  header h1 { font-size:17px; margin:0; }
+  .pill { font-size:12px; padding:2px 8px; border-radius:99px; border:1px solid var(--line); color:var(--muted); }
+  .pill.ok { color:var(--ok); border-color:var(--ok); } .pill.err { color:var(--err); border-color:var(--err); }
+  main { display:grid; grid-template-columns:minmax(0,1.1fr) minmax(0,1fr); gap:12px; padding:12px; height:calc(100vh - 56px); }
+  @media (max-width:900px) { main { grid-template-columns:1fr; height:auto; } .chat { height:75vh; } .side { height:75vh; } }
+  .card { background:var(--panel); border:1px solid var(--line); border-radius:10px; display:flex; flex-direction:column; min-height:0; overflow:hidden; }
+  .setup { display:grid; grid-template-columns:repeat(auto-fit,minmax(130px,1fr)); gap:8px; padding:10px; border-bottom:1px solid var(--line); align-items:end; }
+  label { font-size:12px; color:var(--muted); display:flex; flex-direction:column; gap:2px; }
+  input, select, button, textarea { font:inherit; color:inherit; background:var(--panel); border:1px solid var(--line); border-radius:8px; padding:6px 9px; }
+  button { cursor:pointer; } button.primary { background:var(--accent); color:var(--accent-ink); border-color:var(--accent); }
+  button:disabled { opacity:.5; cursor:not-allowed; }
+  .presets { display:flex; gap:6px; flex-wrap:wrap; padding:8px 10px; border-bottom:1px solid var(--line); font-size:13px; align-items:center; }
+  .presets button { font-size:12px; padding:3px 9px; }
+  .msgs { flex:1; overflow:auto; padding:12px; display:flex; flex-direction:column; gap:10px; }
+  .msg { max-width:86%; padding:8px 12px; border-radius:12px; white-space:pre-wrap; word-wrap:break-word; }
+  .msg.me { align-self:flex-end; background:var(--me); } .msg.bot { align-self:flex-start; background:var(--bot); }
+  .msg.sys { align-self:center; background:none; color:var(--muted); font-size:13px; text-align:center; }
+  .meta { font-size:11px; color:var(--muted); margin-top:4px; }
+  .composer { display:flex; gap:8px; padding:10px; border-top:1px solid var(--line); }
+  .composer textarea { flex:1; resize:none; height:44px; }
+  .tabs { display:flex; border-bottom:1px solid var(--line); overflow-x:auto; }
+  .tabs button { border:0; border-radius:0; background:none; padding:9px 14px; color:var(--muted); border-bottom:2px solid transparent; white-space:nowrap; }
+  .tabs button.on { color:var(--accent); border-bottom-color:var(--accent); font-weight:600; }
+  .pane { flex:1; overflow:auto; padding:12px; display:none; } .pane.on { display:block; }
+  dl { display:grid; grid-template-columns:150px 1fr; gap:6px 10px; margin:0; } dt { color:var(--muted); font-size:13px; } dd { margin:0; word-break:break-word; }
+  .chips { display:flex; gap:5px; flex-wrap:wrap; } .chip { font-size:12px; padding:1px 8px; border-radius:99px; background:var(--bot); }
+  .warn { background:var(--warn-bg); color:var(--warn); padding:8px 10px; border-radius:8px; margin-bottom:10px; font-size:13px; }
+  .open { background:var(--me); padding:10px 12px; border-radius:8px; margin-bottom:12px; }
+  table { border-collapse:collapse; width:100%; font-size:13px; } th, td { border-bottom:1px solid var(--line); padding:5px 6px; text-align:left; vertical-align:top; }
+  th { color:var(--muted); font-weight:500; } .empty { color:var(--muted); font-size:14px; } code { font-size:12px; word-break:break-all; }
+  .ep { border:1px solid var(--line); border-radius:8px; padding:8px 10px; margin-bottom:8px; }
+  .old { color:var(--muted); text-decoration:line-through; }
+  h4 { margin:14px 0 6px; font-size:14px; }
+</style>
+</head>
+<body>
+<header>
+  <h1>Harness Agent — Call Center Telesale</h1>
+  <span id="health" class="pill">đang kiểm tra…</span>
+  <span id="sess" class="pill">chưa có cuộc gọi</span>
+  <span id="cost" class="pill" hidden></span>
+</header>
+<main>
+  <section class="card chat">
+    <div class="presets">Mẫu:
+      <button data-preset="new">Khách mới (cuộc 1)</button>
+      <button data-preset="back">Hoa quay lại — cuộc 2 (17/10)</button>
+      <button data-preset="fb">Khách Fanpage → hotline</button>
+    </div>
+    <div class="setup">
+      <label>SĐT / ID liên hệ<input id="contact" placeholder="để trống = khách ẩn danh"></label>
+      <label>Kênh<select id="channel"><option>hotline</option><option>zalo</option><option>fanpage</option><option>web_chat</option></select></label>
+      <label>Ngày cuộc gọi<input id="date" type="date"></label>
+      <button id="start" class="primary">Bắt đầu cuộc gọi</button>
+      <button id="end" disabled>Kết thúc cuộc gọi</button>
+    </div>
+    <div id="msgs" class="msgs"><div class="msg sys">Chọn mẫu hoặc nhập SĐT rồi bấm “Bắt đầu cuộc gọi”. Call Brief của khách hiện bên phải ngay khi mở cuộc gọi.</div></div>
+    <div class="composer">
+      <input id="audio" type="file" accept=".wav,.mp3" hidden>
+      <button id="mic" title="Tải file ghi âm (.wav/.mp3) → ASR → điền vào ô chat" disabled>🎙</button>
+      <textarea id="text" placeholder="Lời khách… (Enter để gửi, Shift+Enter xuống dòng)" disabled></textarea>
+      <button id="send" class="primary" disabled>Gửi</button>
+    </div>
+  </section>
+  <section class="card side">
+    <div class="tabs" id="tabs">
+      <button class="on" data-tab="brief">Call Brief</button>
+      <button data-tab="timeline">Dòng thời gian bộ nhớ</button>
+      <button data-tab="tools">Nhật ký tool</button>
+      <button data-tab="orders">Đơn hàng</button>
+      <button data-tab="trace">Lượt vừa rồi</button>
+    </div>
+    <div class="pane on" id="p-brief"><div class="empty">Chưa có cuộc gọi.</div></div>
+    <div class="pane" id="p-timeline"><div class="empty">Chưa có cuộc gọi.</div></div>
+    <div class="pane" id="p-tools"><div class="empty">Chưa có cuộc gọi.</div></div>
+    <div class="pane" id="p-orders"><div class="empty">Chưa có cuộc gọi.</div></div>
+    <div class="pane" id="p-trace"><div class="empty">Chưa có lượt nào.</div></div>
+  </section>
+</main>
+<script>
+"use strict";
+const $ = id => document.getElementById(id);
+let sid = null, busy = false;
+
+// Dựng DOM bằng node văn bản (không chèn HTML thô từ máy chủ) để dữ liệu không thành mã.
+function el(tag, props = {}, ...kids) {
+  const n = document.createElement(tag);
+  for (const [k, v] of Object.entries(props)) { if (k === "class") n.className = v; else n[k] = v; }
+  for (const k of kids.flat()) if (k != null) n.append(k.nodeType ? k : document.createTextNode(String(k)));
+  return n;
+}
+const money = v => (typeof v === "number") ? v.toLocaleString("vi-VN") + " đ" : v;
+const show = v => v == null || v === "" ? "—" : (Array.isArray(v) ? v.join(", ") : (typeof v === "object" ? JSON.stringify(v) : v));
+const chips = a => el("div", { class: "chips" }, (a || []).map(x => el("span", { class: "chip" }, x)));
+
+async function api(path, opt) {
+  const r = await fetch(path, opt);
+  let body = null; try { body = await r.json(); } catch (e) {}
+  if (!r.ok) {
+    const d = body && (body.detail || body.message);
+    throw new Error(d ? (typeof d === "string" ? d : JSON.stringify(d)) : "HTTP " + r.status);
+  }
+  return body;
+}
+const post = (path, data) => api(path, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(data || {}) });
+
+function say(kind, text, meta) {
+  const m = el("div", { class: "msg " + kind }, text);
+  if (meta) m.append(el("div", { class: "meta" }, meta));
+  $("msgs").append(m); $("msgs").scrollTop = $("msgs").scrollHeight; return m;
+}
+function setBusy(b) {
+  busy = b;
+  const live = !!sid && !b;
+  $("send").disabled = $("text").disabled = $("mic").disabled = !live;
+  $("start").disabled = b; $("end").disabled = !sid || b;
+}
+
+function renderBrief(b) {
+  const p = $("p-brief"); p.replaceChildren();
+  if (!b) { p.append(el("div", { class: "empty" }, "Chưa có cuộc gọi.")); return; }
+  (b.stale_warnings || []).forEach(w => p.append(el("div", { class: "warn" }, "⚠ " + w)));
+  if (b.suggested_opening) p.append(el("div", { class: "open" }, el("b", {}, "Câu mở đầu gợi ý: "), b.suggested_opening));
+  const rows = [
+    ["Khách", [b.honorific, b.customer_name].filter(Boolean).join(" ") || "chưa biết tên"],
+    ["Số cuộc gọi trước", b.previous_calls_count], ["Cuộc gần nhất", b.last_call_date],
+    ["Sản phẩm đã tư vấn", b.product_advised], ["Giá đã báo", money(b.price_quoted_vnd)],
+    ["Khuyến mãi", [b.promo_code, b.promo_expiry && "hết hạn " + b.promo_expiry].filter(Boolean).join(" · ")],
+    ["Rào cản (blocker)", b.blocker], ["Kênh đã liên hệ", chips(b.channels_seen)],
+    ["Không được hỏi lại", chips(b.must_not_ask)], ["Phải mang sang", chips(b.must_carry_over)],
+  ];
+  const dl = el("dl");
+  rows.forEach(([k, v]) => dl.append(el("dt", {}, k), el("dd", {}, (v && v.nodeType) ? v : show(v))));
+  p.append(dl);
+  const pf = Object.entries(b.profile_facts || {});
+  if (pf.length) {
+    p.append(el("h4", {}, "Hồ sơ đang còn hiệu lực"));
+    p.append(el("table", {}, pf.map(([k, v]) => el("tr", {}, el("th", {}, k), el("td", {}, show(v))))));
+  }
+  const pre = b.precomputed;
+  if (pre) {
+    const pr = pre.price || {}, st = pre.stock || {};
+    p.append(el("h4", {}, `Số liệu code đã tra sẵn (${pre.checked_on})`));
+    const d2 = el("dl");
+    [["Sản phẩm", pre.name || pre.sku], ["Tồn kho", st.in_stock == null ? null : (st.in_stock ? "còn hàng" + (st.qty != null ? " (" + st.qty + ")" : "") : "hết hàng")],
+     ["Giá niêm yết", money(pr.list_price_vnd)], ["Giá cuối", money(pr.final_price_vnd)], ["Ưu đãi đang áp", chips(pr.promos)],
+     ["Miễn phí vận chuyển", pr.freeship == null ? null : (pr.freeship ? "có" : "không")], ["Bảo hành", pre.warranty_months && pre.warranty_months + " tháng"],
+     ["Thời gian tra", pre.latency_ms != null ? pre.latency_ms + " ms" : null]]
+      .forEach(([k, v]) => d2.append(el("dt", {}, k), el("dd", {}, (v && v.nodeType) ? v : show(v))));
+    p.append(d2);
+  }
+}
+
+function renderTimeline(t) {
+  const p = $("p-timeline"); p.replaceChildren();
+  if (!t) { p.append(el("div", { class: "empty" }, "Chưa có cuộc gọi.")); return; }
+  p.append(el("h4", {}, "Các cuộc gọi trước (episode)"));
+  if (!t.episodes.length) p.append(el("div", { class: "empty" }, "Khách chưa có cuộc gọi nào được lưu."));
+  t.episodes.forEach(e => p.append(el("div", { class: "ep" },
+    el("b", {}, `${e.call_date} · ${e.channel} · ${e.outcome}`),
+    el("div", {}, e.summary || e.customer_goal || ""),
+    el("div", { class: "meta" }, ["SP: " + show(e.product_advised), "giá: " + show(money(e.price_quoted_vnd)), "blocker: " + show(e.blocker)].join("  ·  ")))));
+  p.append(el("h4", {}, "Phiên bản sự thật hồ sơ (cũ → mới)"));
+  const keys = Object.keys(t.versions || {});
+  if (!keys.length) p.append(el("div", { class: "empty" }, "Chưa có sự thật nào được ghi."));
+  keys.forEach(k => {
+    const tb = el("table", {}, el("tr", {}, ["giá trị", "ngày", "cuộc/lượt", "nguồn", "trạng thái"].map(h => el("th", {}, h))));
+    t.versions[k].forEach(f => tb.append(el("tr", {},
+      el("td", { class: f.superseded ? "old" : "" }, show(f.value)), el("td", {}, show(f.observed_on)),
+      el("td", {}, `${show(f.source_call)}#${show(f.source_turn)}`), el("td", {}, show(f.source_channel)),
+      el("td", {}, f.superseded ? "đã bị thay" : "đang dùng"))));
+    p.append(el("h4", {}, k), tb);
+  });
+}
+
+function renderTools(entries) {
+  const p = $("p-tools"); p.replaceChildren();
+  if (!entries || !entries.length) { p.append(el("div", { class: "empty" }, "Chưa có tool nào chạy.")); return; }
+  const tb = el("table", {}, el("tr", {}, ["tool", "caller", "ms", "tham số → kết quả"].map(h => el("th", {}, h))));
+  entries.forEach(e => tb.append(el("tr", {}, el("td", {}, e.tool), el("td", {}, e.caller), el("td", {}, e.duration_ms),
+    el("td", {}, el("code", {}, JSON.stringify(e.args) + " → " + JSON.stringify(e.result))))));
+  p.append(tb);
+}
+function renderOrders(o) {
+  const p = $("p-orders"); p.replaceChildren();
+  if (!o || !o.orders.length) { p.append(el("div", { class: "empty" }, "Chưa có đơn hàng / lịch gọi lại trong phiên này.")); return; }
+  o.orders.forEach(e => p.append(el("div", { class: "ep" }, el("b", {}, e.tool),
+    el("div", {}, el("code", {}, JSON.stringify(e.args))), el("div", {}, el("code", {}, JSON.stringify(e.result))))));
+}
+function renderTrace(r) {
+  const p = $("p-trace"); p.replaceChildren();
+  if (!r) { p.append(el("div", { class: "empty" }, "Chưa có lượt nào.")); return; }
+  const t = r.trace, lat = t.latency || {};
+  const dl = el("dl");
+  [["Lượt", `${r.call_name} · lượt ${r.turn_num}`], ["TTFT", lat.ttft_ms != null ? lat.ttft_ms + " ms" : "—"],
+   ["Tổng thời gian", lat.total_ms != null ? lat.total_ms + " ms" : "—"], ["Số vòng gọi LLM", t.llm_cost && t.llm_cost.llm_calls],
+   ["Tool đã chạy", (t.tool_calls || []).map(c => c.tool + (c.error ? " (lỗi)" : "")).join(", ")],
+   ["Câu hỏi / claim", `${t.questions} / ${t.claims}`], ["Thông tin cũ đã dùng", chips(t.facts_used)],
+   ["Đã ghi bộ nhớ", chips((t.memory_writes || []).map(w => w.key))],
+   ["Chi phí LLM", t.llm_cost && t.llm_cost.vnd_cost != null ? t.llm_cost.vnd_cost + " VND" : "—"]]
+   .forEach(([k, v]) => dl.append(el("dt", {}, k), el("dd", {}, (v && v.nodeType) ? v : show(v))));
+  p.append(dl);
+}
+
+async function health() {
+  try {
+    const h = await api("/health");
+    const n = $("health"); n.textContent = h.llm ? "LLM: bật" : "LLM: tắt (nhánh rule-based)"; n.className = "pill " + (h.llm ? "ok" : "err");
+    const c = $("cost");
+    if (h.llm && h.spent_vnd != null) { c.hidden = false; c.textContent = "Chi phí LLM: " + h.spent_vnd + (h.cap_vnd ? " / " + h.cap_vnd : "") + " VND"; }
+  } catch (e) { $("health").textContent = "mất kết nối máy chủ"; $("health").className = "pill err"; }
+}
+
+async function refresh() {
+  health();
+  if (!sid) return;
+  const q = "?session_id=" + encodeURIComponent(sid);
+  const [b, t, l, o] = await Promise.allSettled([api("/call-brief" + q), api("/memory/timeline" + q), api("/tools/log" + q), api("/orders" + q)]);
+  if (b.status === "fulfilled") renderBrief(b.value.call_brief);
+  if (t.status === "fulfilled") renderTimeline(t.value);
+  if (l.status === "fulfilled") renderTools(l.value.entries);
+  if (o.status === "fulfilled") renderOrders(o.value);
+}
+
+async function start() {
+  setBusy(true);
+  try {
+    const s = await post("/sessions", { contact_id: $("contact").value.trim() || null, channel: $("channel").value, call_date: $("date").value || null });
+    sid = s.session_id;
+    $("sess").textContent = `${s.call_name} · ${s.call_date} · ${s.channel}`;
+    $("msgs").replaceChildren();
+    say("sys", `Đã mở ${s.call_name} (${s.call_date}, ${s.channel}). Cuộc cũ của liên hệ này (nếu còn mở) đã được chốt vào bộ nhớ.`);
+    renderTrace(null);
+    await refresh();
+  } catch (e) { say("sys", "Không mở được cuộc gọi: " + e.message); }
+  setBusy(false); $("text").focus();
+}
+
+async function send() {
+  const text = $("text").value.trim();
+  if (!text || !sid || busy) return;
+  $("text").value = ""; say("me", text); setBusy(true);
+  const wait = say("sys", "Agent đang trả lời…");
+  try {
+    const r = await post("/chat", { session_id: sid, message: text });
+    wait.remove();
+    const lat = r.trace.latency || {};
+    say("bot", r.answer, `${r.call_name} · lượt ${r.turn_num}` + (lat.ttft_ms != null ? ` · TTFT ${lat.ttft_ms} ms` : ""));
+    $("sess").textContent = `${r.call_name} · lượt ${r.turn_num}`;
+    renderTrace(r); await refresh();
+  } catch (e) { wait.remove(); say("sys", "Lỗi: " + e.message); }
+  setBusy(false); $("text").focus();
+}
+
+async function endCall() {
+  if (!sid) return; setBusy(true);
+  try {
+    const r = await post(`/sessions/${sid}/end`);
+    say("sys", r.finalized ? `Đã kết thúc và chốt bộ nhớ (${r.memory_writes.length} ghi).` : "Đã kết thúc: " + (r.reason || ""));
+    await refresh();
+  } catch (e) { say("sys", "Lỗi: " + e.message); }
+  sid = null; $("sess").textContent = "cuộc gọi đã kết thúc — bấm “Bắt đầu cuộc gọi” để mở cuộc mới";
+  setBusy(false);
+}
+
+async function uploadAudio(file) {
+  if (!file) return;
+  setBusy(true); const wait = say("sys", "Đang nhận dạng giọng nói…");
+  try {
+    const fd = new FormData(); fd.append("file", file);
+    const r = await api("/asr", { method: "POST", body: fd });
+    wait.remove(); say("sys", `ASR (${r.backend}) đã điền văn bản vào ô chat — kiểm tra rồi bấm Gửi.`);
+    $("text").value = r.text;
+  } catch (e) { wait.remove(); say("sys", "ASR lỗi: " + e.message); }
+  $("audio").value = ""; setBusy(false);
+}
+
+const PRESETS = {
+  new:  { contact: "0911222333", channel: "hotline", date: "2026-10-15" },
+  back: { contact: "0984726714", channel: "hotline", date: "2026-10-17" },   // C001 Hoa; cần scripts/run_demo.py để có lịch sử cuộc 1
+  fb:   { contact: "fb.ha.seed", channel: "fanpage", date: "2026-10-13" },
+};
+document.querySelectorAll("[data-preset]").forEach(b => b.onclick = () => {
+  const p = PRESETS[b.dataset.preset]; $("contact").value = p.contact; $("channel").value = p.channel; $("date").value = p.date;
+});
+$("tabs").onclick = e => {
+  const t = e.target.dataset && e.target.dataset.tab; if (!t) return;
+  document.querySelectorAll(".tabs button").forEach(b => b.classList.toggle("on", b.dataset.tab === t));
+  document.querySelectorAll(".pane").forEach(p => p.classList.toggle("on", p.id === "p-" + t));
+};
+$("start").onclick = start; $("end").onclick = endCall; $("send").onclick = send;
+$("mic").onclick = () => $("audio").click(); $("audio").onchange = e => uploadAudio(e.target.files[0]);
+$("text").onkeydown = e => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); send(); } };
+$("date").value = new Date().toISOString().slice(0, 10);
+
+health();
+</script>
+</body>
+</html>

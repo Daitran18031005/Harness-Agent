@@ -1,0 +1,40 @@
+# Bảng giá LLM — USD cho MỖI 1 TRIỆU token. Đọc bởi src/llm/cost_tracker.py.
+# Token suy luận (reasoning_tokens) đã nằm trong output/completion_tokens nên được tính theo giá output.
+#
+# needs_official_verification: true  =>  giá CHƯA đối chiếu với trang giá chính thức của OpenAI;
+# cost_tracker ghi cảnh báo 1 lần và đánh dấu pricing_verified=false trong llm_cost của trace.
+
+default:
+  input_usd_per_1m: 0.50
+  output_usd_per_1m: 1.50
+  source: "giá mặc định cho model lạ (ước lượng thô)"
+  needs_official_verification: true
+
+models:
+  gpt-4o-mini:
+    input_usd_per_1m: 0.15
+    cached_input_usd_per_1m: 0.075   # token prompt được prompt-caching phục vụ tính 50% giá input — CẦN ĐỐI CHIẾU trang giá OpenAI
+    output_usd_per_1m: 0.60
+    source: "bảng tham khảo trong cost_tracker.py cũ (trùng giá niêm yết gpt-4o-mini đã biết)"
+    needs_official_verification: false
+  gpt-4o:
+    input_usd_per_1m: 2.50
+    output_usd_per_1m: 10.00
+    source: "bảng tham khảo trong cost_tracker.py cũ"
+    needs_official_verification: true
+  gpt-4.1-mini:
+    input_usd_per_1m: 0.40
+    output_usd_per_1m: 1.60
+    source: "bảng tham khảo trong cost_tracker.py cũ"
+    needs_official_verification: true
+  gpt-4.1:
+    input_usd_per_1m: 2.00
+    output_usd_per_1m: 8.00
+    source: "bảng tham khảo trong cost_tracker.py cũ"
+    needs_official_verification: true
+  # Model judge (bước 14b, để M2). Tài khoản đã thấy model này qua GET /v1/models (2026-10-21).
+  gpt-6-luna:
+    input_usd_per_1m: 0.10
+    output_usd_per_1m: 0.50
+    source: "OpenRouter, ngày 2026-10-20 (do chủ dự án cung cấp) — KHÔNG phải trang giá OpenAI chính thức"
+    needs_official_verification: true   # CẦN ĐỐI CHIẾU GIÁ OPENAI CHÍNH THỨC trước khi dùng số này để báo cáo chi phí

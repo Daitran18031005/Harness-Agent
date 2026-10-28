@@ -1,0 +1,273 @@
+{
+ "scenario": {
+  "scenario_id": "SC-D22",
+  "level": "M1",
+  "persona": "khach_goi_lan_3_het_kien_nhan",
+  "hard_case": null,
+  "customer_phone": "0900020022",
+  "customer_name": "Huy",
+  "honorific": "anh",
+  "notes": "3 cuộc hotline: mua → hỏi đơn → khiếu nại giao trễ (cạn kiên nhẫn) → chuyển máy với Handoff Brief chứa mã đơn.",
+  "group": "B",
+  "archetype": "status_complaint",
+  "industry": "mẹ & bé",
+  "south": true
+ },
+ "calls": [
+  {
+   "name": "call_1",
+   "channel": "hotline",
+   "goal": "mua Xe đẩy gấp gọn Joie Pact",
+   "opening": "agent",
+   "customer_plot": "Khách gọi mua Xe đẩy gấp gọn Joie Pact, hỏi giá; chốt luôn, COD, giao về số 136 đường Phan Văn Trị, quận Gò Vấp, TP.HCM.",
+   "agent_plot": "Agent báo {product} giá {price}; theo quy trình đặt đơn rồi chốt: mã đơn {order_id}, dự kiến giao {delivery_date} tại {address}.",
+   "customer_facts": [
+    {
+     "key": "payment",
+     "value": "COD",
+     "hint": "COD"
+    },
+    {
+     "key": "address",
+     "value": "số 136 đường Phan Văn Trị, quận Gò Vấp, TP.HCM",
+     "hint": "giao về số 136 đường Phan Văn Trị, quận Gò Vấp, TP.HCM"
+    },
+    {
+     "key": "recipient_name",
+     "value": "Huy",
+     "hint": "nói tên người nhận là Huy"
+    }
+   ],
+   "agent_vars": {
+    "product": {
+     "text": "Xe đẩy gấp gọn Joie Pact",
+     "desc": "tên sản phẩm ĐẦY ĐỦ đã gồm loại hàng (đừng viết thêm loại hàng phía trước)",
+     "entity": [
+      "sku",
+      "SKU-MB-STR1"
+     ]
+    },
+    "price": {
+     "text": "3.490.000đ",
+     "desc": "giá cuối (đã tính khuyến mãi)",
+     "entity": [
+      "price_vnd",
+      3490000
+     ]
+    },
+    "order_id": {
+     "text": "OD600001",
+     "desc": "mã đơn",
+     "entity": [
+      "order_id",
+      "OD600001"
+     ]
+    },
+    "delivery_date": {
+     "text": "14/10",
+     "desc": "ngày giao dự kiến",
+     "entity": [
+      "delivery_date",
+      "2026-10-14"
+     ]
+    },
+    "address": {
+     "text": "số 136 đường Phan Văn Trị, quận Gò Vấp, TP.HCM",
+     "desc": "địa chỉ giao (khách vừa đọc) — CHỈ dùng sau khi khách đã đọc địa chỉ",
+     "entity": null,
+     "after": "address"
+    },
+    "stock": {
+     "text": "hiện còn hàng",
+     "desc": "tình trạng tồn kho của sản phẩm (còn hàng/hết hàng)",
+     "entity": null
+    },
+    "readback_total": {
+     "text": "3.490.000đ",
+     "desc": "tổng tiền cả đơn (giá × số lượng) — dùng khi ĐỌC LẠI ĐƠN",
+     "entity": null
+    },
+    "payment_label": {
+     "text": "thanh toán khi nhận hàng (COD)",
+     "desc": "hình thức thanh toán chốt của đơn — dùng khi ĐỌC LẠI ĐƠN",
+     "entity": null
+    },
+    "recipient_name": {
+     "text": "Huy",
+     "desc": "tên người nhận — CHỈ dùng sau khi khách đã nói tên",
+     "entity": null,
+     "after": "recipient_name"
+    },
+    "caller_phone": {
+     "text": "0900020022",
+     "desc": "SĐT nhận hàng (số khách đang gọi/nhắn) — đọc lại để xác nhận",
+     "entity": [
+      "phone",
+      "0900020022"
+     ]
+    }
+   },
+   "n_turns": [
+    9,
+    13
+   ],
+   "style": "normal",
+   "expected": {
+    "success_if": {
+     "tool_called": "order.create",
+     "args_match": {
+      "sku": "SKU-MB-STR1",
+      "price_vnd": 3490000,
+      "payment": "COD"
+     }
+    },
+    "ground_truth_facts": {
+     "price_vnd": 3490000,
+     "in_stock": true
+    },
+    "facts_established": {
+     "product_advised": "SKU-MB-STR1",
+     "price_quoted_vnd": 3490000,
+     "order_id": "OD600001",
+     "payment": "COD"
+    },
+    "expected_outcome": "chot_don"
+   },
+   "abs_date": "2026-10-12",
+   "call_date": "2026-10-12",
+   "order_flow": true
+  },
+  {
+   "name": "call_2",
+   "channel": "hotline",
+   "goal": "hỏi đơn đến đâu rồi",
+   "opening": "agent",
+   "customer_plot": "Khách gọi hỏi 'đơn Xe đẩy gấp gọn Joie Pact hôm trước của anh đến đâu rồi?' (không đọc mã đơn); nghe trả lời thì nói 'ừ, anh chờ thêm'.",
+   "agent_plot": "Agent tra đơn bằng thông tin đã lưu (KHÔNG hỏi mã đơn/sản phẩm), báo đơn {order_id} {order_status}, dự kiến giao {delivery_date}.",
+   "customer_facts": [
+    {
+     "key": "order_query",
+     "value": true,
+     "hint": "hỏi đơn hôm trước đến đâu rồi"
+    }
+   ],
+   "agent_vars": {
+    "order_id": {
+     "text": "OD600001",
+     "desc": "mã đơn",
+     "entity": [
+      "order_id",
+      "OD600001"
+     ]
+    },
+    "product": {
+     "text": "Xe đẩy gấp gọn Joie Pact",
+     "desc": "tên sản phẩm ĐẦY ĐỦ đã gồm loại hàng (đừng viết thêm loại hàng phía trước)",
+     "entity": [
+      "sku",
+      "SKU-MB-STR1"
+     ]
+    },
+    "order_status": {
+     "text": "đã tạo, đang chờ giao",
+     "desc": "trạng thái đơn theo hệ thống (order.status)",
+     "entity": null
+    },
+    "delivery_date": {
+     "text": "14/10",
+     "desc": "ngày giao dự kiến",
+     "entity": [
+      "delivery_date",
+      "2026-10-14"
+     ]
+    },
+    "stock": {
+     "text": "hiện còn hàng",
+     "desc": "tình trạng tồn kho của sản phẩm (còn hàng/hết hàng)",
+     "entity": null
+    }
+   },
+   "n_turns": [
+    5,
+    7
+   ],
+   "style": "normal",
+   "expected": {
+    "must_carry_over": [
+     "order_id",
+     "product_advised"
+    ],
+    "must_not_ask": [
+     "order_id",
+     "product_advised",
+     "payment"
+    ],
+    "success_if": {
+     "tool_called": "order.status"
+    },
+    "ground_truth_facts": {
+     "order_status": "created"
+    },
+    "expected_outcome": "hen_goi_lai"
+   },
+   "abs_date": "2026-10-14",
+   "days_later": 2
+  },
+  {
+   "name": "call_3",
+   "channel": "hotline",
+   "goal": "khiếu nại giao trễ → chuyển nhân viên",
+   "opening": "agent",
+   "customer_plot": "Khách bực, cộc lốc: đơn dự kiến giao 14/10 mà giờ vẫn chưa nhận; đòi gặp người có thẩm quyền xử lý.",
+   "agent_plot": "Agent xin lỗi ngắn gọn, KHÔNG hỏi lại mã đơn, nói đơn {order_id} dự kiến giao {delivery_date} đã quá hạn; không hứa thời hạn; chuyển máy cho nhân viên kèm tóm tắt (handoff).",
+   "customer_facts": [
+    {
+     "key": "complaint_late_delivery",
+     "value": true,
+     "hint": "đơn dự kiến giao 14/10 mà vẫn chưa nhận"
+    }
+   ],
+   "agent_vars": {
+    "order_id": {
+     "text": "OD600001",
+     "desc": "mã đơn",
+     "entity": [
+      "order_id",
+      "OD600001"
+     ]
+    },
+    "delivery_date": {
+     "text": "14/10",
+     "desc": "ngày giao dự kiến ban đầu",
+     "entity": [
+      "delivery_date",
+      "2026-10-14"
+     ]
+    }
+   },
+   "n_turns": [
+    5,
+    7
+   ],
+   "style": "normal",
+   "expected": {
+    "must_carry_over": [
+     "order_id"
+    ],
+    "must_not_ask": [
+     "order_id",
+     "product_advised"
+    ],
+    "success_if": {
+     "tool_called": "handoff.transfer",
+     "brief_must_contain": [
+      "OD600001"
+     ]
+    },
+    "expected_outcome": "chuyen_may"
+   },
+   "abs_date": "2026-10-17",
+   "days_later": 3
+  }
+ ]
+}

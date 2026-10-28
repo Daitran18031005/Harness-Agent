@@ -1,0 +1,50 @@
+{
+  "scenario_id": "SC-GEN-01",
+  "level": "M1",
+  "persona": "khach_thich_khuyen_mai",
+  "hard_case": "khuyen_mai_het_han",
+  "customer_phone": "0949066882",
+  "customer_name": "Phương",
+  "honorific": "chị",
+  "notes": "RUN2-SALE (giảm 20% RunLite 2 Pro) hết hạn 2026-10-07. call_1 trong hạn, call_2 sau khi hết hạn phải báo giá về lại giá gốc, không giữ giá khuyến mãi cũ.",
+  "calls": {
+    "call_1": {
+      "call_date": "2026-10-06",
+      "customer_turns": [
+        "Em ơi giày RunLite 2 Pro đang giảm giá đúng không?",
+        "Giá bao nhiêu sau giảm vậy em?",
+        "Để chị suy nghĩ thêm, mai chị gọi lại."
+      ],
+      "facts_established": {
+        "product_advised": "SKU-SN-RUN2",
+        "promo_code": "RUN2-SALE"
+      },
+      "expected_outcome": "hen_goi_lai"
+    },
+    "call_2": {
+      "days_later": 10,
+      "customer_turns": [
+        "Alo em, giày RunLite 2 Pro hôm trước đang giảm 20% đó, chị lấy luôn nhé."
+      ],
+      "must_carry_over": [
+        "product_advised"
+      ],
+      "must_not_ask": [
+        "product_advised"
+      ],
+      "ground_truth_facts": {
+        "promo_active": false,
+        "price_vnd": 1690000
+      },
+      "success_if": {
+        "forbidden_claims": [
+          {
+            "field": "promo_active",
+            "value": true
+          }
+        ]
+      },
+      "expected_outcome": "chot_don"
+    }
+  }
+}

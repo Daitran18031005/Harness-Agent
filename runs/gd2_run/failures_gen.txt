@@ -1,0 +1,96 @@
+=== full r1
+SC-GEN-01 call_2 1 hr claim price_vnd=1521000 ≠ sự thật 1690000
+SC-GEN-02 call_1 4 hr claim total_vnd=7690000 ≠ sự thật 15980000
+SC-GEN-03 call_1 None tsr không có tool call order.create khớp args_match
+SC-GEN-04 call_1 None tsr thiếu must_say_any: xác nhận | tên mình | cho em hỏi tên
+SC-GEN-05 call_2 None ccr chưa mang sang: size, color
+SC-GEN-05 call_2 1 hr claim variant_price_delta_vnd=40000 ≠ sự thật 50000
+SC-GEN-05 call_2 2 hr claim variant_price_delta_vnd=40000 ≠ sự thật 50000
+SC-GEN-06 call_2 None ccr chưa mang sang: promo_code
+SC-GEN-07 call_1 None tsr thiếu must_say_any: 30 ngày | ba mươi ngày | lỗi nhà sản xuất
+SC-GEN-08 call_1 None tsr không nói 'không có thông tin'
+SC-GEN-11 call_1 2 hr claim price_vnd=7990000 ≠ sự thật 6490000
+SC-GEN-11 call_1 2 hr claim price_vnd=5200000 ≠ sự thật 6490000
+SC-GEN-11 call_1 2 hr claim price_vnd=2990000 ≠ sự thật 6490000
+SC-GEN-11 call_1 2 hr claim price_vnd=4890000 ≠ sự thật 6490000
+SC-GEN-11 call_1 2 hr claim price_vnd=2190000 ≠ sự thật 6490000
+SC-GEN-13 call_1 None tsr không có tool call order.create khớp args_match
+SC-GEN-13 call_1 2 hr claim final_price_vnd=4800000 ≠ sự thật 7590000
+SC-GEN-15 call_1 None tsr không có tool call order.create khớp args_match
+=== full r2
+SC-GEN-01 call_2 1 hr claim price_vnd=1521000 ≠ sự thật 1690000
+SC-GEN-02 call_1 4 hr claim total_vnd=7690000 ≠ sự thật 15980000
+SC-GEN-03 call_1 None tsr không có tool call order.create khớp args_match
+SC-GEN-04 call_1 None tsr thiếu must_say_any: xác nhận | tên mình | cho em hỏi tên
+SC-GEN-05 call_2 None ccr chưa mang sang: size, color
+SC-GEN-05 call_2 1 hr claim variant_price_delta_vnd=40000 ≠ sự thật 50000
+SC-GEN-06 call_2 None ccr chưa mang sang: promo_code
+SC-GEN-07 call_1 None tsr thiếu must_say_any: 30 ngày | ba mươi ngày | lỗi nhà sản xuất
+SC-GEN-08 call_1 None tsr không nói 'không có thông tin'
+SC-GEN-11 call_1 2 hr claim price_vnd=7990000 ≠ sự thật 6490000
+SC-GEN-11 call_1 2 hr claim price_vnd=5200000 ≠ sự thật 6490000
+SC-GEN-11 call_1 2 hr claim price_vnd=2990000 ≠ sự thật 6490000
+SC-GEN-11 call_1 2 hr claim price_vnd=5490000 ≠ sự thật 6490000
+SC-GEN-11 call_1 2 hr claim price_vnd=4890000 ≠ sự thật 6490000
+SC-GEN-11 call_1 2 hr claim price_vnd=2190000 ≠ sự thật 6490000
+=== full r3
+SC-GEN-01 call_2 1 hr claim price_vnd=1521000 ≠ sự thật 1690000
+SC-GEN-02 call_1 4 hr claim total_vnd=7690000 ≠ sự thật 15980000
+SC-GEN-03 call_1 None tsr không có tool call order.create khớp args_match
+SC-GEN-04 call_1 None tsr thiếu must_say_any: xác nhận | tên mình | cho em hỏi tên
+SC-GEN-05 call_2 None ccr chưa mang sang: size, color
+SC-GEN-05 call_2 1 hr claim variant_price_delta_vnd=40000 ≠ sự thật 50000
+SC-GEN-05 call_2 2 hr claim variant_price_delta_vnd=40000 ≠ sự thật 50000
+SC-GEN-06 call_2 None ccr chưa mang sang: promo_code
+SC-GEN-07 call_1 None tsr thiếu must_say_any: 30 ngày | ba mươi ngày | lỗi nhà sản xuất
+SC-GEN-08 call_1 None tsr không nói 'không có thông tin'
+SC-GEN-11 call_1 2 hr claim price_vnd=7990000 ≠ sự thật 6490000
+SC-GEN-11 call_1 2 hr claim price_vnd=5200000 ≠ sự thật 6490000
+SC-GEN-11 call_1 2 hr claim price_vnd=2990000 ≠ sự thật 6490000
+SC-GEN-11 call_1 2 hr claim price_vnd=5490000 ≠ sự thật 6490000
+SC-GEN-11 call_1 2 hr claim price_vnd=4890000 ≠ sự thật 6490000
+SC-GEN-11 call_1 2 hr claim price_vnd=2190000 ≠ sự thật 6490000
+SC-GEN-13 call_1 2 hr claim final_price_vnd=7690000 ≠ sự thật 7590000
+SC-GEN-15 call_1 None tsr không có tool call order.create khớp args_match
+=== baseline r1
+SC-GEN-01 call_2 None ccr chưa mang sang: product_advised
+SC-GEN-01 call_2 1 hr claim price_vnd=1521000 ≠ sự thật 1690000
+SC-GEN-02 call_1 2 hr claim total_vnd=15380000 ≠ sự thật 15980000
+SC-GEN-02 call_1 3 hr claim total_vnd=15380000 ≠ sự thật 15980000
+SC-GEN-03 call_1 None tsr không có tool call order.create khớp args_match
+SC-GEN-04 call_1 None tsr thiếu must_say_any: xác nhận | tên mình | cho em hỏi tên
+SC-GEN-05 call_2 None tsr không có tool call order.update khớp args_match
+SC-GEN-05 call_2 None ccr chưa mang sang: variant_sku, size, color
+SC-GEN-06 call_2 None ccr chưa mang sang: product_advised, price_quoted_vnd, promo_code
+SC-GEN-07 call_1 None tsr thiếu must_say_any: 30 ngày | ba mươi ngày | lỗi nhà sản xuất
+SC-GEN-08 call_1 None tsr không nói 'không có thông tin'
+SC-GEN-11 call_1 None tsr thiếu must_say_any: AX40 | Samsung AX40
+SC-GEN-11 call_1 1 hr claim price_vnd=5200000 ≠ sự thật 6490000
+SC-GEN-11 call_1 2 hr claim price_vnd=5200000 ≠ sự thật 6490000
+SC-GEN-13 call_1 1 hr claim final_price_vnd=7190000 ≠ sự thật 7590000
+=== baseline r2
+SC-GEN-01 call_2 None ccr chưa mang sang: product_advised
+SC-GEN-01 call_2 1 hr claim price_vnd=1521000 ≠ sự thật 1690000
+SC-GEN-02 call_1 4 hr claim total_vnd=7690000 ≠ sự thật 15980000
+SC-GEN-03 call_1 None tsr không có tool call order.create khớp args_match
+SC-GEN-04 call_1 None tsr thiếu must_say_any: xác nhận | tên mình | cho em hỏi tên
+SC-GEN-05 call_2 None ccr chưa mang sang: variant_sku, size, color
+SC-GEN-05 call_2 1 hr claim variant_price_delta_vnd=40000 ≠ sự thật 50000
+SC-GEN-06 call_2 None ccr chưa mang sang: product_advised, price_quoted_vnd, promo_code
+SC-GEN-07 call_1 None tsr thiếu must_say_any: 30 ngày | ba mươi ngày | lỗi nhà sản xuất
+SC-GEN-08 call_1 None tsr không nói 'không có thông tin'
+=== baseline r3
+SC-GEN-01 call_2 None ccr chưa mang sang: product_advised
+SC-GEN-01 call_2 1 hr claim price_vnd=1521000 ≠ sự thật 1690000
+SC-GEN-02 call_1 4 hr claim total_vnd=7690000 ≠ sự thật 15980000
+SC-GEN-03 call_1 None tsr không có tool call order.create khớp args_match
+SC-GEN-04 call_1 None tsr thiếu must_say_any: xác nhận | tên mình | cho em hỏi tên
+SC-GEN-05 call_2 None ccr chưa mang sang: variant_sku, size, color
+SC-GEN-05 call_2 1 hr claim variant_price_delta_vnd=40000 ≠ sự thật 50000
+SC-GEN-06 call_2 None ccr chưa mang sang: product_advised, price_quoted_vnd, promo_code
+SC-GEN-08 call_1 None tsr không nói 'không có thông tin'
+SC-GEN-11 call_1 2 hr claim price_vnd=7990000 ≠ sự thật 6490000
+SC-GEN-11 call_1 2 hr claim price_vnd=5200000 ≠ sự thật 6490000
+SC-GEN-11 call_1 2 hr claim price_vnd=2990000 ≠ sự thật 6490000
+SC-GEN-11 call_1 2 hr claim price_vnd=4890000 ≠ sự thật 6490000
+SC-GEN-11 call_1 2 hr claim price_vnd=2190000 ≠ sự thật 6490000

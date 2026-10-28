@@ -1,0 +1,134 @@
+{
+ "scenario_id": "SC-D47",
+ "call": "call_1",
+ "channel": "zalo_oa",
+ "call_date": "2026-10-15",
+ "meta": {
+  "model": "gpt-6-luna",
+  "attempts": 3,
+  "ok": true,
+  "unresolved": [],
+  "rebuilt": true
+ },
+ "frame_sha256": "78b44e12433ff9a9",
+ "allowed_numbers": [],
+ "turns": [
+  {
+   "idx": 1,
+   "speaker": "C",
+   "text": "Chị là khách cũ của shop, mua hồi tháng trước rồi. Giờ chị muốn mua Nồi chiên không dầu Xiaomi 4.5L.",
+   "text_written": "Chị là khách cũ của shop, mua hồi tháng trước rồi. Giờ chị muốn mua Nồi chiên không dầu Xiaomi 4.5L.",
+   "states": [
+    "claimed_status",
+    "product_asked"
+   ],
+   "entities": {
+    "sku": "SKU-AF-XM"
+   },
+   "text_spoken": "chị là khách cũ của shop mua hồi tháng trước rồi giờ chị muốn mua nồi chiên không dầu xiao mi bốn phẩy năm lít"
+  },
+  {
+   "idx": 2,
+   "speaker": "A",
+   "text": "Dạ chị Yến cho em xin số điện thoại hoặc tên tài khoản chị đã dùng để em tra hồ sơ ạ.",
+   "text_template": "Dạ chị Yến cho em xin số điện thoại hoặc tên tài khoản chị đã dùng để em tra hồ sơ ạ.",
+   "text_written": "Dạ chị Yến cho em xin số điện thoại hoặc tên tài khoản chị đã dùng để em tra hồ sơ ạ.",
+   "entities": {},
+   "text_spoken": "dạ chị yến cho em xin số điện thoại hoặc tên tài khoản chị đã dùng để em tra hồ sơ ạ"
+  },
+  {
+   "idx": 3,
+   "speaker": "C",
+   "text": "Số chị dùng là 0900020047.",
+   "text_written": "Số chị dùng là 0900020047.",
+   "states": [
+    "phone_provided"
+   ],
+   "entities": {
+    "phone": "0900020047"
+   },
+   "text_spoken": "số chị dùng là không chín không không không hai không không bốn bảy"
+  },
+  {
+   "idx": 4,
+   "speaker": "A",
+   "text": "Em chưa thấy hồ sơ mua hàng với số này nên hỗ trợ chị như khách mới nhé. Nồi chiên không dầu Xiaomi 4.5L giá 1.590.000đ, hiện hiện còn hàng ạ. Chị cho em xin tên người nhận và địa chỉ giao hàng nhé.",
+   "text_template": "Em chưa thấy hồ sơ mua hàng với số này nên hỗ trợ chị như khách mới nhé. Nồi chiên không dầu Xiaomi 4.5L giá {price}, hiện {stock} ạ. Chị cho em xin tên người nhận và địa chỉ giao hàng nhé.",
+   "text_written": "Em chưa thấy hồ sơ mua hàng với số này nên hỗ trợ chị như khách mới nhé. Nồi chiên không dầu Xiaomi 4.5L giá 1.590.000đ, hiện hiện còn hàng ạ. Chị cho em xin tên người nhận và địa chỉ giao hàng nhé.",
+   "entities": {
+    "price_vnd": 1590000
+   },
+   "text_spoken": "em chưa thấy hồ sơ mua hàng với số này nên hỗ trợ chị như khách mới nhé nồi chiên không dầu xiao mi bốn phẩy năm lít giá một triệu năm trăm chín mươi nghìn hiện hiện còn hàng ạ chị cho em xin tên người nhận và địa chỉ giao hàng nhé"
+  },
+  {
+   "idx": 5,
+   "speaker": "C",
+   "text": "Người nhận là Yến, giao số 31 phố Nguyễn Chí Thanh, quận Ba Đình, Hà Nội. À mà shop có nhận COD không em?",
+   "text_written": "Người nhận là Yến, giao số 31 phố Nguyễn Chí Thanh, quận Ba Đình, Hà Nội. À mà shop có nhận COD không em?",
+   "states": [
+    "recipient_name",
+    "address"
+   ],
+   "entities": {
+    "address": "số 45 phố Nguyễn Chí Thanh, quận Ba Đình, Hà Nội"
+   },
+   "text_spoken": "người nhận là yến giao số ba mươi mốt phố nguyễn chí thanh quận ba đình hà nội à mà shop có nhận cê ô đê không em"
+  },
+  {
+   "idx": 6,
+   "speaker": "A",
+   "text": "Dạ được chị Yến, bên em nhận thanh toán COD ạ. Số điện thoại nhận hàng em xác nhận là 0900020047, đúng không ạ?",
+   "text_template": "Dạ được chị Yến, bên em nhận thanh toán COD ạ. Số điện thoại nhận hàng em xác nhận là {caller_phone}, đúng không ạ?",
+   "text_written": "Dạ được chị Yến, bên em nhận thanh toán COD ạ. Số điện thoại nhận hàng em xác nhận là 0900020047, đúng không ạ?",
+   "entities": {
+    "phone": "0900020047"
+   },
+   "text_spoken": "dạ được chị yến bên em nhận thanh toán cê ô đê ạ số điện thoại nhận hàng em xác nhận là không chín không không không hai không không bốn bảy đúng không ạ"
+  },
+  {
+   "idx": 7,
+   "speaker": "C",
+   "text": "Đúng rồi, chị thanh toán COD nhé.",
+   "text_written": "Đúng rồi, chị thanh toán COD nhé.",
+   "states": [
+    "payment"
+   ],
+   "entities": {
+    "payment": "COD"
+   },
+   "text_spoken": "đúng rồi chị thanh toán cê ô đê nhé"
+  },
+  {
+   "idx": 8,
+   "speaker": "A",
+   "text": "Em đọc lại đơn: Nồi chiên không dầu Xiaomi 4.5L, giá 1.590.000đ, tổng 1.590.000đ, giao cho Yến, SĐT 0900020047, địa chỉ số 45 phố Nguyễn Chí Thanh, quận Ba Đình, Hà Nội, hình thức thanh toán khi nhận hàng (COD). Chị xác nhận đặt đơn này chứ ạ?",
+   "text_template": "Em đọc lại đơn: Nồi chiên không dầu Xiaomi 4.5L, giá {price}, tổng {readback_total}, giao cho {recipient_name}, SĐT {caller_phone}, địa chỉ {address}, hình thức {payment_label}. Chị xác nhận đặt đơn này chứ ạ?",
+   "text_written": "Em đọc lại đơn: Nồi chiên không dầu Xiaomi 4.5L, giá 1.590.000đ, tổng 1.590.000đ, giao cho Yến, SĐT 0900020047, địa chỉ số 45 phố Nguyễn Chí Thanh, quận Ba Đình, Hà Nội, hình thức thanh toán khi nhận hàng (COD). Chị xác nhận đặt đơn này chứ ạ?",
+   "entities": {
+    "price_vnd": 1590000,
+    "phone": "0900020047"
+   },
+   "text_spoken": "em đọc lại đơn nồi chiên không dầu xiao mi bốn phẩy năm lít giá một triệu năm trăm chín mươi nghìn tổng một triệu năm trăm chín mươi nghìn giao cho yến số điện thoại không chín không không không hai không không bốn bảy địa chỉ số bốn mươi lăm phố nguyễn chí thanh quận ba đình hà nội hình thức thanh toán khi nhận hàng cê ô đê chị xác nhận đặt đơn này chứ ạ"
+  },
+  {
+   "idx": 9,
+   "speaker": "C",
+   "text": "Đúng rồi, chốt đi em.",
+   "text_written": "Đúng rồi, chốt đi em.",
+   "states": [],
+   "entities": {},
+   "text_spoken": "đúng rồi chốt đi em"
+  },
+  {
+   "idx": 10,
+   "speaker": "A",
+   "text": "Dạ, mã đơn OD600001, dự kiến giao trong 2 ngày ạ.",
+   "text_template": "Dạ, mã đơn {order_id}, dự kiến giao trong {delivery_days} ngày ạ.",
+   "text_written": "Dạ, mã đơn OD600001, dự kiến giao trong 2 ngày ạ.",
+   "entities": {
+    "order_id": "OD600001"
+   },
+   "text_spoken": "dạ mã đơn ô đê sáu không không không không một dự kiến giao trong hai ngày ạ"
+  }
+ ]
+}

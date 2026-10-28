@@ -1,0 +1,45 @@
+{
+  "scenario_id": "SC-C01",
+  "level": "M1",
+  "persona": "khach_so_gia",
+  "hard_case": "doi_y_giua_cuoc",
+  "customer_phone": "0900010006",
+  "customer_name": "Dũng",
+  "honorific": "anh",
+  "notes": "Đổi ý giữa cuộc: hỏi AirPure Pro (giá sau AIR-OCT) → chuyển sang mẫu rẻ hơn; đơn phải đúng sản phẩm CUỐI CÙNG.",
+  "calls": {
+    "call_1": {
+      "channel": "hotline",
+      "call_date": "2026-10-15",
+      "customer_goal": "hỏi máy cao cấp rồi ĐỔI Ý sang máy rẻ hơn",
+      "customer_turns": [
+        "Anh hỏi máy AirPure Pro, phòng 25 mét vuông dùng được không?",
+        "Ờ, giá đó hơi đắt. Thôi cho anh cái rẻ hơn, tầm 5 triệu.",
+        "Ừm, để anh xem… lấy mẫu đó.",
+        "COD nhé, người nhận tên Dũng.",
+        "Giao về số 71 phố Lê Thanh Nghị, quận Hai Bà Trưng, Hà Nội. Số đang gọi đúng rồi.",
+        "Vâng, chốt đi em."
+      ],
+      "facts_established": {
+        "product_advised": "SKU-AP-X",
+        "room_area_m2": 25,
+        "budget_vnd": 5000000,
+        "price_quoted_vnd": 4890000,
+        "payment": "COD"
+      },
+      "success_if": {
+        "tool_called": "order.create",
+        "args_match": {
+          "sku": "SKU-AP-X",
+          "price_vnd": 4890000
+        }
+      },
+      "ground_truth_facts": {
+        "price_vnd": 4890000,
+        "promo_active": true,
+        "in_stock": true
+      },
+      "expected_outcome": "chot_don"
+    }
+  }
+}

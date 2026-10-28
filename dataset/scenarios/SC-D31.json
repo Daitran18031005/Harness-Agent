@@ -1,0 +1,50 @@
+{
+  "scenario_id": "SC-D31",
+  "level": "M1",
+  "persona": "khach_so_gia",
+  "hard_case": "vuot_ngan_sach_2_lua_chon",
+  "customer_phone": "0900020031",
+  "customer_name": "Thảo",
+  "honorific": "chị",
+  "notes": "Vượt ngân sách 62% (> 20%): nhánh HAI LỰA CHỌN (Máy lọc không khí Samsung AX40 vs Máy lọc không khí Xiaomi Smart 4 Lite); khách chọn mẫu TRONG ngân sách.",
+  "archetype": "over_budget",
+  "industry": "máy lọc không khí",
+  "south": false,
+  "calls": {
+    "call_1": {
+      "channel": "hotline",
+      "call_date": "2026-10-15",
+      "customer_goal": "hỏi máy lọc không khí có bé nhỏ, ngân sách thấp hơn nhiều so với mẫu phù hợp",
+      "customer_turns": [
+        "Chị cần máy lọc không khí cho phòng khoảng 40m², nhà có bé nhỏ. Ngân sách tầm 4 triệu.",
+        "Ờ, mẫu đầu vượt nhiều quá. Mẫu trong ngân sách dùng được chứ em? Chị hơi phân vân.",
+        "Ừm, để chị xem... thôi, lấy mẫu trong ngân sách.",
+        "Người nhận là Thảo, giao về số 14 phố Tây Sơn, quận Đống Đa, Hà Nội.",
+        "Đúng rồi, COD nhé.",
+        "Đúng rồi em, chốt đi."
+      ],
+      "facts_established": {
+        "product_advised": "SKU-XM-4L",
+        "room_area_m2": 40,
+        "has_children": true,
+        "budget_vnd": 4000000,
+        "price_quoted_vnd": 2990000,
+        "payment": "COD"
+      },
+      "success_if": {
+        "tool_called": "order.create",
+        "args_match": {
+          "sku": "SKU-XM-4L",
+          "price_vnd": 2990000,
+          "payment": "COD"
+        }
+      },
+      "ground_truth_facts": {
+        "price_vnd": 2990000,
+        "overage_pct": 62,
+        "in_stock": true
+      },
+      "expected_outcome": "chot_don"
+    }
+  }
+}

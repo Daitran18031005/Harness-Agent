@@ -1,0 +1,27 @@
+{
+  "scenario_id": "SC-GEN-11",
+  "level": "M1",
+  "persona": "khach_het_kien_nhan",
+  "hard_case": null,
+  "customer_phone": "0924410646",
+  "customer_name": "Sơn",
+  "honorific": "anh",
+  "notes": "Khách đã cung cấp diện tích/ngân sách ngay turn 1 — agent không được hỏi lại các slot này ở turn sau trong CÙNG cuộc gọi (test RQR nội bộ 1 call, không chỉ carry-over liên call).",
+  "calls": {
+    "call_1": {
+      "call_date": "2026-10-15",
+      "customer_turns": [
+        "Anh cần máy lọc không khí cho phòng 40m², ngân sách 6 triệu, có bé nhỏ.",
+        "Vậy mẫu nào hợp lý nhất?"
+      ],
+      "must_not_ask": [
+        "room_area_m2",
+        "budget_vnd",
+        "has_children"
+      ],
+      "success_if": {},
+      "ground_truth_facts": {},
+      "expected_outcome": "hen_goi_lai"
+    }
+  }
+}

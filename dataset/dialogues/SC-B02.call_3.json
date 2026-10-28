@@ -1,0 +1,84 @@
+{
+ "scenario_id": "SC-B02",
+ "call": "call_3",
+ "channel": "hotline",
+ "call_date": "2026-10-17",
+ "allowed_numbers": [],
+ "turns": [
+  {
+   "idx": 1,
+   "speaker": "A",
+   "text": "Dạ shop BTC xin nghe, em có thể giúp gì cho mình ạ?",
+   "text_template": "Dạ shop BTC xin nghe, em có thể giúp gì cho mình ạ?",
+   "text_written": "Dạ shop BTC xin nghe, em có thể giúp gì cho mình ạ?",
+   "entities": {},
+   "text_spoken": "dạ shop bê tê xê xin nghe em có thể giúp gì cho mình ạ"
+  },
+  {
+   "idx": 2,
+   "speaker": "C",
+   "text": "Đơn dự kiến giao 14/10 mà giờ chị vẫn chưa nhận. Em nói mấy lần rồi.",
+   "text_written": "Đơn dự kiến giao 14/10 mà giờ chị vẫn chưa nhận. Em nói mấy lần rồi.",
+   "states": [
+    "complaint_late_delivery"
+   ],
+   "entities": {},
+   "text_spoken": "đơn dự kiến giao mười bốn tháng mười mà giờ chị vẫn chưa nhận em nói mấy lần rồi"
+  },
+  {
+   "idx": 3,
+   "speaker": "A",
+   "text": "Em xin lỗi chị Hương. Đơn OD600001 dự kiến giao 14/10 đã quá hạn. Em chuyển máy để nhân viên có thẩm quyền xử lý cho chị.",
+   "text_template": "Em xin lỗi chị Hương. Đơn {order_id} dự kiến giao {delivery_date} đã quá hạn. Em chuyển máy để nhân viên có thẩm quyền xử lý cho chị.",
+   "text_written": "Em xin lỗi chị Hương. Đơn OD600001 dự kiến giao 14/10 đã quá hạn. Em chuyển máy để nhân viên có thẩm quyền xử lý cho chị.",
+   "entities": {
+    "order_id": "OD600001",
+    "delivery_date": "2026-10-14"
+   },
+   "text_spoken": "em xin lỗi chị hương đơn ô đê sáu không không không không một dự kiến giao mười bốn tháng mười đã quá hạn em chuyển máy để nhân viên có thẩm quyền xử lý cho chị"
+  },
+  {
+   "idx": 4,
+   "speaker": "C",
+   "text": "Lần thứ ba rồi. Cho chị gặp người xử lý ngay.",
+   "text_written": "Lần thứ ba rồi. Cho chị gặp người xử lý ngay.",
+   "states": [],
+   "entities": {},
+   "text_spoken": "lần thứ ba rồi cho chị gặp người xử lý ngay"
+  },
+  {
+   "idx": 5,
+   "speaker": "A",
+   "text": "Dạ, em chuyển máy ngay và gửi kèm thông tin chị đã gọi nhiều lần, đơn giao trễ và yêu cầu gặp người có thẩm quyền.",
+   "text_template": "Dạ, em chuyển máy ngay và gửi kèm thông tin chị đã gọi nhiều lần, đơn giao trễ và yêu cầu gặp người có thẩm quyền.",
+   "text_written": "Dạ, em chuyển máy ngay và gửi kèm thông tin chị đã gọi nhiều lần, đơn giao trễ và yêu cầu gặp người có thẩm quyền.",
+   "entities": {},
+   "text_spoken": "dạ em chuyển máy ngay và gửi kèm thông tin chị đã gọi nhiều lần đơn giao trễ và yêu cầu gặp người có thẩm quyền"
+  },
+  {
+   "idx": 6,
+   "speaker": "C",
+   "text": "Nhanh giúp chị.",
+   "text_written": "Nhanh giúp chị.",
+   "states": [],
+   "entities": {},
+   "text_spoken": "nhanh giúp chị"
+  },
+  {
+   "idx": 7,
+   "speaker": "A",
+   "text": "Dạ, em đang chuyển máy cho nhân viên để tiếp nhận và xử lý khiếu nại giao trễ của chị.",
+   "text_template": "Dạ, em đang chuyển máy cho nhân viên để tiếp nhận và xử lý khiếu nại giao trễ của chị.",
+   "text_written": "Dạ, em đang chuyển máy cho nhân viên để tiếp nhận và xử lý khiếu nại giao trễ của chị.",
+   "entities": {},
+   "text_spoken": "dạ em đang chuyển máy cho nhân viên để tiếp nhận và xử lý khiếu nại giao trễ của chị"
+  }
+ ],
+ "meta": {
+  "model": "gpt-6-luna",
+  "attempts": 2,
+  "ok": true,
+  "unresolved": []
+ },
+ "frame_sha256": "2b2c379d7f330e04"
+}

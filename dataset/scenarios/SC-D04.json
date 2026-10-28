@@ -1,0 +1,81 @@
+{
+  "scenario_id": "SC-D04",
+  "level": "M1",
+  "persona": "khach_da_kenh_mau_thuan",
+  "hard_case": "mau_thuan_phien_truoc",
+  "customer_phone": "0900020004",
+  "customer_name": "Đạt",
+  "honorific": "anh",
+  "notes": "Mâu thuẫn phiên trước (thông tin khác): cuộc 1 khách nêu {'room_area_m2': 22, 'has_children': True, 'budget_vnd': 5800000}, cuộc 2 nói {'room_area_m2': 38, 'budget_vnd': 7000000} → sản phẩm đổi Máy lọc không khí AirPure Y → Máy lọc không khí Samsung AX40; agent ghi giá trị MỚI, không hỏi lại slot còn đúng.",
+  "archetype": "cross_conflict",
+  "industry": "máy lọc không khí",
+  "south": false,
+  "calls": {
+    "call_1": {
+      "channel": "zalo_oa",
+      "channel_identity": "zalo.d04",
+      "call_date": "2026-10-14",
+      "customer_goal": "hỏi giá/tư vấn qua chat rồi để suy nghĩ",
+      "customer_turns": [
+        "Lọc không khí phòng ngủ?",
+        "Phòng ngủ cỡ 22 mét vuông, nhà đang có con nhỏ. Ngân sách khoảng 5,8 triệu.",
+        "Khoan đã… giá chốt chưa?",
+        "Để anh xem thêm. Số anh là 0900020004."
+      ],
+      "facts_established": {
+        "product_advised": "SKU-AP-Y",
+        "room_area_m2": 22,
+        "has_children": true,
+        "budget_vnd": 5800000,
+        "price_quoted_vnd": 5200000,
+        "phone_provided": "0900020004"
+      },
+      "expected_outcome": "hen_goi_lai"
+    },
+    "call_2": {
+      "channel": "hotline",
+      "days_later": 3,
+      "customer_goal": "gọi hotline, bực vì lệch thông tin so với phiên trước, rồi chốt",
+      "customer_turns": [
+        "Hôm trước nhắn chat họ báo Máy lọc không khí AirPure Y một giá, giờ gọi lại thấy gợi ý mẫu khác, thông tin lệch thế này bực thật. Phòng khoảng 38m², ngân sách tầm 7 triệu.",
+        "Khoan đã… vì sao đổi mẫu rồi vẫn hợp với nhu cầu của tôi?",
+        "Giao về số 22 đường Giải Phóng, quận Hoàng Mai, Hà Nội. Người nhận là Đạt.",
+        "COD, đúng số đang gọi.",
+        "Đúng rồi, chốt đi em."
+      ],
+      "facts_established": {
+        "room_area_m2": 38,
+        "budget_vnd": 7000000,
+        "payment": "COD"
+      },
+      "must_carry_over": [
+        "has_children"
+      ],
+      "must_not_ask": [
+        "has_children"
+      ],
+      "success_if": {
+        "tool_called": "order.create",
+        "args_match": {
+          "sku": "SKU-SS-AX40",
+          "price_vnd": 6490000,
+          "payment": "COD"
+        }
+      },
+      "ground_truth_facts": {
+        "price_vnd": 6490000,
+        "in_stock": true
+      },
+      "memory_expectation": {
+        "room_area_m2": 38,
+        "budget_vnd": 7000000,
+        "product_advised": "SKU-SS-AX40",
+        "superseded": {
+          "room_area_m2": 22,
+          "budget_vnd": 5800000
+        }
+      },
+      "expected_outcome": "chot_don"
+    }
+  }
+}

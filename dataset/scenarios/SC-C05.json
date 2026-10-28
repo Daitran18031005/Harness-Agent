@@ -1,0 +1,51 @@
+{
+  "scenario_id": "SC-C05",
+  "level": "M1",
+  "persona": "khach_da_kenh_fb_hotline",
+  "hard_case": null,
+  "customer_phone": "0900010010",
+  "customer_name": "Tú",
+  "honorific": "anh",
+  "notes": "Khách nhắn teencode/không dấu (customer_turns_asr, input_mode chat_teencode): kiểm chuẩn hóa tiếng Việt trước khi hiểu ý.",
+  "calls": {
+    "call_1": {
+      "channel": "zalo_oa",
+      "channel_identity": "zalo_tu_c05",
+      "call_date": "2026-10-15",
+      "customer_goal": "hỏi quạt Senko qua Zalo, nhắn teencode không dấu",
+      "input_mode": "chat_teencode",
+      "customer_turns": [
+        "Quạt đứng Senko còn hàng không, giá bao nhiêu em?",
+        "Lấy một cái nhé. À mà giao mất bao lâu em?",
+        "Người nhận là Tú, ship về số 5 đường Nguyễn Thị Thập, quận 7, TP.HCM.",
+        "Số nhận hàng 0900010010, COD nhé.",
+        "Ừ, chốt đi em."
+      ],
+      "customer_turns_asr": [
+        "quat dung senko con hang ko gia bn e?",
+        "lay mot cai nhe a ma giao mat bao lau e?",
+        "nguoi nhan la tu ship ve so 5 duong nguyen thi thap quan 7 tp hcm",
+        "so nhan hang 0900010010 cod nhe",
+        "u chot di e"
+      ],
+      "facts_established": {
+        "product_advised": "SKU-FAN-SEN",
+        "price_quoted_vnd": 590000,
+        "payment": "COD"
+      },
+      "success_if": {
+        "tool_called": "order.create",
+        "args_match": {
+          "sku": "SKU-FAN-SEN",
+          "price_vnd": 590000,
+          "payment": "COD"
+        }
+      },
+      "ground_truth_facts": {
+        "price_vnd": 590000,
+        "in_stock": true
+      },
+      "expected_outcome": "chot_don"
+    }
+  }
+}

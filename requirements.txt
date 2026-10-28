@@ -1,0 +1,47 @@
+# Viết lại từ đầu (bản cũ có nhiều thư viện đầu cơ không ai import: dspy-ai, mem0ai,
+# qdrant-client, underthesea, transformers, torch, presidio, ragas, fastapi/uvicorn/httpx (đã thêm lại ở bước 17: api/ thật sự serve HTTP)
+# (không ai serve HTTP), mcp SDK (mcp_gateway.py tự viết, không dùng SDK thật), prometheus,
+# opentelemetry). Danh sách dưới đây là những gì thật sự được import trong Code/.
+
+# --- Cấu hình / env ---
+python-dotenv==1.2.4
+
+# --- Bảng giá LLM (config/pricing.yaml) — src/llm/cost_tracker.py (thiếu PyYAML thì dùng bảng giá dự phòng trong mã) ---
+PyYAML==6.0.3
+
+# --- LLM thật (OpenAI function-calling) — src/llm/client.py ---
+openai==3.27.0
+
+# --- ASR local thật (faster-whisper) — src/channels/offline_asr.py ---
+faster-whisper==1.2.1
+ctranslate2==4.8.2
+av==19.0.1
+
+# --- ASR local thứ hai: Gipformer 1.5 68M RNN-T (ONNX int8) — src/channels/offline_asr.py (ASR_BACKEND=gipformer) ---
+# Model KHÔNG nằm trong requirements: tải từ HF g-group-ai-lab/gipformer1.5-68M-rnnt vào model_ASR/ (xem README.md § ASR).
+# Đã chạy thật với Python 3.12 / numpy 2.5.2 / PyAV 19.0.1 (PyAV nạp .mp3/.wav → 16 kHz mono).
+sherpa-onnx==1.13.8     # kéo theo sherpa-onnx-core==1.13.8 và onnxruntime
+numpy>=2.0              # xử lý waveform/VAD năng lượng (đã có sẵn do các thư viện khác kéo theo; ghi rõ vì mã import trực tiếp)
+
+# --- MCP thật (bước 19): các server `mcp_servers/` (mcp-catalog, mcp-crm) và client trong src/tools/mcp_gateway.py ---
+# Từ mcp 2.x `FastMCP` đổi tên thành `MCPServer` (mcp.server.mcpserver). Kéo thêm: mcp-types, pyjwt, cryptography, sse-starlette.
+mcp==2.3.0
+psutil==7.2.2           # test/benchmark (đo RAM, kiểm tiến trình MCP server con)
+
+# --- TTS (chỉ dùng để tự sinh audio thử cho eval_asr.py khi chưa có file thật từ BTC) ---
+edge-tts==7.2.8
+gTTS==2.2.4
+
+# --- Vector backend cho Semantic/KB Memory — src/memory/vector_rag.py ---
+scikit-learn==1.9.1   # TF-IDF backend mặc định (offline, quyết định đã chốt)
+chromadb==1.5.9        # backend dự phòng, chỉ dùng khi VECTOR_BACKEND=chroma
+
+# --- UI Streamlit — ui_app.py ---
+streamlit==1.65.0
+pandas==3.0.6
+
+# --- Backend API (bước 17) — api/: `uvicorn api.app:app`; httpx là phụ thuộc của fastapi.testclient (tests/test_api.py); python-multipart cho POST /asr ---
+fastapi==0.162.0
+uvicorn==0.54.0
+httpx==0.28.1
+python-multipart==0.0.32

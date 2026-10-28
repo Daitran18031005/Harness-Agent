@@ -1,0 +1,73 @@
+=== full 1
+23 ca sai
+
+[tsr          ] SAMPLE-01 call_2 lượt -: không có tool call order.create khớp args_match
+[ccr          ] SAMPLE-01 call_2 lượt -: chưa mang sang: room_area_m2
+[tsr          ] SAMPLE-02 call_2 lượt -: không có tool call order.create khớp args_match
+[ccr          ] SAMPLE-02 call_2 lượt -: chưa mang sang: product_advised, competitor_price_vnd, objection
+[tsr          ] SAMPLE-03 call_2 lượt -: không có tool call order.update khớp args_match
+[ccr          ] SAMPLE-03 call_2 lượt -: chưa mang sang: variant_sku, size
+[tsr          ] SAMPLE-04 call_2 lượt -: không có tool call order.create khớp args_match
+[ccr          ] SAMPLE-04 call_2 lượt -: chưa mang sang: promo_code
+[tsr          ] SAMPLE-05 call_2 lượt -: không có tool call order.create khớp args_match
+[ccr          ] SAMPLE-05 call_2 lượt -: chưa mang sang: price_quoted_vnd, promo_code
+[tsr          ] SAMPLE-06 call_2 lượt -: không có tool call order.create khớp args_match
+[ccr          ] SAMPLE-06 call_2 lượt -: chưa mang sang: room_area_m2
+[hr           ] SC-GEN-01 call_2 lượt 1: claim price_vnd=1521000 ≠ sự thật 1690000
+[hr           ] SC-GEN-02 call_1 lượt 2: claim total_vnd=15380000 ≠ sự thật 15980000
+[hr           ] SC-GEN-02 call_1 lượt 3: claim total_vnd=15380000 ≠ sự thật 15980000
+[hr           ] SC-GEN-02 call_1 lượt 4: claim total_vnd=15380000 ≠ sự thật 15980000
+[hr           ] SC-GEN-02 call_1 lượt 5: claim total_vnd=15380000 ≠ sự thật 15980000
+[ccr          ] SC-GEN-05 call_2 lượt -: chưa mang sang: size, color
+[hr           ] SC-GEN-05 call_2 lượt 1: claim variant_price_delta_vnd=40000 ≠ sự thật 50000
+[tsr          ] SC-GEN-06 call_2 lượt -: không có tool call order.create khớp args_match
+[ccr          ] SC-GEN-06 call_2 lượt -: chưa mang sang: promo_code
+[hr           ] SC-GEN-06 call_2 lượt 3: claim price_vnd=5200000 ≠ sự thật 4290000
+[hr           ] SC-GEN-06 call_2 lượt 5: claim price_vnd=5200000 ≠ sự thật 4290000
+=== full 2
+18 ca sai
+
+[tsr          ] SAMPLE-01 call_2 lượt -: không có tool call order.create khớp args_match
+[ccr          ] SAMPLE-01 call_2 lượt -: chưa mang sang: room_area_m2
+[tsr          ] SAMPLE-02 call_2 lượt -: không có tool call order.create khớp args_match
+[ccr          ] SAMPLE-02 call_2 lượt -: chưa mang sang: product_advised, competitor_price_vnd, objection
+[tsr          ] SAMPLE-03 call_2 lượt -: không có tool call order.update khớp args_match
+[ccr          ] SAMPLE-03 call_2 lượt -: chưa mang sang: variant_sku, size, color
+[tsr          ] SAMPLE-04 call_2 lượt -: không có tool call order.create khớp args_match
+[ccr          ] SAMPLE-04 call_2 lượt -: chưa mang sang: promo_code
+[tsr          ] SAMPLE-05 call_2 lượt -: không có tool call order.create khớp args_match
+[ccr          ] SAMPLE-05 call_2 lượt -: chưa mang sang: price_quoted_vnd, promo_code
+[tsr          ] SAMPLE-06 call_2 lượt -: không có tool call order.create khớp args_match
+[ccr          ] SAMPLE-06 call_2 lượt -: chưa mang sang: room_area_m2
+[hr           ] SC-GEN-01 call_2 lượt 1: claim price_vnd=1521000 ≠ sự thật 1690000
+[hr           ] SC-GEN-02 call_1 lượt 3: claim total_vnd=15380000 ≠ sự thật 15980000
+[hr           ] SC-GEN-02 call_1 lượt 4: claim total_vnd=15380000 ≠ sự thật 15980000
+[ccr          ] SC-GEN-05 call_2 lượt -: chưa mang sang: size, color
+[hr           ] SC-GEN-05 call_2 lượt 1: claim variant_price_delta_vnd=40000 ≠ sự thật 50000
+[ccr          ] SC-GEN-06 call_2 lượt -: chưa mang sang: promo_code
+=== full 3
+23 ca sai
+
+[tsr          ] SAMPLE-01 call_2 lượt -: không có tool call order.create khớp args_match
+[ccr          ] SAMPLE-01 call_2 lượt -: chưa mang sang: room_area_m2
+[tsr          ] SAMPLE-02 call_2 lượt -: không có tool call order.create khớp args_match
+[ccr          ] SAMPLE-02 call_2 lượt -: chưa mang sang: product_advised, competitor_price_vnd, objection
+[tsr          ] SAMPLE-03 call_2 lượt -: không có tool call order.update khớp args_match
+[ccr          ] SAMPLE-03 call_2 lượt -: chưa mang sang: variant_sku, size
+[rqr          ] SAMPLE-03 call_2 lượt 2: hỏi lại slot order_id (open): Anh có thể cho em biết mã đơn hàng hoặc thông tin nào khác liên quan đến đơn hàng này không ạ?
+[rqr          ] SAMPLE-03 call_2 lượt 3: hỏi lại slot order_id (open): Anh có thể cung cấp cho em mã đơn hàng hoặc thông tin nào khác liên quan đến đơn hàng này không ạ?
+[tsr          ] SAMPLE-04 call_2 lượt -: không có tool call order.create khớp args_match
+[ccr          ] SAMPLE-04 call_2 lượt -: chưa mang sang: promo_code
+[tsr          ] SAMPLE-05 call_2 lượt -: không có tool call order.create khớp args_match
+[ccr          ] SAMPLE-05 call_2 lượt -: chưa mang sang: price_quoted_vnd, promo_code
+[tsr          ] SAMPLE-06 call_2 lượt -: không có tool call order.create khớp args_match
+[ccr          ] SAMPLE-06 call_2 lượt -: chưa mang sang: room_area_m2
+[hr           ] SC-GEN-01 call_2 lượt 1: claim price_vnd=1521000 ≠ sự thật 1690000
+[hr           ] SC-GEN-02 call_1 lượt 2: claim total_vnd=15380000 ≠ sự thật 15980000
+[hr           ] SC-GEN-02 call_1 lượt 3: claim total_vnd=15380000 ≠ sự thật 15980000
+[hr           ] SC-GEN-02 call_1 lượt 4: claim total_vnd=15380000 ≠ sự thật 15980000
+[hr           ] SC-GEN-02 call_1 lượt 5: claim total_vnd=15380000 ≠ sự thật 15980000
+[ccr          ] SC-GEN-05 call_2 lượt -: chưa mang sang: size, color
+[hr           ] SC-GEN-05 call_2 lượt 1: claim variant_price_delta_vnd=40000 ≠ sự thật 50000
+[hr           ] SC-GEN-05 call_2 lượt 2: claim variant_price_delta_vnd=40000 ≠ sự thật 50000
+[ccr          ] SC-GEN-06 call_2 lượt -: chưa mang sang: promo_code

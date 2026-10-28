@@ -1,0 +1,105 @@
+{
+ "scenario": {
+  "scenario_id": "SC-D42",
+  "level": "M1",
+  "persona": "khach_hoi_ngoai_tai_lieu",
+  "hard_case": "hoi_ngoai_tai_lieu_doi_thu",
+  "customer_phone": "0900020042",
+  "customer_name": "Phúc",
+  "honorific": "anh",
+  "notes": "So giá đối thủ (nồi chiên).",
+  "group": "C",
+  "archetype": "off_doc",
+  "industry": "nồi chiên",
+  "south": false
+ },
+ "calls": [
+  {
+   "name": "call_1",
+   "channel": "hotline",
+   "goal": "so giá đối thủ + hỏi bảo hành quốc tế (ngoài tài liệu)",
+   "opening": "agent",
+   "customer_plot": "Khách hỏi Nồi chiên không dầu Philips 6.2L giá bao nhiêu; nói 'bên Shopee bán 3.5 triệu thôi, bên em có bằng giá không?'; hỏi thêm 'có bảo hành quốc tế không?'; cuối cùng 'để anh cân nhắc rồi gọi lại'.",
+   "agent_plot": "Agent báo {product} giá {price}, bảo hành {warranty} tháng chính hãng; KHÔNG chê đối thủ, KHÔNG hứa khớp giá/giảm không có chương trình; về bảo hành quốc tế nói thẳng là em chưa có thông tin trong tài liệu và sẽ nhờ nhân viên phản hồi.",
+   "customer_facts": [
+    {
+     "key": "product_asked",
+     "value": "SKU-AF-6L",
+     "hint": "hỏi Nồi chiên không dầu Philips 6.2L"
+    },
+    {
+     "key": "competitor_price_vnd",
+     "value": 3500000,
+     "hint": "bên Shopee bán rẻ hơn, chỉ 3.5 triệu"
+    },
+    {
+     "key": "blocker",
+     "value": "so sanh gia",
+     "hint": "để anh cân nhắc rồi gọi lại"
+    }
+   ],
+   "agent_vars": {
+    "product": {
+     "text": "Nồi chiên không dầu Philips 6.2L",
+     "desc": "tên sản phẩm ĐẦY ĐỦ đã gồm loại hàng (đừng viết thêm loại hàng phía trước)",
+     "entity": [
+      "sku",
+      "SKU-AF-6L"
+     ]
+    },
+    "price": {
+     "text": "3.990.000đ",
+     "desc": "giá cuối (đã tính khuyến mãi)",
+     "entity": [
+      "price_vnd",
+      3990000
+     ]
+    },
+    "warranty": {
+     "text": "12",
+     "desc": "số tháng bảo hành",
+     "entity": [
+      "warranty_months",
+      12
+     ]
+    },
+    "stock": {
+     "text": "hiện còn hàng",
+     "desc": "tình trạng tồn kho của sản phẩm (còn hàng/hết hàng)",
+     "entity": null
+    }
+   },
+   "n_turns": [
+    7,
+    10
+   ],
+   "style": "normal",
+   "expected": {
+    "success_if": {
+     "tool_called": null,
+     "agent_must_say": true,
+     "forbidden_claims": [
+      {
+       "field": "price_vnd",
+       "value": 3500000
+      },
+      "bảo hành quốc tế có"
+     ]
+    },
+    "ground_truth_facts": {
+     "price_vnd": 3990000,
+     "warranty_months": 12
+    },
+    "facts_established": {
+     "product_advised": "SKU-AF-6L",
+     "price_quoted_vnd": 3990000,
+     "competitor_price_vnd": 3500000,
+     "blocker": "so sanh gia"
+    },
+    "expected_outcome": "hen_goi_lai"
+   },
+   "abs_date": "2026-10-15",
+   "call_date": "2026-10-15"
+  }
+ ]
+}

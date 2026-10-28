@@ -1,0 +1,167 @@
+{
+ "scenario_id": "SC-D31",
+ "call": "call_1",
+ "channel": "hotline",
+ "call_date": "2026-10-15",
+ "meta": {
+  "model": "gpt-6-luna",
+  "attempts": 1,
+  "ok": true,
+  "unresolved": [],
+  "rebuilt": true
+ },
+ "frame_sha256": "0845a2a2f752f4be",
+ "allowed_numbers": [
+  4,
+  40,
+  4000000
+ ],
+ "turns": [
+  {
+   "idx": 1,
+   "speaker": "A",
+   "text": "Dạ shop BTC xin nghe, em có thể giúp gì cho mình ạ?",
+   "text_template": "Dạ shop BTC xin nghe, em có thể giúp gì cho mình ạ?",
+   "text_written": "Dạ shop BTC xin nghe, em có thể giúp gì cho mình ạ?",
+   "entities": {},
+   "text_spoken": "dạ shop bê tê xê xin nghe em có thể giúp gì cho mình ạ"
+  },
+  {
+   "idx": 2,
+   "speaker": "C",
+   "text": "Chị cần máy lọc không khí cho phòng khoảng 40m², nhà có bé nhỏ. Ngân sách tầm 4 triệu.",
+   "text_written": "Chị cần máy lọc không khí cho phòng khoảng 40m², nhà có bé nhỏ. Ngân sách tầm 4 triệu.",
+   "states": [
+    "room_area_m2",
+    "has_children",
+    "budget_vnd"
+   ],
+   "entities": {
+    "room_area_m2": 40,
+    "has_children": true,
+    "budget_vnd": 4000000
+   },
+   "text_spoken": "chị cần máy lọc không khí cho phòng khoảng bốn mươi mét vuông nhà có bé nhỏ ngân sách tầm bốn triệu"
+  },
+  {
+   "idx": 3,
+   "speaker": "A",
+   "text": "Dạ, với phòng của chị, mẫu phù hợp nhất là Máy lọc không khí Samsung AX40, giá 6.490.000đ, vượt ngân sách 62%, có khóa an toàn trẻ em và đủ diện tích. Mẫu Máy lọc không khí Xiaomi Smart 4 Lite giá 2.990.000đ thì trong ngân sách. Chị cân nhắc hai mẫu giúp em nhé.",
+   "text_template": "Dạ, với phòng của chị, mẫu phù hợp nhất là {product_top}, giá {price_top}, vượt ngân sách {overage}, có khóa an toàn trẻ em và đủ diện tích. Mẫu {product_alt} giá {price_alt} thì trong ngân sách. Chị cân nhắc hai mẫu giúp em nhé.",
+   "text_written": "Dạ, với phòng của chị, mẫu phù hợp nhất là Máy lọc không khí Samsung AX40, giá 6.490.000đ, vượt ngân sách 62%, có khóa an toàn trẻ em và đủ diện tích. Mẫu Máy lọc không khí Xiaomi Smart 4 Lite giá 2.990.000đ thì trong ngân sách. Chị cân nhắc hai mẫu giúp em nhé.",
+   "entities": {
+    "sku": "SKU-XM-4L",
+    "price_vnd": 2990000
+   },
+   "text_spoken": "dạ với phòng của chị mẫu phù hợp nhất là máy lọc không khí sam sung ây ích bốn mươi giá sáu triệu bốn trăm chín mươi nghìn vượt ngân sách sáu mươi hai phần trăm có khóa an toàn trẻ em và đủ diện tích mẫu máy lọc không khí xiao mi smart bốn lite giá hai triệu chín trăm chín mươi nghìn thì trong ngân sách chị cân nhắc hai mẫu giúp em nhé"
+  },
+  {
+   "idx": 4,
+   "speaker": "C",
+   "text": "Ờ, mẫu đầu vượt nhiều quá. Mẫu trong ngân sách dùng được chứ em? Chị hơi phân vân.",
+   "text_written": "Ờ, mẫu đầu vượt nhiều quá. Mẫu trong ngân sách dùng được chứ em? Chị hơi phân vân.",
+   "states": [],
+   "entities": {},
+   "text_spoken": "ờ mẫu đầu vượt nhiều quá mẫu trong ngân sách dùng được chứ em chị hơi phân vân"
+  },
+  {
+   "idx": 5,
+   "speaker": "A",
+   "text": "Dạ, nếu chị muốn chọn trong ngân sách thì em tư vấn Máy lọc không khí Xiaomi Smart 4 Lite giá 2.990.000đ. Chị chọn mẫu này để em hỗ trợ đặt hàng nhé?",
+   "text_template": "Dạ, nếu chị muốn chọn trong ngân sách thì em tư vấn {product_alt} giá {price_alt}. Chị chọn mẫu này để em hỗ trợ đặt hàng nhé?",
+   "text_written": "Dạ, nếu chị muốn chọn trong ngân sách thì em tư vấn Máy lọc không khí Xiaomi Smart 4 Lite giá 2.990.000đ. Chị chọn mẫu này để em hỗ trợ đặt hàng nhé?",
+   "entities": {
+    "sku": "SKU-XM-4L",
+    "price_vnd": 2990000
+   },
+   "text_spoken": "dạ nếu chị muốn chọn trong ngân sách thì em tư vấn máy lọc không khí xiao mi smart bốn lite giá hai triệu chín trăm chín mươi nghìn chị chọn mẫu này để em hỗ trợ đặt hàng nhé"
+  },
+  {
+   "idx": 6,
+   "speaker": "C",
+   "text": "Ừm, để chị xem... thôi, lấy mẫu trong ngân sách.",
+   "text_written": "Ừm, để chị xem... thôi, lấy mẫu trong ngân sách.",
+   "states": [],
+   "entities": {},
+   "text_spoken": "ừm để chị xem thôi lấy mẫu trong ngân sách"
+  },
+  {
+   "idx": 7,
+   "speaker": "A",
+   "text": "Dạ chị Thảo, cho em xin tên người nhận và địa chỉ giao hàng với ạ.",
+   "text_template": "Dạ chị Thảo, cho em xin tên người nhận và địa chỉ giao hàng với ạ.",
+   "text_written": "Dạ chị Thảo, cho em xin tên người nhận và địa chỉ giao hàng với ạ.",
+   "entities": {},
+   "text_spoken": "dạ chị thảo cho em xin tên người nhận và địa chỉ giao hàng với ạ"
+  },
+  {
+   "idx": 8,
+   "speaker": "C",
+   "text": "Người nhận là Thảo, giao về số 14 phố Tây Sơn, quận Đống Đa, Hà Nội.",
+   "text_written": "Người nhận là Thảo, giao về số 14 phố Tây Sơn, quận Đống Đa, Hà Nội.",
+   "states": [
+    "recipient_name",
+    "address"
+   ],
+   "entities": {
+    "address": "số 14 phố Tây Sơn, quận Đống Đa, Hà Nội"
+   },
+   "text_spoken": "người nhận là thảo giao về số mười bốn phố tây sơn quận đống đa hà nội"
+  },
+  {
+   "idx": 9,
+   "speaker": "A",
+   "text": "Dạ, chị thanh toán COD và nhận hàng bằng số điện thoại đang gọi cho em, đúng không ạ?",
+   "text_template": "Dạ, chị thanh toán COD và nhận hàng bằng số điện thoại đang gọi cho em, đúng không ạ?",
+   "text_written": "Dạ, chị thanh toán COD và nhận hàng bằng số điện thoại đang gọi cho em, đúng không ạ?",
+   "entities": {},
+   "text_spoken": "dạ chị thanh toán cê ô đê và nhận hàng bằng số điện thoại đang gọi cho em đúng không ạ"
+  },
+  {
+   "idx": 10,
+   "speaker": "C",
+   "text": "Đúng rồi, COD nhé.",
+   "text_written": "Đúng rồi, COD nhé.",
+   "states": [
+    "payment"
+   ],
+   "entities": {
+    "payment": "COD"
+   },
+   "text_spoken": "đúng rồi cê ô đê nhé"
+  },
+  {
+   "idx": 11,
+   "speaker": "A",
+   "text": "Em đọc lại đơn: Máy lọc không khí Xiaomi Smart 4 Lite, giá 2.990.000đ, tổng 2.990.000đ, giao cho Thảo, SĐT 0900020031, địa chỉ số 14 phố Tây Sơn, quận Đống Đa, Hà Nội, hình thức thanh toán khi nhận hàng (COD). Mình xác nhận đặt đơn này chứ ạ?",
+   "text_template": "Em đọc lại đơn: {product}, giá {price}, tổng {readback_total}, giao cho {recipient_name}, SĐT {caller_phone}, địa chỉ {address}, hình thức {payment_label}. Mình xác nhận đặt đơn này chứ ạ?",
+   "text_written": "Em đọc lại đơn: Máy lọc không khí Xiaomi Smart 4 Lite, giá 2.990.000đ, tổng 2.990.000đ, giao cho Thảo, SĐT 0900020031, địa chỉ số 14 phố Tây Sơn, quận Đống Đa, Hà Nội, hình thức thanh toán khi nhận hàng (COD). Mình xác nhận đặt đơn này chứ ạ?",
+   "entities": {
+    "sku": "SKU-XM-4L",
+    "price_vnd": 2990000,
+    "phone": "0900020031"
+   },
+   "text_spoken": "em đọc lại đơn máy lọc không khí xiao mi smart bốn lite giá hai triệu chín trăm chín mươi nghìn tổng hai triệu chín trăm chín mươi nghìn giao cho thảo số điện thoại không chín không không không hai không không ba một địa chỉ số mười bốn phố tây sơn quận đống đa hà nội hình thức thanh toán khi nhận hàng cê ô đê mình xác nhận đặt đơn này chứ ạ"
+  },
+  {
+   "idx": 12,
+   "speaker": "C",
+   "text": "Đúng rồi em, chốt đi.",
+   "text_written": "Đúng rồi em, chốt đi.",
+   "states": [],
+   "entities": {},
+   "text_spoken": "đúng rồi em chốt đi"
+  },
+  {
+   "idx": 13,
+   "speaker": "A",
+   "text": "Dạ, mã đơn của chị là OD600001, dự kiến giao trong 2 ngày ạ.",
+   "text_template": "Dạ, mã đơn của chị là {order_id}, dự kiến giao trong {delivery_days} ngày ạ.",
+   "text_written": "Dạ, mã đơn của chị là OD600001, dự kiến giao trong 2 ngày ạ.",
+   "entities": {
+    "order_id": "OD600001"
+   },
+   "text_spoken": "dạ mã đơn của chị là ô đê sáu không không không không một dự kiến giao trong hai ngày ạ"
+  }
+ ]
+}

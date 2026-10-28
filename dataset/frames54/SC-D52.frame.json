@@ -1,0 +1,110 @@
+{
+ "scenario": {
+  "scenario_id": "SC-D52",
+  "level": "M1",
+  "persona": "khach_hoi_nhieu_khong_mua",
+  "hard_case": "so_noi_bang_chu",
+  "customer_phone": "0900020052",
+  "customer_name": "Huy",
+  "honorific": "anh",
+  "notes": "Số nói bằng chữ (customer_turns_asr, input_mode asr_transcript): ngân sách và SĐT đọc thành lời → kiểm ITN và Entity Accuracy.",
+  "group": "C",
+  "archetype": "spoken_numbers",
+  "industry": "mẹ & bé",
+  "south": false
+ },
+ "calls": [
+  {
+   "name": "call_1",
+   "channel": "hotline",
+   "goal": "hỏi Xe đẩy 2 chiều Combi Sugocal bằng giọng nói: ngân sách và SĐT đọc bằng chữ",
+   "opening": "agent",
+   "customer_plot": "Khách hỏi Xe đẩy 2 chiều Combi Sugocal: còn hàng không, giá bao nhiêu, bảo hành mấy tháng; nghe xong nói 'để anh tham khảo thêm rồi gọi lại'. Tính cách: nghe không rõ, nhờ nhắc lại. Khi nói số tiền và SĐT, nói rõ ràng. QUAN TRỌNG: trong lời VIẾT, SĐT phải là chữ số liền 0900020052 và số tiền viết bằng chữ số (vd '4,5 triệu'); hệ thống tự đổi thành lời đọc từng chữ số — tuyệt đối đừng tự viết số bằng chữ.",
+   "agent_plot": "Agent trả lời ĐỦ cả ba câu hỏi (còn hàng/giá/bảo hành) bằng ô trống; không ép mua; ghi nhận khách sẽ gọi lại. Nhắc lại SĐT khách vừa đọc ({caller_phone}) để xác nhận sẽ gọi lại đúng số đó.",
+   "customer_facts": [
+    {
+     "key": "product_asked",
+     "value": "SKU-MB-STR2",
+     "hint": "hỏi Xe đẩy 2 chiều Combi Sugocal"
+    },
+    {
+     "key": "budget_vnd",
+     "value": 2800000,
+     "hint": "nói ngân sách tầm 2.8 triệu"
+    },
+    {
+     "key": "phone_provided",
+     "value": "0900020052",
+     "hint": "đọc SĐT 0900020052 để nhân viên gọi lại"
+    }
+   ],
+   "agent_vars": {
+    "product": {
+     "text": "Xe đẩy 2 chiều Combi Sugocal",
+     "desc": "tên sản phẩm ĐẦY ĐỦ đã gồm loại hàng (đừng viết thêm loại hàng phía trước)",
+     "entity": [
+      "sku",
+      "SKU-MB-STR2"
+     ]
+    },
+    "price": {
+     "text": "6.790.000đ",
+     "desc": "giá cuối (đã tính khuyến mãi)",
+     "entity": [
+      "price_vnd",
+      6790000
+     ]
+    },
+    "warranty": {
+     "text": "12",
+     "desc": "số tháng bảo hành",
+     "entity": [
+      "warranty_months",
+      12
+     ]
+    },
+    "stock": {
+     "text": "hiện còn hàng",
+     "desc": "tình trạng tồn kho của sản phẩm (còn hàng/hết hàng)",
+     "entity": null
+    },
+    "caller_phone": {
+     "text": "0900020052",
+     "desc": "SĐT khách vừa đọc — CHỈ dùng sau khi khách đã đọc",
+     "entity": [
+      "phone",
+      "0900020052"
+     ],
+     "after": "phone_provided"
+    }
+   },
+   "n_turns": [
+    7,
+    9
+   ],
+   "style": "spoken",
+   "expected": {
+    "success_if": {
+     "tool_called": null,
+     "agent_must_say": true,
+     "must_not_call_tools": [
+      "order.create"
+     ]
+    },
+    "ground_truth_facts": {
+     "price_vnd": 6790000,
+     "warranty_months": 12,
+     "in_stock": true
+    },
+    "facts_established": {
+     "product_advised": "SKU-MB-STR2",
+     "price_quoted_vnd": 6790000
+    },
+    "expected_outcome": "hen_goi_lai",
+    "input_mode": "asr_transcript"
+   },
+   "abs_date": "2026-10-15",
+   "call_date": "2026-10-15"
+  }
+ ]
+}

@@ -1,0 +1,32 @@
+{
+  "scenario_id": "SC-GEN-14",
+  "level": "M1",
+  "persona": "khach_hoi_nhieu_khong_mua",
+  "hard_case": "sku_ngung_ban",
+  "customer_phone": "0965237355",
+  "customer_name": "Xuân",
+  "honorific": "chị",
+  "notes": "Khách hỏi mua AirPure X bản 2024 (SKU-AP-X-2024, đã ngừng bán theo products.json attributes.discontinued=true) — agent phải báo ngừng bán và gợi ý sản phẩm thay thế SKU-AP-X (successor_sku thật), không được tạo đơn cho SKU ngừng bán.",
+  "calls": {
+    "call_1": {
+      "call_date": "2026-10-15",
+      "customer_turns": [
+        "Em ơi AirPure X bản 2024 còn bán không, chị thấy quảng cáo cũ."
+      ],
+      "success_if": {
+        "must_not_call_tools": [
+          "order.create"
+        ],
+        "must_say_any": [
+          "ngừng bán",
+          "AirPure X"
+        ]
+      },
+      "ground_truth_facts": {
+        "discontinued": true,
+        "successor_sku": "SKU-AP-X"
+      },
+      "expected_outcome": "hen_goi_lai"
+    }
+  }
+}

@@ -1,0 +1,162 @@
+{
+ "scenario_id": "SC-C04",
+ "call": "call_1",
+ "channel": "hotline",
+ "call_date": "2026-10-15",
+ "allowed_numbers": [
+  2
+ ],
+ "turns": [
+  {
+   "idx": 1,
+   "speaker": "A",
+   "text": "Dạ shop BTC xin nghe, em có thể giúp gì cho mình ạ?",
+   "text_template": "Dạ shop BTC xin nghe, em có thể giúp gì cho mình ạ?",
+   "text_written": "Dạ shop BTC xin nghe, em có thể giúp gì cho mình ạ?",
+   "entities": {},
+   "text_spoken": "dạ shop bê tê xê xin nghe em có thể giúp gì cho mình ạ"
+  },
+  {
+   "idx": 2,
+   "speaker": "C",
+   "text": "Mua 2 máy lọc không khí Samsung AX40, ban đầu chị muốn COD.",
+   "text_written": "Mua 2 máy lọc không khí Samsung AX40, ban đầu chị muốn COD.",
+   "states": [
+    "quantity",
+    "payment"
+   ],
+   "entities": {
+    "quantity": 2,
+    "payment": "COD"
+   },
+   "text_spoken": "mua hai máy lọc không khí sam sung ây ích bốn mươi ban đầu chị muốn cê ô đê"
+  },
+  {
+   "idx": 3,
+   "speaker": "A",
+   "text": "Dạ, máy lọc không khí Samsung AX40 giá 6.490.000đ/máy, tổng 12.980.000đ, hiện hiện còn hàng. Em thử đặt COD thì hệ thống báo đơn vượt hạn mức COD 10.000.000đ. Chị chuyển khoản giúp em nhé?",
+   "text_template": "Dạ, máy lọc không khí Samsung AX40 giá {unit_price}/máy, tổng {total}, hiện {stock}. Em thử đặt COD thì hệ thống báo đơn vượt hạn mức COD {cod_limit}. Chị chuyển khoản giúp em nhé?",
+   "text_written": "Dạ, máy lọc không khí Samsung AX40 giá 6.490.000đ/máy, tổng 12.980.000đ, hiện hiện còn hàng. Em thử đặt COD thì hệ thống báo đơn vượt hạn mức COD 10.000.000đ. Chị chuyển khoản giúp em nhé?",
+   "entities": {
+    "price_vnd": 6490000,
+    "total_vnd": 12980000,
+    "cod_limit_vnd": 10000000
+   },
+   "text_spoken": "dạ máy lọc không khí sam sung ây ích bốn mươi giá sáu triệu bốn trăm chín mươi nghìn máy tổng mười hai triệu chín trăm tám mươi nghìn hiện hiện còn hàng em thử đặt cê ô đê thì hệ thống báo đơn vượt hạn mức cê ô đê mười triệu chị chuyển khoản giúp em nhé"
+  },
+  {
+   "idx": 4,
+   "speaker": "C",
+   "text": "Ừ, chuyển khoản. Giao số 102 đường Cách Mạng Tháng Tám, quận 10, TP.HCM.",
+   "text_written": "Ừ, chuyển khoản. Giao số 102 đường Cách Mạng Tháng Tám, quận 10, TP.HCM.",
+   "states": [
+    "payment",
+    "address"
+   ],
+   "entities": {
+    "payment": "COD",
+    "address": "số 102 đường Cách Mạng Tháng Tám, quận 10, TP.HCM"
+   },
+   "text_spoken": "ừ chuyển khoản giao số một trăm lẻ hai đường cách mạng tháng tám quận mười tp hcm"
+  },
+  {
+   "idx": 5,
+   "speaker": "A",
+   "text": "Dạ, em ghi nhận địa chỉ rồi ạ. Tên người nhận là Hạnh đúng không chị? Số điện thoại nhận hàng là 0900010009, số chị đang gọi, đúng không ạ?",
+   "text_template": "Dạ, em ghi nhận địa chỉ rồi ạ. Tên người nhận là Hạnh đúng không chị? Số điện thoại nhận hàng là {caller_phone}, số chị đang gọi, đúng không ạ?",
+   "text_written": "Dạ, em ghi nhận địa chỉ rồi ạ. Tên người nhận là Hạnh đúng không chị? Số điện thoại nhận hàng là 0900010009, số chị đang gọi, đúng không ạ?",
+   "entities": {
+    "phone": "0900010009"
+   },
+   "text_spoken": "dạ em ghi nhận địa chỉ rồi ạ tên người nhận là hạnh đúng không chị số điện thoại nhận hàng là không chín không không không một không không không chín số chị đang gọi đúng không ạ"
+  },
+  {
+   "idx": 6,
+   "speaker": "C",
+   "text": "Đúng, người nhận Hạnh. Số đang gọi đó.",
+   "text_written": "Đúng, người nhận Hạnh. Số đang gọi đó.",
+   "states": [
+    "recipient_name"
+   ],
+   "entities": {},
+   "text_spoken": "đúng người nhận hạnh số đang gọi đó"
+  },
+  {
+   "idx": 7,
+   "speaker": "A",
+   "text": "Dạ, em xác nhận mình dùng số đang gọi là 0900010009 để nhận hàng nhé chị?",
+   "text_template": "Dạ, em xác nhận mình dùng số đang gọi là {caller_phone} để nhận hàng nhé chị?",
+   "text_written": "Dạ, em xác nhận mình dùng số đang gọi là 0900010009 để nhận hàng nhé chị?",
+   "entities": {
+    "phone": "0900010009"
+   },
+   "text_spoken": "dạ em xác nhận mình dùng số đang gọi là không chín không không không một không không không chín để nhận hàng nhé chị"
+  },
+  {
+   "idx": 8,
+   "speaker": "C",
+   "text": "Ừ, đúng rồi.",
+   "text_written": "Ừ, đúng rồi.",
+   "states": [],
+   "entities": {},
+   "text_spoken": "ừ đúng rồi"
+  },
+  {
+   "idx": 9,
+   "speaker": "A",
+   "text": "Dạ, em đã có thông tin giao hàng. Chị chuyển khoản cho đơn này giúp em nhé.",
+   "text_template": "Dạ, em đã có thông tin giao hàng. Chị chuyển khoản cho đơn này giúp em nhé.",
+   "text_written": "Dạ, em đã có thông tin giao hàng. Chị chuyển khoản cho đơn này giúp em nhé.",
+   "entities": {},
+   "text_spoken": "dạ em đã có thông tin giao hàng chị chuyển khoản cho đơn này giúp em nhé"
+  },
+  {
+   "idx": 10,
+   "speaker": "C",
+   "text": "Ừ, lên đơn đi em.",
+   "text_written": "Ừ, lên đơn đi em.",
+   "states": [],
+   "entities": {},
+   "text_spoken": "ừ lên đơn đi em"
+  },
+  {
+   "idx": 11,
+   "speaker": "A",
+   "text": "Dạ, em đọc lại đơn: máy lọc không khí Samsung AX40, giá 6.490.000đ/máy, tổng 12.980.000đ, giao cho Hạnh, SĐT 0900010009, địa chỉ số 102 đường Cách Mạng Tháng Tám, quận 10, TP.HCM, thanh toán chuyển khoản. Chị xác nhận đặt đơn này chứ ạ?",
+   "text_template": "Dạ, em đọc lại đơn: máy lọc không khí Samsung AX40, giá {unit_price}/máy, tổng {readback_total}, giao cho {recipient_name}, SĐT {caller_phone}, địa chỉ {address}, thanh toán {payment_label}. Chị xác nhận đặt đơn này chứ ạ?",
+   "text_written": "Dạ, em đọc lại đơn: máy lọc không khí Samsung AX40, giá 6.490.000đ/máy, tổng 12.980.000đ, giao cho Hạnh, SĐT 0900010009, địa chỉ số 102 đường Cách Mạng Tháng Tám, quận 10, TP.HCM, thanh toán chuyển khoản. Chị xác nhận đặt đơn này chứ ạ?",
+   "entities": {
+    "price_vnd": 6490000,
+    "phone": "0900010009"
+   },
+   "text_spoken": "dạ em đọc lại đơn máy lọc không khí sam sung ây ích bốn mươi giá sáu triệu bốn trăm chín mươi nghìn máy tổng mười hai triệu chín trăm tám mươi nghìn giao cho hạnh số điện thoại không chín không không không một không không không chín địa chỉ số một trăm lẻ hai đường cách mạng tháng tám quận mười tp hcm thanh toán chuyển khoản chị xác nhận đặt đơn này chứ ạ"
+  },
+  {
+   "idx": 12,
+   "speaker": "C",
+   "text": "Đúng rồi.",
+   "text_written": "Đúng rồi.",
+   "states": [],
+   "entities": {},
+   "text_spoken": "đúng rồi"
+  },
+  {
+   "idx": 13,
+   "speaker": "A",
+   "text": "Dạ, đơn hàng của chị là OD600001. Em sẽ cập nhật thời gian giao hàng cho chị ạ.",
+   "text_template": "Dạ, đơn hàng của chị là {order_id}. Em sẽ cập nhật thời gian giao hàng cho chị ạ.",
+   "text_written": "Dạ, đơn hàng của chị là OD600001. Em sẽ cập nhật thời gian giao hàng cho chị ạ.",
+   "entities": {
+    "order_id": "OD600001"
+   },
+   "text_spoken": "dạ đơn hàng của chị là ô đê sáu không không không không một em sẽ cập nhật thời gian giao hàng cho chị ạ"
+  }
+ ],
+ "meta": {
+  "model": "gpt-6-luna",
+  "attempts": 1,
+  "ok": true,
+  "unresolved": []
+ },
+ "frame_sha256": "927b45137ee618e8"
+}

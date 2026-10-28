@@ -1,0 +1,194 @@
+{
+ "scenario": {
+  "scenario_id": "SC-D32",
+  "level": "M1",
+  "persona": "khach_do_du_hoi_nguoi_nha",
+  "hard_case": "vuot_ngan_sach_2_lua_chon",
+  "customer_phone": "0900020032",
+  "customer_name": "Bình",
+  "honorific": "anh",
+  "notes": "Vượt ngân sách 44% (> 20%): nhánh HAI LỰA CHỌN (Máy lọc không khí Samsung AX40 vs Máy lọc không khí Xiaomi Smart 4 Lite); khách cân nhắc rồi vẫn chọn mẫu phù hợp nhất dù đắt hơn.",
+  "group": "C",
+  "archetype": "over_budget",
+  "industry": "máy lọc không khí",
+  "south": true
+ },
+ "calls": [
+  {
+   "name": "call_1",
+   "channel": "zalo_oa",
+   "goal": "hỏi máy lọc không khí có bé nhỏ, ngân sách thấp hơn nhiều so với mẫu phù hợp",
+   "opening": "customer",
+   "customer_plot": "Khách cần máy lọc không khí: phòng khoảng 40m²; nhà có bé nhỏ; ngân sách tầm 4.5 triệu. Nghe mẫu phù hợp nhất vượt ngân sách nhiều, nghe thêm mẫu trong ngân sách rồi cân nhắc rồi vẫn chọn mẫu phù hợp nhất dù đắt hơn.",
+   "agent_plot": "Agent hỏi thông tin còn thiếu; giới thiệu CẢ HAI: {product_top} giá {price_top} (vượt ngân sách {overage}, có khóa an toàn trẻ em/đủ diện tích) và {product_alt} giá {price_alt} (trong ngân sách) để khách chọn; theo quy trình đặt đơn rồi chốt: mã đơn {order_id}, giao {delivery_days} ngày.",
+   "customer_facts": [
+    {
+     "key": "room_area_m2",
+     "value": 40,
+     "hint": "phòng khoảng 40m²"
+    },
+    {
+     "key": "has_children",
+     "value": true,
+     "hint": "nhà có bé nhỏ"
+    },
+    {
+     "key": "budget_vnd",
+     "value": 4500000,
+     "hint": "ngân sách tầm 4.5 triệu"
+    },
+    {
+     "key": "payment",
+     "value": "COD",
+     "hint": "COD"
+    },
+    {
+     "key": "address",
+     "value": "số 27 đường Lý Thường Kiệt, quận Tân Bình, TP.HCM",
+     "hint": "giao về số 27 đường Lý Thường Kiệt, quận Tân Bình, TP.HCM"
+    },
+    {
+     "key": "recipient_name",
+     "value": "Bình",
+     "hint": "nói tên người nhận là Bình"
+    },
+    {
+     "key": "phone_provided",
+     "value": "0900020032",
+     "hint": "đọc SĐT nhận hàng 0900020032"
+    }
+   ],
+   "agent_vars": {
+    "product_top": {
+     "text": "Máy lọc không khí Samsung AX40",
+     "desc": "sản phẩm phù hợp nhất nhưng vượt ngân sách",
+     "entity": [
+      "sku",
+      "SKU-SS-AX40"
+     ]
+    },
+    "price_top": {
+     "text": "6.490.000đ",
+     "desc": "giá cuối sản phẩm phù hợp nhất",
+     "entity": [
+      "price_vnd",
+      6490000
+     ]
+    },
+    "overage": {
+     "text": "44%",
+     "desc": "mức giá sản phẩm phù hợp nhất vượt ngân sách",
+     "entity": null
+    },
+    "product_alt": {
+     "text": "Máy lọc không khí Xiaomi Smart 4 Lite",
+     "desc": "sản phẩm tốt nhất TRONG ngân sách",
+     "entity": [
+      "sku",
+      "SKU-XM-4L"
+     ]
+    },
+    "price_alt": {
+     "text": "2.990.000đ",
+     "desc": "giá cuối sản phẩm trong ngân sách",
+     "entity": [
+      "price_vnd",
+      2990000
+     ]
+    },
+    "product": {
+     "text": "Máy lọc không khí Samsung AX40",
+     "desc": "sản phẩm khách chọn",
+     "entity": [
+      "sku",
+      "SKU-SS-AX40"
+     ]
+    },
+    "price": {
+     "text": "6.490.000đ",
+     "desc": "giá cuối sản phẩm khách chọn",
+     "entity": [
+      "price_vnd",
+      6490000
+     ]
+    },
+    "order_id": {
+     "text": "OD600001",
+     "desc": "mã đơn",
+     "entity": [
+      "order_id",
+      "OD600001"
+     ]
+    },
+    "delivery_days": {
+     "text": "3",
+     "desc": "số ngày giao",
+     "entity": null
+    },
+    "address": {
+     "text": "số 27 đường Lý Thường Kiệt, quận Tân Bình, TP.HCM",
+     "desc": "địa chỉ giao (khách vừa đọc) — CHỈ dùng sau khi khách đã đọc địa chỉ",
+     "entity": null,
+     "after": "address"
+    },
+    "readback_total": {
+     "text": "6.490.000đ",
+     "desc": "tổng tiền cả đơn (giá × số lượng) — dùng khi ĐỌC LẠI ĐƠN",
+     "entity": null
+    },
+    "payment_label": {
+     "text": "thanh toán khi nhận hàng (COD)",
+     "desc": "hình thức thanh toán chốt của đơn — dùng khi ĐỌC LẠI ĐƠN",
+     "entity": null
+    },
+    "recipient_name": {
+     "text": "Bình",
+     "desc": "tên người nhận — CHỈ dùng sau khi khách đã nói tên",
+     "entity": null,
+     "after": "recipient_name"
+    },
+    "caller_phone": {
+     "text": "0900020032",
+     "desc": "SĐT nhận hàng (số khách đang gọi/nhắn) — đọc lại để xác nhận",
+     "entity": [
+      "phone",
+      "0900020032"
+     ],
+     "after": "phone_provided"
+    }
+   },
+   "n_turns": [
+    11,
+    15
+   ],
+   "style": "normal",
+   "expected": {
+    "success_if": {
+     "tool_called": "order.create",
+     "args_match": {
+      "sku": "SKU-SS-AX40",
+      "price_vnd": 6490000,
+      "payment": "COD"
+     }
+    },
+    "ground_truth_facts": {
+     "price_vnd": 6490000,
+     "overage_pct": 44,
+     "in_stock": true
+    },
+    "facts_established": {
+     "product_advised": "SKU-SS-AX40",
+     "room_area_m2": 40,
+     "has_children": true,
+     "budget_vnd": 4500000,
+     "price_quoted_vnd": 6490000
+    },
+    "expected_outcome": "chot_don"
+   },
+   "abs_date": "2026-10-15",
+   "channel_identity": "zalo.d32",
+   "call_date": "2026-10-15",
+   "order_flow": true
+  }
+ ]
+}

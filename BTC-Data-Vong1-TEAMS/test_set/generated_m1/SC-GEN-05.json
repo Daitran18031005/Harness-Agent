@@ -1,0 +1,55 @@
+{
+  "scenario_id": "SC-GEN-05",
+  "level": "M1",
+  "persona": "khach_doi_size",
+  "hard_case": "doi_size_phu_thu_bien_the",
+  "customer_phone": "0930976582",
+  "customer_name": "Cường",
+  "honorific": "anh",
+  "notes": "Đổi từ RunLite 2 Pro size 40 màu đen (delta 0) sang size 43 màu đen (delta +50.000đ) — phụ thu biến thể thật theo products.json, cộng dồn với fee đổi size lần đầu (DT-03: miễn phí dịch vụ đổi, nhưng vẫn phải trả phần chênh giá biến thể extra_payment_vnd).",
+  "calls": {
+    "call_1": {
+      "call_date": "2026-09-20",
+      "customer_turns": [
+        "Em ơi giày RunLite 2 Pro còn size 40 màu đen không?",
+        "Ok lên đơn cho anh, COD nhé."
+      ],
+      "facts_established": {
+        "product_advised": "SKU-SN-RUN2",
+        "variant_sku": "SKU-SN-RUN2-40-DEN",
+        "size": 40,
+        "color": "den",
+        "price_quoted_vnd": 1690000,
+        "payment": "COD"
+      },
+      "expected_outcome": "chot_don"
+    },
+    "call_2": {
+      "days_later": 5,
+      "customer_turns": [
+        "Alo em, giày RunLite nhận rồi nhưng anh muốn đổi lên size 43 cùng màu đen.",
+        "Có phụ thu gì không em?"
+      ],
+      "must_carry_over": [
+        "variant_sku",
+        "size",
+        "color"
+      ],
+      "must_not_ask": [
+        "product_advised",
+        "color"
+      ],
+      "success_if": {
+        "tool_called": "order.update",
+        "args_match": {
+          "new_variant_sku": "SKU-SN-RUN2-43-DEN",
+          "action": "exchange_size"
+        }
+      },
+      "ground_truth_facts": {
+        "variant_price_delta_vnd": 50000
+      },
+      "expected_outcome": "chot_don"
+    }
+  }
+}

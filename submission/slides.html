@@ -1,0 +1,199 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Harness Agent Call Center — 15 slide</title>
+<style>
+  :root { --bg:#0f141c; --card:#171e29; --ink:#e8ecf2; --muted:#9aa6b8; --accent:#5aa9ff; --ok:#4cc38a; --warn:#f5a54a; --line:#2a3342; }
+  @media (prefers-color-scheme: light) { :root { --bg:#eef1f5; --card:#fff; --ink:#1c2230; --muted:#5b6678; --accent:#1f6fd1; --ok:#067647; --warn:#b54708; --line:#d9dee7; } }
+  * { box-sizing:border-box; }
+  html, body { margin:0; height:100%; background:var(--bg); color:var(--ink); font:20px/1.45 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif; }
+  .slide { display:none; min-height:100vh; padding:5vh 7vw; flex-direction:column; justify-content:center; gap:18px; }
+  .slide.on { display:flex; }
+  h1 { font-size:2.1em; margin:0; line-height:1.15; } h2 { font-size:1.55em; margin:0 0 6px; color:var(--accent); }
+  p, li { margin:0; } ul { margin:0; padding-left:1.2em; display:grid; gap:8px; }
+  .sub { color:var(--muted); font-size:.85em; }
+  table { border-collapse:collapse; width:100%; font-size:.78em; background:var(--card); border-radius:8px; overflow:hidden; }
+  th, td { padding:7px 10px; border-bottom:1px solid var(--line); text-align:left; vertical-align:top; } th { color:var(--muted); font-weight:500; }
+  .ok { color:var(--ok); font-weight:600; } .no { color:var(--warn); font-weight:600; }
+  .cols { display:grid; grid-template-columns:1fr 1fr; gap:22px; } .box { background:var(--card); border:1px solid var(--line); border-radius:10px; padding:14px 18px; }
+  .flow { display:flex; gap:8px; flex-wrap:wrap; align-items:center; font-size:.8em; } .flow span.n { background:var(--card); border:1px solid var(--line); border-radius:8px; padding:8px 12px; } .flow i { color:var(--muted); font-style:normal; }
+  .big { font-size:2.4em; font-weight:700; color:var(--accent); line-height:1; }
+  .nav { position:fixed; right:18px; bottom:12px; color:var(--muted); font-size:.7em; user-select:none; }
+  @media print { .slide { display:flex !important; min-height:auto; height:100vh; page-break-after:always; } .nav { display:none; } }
+</style>
+</head>
+<body>
+
+<section class="slide on">
+  <h1>Harness Agent Call Center<br>E-commerce (Telesale)</h1>
+  <p>Agent nhớ khách qua nhiều cuộc gọi và kênh, không hỏi lại, không bịa giá, không tạo đơn khi khách chưa đồng ý</p>
+  <p class="sub">Sudo Code 2026 — Vòng 1 · số liệu: bước 15 giai đoạn 2 (22 kịch bản, 3 seed)</p>
+</section>
+
+<section class="slide">
+  <h2>Bài toán</h2>
+  <ul>
+    <li>Khách gọi lại hôm sau: agent mới hỏi lại tên, nhu cầu, diện tích phòng… — khách bực, cuộc gọi dài, bỏ đơn</li>
+    <li>LLM tự tin báo sai giá/khuyến mãi; tạo đơn khi khách mới chỉ "hỏi thử"</li>
+    <li>Cùng một khách đi qua hotline, Zalo, Fanpage nhưng hệ thống coi là nhiều người</li>
+    <li>Số điện thoại, địa chỉ của khách không được lộ vào LLM, log, trace</li>
+  </ul>
+</section>
+
+<section class="slide">
+  <h2>Giải pháp trong một câu</h2>
+  <div class="box"><b>LLM hiểu, code kiểm chứng.</b> LLM gọi tool (catalog, kho, giá, CRM, bộ nhớ) qua MCP; mọi điều có hệ quả — số tiền, tạo đơn, chuyển máy — có chốt bằng code và dẫn chứng nguyên văn từ lời khách.</div>
+  <ul>
+    <li><b>Call Brief</b> trước khi nói: khách là ai, đã tư vấn gì, <i>không được hỏi lại</i> gì, giá/tồn kho hôm nay</li>
+    <li><b>Bộ nhớ 4 tầng</b> có TTL, lịch sử phiên bản khi khách đổi ý</li>
+    <li><b>Order gate + guardrail</b> chặn đơn sớm và số tiền không khớp tool</li>
+  </ul>
+</section>
+
+<section class="slide">
+  <h2>Kiến trúc</h2>
+  <div class="flow"><span class="n">Khách / audio</span><i>→</i><span class="n">Chuẩn hóa + che PII</span><i>→</i><span class="n">Nhận diện đa kênh</span><i>→</i><span class="n">Call Brief</span><i>→</i><span class="n">Điều phối LLM + tool</span><i>→</i><span class="n">Order gate</span><i>→</i><span class="n">Guardrail</span><i>→</i><span class="n">Trace</span></div>
+  <div class="cols">
+    <div class="box"><b>3 MCP server thật</b><br>mcp-catalog (đọc) · mcp-crm (khách, đơn, hẹn) · <b>mcp-memory</b> (nơi ghi duy nhất, phân quyền theo caller)</div>
+    <div class="box"><b>Giao diện</b><br>FastAPI + web một trang: chat, Call Brief, dòng thời gian bộ nhớ, nhật ký tool, đơn hàng, ASR</div>
+  </div>
+</section>
+
+<section class="slide">
+  <h2>Một lượt xử lý</h2>
+  <ul>
+    <li><b>1–2.</b> Sửa lỗi ASR, đổi số nói bằng chữ, che PII; nhận diện khách theo SĐT/Zalo/FB, nối định danh</li>
+    <li><b>3.</b> Call Brief: <i>must_not_ask</i>, <i>must_carry_over</i>, câu mở đầu tiếp nối; code tra sẵn giá/kho/KM</li>
+    <li><b>4.</b> LLM function-calling (≤ 6 vòng); code sửa SKU, chèn ngày, chống gọi lặp tool ghi</li>
+    <li><b>5–6.</b> Order gate: checklist → đọc lại đơn → khách đồng ý rõ ràng mới tạo đơn · Guardrail: số tiền phải có trong kết quả tool</li>
+    <li><b>7.</b> Trace theo schema BTC; hết cuộc → episode + trích rào cản/ngân sách/giá đối thủ</li>
+  </ul>
+</section>
+
+<section class="slide">
+  <h2>Bộ nhớ 4 tầng</h2>
+  <table>
+    <tr><th>Tầng</th><th>Lưu</th><th>Cơ chế</th></tr>
+    <tr><td>Working</td><td>ngữ cảnh phiên</td><td>xóa khi hết cuộc</td></tr>
+    <tr><td>Profile</td><td>sự thật bền về khách</td><td>TTL theo ngày cuộc gọi · khách đổi ý → bản cũ <i>superseded</i> · có nguồn call/lượt/kênh</td></tr>
+    <tr><td>Episodic</td><td>tóm tắt từng cuộc</td><td>một episode/cuộc; đọc theo ngày gọi</td></tr>
+    <tr><td>Semantic</td><td>99 chunk chính sách</td><td>router LLM chọn file + ngày mua + "ngoài tài liệu" → TF-IDF; lỗi router → TF-IDF toàn bộ</td></tr>
+  </table>
+</section>
+
+<section class="slide">
+  <h2>MCP: vì sao, và vì sao không A2A</h2>
+  <div class="cols">
+    <div class="box"><b>MCP</b><ul><li>một nơi ghi duy nhất → không hai nơi cùng ghi một khách</li><li>quyền theo caller, mặc định từ chối</li><li>nhật ký tool theo phiên</li></ul></div>
+    <div class="box"><b>Không A2A</b><ul><li>một agent + tool đủ cho kịch bản M1</li><li>thêm agent ↔ agent chỉ thêm lượt gọi LLM và độ trễ</li><li>module chuyên biệt chỉ còn làm nhánh dự phòng khi mất LLM</li></ul></div>
+  </div>
+</section>
+
+<section class="slide">
+  <h2>An toàn</h2>
+  <ul>
+    <li><b>Order gate luôn bật:</b> không tạo đơn khi khách chưa xác nhận bản đọc lại</li>
+    <li><b>Guardrail:</b> số tiền/phí/tồn kho khớp tool; chặn "đã lên đơn" khi chưa có tool; chặn "em là nhân viên thật"</li>
+    <li><b>PII:</b> SĐT/địa chỉ/CCCD thành token trước LLM và trace; API trả trace rút gọn</li>
+    <li><b>Trần chi phí cứng</b> mọi lần chạy thật; <b>timeout 20 s + thử lại</b> khi API đứng</li>
+    <li><b>Nhánh dự phòng mất LLM:</b> chưa biết sản phẩm thì hỏi lại, không chọn bừa</li>
+  </ul>
+</section>
+
+<section class="slide">
+  <h2>Cách đo</h2>
+  <ul>
+    <li><b>22 kịch bản:</b> 7 mẫu BTC + 15 kịch bản sinh (đa phiên, đa kênh, ca biên); <b>3 seed</b>; mỗi seed một mẫu</li>
+    <li>Chấm bằng <code>reference_eval.py</code> của BTC, 5 chỉ số: TSR · RQR · CCR · HR giá/KM · độ trễ</li>
+    <li>Baseline: cùng model và tool, bộ nhớ mới mỗi cuộc</li>
+    <li>Kịch bản BTC cố định không trả lời được order gate → báo riêng; số chính là <b>TSR tương tác</b> (khách mô phỏng trả lời gate)</li>
+    <li class="sub">Model agent gpt-4o-mini, temperature 0 · chưa có LLM-judge, chưa điền tay file chấm 20 lượt</li>
+  </ul>
+</section>
+
+<section class="slide">
+  <h2>Kết quả (lần chạy 4)</h2>
+  <table>
+    <tr><th>Chỉ số</th><th>Hệ thống</th><th>Baseline</th><th>Ngưỡng</th><th></th></tr>
+    <tr><td>TSR</td><td>72,7 ± 0,0 %</td><td>71,2 ± 2,6 %</td><td>≥ 70 %, hơn baseline</td><td class="ok">đạt (hơn ít)</td></tr>
+    <tr><td>RQR</td><td>2,1 ± 3,6 %</td><td>12,2 ± 3,4 %</td><td>giảm ≥ 40 %</td><td class="ok">giảm 76,5 %</td></tr>
+    <tr><td>CCR</td><td>52,4 %</td><td>3,6 %</td><td>—</td><td class="ok">hơn rõ</td></tr>
+    <tr><td>HR giá/KM</td><td>6,0 ± 0,2 %</td><td>33,9 ± 5,8 %</td><td>≤ 5 %</td><td class="no">chưa đạt</td></tr>
+    <tr><td>TTFT p95 (seed sạch)</td><td>6,7 – 7,3 s</td><td>—</td><td>≤ 3 s</td><td class="no">chưa đạt</td></tr>
+    <tr><td>Guardrail vi phạm</td><td>0</td><td>—</td><td>0</td><td class="ok">đạt</td></tr>
+  </table>
+</section>
+
+<section class="slide">
+  <h2>So với baseline — điều đáng tin và điều chưa chắc</h2>
+  <div class="cols">
+    <div class="box"><b>Khác biệt rõ</b><ul><li>CCR 52,4 % so với 3,6 %</li><li>HR giá/KM 6,0 % so với 33,9 %</li><li>RQR 2,1 % so với 12,2 %</li></ul></div>
+    <div class="box"><b>Khác biệt chưa chắc</b><ul><li>TSR hơn 1,5 điểm, nằm trong độ lệch chuẩn của baseline</li><li>RQR theo seed: giảm 100 / 29,5 / 100 %</li><li>mỗi seed một mẫu; không tách được đóng góp từng sửa</li></ul></div>
+  </div>
+</section>
+
+<section class="slide">
+  <h2>Trước và sau cải tiến</h2>
+  <table>
+    <tr><th>Lần</th><th>TSR</th><th>TSR bộ sinh</th><th>RQR</th><th>HR giá/KM</th><th>Thay đổi chính</th></tr>
+    <tr><td>1</td><td>50,0</td><td>60–73</td><td>0,0</td><td>31,1</td><td>—</td></tr>
+    <tr><td>2</td><td>68,2</td><td>93</td><td>7,3</td><td>6,2</td><td>sửa order.create/giá/qty/SĐT, nhãn giá sản phẩm phụ</td></tr>
+    <tr><td>3</td><td>71,2</td><td>93–100</td><td>2,2</td><td>9,5*</td><td>câu chuyển máy bằng code; gate không lấn câu trả lời giá</td></tr>
+    <tr><td>4</td><td>72,7</td><td>100</td><td>2,1</td><td>6,0</td><td>nhánh dự phòng không chọn bừa sản phẩm</td></tr>
+  </table>
+  <p class="sub">* seed 1 dính lỗi mạng giữa lượt. Sau lần 4 còn thêm timeout + thử lại và tính chi phí router — chưa đo lại bằng LLM thật.</p>
+</section>
+
+<section class="slide">
+  <h2>Ca làm sai (14 ca trong báo cáo)</h2>
+  <ul>
+    <li><b>Do sự thật kịch bản lệch tool (3):</b> SC-GEN-01 (1.690.000 so với 1.521.000), SC-GEN-02, SC-GEN-05 → gửi BTC; là toàn bộ phần HR còn lại</li>
+    <li><b>Do order gate (6 mẫu BTC cố định):</b> không có lời khách trả lời gate → TSR 14,3 %</li>
+    <li><b>Đã sửa và đo lại:</b> giá sản phẩm phụ tính nhầm, thiếu <i>price_vnd</i>/qty, câu chuyển máy, gate lấn câu trả lời giá</li>
+    <li><b>Đã sửa, chưa đo:</b> nhánh dự phòng chọn bừa SKU, lượt API đứng 68–128 s</li>
+    <li><b>Còn mở:</b> CCR thiếu một nửa; <i>order.update</i> gọi trước khi khách đồng ý; hỏi lại "mã đơn hàng"</li>
+  </ul>
+</section>
+
+<section class="slide">
+  <h2>Chi phí và tác động kinh doanh</h2>
+  <div class="cols">
+    <div class="box"><div class="big">≈ 63 VND</div>mỗi cuộc gọi (cả hai cấu hình, mọi lệnh gọi LLM); lần chạy 4: 11.639 VND cho ≈ 186 cuộc<br><span class="sub">≈ 50 VND/cuộc riêng chat chính của hệ thống</span></div>
+    <div class="box"><b>Ước lượng (giả định, không phải số đo)</b><ul><li>5 câu hỏi/cuộc, 8 s/câu thừa → ≈ 4 s/cuộc gọi lại</li><li>ít sai giá/KM hơn ≈ 280/1.000 câu nói giá</li><li>lợi ích chính: khách không phải nhắc lại</li></ul></div>
+  </div>
+</section>
+
+<section class="slide">
+  <h2>Hạn chế và việc tiếp theo</h2>
+  <ul>
+    <li><b>Dataset:</b> 31 cuộc / 22 kịch bản (ngưỡng ≥ 120); audio 4 file TTS (ngưỡng ≥ 40 cuộc / 1 giờ)</li>
+    <li><b>ASR:</b> Gipformer WER ≈ 8 % — chỉ trên 4 file TTS sạch giọng Bắc; cần ≥ 20 file nhiều giọng</li>
+    <li><b>Độ trễ:</b> TTFT ≤ 3 s chưa đạt; cần tối ưu token và số vòng LLM</li>
+    <li><b>Đánh giá:</b> chưa LLM-judge 12 tiêu chí, chưa chấm tay 20 lượt, chưa thí nghiệm cắt bỏ từng thành phần</li>
+    <li><b>Hệ thống:</b> order gate ở orchestrator (chưa ở mcp-crm); API một worker</li>
+    <li class="sub">Mã nguồn, dataset, báo cáo: thư mục submission/ · chạy demo: python scripts/run_demo.py</li>
+  </ul>
+</section>
+
+<div class="nav" id="nav"></div>
+<script>
+const slides = [...document.querySelectorAll(".slide")];
+let i = 0;
+function go(n) {
+  i = Math.max(0, Math.min(slides.length - 1, n));
+  slides.forEach((s, k) => s.classList.toggle("on", k === i));
+  document.getElementById("nav").textContent = (i + 1) + " / " + slides.length + "  ·  ← →";
+  try { history.replaceState(null, "", "#" + (i + 1)); } catch (e) {}
+}
+document.addEventListener("keydown", e => {
+  if (["ArrowRight", "PageDown", " ", "Enter"].includes(e.key)) { e.preventDefault(); go(i + 1); }
+  if (["ArrowLeft", "PageUp", "Backspace"].includes(e.key)) { e.preventDefault(); go(i - 1); }
+  if (e.key === "Home") go(0); if (e.key === "End") go(slides.length - 1);
+});
+document.addEventListener("click", e => go(e.clientX > innerWidth / 2 ? i + 1 : i - 1));
+go((parseInt(location.hash.slice(1)) || 1) - 1);
+</script>
+</body>
+</html>

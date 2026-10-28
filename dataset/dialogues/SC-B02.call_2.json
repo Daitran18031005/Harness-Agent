@@ -1,0 +1,79 @@
+{
+ "scenario_id": "SC-B02",
+ "call": "call_2",
+ "channel": "hotline",
+ "call_date": "2026-10-14",
+ "allowed_numbers": [],
+ "turns": [
+  {
+   "idx": 1,
+   "speaker": "A",
+   "text": "Dạ shop BTC xin nghe, em có thể giúp gì cho mình ạ?",
+   "text_template": "Dạ shop BTC xin nghe, em có thể giúp gì cho mình ạ?",
+   "text_written": "Dạ shop BTC xin nghe, em có thể giúp gì cho mình ạ?",
+   "entities": {},
+   "text_spoken": "dạ shop bê tê xê xin nghe em có thể giúp gì cho mình ạ"
+  },
+  {
+   "idx": 2,
+   "speaker": "C",
+   "text": "Đơn máy hút sữa hôm trước của chị đến đâu rồi?",
+   "text_written": "Đơn máy hút sữa hôm trước của chị đến đâu rồi?",
+   "states": [
+    "order_query"
+   ],
+   "entities": {},
+   "text_spoken": "đơn máy hút sữa hôm trước của chị đến đâu rồi"
+  },
+  {
+   "idx": 3,
+   "speaker": "A",
+   "text": "Em kiểm tra thấy đơn OD600001 của Máy hút sữa điện đôi Spectra S1 đang đã tạo, đang chờ giao, dự kiến giao 14/10 ạ.",
+   "text_template": "Em kiểm tra thấy đơn {order_id} của {product} đang {order_status}, dự kiến giao {delivery_date} ạ.",
+   "text_written": "Em kiểm tra thấy đơn OD600001 của Máy hút sữa điện đôi Spectra S1 đang đã tạo, đang chờ giao, dự kiến giao 14/10 ạ.",
+   "entities": {
+    "order_id": "OD600001",
+    "sku": "SKU-MB-PUMP1",
+    "delivery_date": "2026-10-14"
+   },
+   "text_spoken": "em kiểm tra thấy đơn ô đê sáu không không không không một của máy hút sữa điện đôi xpec tra ét một đang đã tạo đang chờ giao dự kiến giao mười bốn tháng mười ạ"
+  },
+  {
+   "idx": 4,
+   "speaker": "C",
+   "text": "Hả em? Chị chưa nghe rõ.",
+   "text_written": "Hả em? Chị chưa nghe rõ.",
+   "states": [],
+   "entities": {},
+   "text_spoken": "hả em chị chưa nghe rõ"
+  },
+  {
+   "idx": 5,
+   "speaker": "A",
+   "text": "Đơn OD600001 đang đã tạo, đang chờ giao, dự kiến giao 14/10 ạ.",
+   "text_template": "Đơn {order_id} đang {order_status}, dự kiến giao {delivery_date} ạ.",
+   "text_written": "Đơn OD600001 đang đã tạo, đang chờ giao, dự kiến giao 14/10 ạ.",
+   "entities": {
+    "order_id": "OD600001",
+    "delivery_date": "2026-10-14"
+   },
+   "text_spoken": "đơn ô đê sáu không không không không một đang đã tạo đang chờ giao dự kiến giao mười bốn tháng mười ạ"
+  },
+  {
+   "idx": 6,
+   "speaker": "C",
+   "text": "Ừ, chị chờ thêm.",
+   "text_written": "Ừ, chị chờ thêm.",
+   "states": [],
+   "entities": {},
+   "text_spoken": "ừ chị chờ thêm"
+  }
+ ],
+ "meta": {
+  "model": "gpt-6-luna",
+  "attempts": 1,
+  "ok": true,
+  "unresolved": []
+ },
+ "frame_sha256": "50033b7cbe3d52ff"
+}

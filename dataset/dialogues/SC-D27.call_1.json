@@ -1,0 +1,145 @@
+{
+ "scenario_id": "SC-D27",
+ "call": "call_1",
+ "channel": "hotline",
+ "call_date": "2026-10-15",
+ "meta": {
+  "model": "gpt-6-luna",
+  "attempts": 2,
+  "ok": true,
+  "unresolved": [],
+  "rebuilt": true
+ },
+ "frame_sha256": "bef2ee97b9899d35",
+ "allowed_numbers": [],
+ "turns": [
+  {
+   "idx": 1,
+   "speaker": "A",
+   "text": "Dạ shop BTC xin nghe, em có thể giúp gì cho mình ạ?",
+   "text_template": "Dạ shop BTC xin nghe, em có thể giúp gì cho mình ạ?",
+   "text_written": "Dạ shop BTC xin nghe, em có thể giúp gì cho mình ạ?",
+   "entities": {},
+   "text_spoken": "dạ shop bê tê xê xin nghe em có thể giúp gì cho mình ạ"
+  },
+  {
+   "idx": 2,
+   "speaker": "C",
+   "text": "Áo phao lông vũ Warmly size M màu đen còn hàng không?",
+   "text_written": "Áo phao lông vũ Warmly size M màu đen còn hàng không?",
+   "states": [
+    "product_asked",
+    "size",
+    "color"
+   ],
+   "entities": {
+    "sku": "SKU-JK-DWN",
+    "size": "M",
+    "color": "den"
+   },
+   "text_spoken": "áo phao lông vũ quôm li size m màu đen còn hàng không"
+  },
+  {
+   "idx": 3,
+   "speaker": "A",
+   "text": "Dạ, Áo phao lông vũ Warmly size M màu đen hiện hiện đang hết hàng. Em có thể đổi sang size M màu be, hiện hiện còn hàng, giá 1.490.000đ. Chị Tâm lấy màu be nhé?",
+   "text_template": "Dạ, {product} size M màu đen hiện {stock}. Em có thể đổi sang {alt}, hiện {alt_stock}, giá {price}. Chị Tâm lấy màu be nhé?",
+   "text_written": "Dạ, Áo phao lông vũ Warmly size M màu đen hiện hiện đang hết hàng. Em có thể đổi sang size M màu be, hiện hiện còn hàng, giá 1.490.000đ. Chị Tâm lấy màu be nhé?",
+   "entities": {
+    "sku": "SKU-JK-DWN",
+    "price_vnd": 1490000
+   },
+   "text_spoken": "dạ áo phao lông vũ quôm li size m màu đen hiện hiện đang hết hàng em có thể đổi sang size m màu be hiện hiện còn hàng giá một triệu bốn trăm chín mươi nghìn chị tâm lấy màu be nhé"
+  },
+  {
+   "idx": 4,
+   "speaker": "C",
+   "text": "Ừ, màu be. COD nhé.",
+   "text_written": "Ừ, màu be. COD nhé.",
+   "states": [
+    "color_final",
+    "payment"
+   ],
+   "entities": {
+    "payment": "COD"
+   },
+   "text_spoken": "ừ màu be cê ô đê nhé"
+  },
+  {
+   "idx": 5,
+   "speaker": "A",
+   "text": "Dạ chị Tâm cho em xin tên người nhận và địa chỉ giao hàng ạ.",
+   "text_template": "Dạ chị Tâm cho em xin tên người nhận và địa chỉ giao hàng ạ.",
+   "text_written": "Dạ chị Tâm cho em xin tên người nhận và địa chỉ giao hàng ạ.",
+   "entities": {},
+   "text_spoken": "dạ chị tâm cho em xin tên người nhận và địa chỉ giao hàng ạ"
+  },
+  {
+   "idx": 6,
+   "speaker": "C",
+   "text": "Tâm, số 9 phố Bạch Mai, quận Hai Bà Trưng, Hà Nội.",
+   "text_written": "Tâm, số 9 phố Bạch Mai, quận Hai Bà Trưng, Hà Nội.",
+   "states": [
+    "recipient_name",
+    "address"
+   ],
+   "entities": {
+    "address": "số 9 phố Bạch Mai, quận Hai Bà Trưng, Hà Nội"
+   },
+   "text_spoken": "tâm số chín phố bạch mai quận hai bà trưng hà nội"
+  },
+  {
+   "idx": 7,
+   "speaker": "A",
+   "text": "Dạ, em xác nhận số điện thoại nhận hàng là 0900020027, số chị đang gọi, đúng không ạ?",
+   "text_template": "Dạ, em xác nhận số điện thoại nhận hàng là {caller_phone}, số chị đang gọi, đúng không ạ?",
+   "text_written": "Dạ, em xác nhận số điện thoại nhận hàng là 0900020027, số chị đang gọi, đúng không ạ?",
+   "entities": {
+    "phone": "0900020027"
+   },
+   "text_spoken": "dạ em xác nhận số điện thoại nhận hàng là không chín không không không hai không không hai bảy số chị đang gọi đúng không ạ"
+  },
+  {
+   "idx": 8,
+   "speaker": "C",
+   "text": "Đúng rồi.",
+   "text_written": "Đúng rồi.",
+   "states": [],
+   "entities": {},
+   "text_spoken": "đúng rồi"
+  },
+  {
+   "idx": 9,
+   "speaker": "A",
+   "text": "Dạ chị Tâm, em đọc lại đơn Áo phao lông vũ Warmly màu be, giá 1.490.000đ, tổng 1.490.000đ, giao cho Tâm, SĐT 0900020027, địa chỉ số 9 phố Bạch Mai, quận Hai Bà Trưng, Hà Nội, thanh toán thanh toán khi nhận hàng (COD). Chị xác nhận đặt đơn này chứ ạ?",
+   "text_template": "Dạ chị Tâm, em đọc lại đơn {product} màu be, giá {price}, tổng {readback_total}, giao cho {recipient_name}, SĐT {caller_phone}, địa chỉ {address}, thanh toán {payment_label}. Chị xác nhận đặt đơn này chứ ạ?",
+   "text_written": "Dạ chị Tâm, em đọc lại đơn Áo phao lông vũ Warmly màu be, giá 1.490.000đ, tổng 1.490.000đ, giao cho Tâm, SĐT 0900020027, địa chỉ số 9 phố Bạch Mai, quận Hai Bà Trưng, Hà Nội, thanh toán thanh toán khi nhận hàng (COD). Chị xác nhận đặt đơn này chứ ạ?",
+   "entities": {
+    "sku": "SKU-JK-DWN",
+    "price_vnd": 1490000,
+    "phone": "0900020027"
+   },
+   "text_spoken": "dạ chị tâm em đọc lại đơn áo phao lông vũ quôm li màu be giá một triệu bốn trăm chín mươi nghìn tổng một triệu bốn trăm chín mươi nghìn giao cho tâm số điện thoại không chín không không không hai không không hai bảy địa chỉ số chín phố bạch mai quận hai bà trưng hà nội thanh toán thanh toán khi nhận hàng cê ô đê chị xác nhận đặt đơn này chứ ạ"
+  },
+  {
+   "idx": 10,
+   "speaker": "C",
+   "text": "Ừ, chốt đi.",
+   "text_written": "Ừ, chốt đi.",
+   "states": [],
+   "entities": {},
+   "text_spoken": "ừ chốt đi"
+  },
+  {
+   "idx": 11,
+   "speaker": "A",
+   "text": "Dạ chị Tâm, đơn hàng có mã OD600001, dự kiến giao trong 2 ngày ạ.",
+   "text_template": "Dạ chị Tâm, đơn hàng có mã {order_id}, dự kiến giao trong {delivery_days} ngày ạ.",
+   "text_written": "Dạ chị Tâm, đơn hàng có mã OD600001, dự kiến giao trong 2 ngày ạ.",
+   "entities": {
+    "order_id": "OD600001"
+   },
+   "text_spoken": "dạ chị tâm đơn hàng có mã ô đê sáu không không không không một dự kiến giao trong hai ngày ạ"
+  }
+ ]
+}

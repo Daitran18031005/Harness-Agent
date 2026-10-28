@@ -1,0 +1,68 @@
+{
+ "scenario": {
+  "scenario_id": "SC-D54",
+  "level": "M1",
+  "persona": "khach_goi_lan_3_het_kien_nhan",
+  "hard_case": "khieu_nai_loi_nsx",
+  "customer_phone": "0900020054",
+  "customer_name": "Nam",
+  "honorific": "anh",
+  "notes": "Máy lọc nước UF Sunhouse lỗi nhà sản xuất sau 14 ngày: chính sách DT-05 (30 ngày đổi mới 1-1).",
+  "group": "C",
+  "archetype": "defect",
+  "industry": "máy lọc nước",
+  "south": false
+ },
+ "calls": [
+  {
+   "name": "call_1",
+   "channel": "hotline",
+   "goal": "Máy lọc nước UF Sunhouse bị lỗi 14 ngày sau khi mua",
+   "opening": "agent",
+   "customer_plot": "Khách gọi: 'Máy lọc nước UF Sunhouse anh mua bị lỗi, chảy nước ra sàn, mới dùng 14 ngày thôi'; hỏi 'vậy giờ xử lý sao em?'.",
+   "agent_plot": "Agent xin lỗi, nói rõ lỗi kỹ thuật từ nhà sản xuất trong 30 ngày được đổi mới 1-1 theo chính sách (khác đổi trả thường 7 ngày); không hứa thêm điều ngoài tài liệu; ghi nhận và hẹn nhân viên gọi lại.",
+   "customer_facts": [
+    {
+     "key": "product_asked",
+     "value": "SKU-WF-UF",
+     "hint": "nói Máy lọc nước UF Sunhouse bị lỗi"
+    }
+   ],
+   "agent_vars": {
+    "product": {
+     "text": "Máy lọc nước UF Sunhouse",
+     "desc": "tên sản phẩm ĐẦY ĐỦ đã gồm loại hàng (đừng viết thêm loại hàng phía trước)",
+     "entity": [
+      "sku",
+      "SKU-WF-UF"
+     ]
+    },
+    "stock": {
+     "text": "hiện còn hàng",
+     "desc": "tình trạng tồn kho của sản phẩm (còn hàng/hết hàng)",
+     "entity": null
+    }
+   },
+   "n_turns": [
+    6,
+    8
+   ],
+   "style": "normal",
+   "expected": {
+    "success_if": {
+     "must_say_any": [
+      "30 ngày",
+      "ba mươi ngày",
+      "lỗi nhà sản xuất"
+     ]
+    },
+    "ground_truth_facts": {
+     "exchange_window_days": 30
+    },
+    "expected_outcome": "hen_goi_lai"
+   },
+   "abs_date": "2026-10-15",
+   "call_date": "2026-10-15"
+  }
+ ]
+}

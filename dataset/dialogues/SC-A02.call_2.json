@@ -1,0 +1,143 @@
+{
+ "scenario_id": "SC-A02",
+ "call": "call_2",
+ "channel": "hotline",
+ "call_date": "2026-10-18",
+ "meta": {
+  "model": "gpt-6-luna",
+  "attempts": 3,
+  "ok": true,
+  "unresolved": [],
+  "rebuilt": true
+ },
+ "frame_sha256": "8b5faa1426758a9e",
+ "allowed_numbers": [
+  42
+ ],
+ "turns": [
+  {
+   "idx": 1,
+   "speaker": "A",
+   "text": "Dạ shop BTC xin nghe, em có thể giúp gì cho mình ạ?",
+   "text_template": "Dạ shop BTC xin nghe, em có thể giúp gì cho mình ạ?",
+   "text_written": "Dạ shop BTC xin nghe, em có thể giúp gì cho mình ạ?",
+   "entities": {},
+   "text_spoken": "dạ shop bê tê xê xin nghe em có thể giúp gì cho mình ạ"
+  },
+  {
+   "idx": 2,
+   "speaker": "C",
+   "text": "Hôm trước anh nói size 40 màu đen nhưng anh nhầm, anh đi size 42 và muốn màu xám. À mà giao mất mấy ngày em?",
+   "text_written": "Hôm trước anh nói size 40 màu đen nhưng anh nhầm, anh đi size 42 và muốn màu xám. À mà giao mất mấy ngày em?",
+   "states": [
+    "size",
+    "color"
+   ],
+   "entities": {
+    "size": 42,
+    "color": "xam"
+   },
+   "text_spoken": "hôm trước anh nói size bốn mươi màu đen nhưng anh nhầm anh đi size bốn mươi hai và muốn màu xám à mà giao mất mấy ngày em"
+  },
+  {
+   "idx": 3,
+   "speaker": "A",
+   "text": "Dạ, em ghi nhận đổi size 40 sang 42, màu đen sang xám cho Giày chạy bộ RunLite 2 Pro. Giá biến thể mới là 1.521.000đ, hiện hiện còn hàng; thời gian giao dự kiến 2. Anh cho em xin tên người nhận và địa chỉ giao hàng nhé.",
+   "text_template": "Dạ, em ghi nhận đổi size {old_size} sang {new_size}, màu {old_color} sang {new_color} cho {product}. Giá biến thể mới là {price}, hiện {stock}; thời gian giao dự kiến {delivery_days}. Anh cho em xin tên người nhận và địa chỉ giao hàng nhé.",
+   "text_written": "Dạ, em ghi nhận đổi size 40 sang 42, màu đen sang xám cho Giày chạy bộ RunLite 2 Pro. Giá biến thể mới là 1.521.000đ, hiện hiện còn hàng; thời gian giao dự kiến 2. Anh cho em xin tên người nhận và địa chỉ giao hàng nhé.",
+   "entities": {
+    "sku": "SKU-SN-RUN2",
+    "price_vnd": 1521000
+   },
+   "text_spoken": "dạ em ghi nhận đổi size bốn mươi sang bốn mươi hai màu đen sang xám cho giày chạy bộ run lai hai pro giá biến thể mới là một triệu năm trăm hai mươi mốt nghìn hiện hiện còn hàng thời gian giao dự kiến hai anh cho em xin tên người nhận và địa chỉ giao hàng nhé"
+  },
+  {
+   "idx": 4,
+   "speaker": "C",
+   "text": "Người nhận là Long.",
+   "text_written": "Người nhận là Long.",
+   "states": [
+    "recipient_name"
+   ],
+   "entities": {},
+   "text_spoken": "người nhận là long"
+  },
+  {
+   "idx": 5,
+   "speaker": "A",
+   "text": "Dạ, anh cho em xin địa chỉ giao hàng và xác nhận giúp em hình thức thanh toán mình chọn nhé.",
+   "text_template": "Dạ, anh cho em xin địa chỉ giao hàng và xác nhận giúp em hình thức thanh toán mình chọn nhé.",
+   "text_written": "Dạ, anh cho em xin địa chỉ giao hàng và xác nhận giúp em hình thức thanh toán mình chọn nhé.",
+   "entities": {},
+   "text_spoken": "dạ anh cho em xin địa chỉ giao hàng và xác nhận giúp em hình thức thanh toán mình chọn nhé"
+  },
+  {
+   "idx": 6,
+   "speaker": "C",
+   "text": "Giao về số 8 phố Hoàng Hoa Thám, quận Ba Đình, Hà Nội. COD nhé.",
+   "text_written": "Giao về số 8 phố Hoàng Hoa Thám, quận Ba Đình, Hà Nội. COD nhé.",
+   "states": [
+    "address",
+    "payment"
+   ],
+   "entities": {
+    "address": "số 8 phố Hoàng Hoa Thám, quận Ba Đình, Hà Nội",
+    "payment": "COD"
+   },
+   "text_spoken": "giao về số tám phố hoàng hoa thám quận ba đình hà nội cê ô đê nhé"
+  },
+  {
+   "idx": 7,
+   "speaker": "A",
+   "text": "Em xác nhận đơn sẽ gửi về số điện thoại 0900010002 anh đang gọi, đúng không ạ?",
+   "text_template": "Em xác nhận đơn sẽ gửi về số điện thoại {caller_phone} anh đang gọi, đúng không ạ?",
+   "text_written": "Em xác nhận đơn sẽ gửi về số điện thoại 0900010002 anh đang gọi, đúng không ạ?",
+   "entities": {
+    "phone": "0900010002"
+   },
+   "text_spoken": "em xác nhận đơn sẽ gửi về số điện thoại không chín không không không một không không không hai anh đang gọi đúng không ạ"
+  },
+  {
+   "idx": 8,
+   "speaker": "C",
+   "text": "Đúng rồi.",
+   "text_written": "Đúng rồi.",
+   "states": [],
+   "entities": {},
+   "text_spoken": "đúng rồi"
+  },
+  {
+   "idx": 9,
+   "speaker": "A",
+   "text": "Em đọc lại đơn: Giày chạy bộ RunLite 2 Pro, giá 1.521.000đ, tổng 1.521.000đ, giao cho Long, SĐT 0900010002, địa chỉ số 8 phố Hoàng Hoa Thám, quận Ba Đình, Hà Nội, hình thức thanh toán khi nhận hàng (COD). Anh xác nhận đặt đơn này chứ ạ?",
+   "text_template": "Em đọc lại đơn: {product}, giá {price}, tổng {readback_total}, giao cho {recipient_name}, SĐT {caller_phone}, địa chỉ {address}, hình thức {payment_label}. Anh xác nhận đặt đơn này chứ ạ?",
+   "text_written": "Em đọc lại đơn: Giày chạy bộ RunLite 2 Pro, giá 1.521.000đ, tổng 1.521.000đ, giao cho Long, SĐT 0900010002, địa chỉ số 8 phố Hoàng Hoa Thám, quận Ba Đình, Hà Nội, hình thức thanh toán khi nhận hàng (COD). Anh xác nhận đặt đơn này chứ ạ?",
+   "entities": {
+    "sku": "SKU-SN-RUN2",
+    "price_vnd": 1521000,
+    "phone": "0900010002"
+   },
+   "text_spoken": "em đọc lại đơn giày chạy bộ run lai hai pro giá một triệu năm trăm hai mươi mốt nghìn tổng một triệu năm trăm hai mươi mốt nghìn giao cho long số điện thoại không chín không không không một không không không hai địa chỉ số tám phố hoàng hoa thám quận ba đình hà nội hình thức thanh toán khi nhận hàng cê ô đê anh xác nhận đặt đơn này chứ ạ"
+  },
+  {
+   "idx": 10,
+   "speaker": "C",
+   "text": "Ok em, chốt đi.",
+   "text_written": "Ok em, chốt đi.",
+   "states": [],
+   "entities": {},
+   "text_spoken": "ok em chốt đi"
+  },
+  {
+   "idx": 11,
+   "speaker": "A",
+   "text": "Dạ, em chốt đơn OD600001 cho anh. Đơn dự kiến giao trong 2.",
+   "text_template": "Dạ, em chốt đơn {order_id} cho anh. Đơn dự kiến giao trong {delivery_days}.",
+   "text_written": "Dạ, em chốt đơn OD600001 cho anh. Đơn dự kiến giao trong 2.",
+   "entities": {
+    "order_id": "OD600001"
+   },
+   "text_spoken": "dạ em chốt đơn ô đê sáu không không không không một cho anh đơn dự kiến giao trong hai"
+  }
+ ]
+}

@@ -1,0 +1,102 @@
+{
+ "scenario_id": "SC-C02",
+ "call": "call_1",
+ "channel": "hotline",
+ "call_date": "2026-10-15",
+ "meta": {
+  "model": "gpt-6-luna",
+  "attempts": 1,
+  "ok": true,
+  "unresolved": [],
+  "rebuilt": true
+ },
+ "frame_sha256": "3b0480a0da74cff2",
+ "allowed_numbers": [],
+ "turns": [
+  {
+   "idx": 1,
+   "speaker": "A",
+   "text": "Dạ shop BTC xin nghe, em có thể giúp gì cho mình ạ?",
+   "text_template": "Dạ shop BTC xin nghe, em có thể giúp gì cho mình ạ?",
+   "text_written": "Dạ shop BTC xin nghe, em có thể giúp gì cho mình ạ?",
+   "entities": {},
+   "text_spoken": "dạ shop bê tê xê xin nghe em có thể giúp gì cho mình ạ"
+  },
+  {
+   "idx": 2,
+   "speaker": "C",
+   "text": "Chị đang bị tắc tia sữa, máy hút sữa Spectra S1 có chữa được tắc tia sữa hay viêm vú không? Bác sĩ chưa khám.",
+   "text_written": "Chị đang bị tắc tia sữa, máy hút sữa Spectra S1 có chữa được tắc tia sữa hay viêm vú không? Bác sĩ chưa khám.",
+   "states": [
+    "product_asked",
+    "medical_question"
+   ],
+   "entities": {
+    "sku": "SKU-MB-PUMP1"
+   },
+   "text_spoken": "chị đang bị tắc tia sữa máy hút sữa xpec tra ét một có chữa được tắc tia sữa hay viêm vú không bác sĩ chưa khám"
+  },
+  {
+   "idx": 3,
+   "speaker": "A",
+   "text": "Em chỉ có thông tin sản phẩm, không có thông tin y tế nên không thể khẳng định máy chữa được tắc tia sữa hay viêm vú ạ. Chị Lan nên hỏi bác sĩ để được tư vấn. Sản phẩm là Máy hút sữa điện đôi Spectra S1, giá 4.290.000đ, bảo hành 12 tháng.",
+   "text_template": "Em chỉ có thông tin sản phẩm, không có thông tin y tế nên không thể khẳng định máy chữa được tắc tia sữa hay viêm vú ạ. Chị Lan nên hỏi bác sĩ để được tư vấn. Sản phẩm là {product}, giá {price}, bảo hành {warranty} tháng.",
+   "text_written": "Em chỉ có thông tin sản phẩm, không có thông tin y tế nên không thể khẳng định máy chữa được tắc tia sữa hay viêm vú ạ. Chị Lan nên hỏi bác sĩ để được tư vấn. Sản phẩm là Máy hút sữa điện đôi Spectra S1, giá 4.290.000đ, bảo hành 12 tháng.",
+   "entities": {
+    "sku": "SKU-MB-PUMP1",
+    "price_vnd": 4290000,
+    "warranty_months": 12
+   },
+   "text_spoken": "em chỉ có thông tin sản phẩm không có thông tin y tế nên không thể khẳng định máy chữa được tắc tia sữa hay viêm vú ạ chị lan nên hỏi bác sĩ để được tư vấn sản phẩm là máy hút sữa điện đôi xpec tra ét một giá bốn triệu hai trăm chín mươi nghìn bảo hành mười hai tháng"
+  },
+  {
+   "idx": 4,
+   "speaker": "C",
+   "text": "Hả em, chị nghe không rõ, em nói lại giúp chị.",
+   "text_written": "Hả em, chị nghe không rõ, em nói lại giúp chị.",
+   "states": [],
+   "entities": {},
+   "text_spoken": "hả em chị nghe không rõ em nói lại giúp chị"
+  },
+  {
+   "idx": 5,
+   "speaker": "A",
+   "text": "Dạ, em xin nhắc lại: Máy hút sữa điện đôi Spectra S1, giá 4.290.000đ, bảo hành 12 tháng. Về tắc tia sữa hay viêm vú, chị hỏi bác sĩ giúp em ạ.",
+   "text_template": "Dạ, em xin nhắc lại: {product}, giá {price}, bảo hành {warranty} tháng. Về tắc tia sữa hay viêm vú, chị hỏi bác sĩ giúp em ạ.",
+   "text_written": "Dạ, em xin nhắc lại: Máy hút sữa điện đôi Spectra S1, giá 4.290.000đ, bảo hành 12 tháng. Về tắc tia sữa hay viêm vú, chị hỏi bác sĩ giúp em ạ.",
+   "entities": {
+    "sku": "SKU-MB-PUMP1",
+    "price_vnd": 4290000,
+    "warranty_months": 12
+   },
+   "text_spoken": "dạ em xin nhắc lại máy hút sữa điện đôi xpec tra ét một giá bốn triệu hai trăm chín mươi nghìn bảo hành mười hai tháng về tắc tia sữa hay viêm vú chị hỏi bác sĩ giúp em ạ"
+  },
+  {
+   "idx": 6,
+   "speaker": "C",
+   "text": "Ừ, chị vẫn lo. Em gọi lại tư vấn thêm được không?",
+   "text_written": "Ừ, chị vẫn lo. Em gọi lại tư vấn thêm được không?",
+   "states": [],
+   "entities": {},
+   "text_spoken": "ừ chị vẫn lo em gọi lại tư vấn thêm được không"
+  },
+  {
+   "idx": 7,
+   "speaker": "A",
+   "text": "Dạ được chị Lan, em sẽ nhờ nhân viên gọi lại tư vấn thêm về sản phẩm. Riêng vấn đề sức khỏe, chị vui lòng hỏi bác sĩ ạ.",
+   "text_template": "Dạ được chị Lan, em sẽ nhờ nhân viên gọi lại tư vấn thêm về sản phẩm. Riêng vấn đề sức khỏe, chị vui lòng hỏi bác sĩ ạ.",
+   "text_written": "Dạ được chị Lan, em sẽ nhờ nhân viên gọi lại tư vấn thêm về sản phẩm. Riêng vấn đề sức khỏe, chị vui lòng hỏi bác sĩ ạ.",
+   "entities": {},
+   "text_spoken": "dạ được chị lan em sẽ nhờ nhân viên gọi lại tư vấn thêm về sản phẩm riêng vấn đề sức khỏe chị vui lòng hỏi bác sĩ ạ"
+  },
+  {
+   "idx": 8,
+   "speaker": "C",
+   "text": "Được em, chị đồng ý nhé.",
+   "text_written": "Được em, chị đồng ý nhé.",
+   "states": [],
+   "entities": {},
+   "text_spoken": "được em chị đồng ý nhé"
+  }
+ ]
+}

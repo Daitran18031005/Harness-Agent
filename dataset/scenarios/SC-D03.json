@@ -1,0 +1,85 @@
+{
+  "scenario_id": "SC-D03",
+  "level": "M1",
+  "persona": "khach_da_kenh_mau_thuan",
+  "hard_case": "mau_thuan_phien_truoc",
+  "customer_phone": "0900020003",
+  "customer_name": "Châu",
+  "honorific": "chị",
+  "notes": "Mâu thuẫn phiên trước (giá khác giữa các kênh): chat_fanpage (2026-09-25) báo 4.390.000đ còn KM AP-SEP, hotline (2026-10-05) báo 4.890.000đ → khách đòi giá thấp nhất từng được báo; agent giải thích KM theo ngày, không hứa giữ giá cũ.",
+  "archetype": "cross_conflict",
+  "industry": "máy lọc không khí",
+  "south": false,
+  "calls": {
+    "call_1": {
+      "channel": "chat_fanpage",
+      "channel_identity": "fb.d03",
+      "call_date": "2026-09-25",
+      "customer_goal": "hỏi giá/tư vấn qua chat rồi để suy nghĩ",
+      "customer_turns": [
+        "Chị hỏi Máy lọc không khí AirPure X giá bao nhiêu? Mỗi kênh báo một kiểu, bực thật.",
+        "À mà… còn hàng không em?",
+        "Ừ, để chị suy nghĩ rồi gọi hotline. Số chị là 0900020003."
+      ],
+      "facts_established": {
+        "product_advised": "SKU-AP-X",
+        "price_quoted_vnd": 4390000,
+        "promo_code": "AP-SEP",
+        "promo_expiry": "2026-09-30",
+        "phone_provided": "0900020003"
+      },
+      "expected_outcome": "hen_goi_lai"
+    },
+    "call_2": {
+      "channel": "hotline",
+      "days_later": 10,
+      "customer_goal": "gọi hotline, bực vì lệch thông tin so với phiên trước, rồi chốt",
+      "customer_turns": [
+        "Chị bực thật đấy, hôm trước nhắn Fanpage/Zalo họ báo 4.390.000đ, sao giờ hotline lại báo giá khác? Giá thấp nhất từng báo là bao nhiêu?",
+        "Nhưng chị hỏi giá thấp nhất từng được báo cơ mà. Sao không áp dụng mức đó nữa?",
+        "À mà… hôm nay đặt thì thanh toán khi nhận hàng được không?",
+        "COD nhé em.",
+        "Người nhận là Châu, giao về số 9 phố Bạch Mai, quận Hai Bà Trưng, Hà Nội.",
+        "Đúng rồi.",
+        "Vâng, chốt đi em.",
+        "Ừ, cảm ơn em."
+      ],
+      "facts_established": {
+        "payment": "COD"
+      },
+      "must_carry_over": [
+        "product_advised",
+        "price_quoted_vnd"
+      ],
+      "must_not_ask": [
+        "product_advised"
+      ],
+      "success_if": {
+        "tool_called": "order.create",
+        "args_match": {
+          "sku": "SKU-AP-X",
+          "price_vnd": 4890000,
+          "payment": "COD"
+        },
+        "forbidden_claims": [
+          {
+            "field": "price_vnd",
+            "value": 4390000
+          }
+        ]
+      },
+      "ground_truth_facts": {
+        "price_vnd": 4890000,
+        "promo_AP-SEP_active": false,
+        "in_stock": true
+      },
+      "memory_expectation": {
+        "price_quoted_vnd": 4890000,
+        "superseded": {
+          "price_quoted_vnd": 4390000
+        }
+      },
+      "expected_outcome": "chot_don"
+    }
+  }
+}

@@ -1,0 +1,318 @@
+{
+ "scenario": {
+  "scenario_id": "SC-D17",
+  "level": "M1",
+  "persona": "khach_da_mua_doi_size",
+  "hard_case": null,
+  "customer_phone": "0900020017",
+  "customer_name": "Yến",
+  "honorific": "chị",
+  "notes": "3 cuộc, 2 kênh chat + hotline: hỏi giá → chốt → đổi size M→XL có phụ thu 40.000đ.",
+  "group": "B",
+  "archetype": "exchange",
+  "industry": "áo khoác",
+  "south": false
+ },
+ "calls": [
+  {
+   "name": "call_1",
+   "channel": "zalo_oa",
+   "goal": "hỏi giá Áo khoác gió Windbreak qua chat",
+   "opening": "customer",
+   "customer_plot": "Khách nhắn hỏi Áo khoác gió Windbreak size M màu xanh navy giá bao nhiêu; đọc SĐT 0900020017; nói 'tối chị nhắn chốt'.",
+   "agent_plot": "Agent báo giá {price} cho size M màu xanh navy; xin SĐT.",
+   "customer_facts": [
+    {
+     "key": "size",
+     "value": "M",
+     "hint": "size M"
+    },
+    {
+     "key": "color",
+     "value": "navy",
+     "hint": "màu xanh navy"
+    },
+    {
+     "key": "phone_provided",
+     "value": "0900020017",
+     "hint": "đọc SĐT 0900020017"
+    }
+   ],
+   "agent_vars": {
+    "product": {
+     "text": "Áo khoác gió Windbreak",
+     "desc": "tên sản phẩm ĐẦY ĐỦ đã gồm loại hàng (đừng viết thêm loại hàng phía trước)",
+     "entity": [
+      "sku",
+      "SKU-JK-WND"
+     ]
+    },
+    "price": {
+     "text": "690.000đ",
+     "desc": "giá cuối size M màu xanh navy",
+     "entity": [
+      "price_vnd",
+      690000
+     ]
+    },
+    "stock": {
+     "text": "hiện còn hàng",
+     "desc": "tình trạng tồn kho của sản phẩm (còn hàng/hết hàng)",
+     "entity": null
+    }
+   },
+   "n_turns": [
+    5,
+    7
+   ],
+   "style": "normal",
+   "expected": {
+    "facts_established": {
+     "product_advised": "SKU-JK-WND",
+     "size": "M",
+     "color": "navy",
+     "price_quoted_vnd": 690000,
+     "channel": "zalo",
+     "phone_provided": "0900020017"
+    },
+    "expected_outcome": "hen_goi_lai"
+   },
+   "abs_date": "2026-10-14",
+   "channel_identity": "zalo.d17",
+   "call_date": "2026-10-14"
+  },
+  {
+   "name": "call_2",
+   "channel": "chat_fanpage",
+   "goal": "chốt đơn qua chat",
+   "opening": "customer",
+   "customer_plot": "Khách nhắn: 'chị hỏi Áo khoác gió Windbreak hôm qua'; chốt lấy size M màu xanh navy, COD, giao về số 35 phố Nguyễn Chí Thanh, quận Ba Đình, Hà Nội.",
+   "agent_plot": "Agent nhận ra khách từ cuộc trước, KHÔNG hỏi lại sản phẩm/size/màu; xác nhận giá {price}; theo quy trình đặt đơn rồi chốt: mã đơn {order_id}, giao {delivery_days} ngày về {address}.",
+   "customer_facts": [
+    {
+     "key": "payment",
+     "value": "COD",
+     "hint": "COD"
+    },
+    {
+     "key": "address",
+     "value": "số 35 phố Nguyễn Chí Thanh, quận Ba Đình, Hà Nội",
+     "hint": "giao về số 35 phố Nguyễn Chí Thanh, quận Ba Đình, Hà Nội"
+    },
+    {
+     "key": "recipient_name",
+     "value": "Yến",
+     "hint": "nói tên người nhận là Yến"
+    }
+   ],
+   "agent_vars": {
+    "product": {
+     "text": "Áo khoác gió Windbreak",
+     "desc": "tên sản phẩm ĐẦY ĐỦ đã gồm loại hàng (đừng viết thêm loại hàng phía trước)",
+     "entity": [
+      "sku",
+      "SKU-JK-WND"
+     ]
+    },
+    "price": {
+     "text": "690.000đ",
+     "desc": "giá cuối (đã tính khuyến mãi)",
+     "entity": [
+      "price_vnd",
+      690000
+     ]
+    },
+    "order_id": {
+     "text": "OD600001",
+     "desc": "mã đơn",
+     "entity": [
+      "order_id",
+      "OD600001"
+     ]
+    },
+    "delivery_days": {
+     "text": "2",
+     "desc": "số ngày giao",
+     "entity": null
+    },
+    "address": {
+     "text": "số 35 phố Nguyễn Chí Thanh, quận Ba Đình, Hà Nội",
+     "desc": "địa chỉ giao (khách vừa đọc) — CHỈ dùng sau khi khách đã đọc địa chỉ",
+     "entity": null,
+     "after": "address"
+    },
+    "stock": {
+     "text": "hiện còn hàng",
+     "desc": "tình trạng tồn kho của sản phẩm (còn hàng/hết hàng)",
+     "entity": null
+    },
+    "readback_total": {
+     "text": "690.000đ",
+     "desc": "tổng tiền cả đơn (giá × số lượng) — dùng khi ĐỌC LẠI ĐƠN",
+     "entity": null
+    },
+    "payment_label": {
+     "text": "thanh toán khi nhận hàng (COD)",
+     "desc": "hình thức thanh toán chốt của đơn — dùng khi ĐỌC LẠI ĐƠN",
+     "entity": null
+    },
+    "recipient_name": {
+     "text": "Yến",
+     "desc": "tên người nhận — CHỈ dùng sau khi khách đã nói tên",
+     "entity": null,
+     "after": "recipient_name"
+    },
+    "caller_phone": {
+     "text": "0900020017",
+     "desc": "SĐT nhận hàng (số khách đang gọi/nhắn) — đọc lại để xác nhận",
+     "entity": [
+      "phone",
+      "0900020017"
+     ]
+    }
+   },
+   "n_turns": [
+    9,
+    12
+   ],
+   "style": "normal",
+   "expected": {
+    "must_carry_over": [
+     "product_advised",
+     "size",
+     "color",
+     "price_quoted_vnd"
+    ],
+    "must_not_ask": [
+     "product_advised",
+     "size",
+     "color"
+    ],
+    "success_if": {
+     "tool_called": "order.create",
+     "args_match": {
+      "sku": "SKU-JK-WND-M-NAVY",
+      "price_vnd": 690000,
+      "payment": "COD"
+     }
+    },
+    "ground_truth_facts": {
+     "price_vnd": 690000,
+     "in_stock": true
+    },
+    "facts_established": {
+     "order_id": "OD600001",
+     "variant_sku": "SKU-JK-WND-M-NAVY",
+     "payment": "COD"
+    },
+    "expected_outcome": "chot_don"
+   },
+   "abs_date": "2026-10-15",
+   "channel_identity": "fb.d17b",
+   "days_later": 1,
+   "order_flow": true
+  },
+  {
+   "name": "call_3",
+   "channel": "hotline",
+   "goal": "gọi hotline đổi sang size XL",
+   "opening": "agent",
+   "customer_plot": "Khách gọi: 'chị mới nhận giày/áo, size M không vừa, đổi lên size XL được không, mất phí gì không?'; nghe phụ thu 40.000đ thì đồng ý, nhờ làm thủ tục đổi.",
+   "agent_plot": "Agent biết ngay đơn {order_id} ({product}, size {old_size}); báo chính sách đổi trả {return_days} ngày, phí đổi {exchange_fee}, nhưng size {new_size} có phụ thu: khách trả thêm {extra_payment}; sau khi khách đồng ý thì làm thủ tục đổi. KHÔNG hỏi lại mã đơn/sản phẩm/màu.",
+   "customer_facts": [
+    {
+     "key": "size_new",
+     "value": "XL",
+     "hint": "đổi lên size XL"
+    }
+   ],
+   "agent_vars": {
+    "order_id": {
+     "text": "OD600001",
+     "desc": "mã đơn khách đã đặt",
+     "entity": [
+      "order_id",
+      "OD600001"
+     ]
+    },
+    "product": {
+     "text": "Áo khoác gió Windbreak",
+     "desc": "tên sản phẩm ĐẦY ĐỦ đã gồm loại hàng (đừng viết thêm loại hàng phía trước)",
+     "entity": [
+      "sku",
+      "SKU-JK-WND"
+     ]
+    },
+    "old_size": {
+     "text": "M",
+     "desc": "size hiện tại của đơn",
+     "entity": null
+    },
+    "new_size": {
+     "text": "XL",
+     "desc": "size khách muốn đổi",
+     "entity": null
+    },
+    "exchange_fee": {
+     "text": "không",
+     "desc": "phí đổi size (miễn phí lần đầu)",
+     "entity": null
+    },
+    "return_days": {
+     "text": "7",
+     "desc": "số ngày đổi trả",
+     "entity": null
+    },
+    "extra_payment": {
+     "text": "40.000đ",
+     "desc": "số tiền khách phải trả thêm khi đổi sang size XL",
+     "entity": [
+      "extra_payment_vnd",
+      40000
+     ]
+    },
+    "stock": {
+     "text": "hiện còn hàng",
+     "desc": "tình trạng tồn kho của sản phẩm (còn hàng/hết hàng)",
+     "entity": null
+    }
+   },
+   "n_turns": [
+    7,
+    10
+   ],
+   "style": "normal",
+   "expected": {
+    "must_carry_over": [
+     "order_id",
+     "variant_sku",
+     "size",
+     "color"
+    ],
+    "must_not_ask": [
+     "product_advised",
+     "order_id",
+     "color",
+     "payment"
+    ],
+    "success_if": {
+     "tool_called": "order.update",
+     "args_match": {
+      "order_id": "OD600001",
+      "new_variant_sku": "SKU-JK-WND-XL-NAVY",
+      "action": "exchange_size"
+     }
+    },
+    "ground_truth_facts": {
+     "return_days": 7,
+     "exchange_fee_vnd": 0,
+     "extra_payment_vnd": 40000,
+     "new_size_in_stock": true
+    },
+    "expected_outcome": "chot_don"
+   },
+   "abs_date": "2026-10-18",
+   "days_later": 3
+  }
+ ]
+}

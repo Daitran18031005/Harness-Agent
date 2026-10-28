@@ -1,0 +1,310 @@
+{
+ "scenario": {
+  "scenario_id": "SC-D15",
+  "level": "M1",
+  "persona": "khach_da_mua_doi_size",
+  "hard_case": null,
+  "customer_phone": "0900020015",
+  "customer_name": "Uyên",
+  "honorific": "chị",
+  "notes": "3 cuộc, 2 kênh chat + hotline: hỏi giá → chốt → đổi size 39→40 không phụ thu.",
+  "group": "B",
+  "archetype": "exchange",
+  "industry": "giày",
+  "south": true
+ },
+ "calls": [
+  {
+   "name": "call_1",
+   "channel": "zalo_oa",
+   "goal": "hỏi giá Giày sneaker Urban Classic qua chat",
+   "opening": "customer",
+   "customer_plot": "Khách nhắn hỏi Giày sneaker Urban Classic size 39 màu trắng giá bao nhiêu; đọc SĐT 0900020015; nói 'tối chị nhắn chốt'.",
+   "agent_plot": "Agent báo giá {price} cho size 39 màu trắng; xin SĐT.",
+   "customer_facts": [
+    {
+     "key": "size",
+     "value": 39,
+     "hint": "size 39"
+    },
+    {
+     "key": "color",
+     "value": "trang",
+     "hint": "màu trắng"
+    },
+    {
+     "key": "phone_provided",
+     "value": "0900020015",
+     "hint": "đọc SĐT 0900020015"
+    }
+   ],
+   "agent_vars": {
+    "product": {
+     "text": "Giày sneaker Urban Classic",
+     "desc": "tên sản phẩm ĐẦY ĐỦ đã gồm loại hàng (đừng viết thêm loại hàng phía trước)",
+     "entity": [
+      "sku",
+      "SKU-SN-CAS"
+     ]
+    },
+    "price": {
+     "text": "890.000đ",
+     "desc": "giá cuối size 39 màu trắng",
+     "entity": [
+      "price_vnd",
+      890000
+     ]
+    },
+    "stock": {
+     "text": "hiện còn hàng",
+     "desc": "tình trạng tồn kho của sản phẩm (còn hàng/hết hàng)",
+     "entity": null
+    }
+   },
+   "n_turns": [
+    5,
+    7
+   ],
+   "style": "normal",
+   "expected": {
+    "facts_established": {
+     "product_advised": "SKU-SN-CAS",
+     "size": 39,
+     "color": "trang",
+     "price_quoted_vnd": 890000,
+     "channel": "zalo",
+     "phone_provided": "0900020015"
+    },
+    "expected_outcome": "hen_goi_lai"
+   },
+   "abs_date": "2026-10-14",
+   "channel_identity": "zalo.d15",
+   "call_date": "2026-10-14"
+  },
+  {
+   "name": "call_2",
+   "channel": "zalo_oa",
+   "goal": "chốt đơn qua chat",
+   "opening": "customer",
+   "customer_plot": "Khách nhắn: 'chị hỏi Giày sneaker Urban Classic hôm qua'; chốt lấy size 39 màu trắng, COD, giao về số 80 đường Nguyễn Huệ, quận 1, TP.HCM.",
+   "agent_plot": "Agent nhận ra khách từ cuộc trước, KHÔNG hỏi lại sản phẩm/size/màu; xác nhận giá {price}; theo quy trình đặt đơn rồi chốt: mã đơn {order_id}, giao {delivery_days} ngày về {address}.",
+   "customer_facts": [
+    {
+     "key": "payment",
+     "value": "COD",
+     "hint": "COD"
+    },
+    {
+     "key": "address",
+     "value": "số 80 đường Nguyễn Huệ, quận 1, TP.HCM",
+     "hint": "giao về số 80 đường Nguyễn Huệ, quận 1, TP.HCM"
+    },
+    {
+     "key": "recipient_name",
+     "value": "Uyên",
+     "hint": "nói tên người nhận là Uyên"
+    }
+   ],
+   "agent_vars": {
+    "product": {
+     "text": "Giày sneaker Urban Classic",
+     "desc": "tên sản phẩm ĐẦY ĐỦ đã gồm loại hàng (đừng viết thêm loại hàng phía trước)",
+     "entity": [
+      "sku",
+      "SKU-SN-CAS"
+     ]
+    },
+    "price": {
+     "text": "890.000đ",
+     "desc": "giá cuối (đã tính khuyến mãi)",
+     "entity": [
+      "price_vnd",
+      890000
+     ]
+    },
+    "order_id": {
+     "text": "OD600001",
+     "desc": "mã đơn",
+     "entity": [
+      "order_id",
+      "OD600001"
+     ]
+    },
+    "delivery_days": {
+     "text": "3",
+     "desc": "số ngày giao",
+     "entity": null
+    },
+    "address": {
+     "text": "số 80 đường Nguyễn Huệ, quận 1, TP.HCM",
+     "desc": "địa chỉ giao (khách vừa đọc) — CHỈ dùng sau khi khách đã đọc địa chỉ",
+     "entity": null,
+     "after": "address"
+    },
+    "stock": {
+     "text": "hiện còn hàng",
+     "desc": "tình trạng tồn kho của sản phẩm (còn hàng/hết hàng)",
+     "entity": null
+    },
+    "readback_total": {
+     "text": "890.000đ",
+     "desc": "tổng tiền cả đơn (giá × số lượng) — dùng khi ĐỌC LẠI ĐƠN",
+     "entity": null
+    },
+    "payment_label": {
+     "text": "thanh toán khi nhận hàng (COD)",
+     "desc": "hình thức thanh toán chốt của đơn — dùng khi ĐỌC LẠI ĐƠN",
+     "entity": null
+    },
+    "recipient_name": {
+     "text": "Uyên",
+     "desc": "tên người nhận — CHỈ dùng sau khi khách đã nói tên",
+     "entity": null,
+     "after": "recipient_name"
+    },
+    "caller_phone": {
+     "text": "0900020015",
+     "desc": "SĐT nhận hàng (số khách đang gọi/nhắn) — đọc lại để xác nhận",
+     "entity": [
+      "phone",
+      "0900020015"
+     ]
+    }
+   },
+   "n_turns": [
+    9,
+    12
+   ],
+   "style": "normal",
+   "expected": {
+    "must_carry_over": [
+     "product_advised",
+     "size",
+     "color",
+     "price_quoted_vnd"
+    ],
+    "must_not_ask": [
+     "product_advised",
+     "size",
+     "color"
+    ],
+    "success_if": {
+     "tool_called": "order.create",
+     "args_match": {
+      "sku": "SKU-SN-CAS-39-TRANG",
+      "price_vnd": 890000,
+      "payment": "COD"
+     }
+    },
+    "ground_truth_facts": {
+     "price_vnd": 890000,
+     "in_stock": true
+    },
+    "facts_established": {
+     "order_id": "OD600001",
+     "variant_sku": "SKU-SN-CAS-39-TRANG",
+     "payment": "COD"
+    },
+    "expected_outcome": "chot_don"
+   },
+   "abs_date": "2026-10-15",
+   "channel_identity": "zalo_d15b",
+   "days_later": 1,
+   "order_flow": true
+  },
+  {
+   "name": "call_3",
+   "channel": "hotline",
+   "goal": "gọi hotline đổi sang size 40",
+   "opening": "agent",
+   "customer_plot": "Khách gọi: 'chị mới nhận giày/áo, size 39 không vừa, đổi lên size 40 được không, mất phí gì không?'; nghe không mất phí thì đồng ý, nhờ làm thủ tục đổi.",
+   "agent_plot": "Agent biết ngay đơn {order_id} ({product}, size {old_size}); báo chính sách đổi trả {return_days} ngày, phí đổi {exchange_fee}, size {new_size} không phụ thu; sau khi khách đồng ý thì làm thủ tục đổi. KHÔNG hỏi lại mã đơn/sản phẩm/màu.",
+   "customer_facts": [
+    {
+     "key": "size_new",
+     "value": 40,
+     "hint": "đổi lên size 40"
+    }
+   ],
+   "agent_vars": {
+    "order_id": {
+     "text": "OD600001",
+     "desc": "mã đơn khách đã đặt",
+     "entity": [
+      "order_id",
+      "OD600001"
+     ]
+    },
+    "product": {
+     "text": "Giày sneaker Urban Classic",
+     "desc": "tên sản phẩm ĐẦY ĐỦ đã gồm loại hàng (đừng viết thêm loại hàng phía trước)",
+     "entity": [
+      "sku",
+      "SKU-SN-CAS"
+     ]
+    },
+    "old_size": {
+     "text": "39",
+     "desc": "size hiện tại của đơn",
+     "entity": null
+    },
+    "new_size": {
+     "text": "40",
+     "desc": "size khách muốn đổi",
+     "entity": null
+    },
+    "exchange_fee": {
+     "text": "không",
+     "desc": "phí đổi size (miễn phí lần đầu)",
+     "entity": null
+    },
+    "return_days": {
+     "text": "7",
+     "desc": "số ngày đổi trả",
+     "entity": null
+    },
+    "stock": {
+     "text": "hiện còn hàng",
+     "desc": "tình trạng tồn kho của sản phẩm (còn hàng/hết hàng)",
+     "entity": null
+    }
+   },
+   "n_turns": [
+    7,
+    10
+   ],
+   "style": "normal",
+   "expected": {
+    "must_carry_over": [
+     "order_id",
+     "variant_sku",
+     "size",
+     "color"
+    ],
+    "must_not_ask": [
+     "product_advised",
+     "order_id",
+     "color",
+     "payment"
+    ],
+    "success_if": {
+     "tool_called": "order.update",
+     "args_match": {
+      "order_id": "OD600001",
+      "new_variant_sku": "SKU-SN-CAS-40-TRANG",
+      "action": "exchange_size"
+     }
+    },
+    "ground_truth_facts": {
+     "return_days": 7,
+     "exchange_fee_vnd": 0,
+     "extra_payment_vnd": 0,
+     "new_size_in_stock": true
+    },
+    "expected_outcome": "chot_don"
+   },
+   "abs_date": "2026-10-18",
+   "days_later": 3
+  }
+ ]
+}

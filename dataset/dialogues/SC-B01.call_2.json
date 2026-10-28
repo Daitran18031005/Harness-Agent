@@ -1,0 +1,123 @@
+{
+ "scenario_id": "SC-B01",
+ "call": "call_2",
+ "channel": "zalo_oa",
+ "call_date": "2026-10-16",
+ "allowed_numbers": [],
+ "turns": [
+  {
+   "idx": 1,
+   "speaker": "C",
+   "text": "Anh hỏi giày RunLite hôm qua bên Facebook. Size 41 màu đen.",
+   "text_written": "Anh hỏi giày RunLite hôm qua bên Facebook. Size 41 màu đen.",
+   "states": [],
+   "entities": {},
+   "text_spoken": "anh hỏi giày run lai hôm qua bên facebook size bốn mươi mốt màu đen"
+  },
+  {
+   "idx": 2,
+   "speaker": "A",
+   "text": "Em nhớ anh Quân hỏi bên Fanpage ạ. RunLite 2 Pro giá 1.521.000đ. Anh muốn lấy size 41 màu đen như đã chọn chứ ạ?",
+   "text_template": "Em nhớ anh Quân hỏi bên Fanpage ạ. RunLite 2 Pro giá {price}. Anh muốn lấy size 41 màu đen như đã chọn chứ ạ?",
+   "text_written": "Em nhớ anh Quân hỏi bên Fanpage ạ. RunLite 2 Pro giá 1.521.000đ. Anh muốn lấy size 41 màu đen như đã chọn chứ ạ?",
+   "entities": {
+    "price_vnd": 1521000
+   },
+   "text_spoken": "em nhớ anh quân hỏi bên fanpage ạ run lai hai pro giá một triệu năm trăm hai mươi mốt nghìn anh muốn lấy size bốn mươi mốt màu đen như đã chọn chứ ạ"
+  },
+  {
+   "idx": 3,
+   "speaker": "C",
+   "text": "Ừ. Còn hàng không?",
+   "text_written": "Ừ. Còn hàng không?",
+   "states": [],
+   "entities": {},
+   "text_spoken": "ừ còn hàng không"
+  },
+  {
+   "idx": 4,
+   "speaker": "A",
+   "text": "Dạ, sản phẩm hiện còn hàng ạ. Anh cho em xin địa chỉ giao, tên người nhận và hình thức thanh toán nhé.",
+   "text_template": "Dạ, sản phẩm {stock} ạ. Anh cho em xin địa chỉ giao, tên người nhận và hình thức thanh toán nhé.",
+   "text_written": "Dạ, sản phẩm hiện còn hàng ạ. Anh cho em xin địa chỉ giao, tên người nhận và hình thức thanh toán nhé.",
+   "entities": {},
+   "text_spoken": "dạ sản phẩm hiện còn hàng ạ anh cho em xin địa chỉ giao tên người nhận và hình thức thanh toán nhé"
+  },
+  {
+   "idx": 5,
+   "speaker": "C",
+   "text": "Giao về số 45 đường Lê Văn Sỹ, quận 3, TP.HCM. COD, người nhận Quân.",
+   "text_written": "Giao về số 45 đường Lê Văn Sỹ, quận 3, TP.HCM. COD, người nhận Quân.",
+   "states": [
+    "address",
+    "payment",
+    "recipient_name"
+   ],
+   "entities": {
+    "address": "số 45 đường Lê Văn Sỹ, quận 3, TP.HCM",
+    "payment": "COD"
+   },
+   "text_spoken": "giao về số bốn mươi lăm đường lê văn sỹ quận ba tp hcm cê ô đê người nhận quân"
+  },
+  {
+   "idx": 6,
+   "speaker": "A",
+   "text": "Em xác nhận SĐT nhận hàng là 0900010004, đúng không ạ?",
+   "text_template": "Em xác nhận SĐT nhận hàng là {caller_phone}, đúng không ạ?",
+   "text_written": "Em xác nhận SĐT nhận hàng là 0900010004, đúng không ạ?",
+   "entities": {
+    "phone": "0900010004"
+   },
+   "text_spoken": "em xác nhận số điện thoại nhận hàng là không chín không không không một không không không bốn đúng không ạ"
+  },
+  {
+   "idx": 7,
+   "speaker": "C",
+   "text": "Đúng số này.",
+   "text_written": "Đúng số này.",
+   "states": [],
+   "entities": {},
+   "text_spoken": "đúng số này"
+  },
+  {
+   "idx": 8,
+   "speaker": "A",
+   "text": "Em đọc lại đơn: Giày chạy bộ RunLite 2 Pro, giá 1.521.000đ, tổng 1.521.000đ, giao cho Quân, SĐT 0900010004, địa chỉ số 45 đường Lê Văn Sỹ, quận 3, TP.HCM, hình thức thanh toán khi nhận hàng (COD). Mình xác nhận đặt đơn này chứ ạ?",
+   "text_template": "Em đọc lại đơn: {product}, giá {price}, tổng {readback_total}, giao cho {recipient_name}, SĐT {caller_phone}, địa chỉ {address}, hình thức {payment_label}. Mình xác nhận đặt đơn này chứ ạ?",
+   "text_written": "Em đọc lại đơn: Giày chạy bộ RunLite 2 Pro, giá 1.521.000đ, tổng 1.521.000đ, giao cho Quân, SĐT 0900010004, địa chỉ số 45 đường Lê Văn Sỹ, quận 3, TP.HCM, hình thức thanh toán khi nhận hàng (COD). Mình xác nhận đặt đơn này chứ ạ?",
+   "entities": {
+    "sku": "SKU-SN-RUN2",
+    "price_vnd": 1521000,
+    "phone": "0900010004"
+   },
+   "text_spoken": "em đọc lại đơn giày chạy bộ run lai hai pro giá một triệu năm trăm hai mươi mốt nghìn tổng một triệu năm trăm hai mươi mốt nghìn giao cho quân số điện thoại không chín không không không một không không không bốn địa chỉ số bốn mươi lăm đường lê văn sỹ quận ba tp hcm hình thức thanh toán khi nhận hàng cê ô đê mình xác nhận đặt đơn này chứ ạ"
+  },
+  {
+   "idx": 9,
+   "speaker": "C",
+   "text": "Ừ, chốt đi.",
+   "text_written": "Ừ, chốt đi.",
+   "states": [],
+   "entities": {},
+   "text_spoken": "ừ chốt đi"
+  },
+  {
+   "idx": 10,
+   "speaker": "A",
+   "text": "Dạ, em chốt đơn mã OD600001, dự kiến giao trong 2 ngày ạ.",
+   "text_template": "Dạ, em chốt đơn mã {order_id}, dự kiến giao trong {delivery_days} ngày ạ.",
+   "text_written": "Dạ, em chốt đơn mã OD600001, dự kiến giao trong 2 ngày ạ.",
+   "entities": {
+    "order_id": "OD600001"
+   },
+   "text_spoken": "dạ em chốt đơn mã ô đê sáu không không không không một dự kiến giao trong hai ngày ạ"
+  }
+ ],
+ "meta": {
+  "model": "gpt-6-luna",
+  "attempts": 2,
+  "ok": true,
+  "unresolved": []
+ },
+ "frame_sha256": "33d3631c6ec3332d"
+}

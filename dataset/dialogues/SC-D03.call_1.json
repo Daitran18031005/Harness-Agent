@@ -1,0 +1,82 @@
+{
+ "scenario_id": "SC-D03",
+ "call": "call_1",
+ "channel": "chat_fanpage",
+ "call_date": "2026-09-25",
+ "meta": {
+  "model": "gpt-6-luna",
+  "attempts": 1,
+  "ok": true,
+  "unresolved": [],
+  "rebuilt": true
+ },
+ "frame_sha256": "9fde7b9d87833d2b",
+ "allowed_numbers": [],
+ "turns": [
+  {
+   "idx": 1,
+   "speaker": "C",
+   "text": "Chị hỏi Máy lọc không khí AirPure X giá bao nhiêu? Mỗi kênh báo một kiểu, bực thật.",
+   "text_written": "Chị hỏi Máy lọc không khí AirPure X giá bao nhiêu? Mỗi kênh báo một kiểu, bực thật.",
+   "states": [
+    "product_asked"
+   ],
+   "entities": {
+    "sku": "SKU-AP-X"
+   },
+   "text_spoken": "chị hỏi máy lọc không khí e pia x giá bao nhiêu mỗi kênh báo một kiểu bực thật"
+  },
+  {
+   "idx": 2,
+   "speaker": "A",
+   "text": "Em gửi chị Châu giá Máy lọc không khí AirPure X là 4.390.000đ, khuyến mãi đến hết 30/9. Em xin số điện thoại để hotline gọi lại tư vấn thêm nhé chị?",
+   "text_template": "Em gửi chị Châu giá Máy lọc không khí AirPure X là {price}, khuyến mãi đến hết {promo_end}. Em xin số điện thoại để hotline gọi lại tư vấn thêm nhé chị?",
+   "text_written": "Em gửi chị Châu giá Máy lọc không khí AirPure X là 4.390.000đ, khuyến mãi đến hết 30/9. Em xin số điện thoại để hotline gọi lại tư vấn thêm nhé chị?",
+   "entities": {
+    "price_vnd": 4390000,
+    "promo_expiry": "2026-09-30"
+   },
+   "text_spoken": "em gửi chị châu giá máy lọc không khí e pia x là bốn triệu ba trăm chín mươi nghìn khuyến mãi đến hết ba mươi tháng chín em xin số điện thoại để hotline gọi lại tư vấn thêm nhé chị"
+  },
+  {
+   "idx": 3,
+   "speaker": "C",
+   "text": "À mà… còn hàng không em?",
+   "text_written": "À mà… còn hàng không em?",
+   "states": [],
+   "entities": {},
+   "text_spoken": "à mà còn hàng không em"
+  },
+  {
+   "idx": 4,
+   "speaker": "A",
+   "text": "Dạ, sản phẩm hiện hiện còn hàng chị Châu nhé.",
+   "text_template": "Dạ, sản phẩm hiện {stock} chị Châu nhé.",
+   "text_written": "Dạ, sản phẩm hiện hiện còn hàng chị Châu nhé.",
+   "entities": {},
+   "text_spoken": "dạ sản phẩm hiện hiện còn hàng chị châu nhé"
+  },
+  {
+   "idx": 5,
+   "speaker": "C",
+   "text": "Ừ, để chị suy nghĩ rồi gọi hotline. Số chị là 0900020003.",
+   "text_written": "Ừ, để chị suy nghĩ rồi gọi hotline. Số chị là 0900020003.",
+   "states": [
+    "phone_provided"
+   ],
+   "entities": {
+    "phone": "0900020003"
+   },
+   "text_spoken": "ừ để chị suy nghĩ rồi gọi hotline số chị là không chín không không không hai không không không ba"
+  },
+  {
+   "idx": 6,
+   "speaker": "A",
+   "text": "Dạ, em ghi nhận rồi chị Châu. Hotline sẽ gọi lại tư vấn cho chị nhé.",
+   "text_template": "Dạ, em ghi nhận rồi chị Châu. Hotline sẽ gọi lại tư vấn cho chị nhé.",
+   "text_written": "Dạ, em ghi nhận rồi chị Châu. Hotline sẽ gọi lại tư vấn cho chị nhé.",
+   "entities": {},
+   "text_spoken": "dạ em ghi nhận rồi chị châu hotline sẽ gọi lại tư vấn cho chị nhé"
+  }
+ ]
+}

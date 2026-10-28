@@ -1,0 +1,53 @@
+=== full 1
+SC-GEN-01 call_2 1 hr claim price_vnd=1521000 ≠ sự thật 1690000
+SC-GEN-02 call_1 3 hr claim total_vnd=15380000 ≠ sự thật 15980000
+SC-GEN-02 call_1 4 hr claim total_vnd=15380000 ≠ sự thật 15980000
+SC-GEN-05 call_2 None ccr chưa mang sang: size, color
+SC-GEN-05 call_2 1 hr claim variant_price_delta_vnd=40000 ≠ sự thật 50000
+SC-GEN-06 call_2 None ccr chưa mang sang: promo_code
+SC-GEN-08 call_1 None tsr không nói 'không có thông tin'
+=== full 2
+SC-GEN-01 call_2 1 hr claim price_vnd=1521000 ≠ sự thật 1690000
+SC-GEN-02 call_1 2 hr claim total_vnd=15380000 ≠ sự thật 15980000
+SC-GEN-02 call_1 3 hr claim total_vnd=15380000 ≠ sự thật 15980000
+SC-GEN-05 call_2 None ccr chưa mang sang: size, color
+SC-GEN-05 call_2 1 hr claim variant_price_delta_vnd=40000 ≠ sự thật 50000
+SC-GEN-05 call_2 2 hr claim variant_price_delta_vnd=40000 ≠ sự thật 50000
+SC-GEN-06 call_2 None ccr chưa mang sang: promo_code
+SC-GEN-08 call_1 None tsr không nói 'không có thông tin'
+=== full 3
+SC-GEN-01 call_2 1 hr claim price_vnd=1521000 ≠ sự thật 1690000
+SC-GEN-02 call_1 3 hr claim total_vnd=15380000 ≠ sự thật 15980000
+SC-GEN-02 call_1 4 hr claim total_vnd=15380000 ≠ sự thật 15980000
+SC-GEN-05 call_2 None ccr chưa mang sang: size, color
+SC-GEN-05 call_2 1 hr claim variant_price_delta_vnd=40000 ≠ sự thật 50000
+SC-GEN-05 call_2 2 hr claim variant_price_delta_vnd=40000 ≠ sự thật 50000
+SC-GEN-06 call_2 None ccr chưa mang sang: promo_code
+SC-GEN-08 call_1 None tsr không nói 'không có thông tin'
+=== baseline 1
+SC-GEN-01 call_2 None ccr chưa mang sang: product_advised
+SC-GEN-01 call_2 1 hr claim price_vnd=1521000 ≠ sự thật 1690000
+SC-GEN-02 call_1 3 hr claim total_vnd=15380000 ≠ sự thật 15980000
+SC-GEN-02 call_1 4 hr claim total_vnd=15380000 ≠ sự thật 15980000
+SC-GEN-05 call_2 None ccr chưa mang sang: variant_sku, size, color
+SC-GEN-05 call_2 1 hr claim variant_price_delta_vnd=40000 ≠ sự thật 50000
+SC-GEN-06 call_2 None ccr chưa mang sang: product_advised, price_quoted_vnd, promo_code
+SC-GEN-08 call_1 None tsr không nói 'không có thông tin'
+=== baseline 2
+SC-GEN-01 call_2 None ccr chưa mang sang: product_advised
+SC-GEN-01 call_2 1 hr claim price_vnd=1521000 ≠ sự thật 1690000
+SC-GEN-02 call_1 3 hr claim total_vnd=15380000 ≠ sự thật 15980000
+SC-GEN-02 call_1 4 hr claim total_vnd=15380000 ≠ sự thật 15980000
+SC-GEN-05 call_2 None ccr chưa mang sang: variant_sku, size, color
+SC-GEN-05 call_2 1 hr claim variant_price_delta_vnd=40000 ≠ sự thật 50000
+SC-GEN-06 call_2 None ccr chưa mang sang: product_advised, price_quoted_vnd, promo_code
+SC-GEN-08 call_1 None tsr không nói 'không có thông tin'
+=== baseline 3
+SC-GEN-01 call_2 None ccr chưa mang sang: product_advised
+SC-GEN-01 call_2 1 hr claim price_vnd=1521000 ≠ sự thật 1690000
+SC-GEN-02 call_1 2 hr claim total_vnd=15380000 ≠ sự thật 15980000
+SC-GEN-02 call_1 3 hr claim total_vnd=15380000 ≠ sự thật 15980000
+SC-GEN-05 call_2 None tsr không có tool call order.update khớp args_match
+SC-GEN-05 call_2 None ccr chưa mang sang: variant_sku, size, color
+SC-GEN-06 call_2 None ccr chưa mang sang: product_advised, price_quoted_vnd, promo_code
+SC-GEN-08 call_1 None tsr không nói 'không có thông tin'

@@ -1,0 +1,1323 @@
+{
+ "model": "gpt-6-luna",
+ "seed": 42,
+ "set": "frames54",
+ "total_spent_vnd_all_runs": 2076.33,
+ "hard_cap_vnd": 10000.0,
+ "last_run_spent_vnd": 15.862,
+ "stopped": null,
+ "scenarios_done": [
+  "SC-D03",
+  "SC-D04",
+  "SC-D24",
+  "SC-D25",
+  "SC-D26",
+  "SC-D27",
+  "SC-D28",
+  "SC-D31",
+  "SC-D47",
+  "SC-D51"
+ ],
+ "runs": [
+  {
+   "run": 1,
+   "model": "gpt-6-luna",
+   "reconstructed": true,
+   "note": "lần đầu: nhiều lần 'thất bại' do LỖI CỦA BỘ KIỂM (S11 cấm chữ số trong tên model/echo số khách, S12 ITN đọc sai mã đơn đọc như một con số, S10 cùng một địa chỉ ở mọi kịch bản) — đã sửa mã rồi dựng lại, không sinh lại hết",
+   "spent_vnd": 361.1,
+   "calls": [
+    {
+     "scenario": "SC-A01",
+     "call": "call_1",
+     "attempts": 1,
+     "cost_vnd": 10.1
+    },
+    {
+     "scenario": "SC-A01",
+     "call": "call_2",
+     "attempts": 1,
+     "cost_vnd": 10.1
+    },
+    {
+     "scenario": "SC-A02",
+     "call": "call_1",
+     "attempts": 2,
+     "cost_vnd": 17.8
+    },
+    {
+     "scenario": "SC-A02",
+     "call": "call_2",
+     "attempts": 3,
+     "cost_vnd": 32.0
+    },
+    {
+     "scenario": "SC-A03",
+     "call": "call_1",
+     "attempts": 2,
+     "cost_vnd": 22.0
+    },
+    {
+     "scenario": "SC-A03",
+     "call": "call_2",
+     "attempts": 3,
+     "cost_vnd": 28.7
+    },
+    {
+     "scenario": "SC-B01",
+     "call": "call_1",
+     "attempts": 3,
+     "cost_vnd": 26.8
+    },
+    {
+     "scenario": "SC-B01",
+     "call": "call_2",
+     "attempts": 1,
+     "cost_vnd": 8.2
+    },
+    {
+     "scenario": "SC-B01",
+     "call": "call_3",
+     "attempts": 3,
+     "cost_vnd": 31.4
+    },
+    {
+     "scenario": "SC-B02",
+     "call": "call_1",
+     "attempts": 3,
+     "cost_vnd": 24.6
+    },
+    {
+     "scenario": "SC-B02",
+     "call": "call_2",
+     "attempts": 3,
+     "cost_vnd": 21.1
+    },
+    {
+     "scenario": "SC-B02",
+     "call": "call_3",
+     "attempts": 3,
+     "cost_vnd": 22.9
+    },
+    {
+     "scenario": "SC-C01",
+     "call": "call_1",
+     "attempts": 3,
+     "cost_vnd": 36.1
+    },
+    {
+     "scenario": "SC-C02",
+     "call": "call_1",
+     "attempts": 1,
+     "cost_vnd": 10.3
+    },
+    {
+     "scenario": "SC-C03",
+     "call": "call_1",
+     "attempts": 2,
+     "cost_vnd": 17.3
+    },
+    {
+     "scenario": "SC-C04",
+     "call": "call_1",
+     "attempts": 3,
+     "cost_vnd": 34.3
+    },
+    {
+     "scenario": "SC-C05",
+     "call": "call_1",
+     "attempts": 1,
+     "cost_vnd": 7.4
+    }
+   ]
+  },
+  {
+   "run": 2,
+   "model": "gpt-6-luna",
+   "reconstructed": true,
+   "note": "sau khi sửa bộ kiểm: giữ các cuộc đã đạt, chỉ sinh lại cuộc còn lỗi (trần 139 VND = 500 − 361)",
+   "spent_vnd": 81.2,
+   "calls": [
+    {
+     "scenario": "SC-A01",
+     "call": "call_2",
+     "attempts": 2,
+     "cost_vnd": 22.3
+    },
+    {
+     "scenario": "SC-A02",
+     "call": "call_2",
+     "attempts": 1,
+     "cost_vnd": 10.9
+    },
+    {
+     "scenario": "SC-A03",
+     "call": "call_2",
+     "attempts": 1,
+     "cost_vnd": 8.9
+    },
+    {
+     "scenario": "SC-B02",
+     "call": "call_1",
+     "attempts": 1,
+     "cost_vnd": 7.0
+    },
+    {
+     "scenario": "SC-C01",
+     "call": "call_1",
+     "attempts": 1,
+     "cost_vnd": 12.5
+    },
+    {
+     "scenario": "SC-C04",
+     "call": "call_1",
+     "attempts": 1,
+     "cost_vnd": 11.8
+    },
+    {
+     "scenario": "SC-C05",
+     "call": "call_1",
+     "attempts": 1,
+     "cost_vnd": 7.8
+    }
+   ]
+  },
+  {
+   "run": 3,
+   "model": "gpt-6-luna",
+   "reconstructed": true,
+   "note": "sửa lỗi NỘI DUNG phát hiện khi đọc: B01 call_2 (agent nói địa chỉ trước khi khách đọc) và C05 (LLM tự viết teencode thay vì có dấu) — trần 55 VND",
+   "spent_vnd": 28.4,
+   "calls": [
+    {
+     "scenario": "SC-B01",
+     "call": "call_2",
+     "attempts": 2,
+     "cost_vnd": 18.7
+    },
+    {
+     "scenario": "SC-C05",
+     "call": "call_1",
+     "attempts": 1,
+     "cost_vnd": 9.7
+    }
+   ]
+  },
+  {
+   "run": "auto",
+   "model": "gpt-6-luna",
+   "seed": 42,
+   "max_cost_vnd": 1000.0,
+   "spent_vnd": 672.315,
+   "stopped": null,
+   "calls": [
+    {
+     "scenario": "SC-A01",
+     "call": "call_1",
+     "attempts": 1,
+     "cost_vnd": 12.857,
+     "ok": false,
+     "errors": [
+      "P3 hồ sơ 'hesitant': chỉ 0/5 lượt khách ≤ 6 từ (cần ≥ 25%) — rút ngắn, bỏ bớt câu đủ chủ vị"
+     ]
+    },
+    {
+     "scenario": "SC-A01",
+     "call": "call_1",
+     "attempts": 2,
+     "cost_vnd": 12.697,
+     "ok": true,
+     "errors": []
+    },
+    {
+     "scenario": "SC-A01",
+     "call": "call_2",
+     "attempts": 1,
+     "cost_vnd": 21.369,
+     "ok": false,
+     "errors": [
+      "P3 hồ sơ 'hesitant': chỉ 0/5 lượt khách ≤ 6 từ (cần ≥ 25%) — rút ngắn, bỏ bớt câu đủ chủ vị",
+      "P5 lượt 9: sau khi đọc lại đơn, lượt kế phải là khách đồng ý RÕ RÀNG (ngắn, không điều kiện/câu hỏi)"
+     ]
+    },
+    {
+     "scenario": "SC-A01",
+     "call": "call_2",
+     "attempts": 2,
+     "cost_vnd": 19.665,
+     "ok": false,
+     "errors": [
+      "P3 hồ sơ 'hesitant': chỉ 0/5 lượt khách ≤ 6 từ (cần ≥ 25%) — rút ngắn, bỏ bớt câu đủ chủ vị"
+     ]
+    },
+    {
+     "scenario": "SC-A01",
+     "call": "call_2",
+     "attempts": 3,
+     "cost_vnd": 16.256,
+     "ok": false,
+     "errors": [
+      "P2 lượt 5: khách hỏi ['price'] ở lượt 4 nhưng agent chưa trả lời: ['price'] (dùng ô trống tương ứng)",
+      "P3 hồ sơ 'hesitant': chỉ 1/5 lượt khách ≤ 6 từ (cần ≥ 25%) — rút ngắn, bỏ bớt câu đủ chủ vị"
+     ]
+    },
+    {
+     "scenario": "SC-A02",
+     "call": "call_1",
+     "attempts": 1,
+     "cost_vnd": 7.635,
+     "ok": false,
+     "errors": [
+      "P3 hồ sơ 'interrupting': chỉ 0/4 lượt khách ≤ 6 từ (cần ≥ 25%) — rút ngắn, bỏ bớt câu đủ chủ vị"
+     ]
+    },
+    {
+     "scenario": "SC-A02",
+     "call": "call_1",
+     "attempts": 2,
+     "cost_vnd": 11.438,
+     "ok": true,
+     "errors": []
+    },
+    {
+     "scenario": "SC-A02",
+     "call": "call_2",
+     "attempts": 1,
+     "cost_vnd": 21.687,
+     "ok": false,
+     "errors": [
+      "P2 lượt 5: khách hỏi ['payment'] ở lượt 4 nhưng agent chưa trả lời: ['payment'] (dùng ô trống tương ứng)"
+     ]
+    },
+    {
+     "scenario": "SC-A02",
+     "call": "call_2",
+     "attempts": 2,
+     "cost_vnd": 19.578,
+     "ok": false,
+     "errors": [
+      "P3 hồ sơ 'interrupting': chỉ 1/5 lượt khách ≤ 6 từ (cần ≥ 25%) — rút ngắn, bỏ bớt câu đủ chủ vị"
+     ]
+    },
+    {
+     "scenario": "SC-A02",
+     "call": "call_2",
+     "attempts": 3,
+     "cost_vnd": 16.789,
+     "ok": true,
+     "errors": []
+    },
+    {
+     "scenario": "SC-A03",
+     "call": "call_1",
+     "attempts": 1,
+     "cost_vnd": 13.437,
+     "ok": false,
+     "errors": [
+      "P1 lượt 3: khách nhắc đối thủ/nơi khác ('ben khac') nhưng cốt truyện không có — thêm fact competitor_price_vnd vào khung hoặc bỏ",
+      "P3 hồ sơ 'hesitant': chỉ 0/3 lượt khách ≤ 6 từ (cần ≥ 25%) — rút ngắn, bỏ bớt câu đủ chủ vị"
+     ]
+    },
+    {
+     "scenario": "SC-A03",
+     "call": "call_1",
+     "attempts": 2,
+     "cost_vnd": 12.172,
+     "ok": false,
+     "errors": [
+      "P3 hồ sơ 'hesitant': chỉ 0/3 lượt khách ≤ 6 từ (cần ≥ 25%) — rút ngắn, bỏ bớt câu đủ chủ vị"
+     ]
+    },
+    {
+     "scenario": "SC-A03",
+     "call": "call_1",
+     "attempts": 3,
+     "cost_vnd": 12.07,
+     "ok": false,
+     "errors": [
+      "P1 lượt 3: khách nhắc đối thủ/nơi khác ('cho khac') nhưng cốt truyện không có — thêm fact competitor_price_vnd vào khung hoặc bỏ"
+     ]
+    },
+    {
+     "scenario": "SC-A03",
+     "call": "call_2",
+     "attempts": 1,
+     "cost_vnd": 16.515,
+     "ok": false,
+     "errors": [
+      "[LỖI] S10 SC-A03/call_2: lượt khách 10 trùng ≥ 85% với SC-A02/call_2: 'Ok em, chốt đi.'",
+      "P1 lượt 4: khách nhắc đối thủ/nơi khác ('ben khac') nhưng cốt truyện không có — thêm fact competitor_price_vnd vào khung hoặc bỏ"
+     ]
+    },
+    {
+     "scenario": "SC-A03",
+     "call": "call_2",
+     "attempts": 2,
+     "cost_vnd": 16.553,
+     "ok": true,
+     "errors": []
+    },
+    {
+     "scenario": "SC-B01",
+     "call": "call_1",
+     "attempts": 1,
+     "cost_vnd": 10.592,
+     "ok": true,
+     "errors": []
+    },
+    {
+     "scenario": "SC-B01",
+     "call": "call_2",
+     "attempts": 1,
+     "cost_vnd": 23.663,
+     "ok": false,
+     "errors": [
+      "P3 hồ sơ 'curt': chỉ 2/5 lượt khách ≤ 6 từ (cần ≥ 50%) — rút ngắn, bỏ bớt câu đủ chủ vị"
+     ]
+    },
+    {
+     "scenario": "SC-B01",
+     "call": "call_2",
+     "attempts": 2,
+     "cost_vnd": 19.82,
+     "ok": false,
+     "errors": [
+      "P5 trước khi đọc lại đơn, SĐT nhận hàng chưa được khách nói hay agent hỏi/xác nhận"
+     ]
+    },
+    {
+     "scenario": "SC-B01",
+     "call": "call_2",
+     "attempts": 3,
+     "cost_vnd": 23.688,
+     "ok": false,
+     "errors": [
+      "[LỖI] S10 SC-B01/call_2: lượt 5 và 6 cùng người nói (C)"
+     ]
+    },
+    {
+     "scenario": "SC-B01",
+     "call": "call_3",
+     "attempts": 1,
+     "cost_vnd": 11.321,
+     "ok": false,
+     "errors": [
+      "P3 hồ sơ 'impatient': chỉ 0/4 lượt khách ≤ 6 từ (cần ≥ 40%) — rút ngắn, bỏ bớt câu đủ chủ vị"
+     ]
+    },
+    {
+     "scenario": "SC-B01",
+     "call": "call_3",
+     "attempts": 2,
+     "cost_vnd": 11.732,
+     "ok": false,
+     "errors": [
+      "P3 hồ sơ 'impatient': chỉ 0/4 lượt khách ≤ 6 từ (cần ≥ 40%) — rút ngắn, bỏ bớt câu đủ chủ vị"
+     ]
+    },
+    {
+     "scenario": "SC-B01",
+     "call": "call_3",
+     "attempts": 3,
+     "cost_vnd": 11.58,
+     "ok": false,
+     "errors": [
+      "P3 hồ sơ 'impatient': chỉ 1/4 lượt khách ≤ 6 từ (cần ≥ 40%) — rút ngắn, bỏ bớt câu đủ chủ vị"
+     ]
+    },
+    {
+     "scenario": "SC-B02",
+     "call": "call_1",
+     "attempts": 1,
+     "cost_vnd": 14.968,
+     "ok": false,
+     "errors": [
+      "[LỖI] S10 SC-B02/call_1: lượt khách 8 trùng ≥ 85% với SC-B01/call_2: 'Ừ, chốt đi.'",
+      "P3 hồ sơ 'impatient': 2/5 lượt khách có từ lịch sự (dạ/vâng/xin/cảm ơn/…ạ; tối đa 30%) — không phải câu nào cũng lịch sự"
+     ]
+    },
+    {
+     "scenario": "SC-B02",
+     "call": "call_1",
+     "attempts": 2,
+     "cost_vnd": 15.281,
+     "ok": false,
+     "errors": [
+      "[LỖI] S10 SC-B02/call_1: lượt khách 10 trùng ≥ 85% với SC-A03/call_2: 'Vâng, chốt đơn giúp chị.'"
+     ]
+    },
+    {
+     "scenario": "SC-B02",
+     "call": "call_1",
+     "attempts": 3,
+     "cost_vnd": 17.755,
+     "ok": false,
+     "errors": [
+      "P3 hồ sơ 'impatient': 2/5 lượt khách có từ lịch sự (dạ/vâng/xin/cảm ơn/…ạ; tối đa 30%) — không phải câu nào cũng lịch sự"
+     ]
+    },
+    {
+     "scenario": "SC-B02",
+     "call": "call_2",
+     "attempts": 1,
+     "cost_vnd": 9.809,
+     "ok": false,
+     "errors": [
+      "[LỖI] S10 SC-B02/call_2: lượt khách 6 trùng ≥ 85% với SC-B01/call_3: 'Nhanh giúp anh nhé.'",
+      "P3 hồ sơ 'impatient': chỉ 1/3 lượt khách ≤ 6 từ (cần ≥ 40%) — rút ngắn, bỏ bớt câu đủ chủ vị"
+     ]
+    },
+    {
+     "scenario": "SC-B02",
+     "call": "call_2",
+     "attempts": 2,
+     "cost_vnd": 10.307,
+     "ok": false,
+     "errors": [
+      "P3 hồ sơ 'impatient': chỉ 1/3 lượt khách ≤ 6 từ (cần ≥ 40%) — rút ngắn, bỏ bớt câu đủ chủ vị"
+     ]
+    },
+    {
+     "scenario": "SC-B02",
+     "call": "call_2",
+     "attempts": 3,
+     "cost_vnd": 9.891,
+     "ok": false,
+     "errors": [
+      "P3 hồ sơ 'impatient': chỉ 1/3 lượt khách ≤ 6 từ (cần ≥ 40%) — rút ngắn, bỏ bớt câu đủ chủ vị"
+     ]
+    },
+    {
+     "scenario": "SC-B02",
+     "call": "call_3",
+     "attempts": 1,
+     "cost_vnd": 10.424,
+     "ok": false,
+     "errors": [
+      "P3 hồ sơ 'impatient': chỉ 1/3 lượt khách ≤ 6 từ (cần ≥ 40%) — rút ngắn, bỏ bớt câu đủ chủ vị"
+     ]
+    },
+    {
+     "scenario": "SC-B02",
+     "call": "call_3",
+     "attempts": 2,
+     "cost_vnd": 11.674,
+     "ok": false,
+     "errors": [
+      "P3 hồ sơ 'impatient': chỉ 1/3 lượt khách ≤ 6 từ (cần ≥ 40%) — rút ngắn, bỏ bớt câu đủ chủ vị"
+     ]
+    },
+    {
+     "scenario": "SC-B02",
+     "call": "call_3",
+     "attempts": 3,
+     "cost_vnd": 9.235,
+     "ok": false,
+     "errors": [
+      "[LỖI] S11 SC-B02/call_3: lời agent lượt 5 có chữ số ngoài ô trống: 'Dạ, em chuyển máy ngay và tóm tắt là chị Hương khiếu nại đơn máy hút sữa Spectra S1 giao trễ, dự kiến giao ngày 14/10 nhưng chưa nhận được ạ.'",
+      "P3 hồ sơ 'impatient': chỉ 1/3 lượt khách ≤ 6 từ (cần ≥ 40%) — rút ngắn, bỏ bớt câu đủ chủ vị"
+     ]
+    },
+    {
+     "scenario": "SC-C01",
+     "call": "call_1",
+     "attempts": 1,
+     "cost_vnd": 20.02,
+     "ok": false,
+     "errors": [
+      "P1 lượt 4: khách nhắc đối thủ/nơi khác ('cho khac') nhưng cốt truyện không có — thêm fact competitor_price_vnd vào khung hoặc bỏ"
+     ]
+    },
+    {
+     "scenario": "SC-C01",
+     "call": "call_1",
+     "attempts": 2,
+     "cost_vnd": 18.623,
+     "ok": false,
+     "errors": [
+      "[LỖI] S10 SC-C01/call_1: lượt khách 16 trùng ≥ 85% với SC-B01/call_2: 'Ừ, chốt đi.'"
+     ]
+    },
+    {
+     "scenario": "SC-C01",
+     "call": "call_1",
+     "attempts": 3,
+     "cost_vnd": 18.23,
+     "ok": false,
+     "errors": [
+      "[LỖI] S10 SC-C01/call_1: lượt khách 12 trùng ≥ 85% với SC-B01/call_2: 'Ừ, chốt đi.'",
+      "P3 hồ sơ 'hesitant': chỉ 1/6 lượt khách ≤ 6 từ (cần ≥ 25%) — rút ngắn, bỏ bớt câu đủ chủ vị"
+     ]
+    },
+    {
+     "scenario": "SC-C02",
+     "call": "call_1",
+     "attempts": 1,
+     "cost_vnd": 11.273,
+     "ok": true,
+     "errors": []
+    },
+    {
+     "scenario": "SC-C03",
+     "call": "call_1",
+     "attempts": 1,
+     "cost_vnd": 11.313,
+     "ok": false,
+     "errors": [
+      "lượt 8: gắn nhãn 'blocker' nhưng lời khách không nói đúng giá trị 'so sanh gia'",
+      "P3 hồ sơ 'interrupting': chỉ 0/4 lượt khách ≤ 6 từ (cần ≥ 25%) — rút ngắn, bỏ bớt câu đủ chủ vị"
+     ]
+    },
+    {
+     "scenario": "SC-C03",
+     "call": "call_1",
+     "attempts": 2,
+     "cost_vnd": 12.913,
+     "ok": false,
+     "errors": [
+      "lượt 8: gắn nhãn 'blocker' nhưng lời khách không nói đúng giá trị 'so sanh gia'"
+     ]
+    },
+    {
+     "scenario": "SC-C03",
+     "call": "call_1",
+     "attempts": 3,
+     "cost_vnd": 10.739,
+     "ok": false,
+     "errors": [
+      "lượt 8: gắn nhãn 'blocker' nhưng lời khách không nói đúng giá trị 'so sanh gia'",
+      "P3 hồ sơ 'interrupting': chỉ 0/4 lượt khách ≤ 6 từ (cần ≥ 25%) — rút ngắn, bỏ bớt câu đủ chủ vị"
+     ]
+    },
+    {
+     "scenario": "SC-C04",
+     "call": "call_1",
+     "attempts": 1,
+     "cost_vnd": 21.186,
+     "ok": false,
+     "errors": [
+      "lượt 13: ô trống không có trong danh sách: ['delivery_days']",
+      "[LỖI] S10 SC-C04/call_1: lượt khách 12 trùng ≥ 85% với SC-B02/call_1: 'Đúng rồi, chốt đi em.'",
+      "[LỖI] S11 SC-C04/call_1: lời agent lượt 13 còn ô trống chưa điền: 'Dạ, đơn hàng của chị Hạnh mã OD600001, dự kiến giao trong {delivery_days} ngày ạ.'",
+      "P2 lượt 3: khách hỏi ['payment'] ở lượt 2 nhưng agent chưa trả lời: ['payment'] (dùng ô trống tương ứng)",
+      "P5 trước khi đọc lại đơn, SĐT nhận hàng chưa được khách nói hay agent hỏi/xác nhận"
+     ]
+    },
+    {
+     "scenario": "SC-C04",
+     "call": "call_1",
+     "attempts": 2,
+     "cost_vnd": 22.027,
+     "ok": false,
+     "errors": [
+      "[LỖI] S10 SC-C04/call_1: lượt khách 12 trùng ≥ 85% với SC-B02/call_2: 'Ừ, chị biết rồi.'"
+     ]
+    },
+    {
+     "scenario": "SC-C04",
+     "call": "call_1",
+     "attempts": 3,
+     "cost_vnd": 20.704,
+     "ok": false,
+     "errors": [
+      "[LỖI] S10 SC-C04/call_1: lượt khách 12 trùng ≥ 85% với SC-B02/call_1: 'Đúng rồi, chốt đi em.'",
+      "P2 lượt 3: khách hỏi ['payment'] ở lượt 2 nhưng agent chưa trả lời: ['payment'] (dùng ô trống tương ứng)",
+      "P3 hồ sơ 'curt': chỉ 2/6 lượt khách ≤ 6 từ (cần ≥ 50%) — rút ngắn, bỏ bớt câu đủ chủ vị"
+     ]
+    },
+    {
+     "scenario": "SC-C05",
+     "call": "call_1",
+     "attempts": 1,
+     "cost_vnd": 16.243,
+     "ok": false,
+     "errors": [
+      "[LỖI] S10 SC-C05/call_1: lượt khách 9 trùng ≥ 85% với SC-B02/call_1: 'Đúng rồi, chốt đi em.'",
+      "[LỖI] S10 SC-C05/call_1: lượt khách 9 trùng ≥ 85% với SC-C04/call_1: 'Đúng rồi, chốt đi em.'",
+      "P2 lượt 6: khách hỏi ['payment'] ở lượt 5 nhưng agent chưa trả lời: ['payment'] (dùng ô trống tương ứng)"
+     ]
+    },
+    {
+     "scenario": "SC-C05",
+     "call": "call_1",
+     "attempts": 2,
+     "cost_vnd": 16.378,
+     "ok": false,
+     "errors": [
+      "lượt 6: dùng ô {caller_phone} khi khách CHƯA nói 'phone_provided' (agent không được biết trước)",
+      "[LỖI] S10 SC-C05/call_1: lượt khách 11 trùng ≥ 85% với SC-B01/call_3: 'Ừ, cảm ơn em nhé.'"
+     ]
+    },
+    {
+     "scenario": "SC-C05",
+     "call": "call_1",
+     "attempts": 3,
+     "cost_vnd": 20.208,
+     "ok": false,
+     "errors": [
+      "P2 lượt 4: khách hỏi ['delivery', 'payment'] ở lượt 3 nhưng agent chưa trả lời: ['payment'] (dùng ô trống tương ứng)"
+     ]
+    }
+   ]
+  },
+  {
+   "run": "auto",
+   "model": "gpt-6-luna",
+   "seed": 42,
+   "max_cost_vnd": 320.0,
+   "spent_vnd": 327.36,
+   "stopped": null,
+   "calls": [
+    {
+     "scenario": "SC-A01",
+     "call": "call_2",
+     "attempts": 1,
+     "cost_vnd": 16.485,
+     "ok": false,
+     "errors": [
+      "P3 hồ sơ 'hesitant': chỉ 1/5 lượt khách ≤ 6 từ (cần ≥ 25%) — rút ngắn, bỏ bớt câu đủ chủ vị",
+      "P5 lượt 9: sau khi đọc lại đơn, lượt kế phải là khách đồng ý RÕ RÀNG (ngắn, không điều kiện/câu hỏi)"
+     ]
+    },
+    {
+     "scenario": "SC-A01",
+     "call": "call_2",
+     "attempts": 2,
+     "cost_vnd": 21.41,
+     "ok": true,
+     "errors": []
+    },
+    {
+     "scenario": "SC-A03",
+     "call": "call_1",
+     "attempts": 1,
+     "cost_vnd": 12.56,
+     "ok": true,
+     "errors": []
+    },
+    {
+     "scenario": "SC-B01",
+     "call": "call_2",
+     "attempts": 1,
+     "cost_vnd": 14.826,
+     "ok": false,
+     "errors": [
+      "P3 hồ sơ 'curt': chỉ 2/5 lượt khách ≤ 6 từ (cần ≥ 50%) — rút ngắn, bỏ bớt câu đủ chủ vị"
+     ]
+    },
+    {
+     "scenario": "SC-B01",
+     "call": "call_2",
+     "attempts": 2,
+     "cost_vnd": 19.555,
+     "ok": true,
+     "errors": []
+    },
+    {
+     "scenario": "SC-B01",
+     "call": "call_3",
+     "attempts": 1,
+     "cost_vnd": 13.228,
+     "ok": false,
+     "errors": [
+      "P3 hồ sơ 'impatient': chỉ 1/4 lượt khách ≤ 6 từ (cần ≥ 33%) — rút ngắn, bỏ bớt câu đủ chủ vị"
+     ]
+    },
+    {
+     "scenario": "SC-B01",
+     "call": "call_3",
+     "attempts": 2,
+     "cost_vnd": 11.328,
+     "ok": false,
+     "errors": [
+      "P3 hồ sơ 'impatient': chỉ 0/4 lượt khách ≤ 6 từ (cần ≥ 33%) — rút ngắn, bỏ bớt câu đủ chủ vị"
+     ]
+    },
+    {
+     "scenario": "SC-B01",
+     "call": "call_3",
+     "attempts": 3,
+     "cost_vnd": 10.884,
+     "ok": false,
+     "errors": [
+      "lượt 4: gắn nhãn 'size_new' nhưng lời khách không nói đúng giá trị 43",
+      "P3 hồ sơ 'impatient': chỉ 1/4 lượt khách ≤ 6 từ (cần ≥ 33%) — rút ngắn, bỏ bớt câu đủ chủ vị"
+     ]
+    },
+    {
+     "scenario": "SC-B02",
+     "call": "call_1",
+     "attempts": 1,
+     "cost_vnd": 13.495,
+     "ok": false,
+     "errors": [
+      "P5 trước khi đọc lại đơn, SĐT nhận hàng chưa được khách nói hay agent hỏi/xác nhận"
+     ]
+    },
+    {
+     "scenario": "SC-B02",
+     "call": "call_1",
+     "attempts": 2,
+     "cost_vnd": 16.962,
+     "ok": true,
+     "errors": []
+    },
+    {
+     "scenario": "SC-B02",
+     "call": "call_2",
+     "attempts": 1,
+     "cost_vnd": 8.265,
+     "ok": true,
+     "errors": []
+    },
+    {
+     "scenario": "SC-B02",
+     "call": "call_3",
+     "attempts": 1,
+     "cost_vnd": 10.249,
+     "ok": false,
+     "errors": [
+      "P3 hồ sơ 'impatient': chỉ 0/3 lượt khách ≤ 6 từ (cần ≥ 33%) — rút ngắn, bỏ bớt câu đủ chủ vị"
+     ]
+    },
+    {
+     "scenario": "SC-B02",
+     "call": "call_3",
+     "attempts": 2,
+     "cost_vnd": 8.4,
+     "ok": true,
+     "errors": []
+    },
+    {
+     "scenario": "SC-C01",
+     "call": "call_1",
+     "attempts": 1,
+     "cost_vnd": 19.55,
+     "ok": false,
+     "errors": [
+      "P3 hồ sơ 'hesitant': chỉ 1/6 lượt khách ≤ 6 từ (cần ≥ 25%) — rút ngắn, bỏ bớt câu đủ chủ vị",
+      "P3 hồ sơ 'hesitant': cần ≥ 2 lượt khách thể hiện phong cách này, mới có 1. Khách ngập ngừng, phân vân: ít nhất 2 lượt có từ đệm 'ờ', 'à', 'ừm', 'để chị/anh xem', 'hơi phân vân'; câu bỏ lửng; chưa vội chốt."
+     ]
+    },
+    {
+     "scenario": "SC-C01",
+     "call": "call_1",
+     "attempts": 2,
+     "cost_vnd": 16.149,
+     "ok": false,
+     "errors": [
+      "P3 hồ sơ 'hesitant': chỉ 1/6 lượt khách ≤ 6 từ (cần ≥ 25%) — rút ngắn, bỏ bớt câu đủ chủ vị"
+     ]
+    },
+    {
+     "scenario": "SC-C01",
+     "call": "call_1",
+     "attempts": 3,
+     "cost_vnd": 17.574,
+     "ok": true,
+     "errors": []
+    },
+    {
+     "scenario": "SC-C03",
+     "call": "call_1",
+     "attempts": 1,
+     "cost_vnd": 11.43,
+     "ok": false,
+     "errors": [
+      "lượt 8: gắn nhãn 'blocker' nhưng lời khách không nói đúng giá trị 'so sanh gia'",
+      "P3 hồ sơ 'interrupting': chỉ 0/4 lượt khách ≤ 6 từ (cần ≥ 25%) — rút ngắn, bỏ bớt câu đủ chủ vị"
+     ]
+    },
+    {
+     "scenario": "SC-C03",
+     "call": "call_1",
+     "attempts": 2,
+     "cost_vnd": 11.62,
+     "ok": false,
+     "errors": [
+      "P3 hồ sơ 'interrupting': chỉ 0/4 lượt khách ≤ 6 từ (cần ≥ 25%) — rút ngắn, bỏ bớt câu đủ chủ vị"
+     ]
+    },
+    {
+     "scenario": "SC-C03",
+     "call": "call_1",
+     "attempts": 3,
+     "cost_vnd": 11.435,
+     "ok": false,
+     "errors": [
+      "fact 'blocker'='so sanh gia' (gợi ý: để anh cân nhắc rồi gọi lại) CHƯA được khách nói đúng trong lời khách",
+      "lượt 8: gắn nhãn 'blocker' nhưng lời khách không nói đúng giá trị 'so sanh gia'"
+     ]
+    },
+    {
+     "scenario": "SC-C04",
+     "call": "call_1",
+     "attempts": 1,
+     "cost_vnd": 17.823,
+     "ok": true,
+     "errors": []
+    },
+    {
+     "scenario": "SC-C05",
+     "call": "call_1",
+     "attempts": 1,
+     "cost_vnd": 14.684,
+     "ok": false,
+     "errors": [
+      "lượt 6: dùng ô {caller_phone} khi khách CHƯA nói 'phone_provided' (agent không được biết trước)",
+      "fact 'phone_provided'='0900010010' (gợi ý: đọc SĐT nhận hàng 0900010010) CHƯA được khách nói đúng trong lời khách",
+      "lượt 7: gắn nhãn 'phone_provided' nhưng lời khách không nói đúng giá trị '0900010010'",
+      "P2 lượt 4: khách hỏi ['payment'] ở lượt 3 nhưng agent chưa trả lời: ['payment'] (dùng ô trống tương ứng)"
+     ]
+    },
+    {
+     "scenario": "SC-C05",
+     "call": "call_1",
+     "attempts": 2,
+     "cost_vnd": 14.912,
+     "ok": false,
+     "errors": [
+      "lượt 6: dùng ô {caller_phone} khi khách CHƯA nói 'phone_provided' (agent không được biết trước)"
+     ]
+    },
+    {
+     "scenario": "SC-C05",
+     "call": "call_1",
+     "attempts": 3,
+     "cost_vnd": 14.534,
+     "ok": true,
+     "errors": []
+    }
+   ]
+  },
+  {
+   "run": "auto",
+   "model": "gpt-6-luna",
+   "seed": 42,
+   "set": "frames54",
+   "max_cost_vnd": 1500.0,
+   "spent_vnd": 442.313,
+   "stopped": null,
+   "calls": [
+    {
+     "scenario": "SC-D03",
+     "call": "call_1",
+     "attempts": 1,
+     "cost_vnd": 10.422,
+     "ok": true,
+     "errors": []
+    },
+    {
+     "scenario": "SC-D03",
+     "call": "call_2",
+     "attempts": 1,
+     "cost_vnd": 18.303,
+     "ok": false,
+     "errors": [
+      "P5 trước khi đọc lại đơn, SĐT nhận hàng chưa được khách nói hay agent hỏi/xác nhận"
+     ]
+    },
+    {
+     "scenario": "SC-D03",
+     "call": "call_2",
+     "attempts": 2,
+     "cost_vnd": 19.319,
+     "ok": true,
+     "errors": []
+    },
+    {
+     "scenario": "SC-D04",
+     "call": "call_1",
+     "attempts": 1,
+     "cost_vnd": 15.926,
+     "ok": false,
+     "errors": [
+      "P2 lượt 2: khách hỏi ['price'] ở lượt 1 nhưng agent chưa trả lời: ['price'] (dùng ô trống tương ứng)",
+      "P3 hồ sơ 'interrupting': chỉ 0/4 lượt khách ≤ 6 từ (cần ≥ 25%) — rút ngắn, bỏ bớt câu đủ chủ vị"
+     ]
+    },
+    {
+     "scenario": "SC-D04",
+     "call": "call_1",
+     "attempts": 2,
+     "cost_vnd": 16.068,
+     "ok": false,
+     "errors": [
+      "[LỖI] S10 SC-D04/call_1: lượt khách 1 trùng ≥ 85% với SC-A01/call_1: 'Chào em, chị muốn hỏi máy lọc không khí cho phòng ngủ có bé nhỏ.'",
+      "P3 hồ sơ 'interrupting': chỉ 0/4 lượt khách ≤ 6 từ (cần ≥ 25%) — rút ngắn, bỏ bớt câu đủ chủ vị"
+     ]
+    },
+    {
+     "scenario": "SC-D04",
+     "call": "call_1",
+     "attempts": 3,
+     "cost_vnd": 16.685,
+     "ok": false,
+     "errors": [
+      "[LỖI] S10 SC-D04/call_1: lượt khách 3 trùng ≥ 85% với SC-A01/call_1: 'Phòng khoảng 25m², nhà có bé 2 tuổi. Ngân sách tầm 5 triệu thôi em.'",
+      "P3 hồ sơ 'interrupting': chỉ 0/4 lượt khách ≤ 6 từ (cần ≥ 25%) — rút ngắn, bỏ bớt câu đủ chủ vị"
+     ]
+    },
+    {
+     "scenario": "SC-D04",
+     "call": "call_2",
+     "attempts": 1,
+     "cost_vnd": 25.446,
+     "ok": false,
+     "errors": [
+      "P3 hồ sơ 'interrupting': chỉ 1/6 lượt khách ≤ 6 từ (cần ≥ 25%) — rút ngắn, bỏ bớt câu đủ chủ vị"
+     ]
+    },
+    {
+     "scenario": "SC-D04",
+     "call": "call_2",
+     "attempts": 2,
+     "cost_vnd": 18.58,
+     "ok": true,
+     "errors": []
+    },
+    {
+     "scenario": "SC-D24",
+     "call": "call_1",
+     "attempts": 1,
+     "cost_vnd": 13.551,
+     "ok": true,
+     "errors": []
+    },
+    {
+     "scenario": "SC-D25",
+     "call": "call_1",
+     "attempts": 1,
+     "cost_vnd": 17.973,
+     "ok": false,
+     "errors": [
+      "lượt 8: dùng ô {caller_phone} khi khách CHƯA nói 'phone_provided' (agent không được biết trước)",
+      "fact 'product_asked'='SKU-AF-XM' (gợi ý: hỏi Nồi chiên không dầu Xiaomi 4.5L) CHƯA được khách nói đúng trong lời khách",
+      "lượt 1: gắn nhãn 'product_asked' nhưng lời khách không nói đúng giá trị 'SKU-AF-XM'",
+      "[LỖI] S12 SC-D25/call_1: text_spoken lượt 1 còn chữ số/dấu câu: 'chào em nồi chiên không dầu xiao mi 4 5l còn hàng không giá bao nhiêu vậy'",
+      "[LỖI] S12 SC-D25/call_1: text_spoken lượt 2 còn chữ số/dấu câu: 'dạ nồi chiên không dầu xiao mi 4 5l hiện còn hàng giá một triệu năm trăm chín mươi nghìn chị phương nhé'",
+      "[LỖI] S12 SC-D25/call_1: text_spoken lượt 10 còn chữ số/dấu câu: 'dạ em đọc lại đơn nồi chiên không dầu xiao mi 4 5l giá một triệu năm trăm chín mươi nghìn tổng một triệu năm trăm chín mươi nghìn giao cho phương số điện thoại không chín không không không hai không không hai năm địa chỉ số bốn mươi tám đường võ văn tần quận ba tp hcm hình thức thanh toán khi nhận hàng cê ô đê mình xác nhận đặt đơn này chứ ạ'",
+      "P3 hồ sơ 'hesitant': chỉ 1/6 lượt khách ≤ 6 từ (cần ≥ 25%) — rút ngắn, bỏ bớt câu đủ chủ vị"
+     ]
+    },
+    {
+     "scenario": "SC-D25",
+     "call": "call_1",
+     "attempts": 2,
+     "cost_vnd": 18.748,
+     "ok": false,
+     "errors": [
+      "fact 'product_asked'='SKU-AF-XM' (gợi ý: hỏi Nồi chiên không dầu Xiaomi 4.5L) CHƯA được khách nói đúng trong lời khách",
+      "lượt 1: gắn nhãn 'product_asked' nhưng lời khách không nói đúng giá trị 'SKU-AF-XM'",
+      "[LỖI] S12 SC-D25/call_1: text_spoken lượt 1 còn chữ số/dấu câu: 'chào em nồi chiên không dầu xiao mi 4 5l còn hàng không giá bao nhiêu vậy'",
+      "[LỖI] S12 SC-D25/call_1: text_spoken lượt 2 còn chữ số/dấu câu: 'dạ nồi chiên không dầu xiao mi 4 5l hiện còn hàng giá một triệu năm trăm chín mươi nghìn chị phương nhé'",
+      "[LỖI] S12 SC-D25/call_1: text_spoken lượt 10 còn chữ số/dấu câu: 'dạ em đọc lại đơn nồi chiên không dầu xiao mi 4 5l giá một triệu năm trăm chín mươi nghìn tổng một triệu năm trăm chín mươi nghìn giao cho phương số điện thoại không chín không không không hai không không hai năm địa chỉ số bốn mươi tám đường võ văn tần quận ba tp hcm hình thức thanh toán khi nhận hàng cê ô đê mình xác nhận đặt đơn này chứ ạ'",
+      "P3 hồ sơ 'hesitant': chỉ 1/6 lượt khách ≤ 6 từ (cần ≥ 25%) — rút ngắn, bỏ bớt câu đủ chủ vị"
+     ]
+    },
+    {
+     "scenario": "SC-D25",
+     "call": "call_1",
+     "attempts": 3,
+     "cost_vnd": 18.989,
+     "ok": false,
+     "errors": [
+      "fact 'product_asked'='SKU-AF-XM' (gợi ý: hỏi Nồi chiên không dầu Xiaomi 4.5L) CHƯA được khách nói đúng trong lời khách",
+      "lượt 1: gắn nhãn 'product_asked' nhưng lời khách không nói đúng giá trị 'SKU-AF-XM'",
+      "[LỖI] S12 SC-D25/call_1: text_spoken lượt 1 còn chữ số/dấu câu: 'chị phương đây ờ nồi chiên không dầu xiao mi 4 5l còn hàng không giá bao nhiêu em'",
+      "[LỖI] S12 SC-D25/call_1: text_spoken lượt 2 còn chữ số/dấu câu: 'dạ nồi chiên không dầu xiao mi 4 5l hiện hiện còn hàng giá một triệu năm trăm chín mươi nghìn chị phương nhé'",
+      "[LỖI] S12 SC-D25/call_1: text_spoken lượt 10 còn chữ số/dấu câu: 'dạ em đọc lại đơn nồi chiên không dầu xiao mi 4 5l giá một triệu năm trăm chín mươi nghìn tổng một triệu năm trăm chín mươi nghìn giao cho phương số điện thoại không chín không không không hai không không hai năm địa chỉ số bốn mươi tám đường võ văn tần quận ba tp hcm hình thức thanh toán khi nhận hàng cê ô đê mình xác nhận đặt đơn này chứ ạ'",
+      "P3 hồ sơ 'hesitant': chỉ 1/6 lượt khách ≤ 6 từ (cần ≥ 25%) — rút ngắn, bỏ bớt câu đủ chủ vị"
+     ]
+    },
+    {
+     "scenario": "SC-D26",
+     "call": "call_1",
+     "attempts": 1,
+     "cost_vnd": 17.046,
+     "ok": false,
+     "errors": [
+      "P3 hồ sơ 'hesitant': chỉ 1/5 lượt khách ≤ 6 từ (cần ≥ 25%) — rút ngắn, bỏ bớt câu đủ chủ vị"
+     ]
+    },
+    {
+     "scenario": "SC-D26",
+     "call": "call_1",
+     "attempts": 2,
+     "cost_vnd": 15.845,
+     "ok": true,
+     "errors": []
+    },
+    {
+     "scenario": "SC-D27",
+     "call": "call_1",
+     "attempts": 1,
+     "cost_vnd": 14.689,
+     "ok": false,
+     "errors": [
+      "P2 lượt 5: khách hỏi ['payment'] ở lượt 4 nhưng agent chưa trả lời: ['payment'] (dùng ô trống tương ứng)",
+      "P3 hồ sơ 'curt': chỉ 2/5 lượt khách ≤ 6 từ (cần ≥ 50%) — rút ngắn, bỏ bớt câu đủ chủ vị"
+     ]
+    },
+    {
+     "scenario": "SC-D27",
+     "call": "call_1",
+     "attempts": 2,
+     "cost_vnd": 15.009,
+     "ok": true,
+     "errors": []
+    },
+    {
+     "scenario": "SC-D28",
+     "call": "call_1",
+     "attempts": 1,
+     "cost_vnd": 15.936,
+     "ok": false,
+     "errors": [
+      "P3 hồ sơ 'hesitant': chỉ 1/6 lượt khách ≤ 6 từ (cần ≥ 25%) — rút ngắn, bỏ bớt câu đủ chủ vị"
+     ]
+    },
+    {
+     "scenario": "SC-D28",
+     "call": "call_1",
+     "attempts": 2,
+     "cost_vnd": 15.154,
+     "ok": false,
+     "errors": [
+      "[LỖI] S10 SC-D28/call_1: lượt khách 7 trùng ≥ 85% với SC-D04/call_2: 'Giao về số 22 đường Giải Phóng, quận Hoàng Mai, Hà Nội. Người nhận là Đạt.'",
+      "P3 hồ sơ 'hesitant': chỉ 0/6 lượt khách ≤ 6 từ (cần ≥ 25%) — rút ngắn, bỏ bớt câu đủ chủ vị"
+     ]
+    },
+    {
+     "scenario": "SC-D28",
+     "call": "call_1",
+     "attempts": 3,
+     "cost_vnd": 15.103,
+     "ok": false,
+     "errors": [
+      "[LỖI] S10 SC-D28/call_1: lượt khách 5 trùng ≥ 85% với SC-D04/call_2: 'Giao về số 22 đường Giải Phóng, quận Hoàng Mai, Hà Nội. Người nhận là Đạt.'",
+      "P3 hồ sơ 'hesitant': chỉ 0/5 lượt khách ≤ 6 từ (cần ≥ 25%) — rút ngắn, bỏ bớt câu đủ chủ vị"
+     ]
+    },
+    {
+     "scenario": "SC-D31",
+     "call": "call_1",
+     "attempts": 1,
+     "cost_vnd": 19.383,
+     "ok": true,
+     "errors": []
+    },
+    {
+     "scenario": "SC-D47",
+     "call": "call_1",
+     "attempts": 1,
+     "cost_vnd": 16.807,
+     "ok": false,
+     "errors": [
+      "fact 'product_asked'='SKU-AF-XM' (gợi ý: hỏi mua Nồi chiên không dầu Xiaomi 4.5L) CHƯA được khách nói đúng trong lời khách",
+      "lượt 1: gắn nhãn 'product_asked' nhưng lời khách không nói đúng giá trị 'SKU-AF-XM'",
+      "[LỖI] S12 SC-D47/call_1: text_spoken lượt 1 còn chữ số/dấu câu: 'chị là khách cũ của shop mua hồi tháng trước rồi giờ chị muốn mua nồi chiên không dầu xiao mi 4 5l'",
+      "[LỖI] S12 SC-D47/call_1: text_spoken lượt 4 còn chữ số/dấu câu: 'em chưa thấy hồ sơ mua hàng với số này nên em hỗ trợ chị như khách mới nhé nồi chiên không dầu xiao mi 4 5l giá một triệu năm trăm chín mươi nghìn hiện hiện còn hàng ạ'",
+      "[LỖI] S12 SC-D47/call_1: text_spoken lượt 10 còn chữ số/dấu câu: 'dạ em đọc lại đơn nồi chiên không dầu xiao mi 4 5l giá một triệu năm trăm chín mươi nghìn tổng một triệu năm trăm chín mươi nghìn giao cho yến số điện thoại không chín không không không hai không không bốn bảy địa chỉ số ba mươi mốt phố nguyễn chí thanh quận ba đình hà nội hình thức thanh toán khi nhận hàng cê ô đê chị xác nhận đặt đơn này chứ ạ'"
+     ]
+    },
+    {
+     "scenario": "SC-D47",
+     "call": "call_1",
+     "attempts": 2,
+     "cost_vnd": 17.163,
+     "ok": false,
+     "errors": [
+      "fact 'product_asked'='SKU-AF-XM' (gợi ý: hỏi mua Nồi chiên không dầu Xiaomi 4.5L) CHƯA được khách nói đúng trong lời khách",
+      "lượt 1: gắn nhãn 'product_asked' nhưng lời khách không nói đúng giá trị 'SKU-AF-XM'",
+      "[LỖI] S12 SC-D47/call_1: text_spoken lượt 1 còn chữ số/dấu câu: 'chị là khách cũ của shop mua hồi tháng trước rồi giờ chị muốn mua nồi chiên không dầu xiao mi 4 5l'",
+      "[LỖI] S12 SC-D47/call_1: text_spoken lượt 4 còn chữ số/dấu câu: 'em chưa thấy hồ sơ mua hàng với số này nên hỗ trợ chị như khách mới nhé nồi chiên không dầu xiao mi 4 5l giá một triệu năm trăm chín mươi nghìn hiện hiện còn hàng ạ'",
+      "[LỖI] S12 SC-D47/call_1: text_spoken lượt 10 còn chữ số/dấu câu: 'dạ em đọc lại đơn nồi chiên không dầu xiao mi 4 5l giá một triệu năm trăm chín mươi nghìn tổng một triệu năm trăm chín mươi nghìn giao cho yến số điện thoại không chín không không không hai không không bốn bảy địa chỉ số ba mươi mốt phố nguyễn chí thanh quận ba đình hà nội hình thức thanh toán khi nhận hàng cê ô đê chị xác nhận đặt đơn này chứ ạ'"
+     ]
+    },
+    {
+     "scenario": "SC-D47",
+     "call": "call_1",
+     "attempts": 3,
+     "cost_vnd": 19.853,
+     "ok": false,
+     "errors": [
+      "fact 'product_asked'='SKU-AF-XM' (gợi ý: hỏi mua Nồi chiên không dầu Xiaomi 4.5L) CHƯA được khách nói đúng trong lời khách",
+      "lượt 1: gắn nhãn 'product_asked' nhưng lời khách không nói đúng giá trị 'SKU-AF-XM'",
+      "[LỖI] S12 SC-D47/call_1: text_spoken lượt 1 còn chữ số/dấu câu: 'chị là khách cũ của shop mua hồi tháng trước rồi giờ chị muốn mua nồi chiên không dầu xiao mi 4 5l'",
+      "[LỖI] S12 SC-D47/call_1: text_spoken lượt 4 còn chữ số/dấu câu: 'em chưa thấy hồ sơ mua hàng với số này nên hỗ trợ chị như khách mới nhé nồi chiên không dầu xiao mi 4 5l giá một triệu năm trăm chín mươi nghìn hiện hiện còn hàng ạ chị cho em xin tên người nhận và địa chỉ giao hàng nhé'",
+      "[LỖI] S12 SC-D47/call_1: text_spoken lượt 8 còn chữ số/dấu câu: 'em đọc lại đơn nồi chiên không dầu xiao mi 4 5l giá một triệu năm trăm chín mươi nghìn tổng một triệu năm trăm chín mươi nghìn giao cho yến số điện thoại không chín không không không hai không không bốn bảy địa chỉ số ba mươi mốt phố nguyễn chí thanh quận ba đình hà nội hình thức thanh toán khi nhận hàng cê ô đê chị xác nhận đặt đơn này chứ ạ'"
+     ]
+    },
+    {
+     "scenario": "SC-D51",
+     "call": "call_1",
+     "attempts": 1,
+     "cost_vnd": 16.784,
+     "ok": false,
+     "errors": [
+      "fact 'phone_provided'='0900020051' (gợi ý: đọc từng chữ số SĐT 0900020051 để nhân viên gọi lại) CHƯA được khách nói đúng trong lời khách",
+      "lượt 6: gắn nhãn 'phone_provided' nhưng lời khách không nói đúng giá trị '0900020051'",
+      "P3 hồ sơ 'interrupting': chỉ 0/4 lượt khách ≤ 6 từ (cần ≥ 25%) — rút ngắn, bỏ bớt câu đủ chủ vị"
+     ]
+    },
+    {
+     "scenario": "SC-D51",
+     "call": "call_1",
+     "attempts": 2,
+     "cost_vnd": 16.601,
+     "ok": false,
+     "errors": [
+      "fact 'phone_provided'='0900020051' (gợi ý: đọc từng chữ số SĐT 0900020051 để nhân viên gọi lại) CHƯA được khách nói đúng trong lời khách",
+      "lượt 6: gắn nhãn 'phone_provided' nhưng lời khách không nói đúng giá trị '0900020051'",
+      "P3 hồ sơ 'interrupting': chỉ 0/4 lượt khách ≤ 6 từ (cần ≥ 25%) — rút ngắn, bỏ bớt câu đủ chủ vị"
+     ]
+    },
+    {
+     "scenario": "SC-D51",
+     "call": "call_1",
+     "attempts": 3,
+     "cost_vnd": 16.932,
+     "ok": false,
+     "errors": [
+      "fact 'phone_provided'='0900020051' (gợi ý: đọc từng chữ số SĐT 0900020051 để nhân viên gọi lại) CHƯA được khách nói đúng trong lời khách",
+      "lượt 6: gắn nhãn 'phone_provided' nhưng lời khách không nói đúng giá trị '0900020051'",
+      "P3 hồ sơ 'interrupting': chỉ 0/4 lượt khách ≤ 6 từ (cần ≥ 25%) — rút ngắn, bỏ bớt câu đủ chủ vị"
+     ]
+    }
+   ]
+  },
+  {
+   "run": "auto",
+   "model": "gpt-6-luna",
+   "seed": 42,
+   "set": "frames54",
+   "max_cost_vnd": 600.0,
+   "spent_vnd": 147.78,
+   "stopped": null,
+   "calls": [
+    {
+     "scenario": "SC-D04",
+     "call": "call_1",
+     "attempts": 1,
+     "cost_vnd": 20.759,
+     "ok": false,
+     "errors": [
+      "[LỖI] S10 SC-D04/call_1: lượt khách 1 trùng ≥ 85% với SC-A01/call_1: 'Chào em, chị muốn hỏi máy lọc không khí cho phòng ngủ có bé nhỏ.'",
+      "[LỖI] S11 SC-D04/call_1: lời agent lượt 8 có chữ số ngoài ô trống: 'Dạ, em ghi nhận số điện thoại của anh Đạt là 0900020004 để hotline gọi lại tư vấn nhé.'",
+      "P3 hồ sơ 'interrupting': cần ≥ 1 lượt khách thể hiện phong cách này, mới có 0. Khách hay chen ngang/đổi chủ đề: ít nhất một lượt bỏ lửng câu hoặc mở bằng 'à mà…', 'khoan đã…', 'nhân tiện…' rồi hỏi sang chuyện khác (chuyện mới phải nằm trong cốt truyện)."
+     ]
+    },
+    {
+     "scenario": "SC-D04",
+     "call": "call_1",
+     "attempts": 2,
+     "cost_vnd": 22.017,
+     "ok": true,
+     "errors": []
+    },
+    {
+     "scenario": "SC-D25",
+     "call": "call_1",
+     "attempts": 1,
+     "cost_vnd": 27.3,
+     "ok": false,
+     "errors": [
+      "P3 hồ sơ 'hesitant': chỉ 1/6 lượt khách ≤ 6 từ (cần ≥ 25%) — rút ngắn, bỏ bớt câu đủ chủ vị"
+     ]
+    },
+    {
+     "scenario": "SC-D25",
+     "call": "call_1",
+     "attempts": 2,
+     "cost_vnd": 17.31,
+     "ok": true,
+     "errors": []
+    },
+    {
+     "scenario": "SC-D28",
+     "call": "call_1",
+     "attempts": 1,
+     "cost_vnd": 14.887,
+     "ok": false,
+     "errors": [
+      "[LỖI] S10 SC-D28/call_1: lượt khách 9 trùng ≥ 85% với SC-D25/call_1: '0900020025, COD nhé.'"
+     ]
+    },
+    {
+     "scenario": "SC-D28",
+     "call": "call_1",
+     "attempts": 2,
+     "cost_vnd": 13.81,
+     "ok": true,
+     "errors": []
+    },
+    {
+     "scenario": "SC-D51",
+     "call": "call_1",
+     "attempts": 1,
+     "cost_vnd": 17.112,
+     "ok": false,
+     "errors": [
+      "P3 hồ sơ 'interrupting': cần ≥ 1 lượt khách thể hiện phong cách này, mới có 0. Khách hay chen ngang/đổi chủ đề: ít nhất một lượt bỏ lửng câu hoặc mở bằng 'à mà…', 'khoan đã…', 'nhân tiện…' rồi hỏi sang chuyện khác (chuyện mới phải nằm trong cốt truyện)."
+     ]
+    },
+    {
+     "scenario": "SC-D51",
+     "call": "call_1",
+     "attempts": 2,
+     "cost_vnd": 14.585,
+     "ok": true,
+     "errors": []
+    }
+   ]
+  },
+  {
+   "run": "auto",
+   "model": "gpt-6-luna",
+   "seed": 42,
+   "set": "frames54",
+   "max_cost_vnd": 300.0,
+   "spent_vnd": 15.862,
+   "stopped": null,
+   "calls": [
+    {
+     "scenario": "SC-D28",
+     "call": "call_1",
+     "attempts": 1,
+     "cost_vnd": 15.862,
+     "ok": true,
+     "errors": []
+    }
+   ]
+  }
+ ],
+ "distribution": {
+  "scenarios": 20,
+  "calls": 29,
+  "multi_session": 7,
+  "ge3_sessions": 2,
+  "multi_channel": 5,
+  "multi_session_scenarios": 7,
+  "hard_cases": {
+   "mâu thuẫn với phiên trước": 3,
+   "KM hết hạn": 1,
+   "đổi ý": 1,
+   "hỏi ngoài tài liệu": 2,
+   "khác (giữ lại)": 2,
+   "tái hiện lỗi demo": 7
+  },
+  "personas": {
+   "khach_do_du_hoi_nguoi_nha": 2,
+   "khach_hoi_nhieu_khong_mua": 2,
+   "khach_so_gia": 5,
+   "khach_da_mua_doi_size": 1,
+   "khach_goi_lan_3_het_kien_nhan": 1,
+   "khach_ngoai_pham_vi_chuyen_may": 1,
+   "khach_hoi_ngoai_tai_lieu": 1,
+   "khach_mua_nhieu_mon": 3,
+   "khach_da_kenh_fb_hotline": 2,
+   "khach_da_kenh_mau_thuan": 2
+  },
+  "dialogue_files": 29
+ }
+}

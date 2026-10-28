@@ -1,0 +1,157 @@
+{
+ "scenario": {
+  "scenario_id": "SC-D45",
+  "level": "M1",
+  "persona": "khach_mua_nhieu_mon",
+  "hard_case": "cod_vuot_han_muc",
+  "customer_phone": "0900020045",
+  "customer_name": "Uyên",
+  "honorific": "chị",
+  "notes": "COD vượt hạn mức 10 triệu (2 × Máy lọc nước RO Kangaroo 10 lõi = 13.780.000đ): chuyển sang chuyển khoản.",
+  "group": "C",
+  "archetype": "cod_limit",
+  "industry": "máy lọc nước",
+  "south": true
+ },
+ "calls": [
+  {
+   "name": "call_1",
+   "channel": "hotline",
+   "goal": "mua 2 sản phẩm, COD vượt hạn mức → đổi sang chuyển khoản",
+   "opening": "agent",
+   "customer_plot": "Khách muốn mua 2 máy Máy lọc nước RO Kangaroo 10 lõi, thanh toán COD, giao về số 90 đường Nguyễn Huệ, quận 1, TP.HCM; nghe COD vượt hạn mức thì đồng ý chuyển khoản.",
+   "agent_plot": "Agent báo {product} giá {unit_price}/sản phẩm, tổng {total}; theo quy trình đặt đơn (đọc lại đơn với COD, khách đồng ý) rồi đặt đơn thì hệ thống báo vượt hạn mức COD {cod_limit}/đơn; giải thích rõ và đề nghị chuyển khoản; khách đồng ý → đọc lại đơn chuyển khoản, khách đồng ý rõ ràng rồi chốt: mã đơn {order_id}, giao về {address}.",
+   "customer_facts": [
+    {
+     "key": "quantity",
+     "value": 2,
+     "hint": "mua 2 máy"
+    },
+    {
+     "key": "payment",
+     "value": "COD",
+     "hint": "ban đầu muốn COD"
+    },
+    {
+     "key": "address",
+     "value": "số 90 đường Nguyễn Huệ, quận 1, TP.HCM",
+     "hint": "giao về số 90 đường Nguyễn Huệ, quận 1, TP.HCM"
+    },
+    {
+     "key": "recipient_name",
+     "value": "Uyên",
+     "hint": "nói tên người nhận là Uyên"
+    }
+   ],
+   "agent_vars": {
+    "product": {
+     "text": "Máy lọc nước RO Kangaroo 10 lõi",
+     "desc": "tên sản phẩm ĐẦY ĐỦ đã gồm loại hàng (đừng viết thêm loại hàng phía trước)",
+     "entity": [
+      "sku",
+      "SKU-WF-RO10"
+     ]
+    },
+    "unit_price": {
+     "text": "6.890.000đ",
+     "desc": "giá một sản phẩm",
+     "entity": [
+      "price_vnd",
+      6890000
+     ]
+    },
+    "total": {
+     "text": "13.780.000đ",
+     "desc": "tổng tiền hai sản phẩm",
+     "entity": [
+      "total_vnd",
+      13780000
+     ]
+    },
+    "cod_limit": {
+     "text": "10.000.000đ",
+     "desc": "hạn mức thanh toán COD tối đa một đơn",
+     "entity": [
+      "cod_limit_vnd",
+      10000000
+     ]
+    },
+    "order_id": {
+     "text": "OD600001",
+     "desc": "mã đơn sau khi khách chuyển sang chuyển khoản",
+     "entity": [
+      "order_id",
+      "OD600001"
+     ]
+    },
+    "address": {
+     "text": "số 90 đường Nguyễn Huệ, quận 1, TP.HCM",
+     "desc": "địa chỉ giao (khách vừa đọc) — CHỈ dùng sau khi khách đã đọc địa chỉ",
+     "entity": null,
+     "after": "address"
+    },
+    "stock": {
+     "text": "hiện còn hàng",
+     "desc": "tình trạng tồn kho của sản phẩm (còn hàng/hết hàng)",
+     "entity": null
+    },
+    "readback_total": {
+     "text": "13.780.000đ",
+     "desc": "tổng tiền cả đơn (giá × số lượng) — dùng khi ĐỌC LẠI ĐƠN",
+     "entity": null
+    },
+    "payment_label": {
+     "text": "chuyển khoản",
+     "desc": "hình thức thanh toán chốt của đơn — dùng khi ĐỌC LẠI ĐƠN",
+     "entity": null
+    },
+    "payment_label_initial": {
+     "text": "thanh toán khi nhận hàng (COD)",
+     "desc": "hình thức thanh toán khách chọn ban đầu (trước khi bị đổi)",
+     "entity": null
+    },
+    "recipient_name": {
+     "text": "Uyên",
+     "desc": "tên người nhận — CHỈ dùng sau khi khách đã nói tên",
+     "entity": null,
+     "after": "recipient_name"
+    },
+    "caller_phone": {
+     "text": "0900020045",
+     "desc": "SĐT nhận hàng (số khách đang gọi/nhắn) — đọc lại để xác nhận",
+     "entity": [
+      "phone",
+      "0900020045"
+     ]
+    }
+   },
+   "n_turns": [
+    11,
+    15
+   ],
+   "style": "normal",
+   "expected": {
+    "success_if": {
+     "tool_called": "order.create",
+     "args_match": {
+      "sku": "SKU-WF-RO10",
+      "qty": 2,
+      "payment": "bank"
+     }
+    },
+    "ground_truth_facts": {
+     "cod_limit_vnd": 10000000,
+     "total_vnd": 13780000
+    },
+    "facts_established": {
+     "product_advised": "SKU-WF-RO10",
+     "price_quoted_vnd": 6890000
+    },
+    "expected_outcome": "chot_don"
+   },
+   "abs_date": "2026-10-15",
+   "call_date": "2026-10-15",
+   "order_flow": true
+  }
+ ]
+}

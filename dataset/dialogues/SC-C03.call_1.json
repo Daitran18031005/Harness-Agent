@@ -1,0 +1,109 @@
+{
+ "scenario_id": "SC-C03",
+ "call": "call_1",
+ "channel": "hotline",
+ "call_date": "2026-10-15",
+ "allowed_numbers": [
+  6,
+  6000000
+ ],
+ "turns": [
+  {
+   "idx": 1,
+   "speaker": "A",
+   "text": "Dạ shop BTC xin nghe, em có thể giúp gì cho mình ạ?",
+   "text_template": "Dạ shop BTC xin nghe, em có thể giúp gì cho mình ạ?",
+   "text_written": "Dạ shop BTC xin nghe, em có thể giúp gì cho mình ạ?",
+   "entities": {},
+   "text_spoken": "dạ shop bê tê xê xin nghe em có thể giúp gì cho mình ạ"
+  },
+  {
+   "idx": 2,
+   "speaker": "C",
+   "text": "Anh hỏi Samsung AX40.",
+   "text_written": "Anh hỏi Samsung AX40.",
+   "states": [
+    "product_asked"
+   ],
+   "entities": {
+    "sku": "SKU-SS-AX40"
+   },
+   "text_spoken": "anh hỏi sam sung ây ích bốn mươi"
+  },
+  {
+   "idx": 3,
+   "speaker": "A",
+   "text": "Dạ anh Phát, máy lọc không khí Samsung AX40 giá 6.490.000đ, hiện hiện còn hàng; bảo hành chính hãng 24 tháng ạ.",
+   "text_template": "Dạ anh Phát, máy lọc không khí Samsung AX40 giá {price}, hiện {stock}; bảo hành chính hãng {warranty} tháng ạ.",
+   "text_written": "Dạ anh Phát, máy lọc không khí Samsung AX40 giá 6.490.000đ, hiện hiện còn hàng; bảo hành chính hãng 24 tháng ạ.",
+   "entities": {
+    "price_vnd": 6490000,
+    "warranty_months": 24
+   },
+   "text_spoken": "dạ anh phát máy lọc không khí sam sung ây ích bốn mươi giá sáu triệu bốn trăm chín mươi nghìn hiện hiện còn hàng bảo hành chính hãng hai mươi bốn tháng ạ"
+  },
+  {
+   "idx": 4,
+   "speaker": "C",
+   "text": "Bên Điện Máy Xanh bán 6 triệu thôi, bên em có bằng giá không?",
+   "text_written": "Bên Điện Máy Xanh bán 6 triệu thôi, bên em có bằng giá không?",
+   "states": [
+    "competitor_price_vnd"
+   ],
+   "entities": {
+    "competitor_price_vnd": 6000000
+   },
+   "text_spoken": "bên điện máy xanh bán sáu triệu thôi bên em có bằng giá không"
+  },
+  {
+   "idx": 5,
+   "speaker": "A",
+   "text": "Dạ em chưa có chương trình để xác nhận mức giá đó, nên không thể hứa khớp giá với anh Phát ạ.",
+   "text_template": "Dạ em chưa có chương trình để xác nhận mức giá đó, nên không thể hứa khớp giá với anh Phát ạ.",
+   "text_written": "Dạ em chưa có chương trình để xác nhận mức giá đó, nên không thể hứa khớp giá với anh Phát ạ.",
+   "entities": {},
+   "text_spoken": "dạ em chưa có chương trình để xác nhận mức giá đó nên không thể hứa khớp giá với anh phát ạ"
+  },
+  {
+   "idx": 6,
+   "speaker": "C",
+   "text": "À mà… có bảo hành quốc tế không?",
+   "text_written": "À mà… có bảo hành quốc tế không?",
+   "states": [],
+   "entities": {},
+   "text_spoken": "à mà có bảo hành quốc tế không"
+  },
+  {
+   "idx": 7,
+   "speaker": "A",
+   "text": "Dạ phần bảo hành quốc tế em chưa có thông tin trong tài liệu, em sẽ nhờ nhân viên phản hồi anh Phát ạ.",
+   "text_template": "Dạ phần bảo hành quốc tế em chưa có thông tin trong tài liệu, em sẽ nhờ nhân viên phản hồi anh Phát ạ.",
+   "text_written": "Dạ phần bảo hành quốc tế em chưa có thông tin trong tài liệu, em sẽ nhờ nhân viên phản hồi anh Phát ạ.",
+   "entities": {},
+   "text_spoken": "dạ phần bảo hành quốc tế em chưa có thông tin trong tài liệu em sẽ nhờ nhân viên phản hồi anh phát ạ"
+  },
+  {
+   "idx": 8,
+   "speaker": "C",
+   "text": "Để anh cân nhắc rồi gọi lại.",
+   "text_written": "Để anh cân nhắc rồi gọi lại.",
+   "states": [
+    "blocker"
+   ],
+   "entities": {
+    "blocker": "so sanh gia"
+   },
+   "text_spoken": "để anh cân nhắc rồi gọi lại"
+  }
+ ],
+ "meta": {
+  "model": "gpt-6-luna",
+  "attempts": 3,
+  "ok": false,
+  "unresolved": [
+   "fact 'blocker'='so sanh gia' (gợi ý: để anh cân nhắc rồi gọi lại) CHƯA được khách nói đúng trong lời khách",
+   "lượt 8: gắn nhãn 'blocker' nhưng lời khách không nói đúng giá trị 'so sanh gia'"
+  ]
+ },
+ "frame_sha256": "36d2803ca373a785"
+}

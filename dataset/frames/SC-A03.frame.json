@@ -1,0 +1,230 @@
+{
+ "scenario": {
+  "scenario_id": "SC-A03",
+  "level": "M1",
+  "persona": "khach_so_gia",
+  "hard_case": "khuyen_mai_het_han",
+  "customer_phone": "0900010003",
+  "customer_name": "Mai",
+  "honorific": "chị",
+  "notes": "Khuyến mãi quà tặng PUMP-GIFT (hết 13/10): cuộc 1 còn hạn (10/10), cuộc 2 (15/10) đã hết → agent không được hứa quà.",
+  "group": "A"
+ },
+ "calls": [
+  {
+   "name": "call_1",
+   "channel": "zalo_oa",
+   "goal": "hỏi máy hút sữa Spectra S1 và quà tặng",
+   "opening": "customer",
+   "customer_plot": "Khách nhắn Zalo hỏi máy hút sữa Spectra S1 giá bao nhiêu, nghe nói có tặng túi trữ sữa; nói 'để chị suy nghĩ rồi gọi hotline' và đọc SĐT.",
+   "agent_plot": "Agent báo {product} giá {price}, có tặng {gift} đến hết {promo_end}; xin SĐT để hotline gọi lại.",
+   "customer_facts": [
+    {
+     "key": "product_asked",
+     "value": "SKU-MB-PUMP1",
+     "hint": "máy hút sữa Spectra S1"
+    },
+    {
+     "key": "phone_provided",
+     "value": "0900010003",
+     "hint": "đọc SĐT 0900010003"
+    }
+   ],
+   "agent_vars": {
+    "product": {
+     "text": "Máy hút sữa điện đôi Spectra S1",
+     "desc": "tên sản phẩm ĐẦY ĐỦ đã gồm loại hàng (đừng viết thêm loại hàng phía trước)",
+     "entity": [
+      "sku",
+      "SKU-MB-PUMP1"
+     ]
+    },
+    "price": {
+     "text": "4.290.000đ",
+     "desc": "giá cuối",
+     "entity": [
+      "price_vnd",
+      4290000
+     ]
+    },
+    "gift": {
+     "text": "Túi trữ sữa Sunmum 50 túi",
+     "desc": "quà tặng kèm",
+     "entity": null
+    },
+    "promo_end": {
+     "text": "13/10",
+     "desc": "ngày hết khuyến mãi quà tặng",
+     "entity": [
+      "promo_expiry",
+      "2026-10-13"
+     ]
+    },
+    "stock": {
+     "text": "hiện còn hàng",
+     "desc": "tình trạng tồn kho của sản phẩm (còn hàng/hết hàng)",
+     "entity": null
+    }
+   },
+   "n_turns": [
+    6,
+    8
+   ],
+   "style": "normal",
+   "expected": {
+    "facts_established": {
+     "product_advised": "SKU-MB-PUMP1",
+     "price_quoted_vnd": 4290000,
+     "promo_code": "PUMP-GIFT",
+     "promo_expiry": "2026-10-13",
+     "channel": "zalo",
+     "phone_provided": "0900010003"
+    },
+    "expected_outcome": "hen_goi_lai"
+   },
+   "abs_date": "2026-10-10",
+   "channel_identity": "zalo_mai_a03",
+   "call_date": "2026-10-10"
+  },
+  {
+   "name": "call_2",
+   "channel": "hotline",
+   "goal": "gọi lại hỏi quà đã hết hạn rồi vẫn mua",
+   "opening": "agent",
+   "customer_plot": "Khách gọi: 'chị gọi lấy cái máy hút sữa Spectra hôm trước, có tặng túi trữ sữa đúng không?'; nghe tin quà đã hết thì hơi tiếc nhưng vẫn lấy, COD, giao về số 27 đường Trần Phú, quận Hà Đông, Hà Nội.",
+   "agent_plot": "Agent nói rõ khuyến mãi tặng {gift} đã kết thúc ngày {promo_end} nên KHÔNG còn quà; giá hôm nay {price}; không hứa tặng bù; chốt đơn, mã đơn {order_id}, giao {delivery_days} ngày.",
+   "customer_facts": [
+    {
+     "key": "payment",
+     "value": "COD",
+     "hint": "COD"
+    },
+    {
+     "key": "address",
+     "value": "số 27 đường Trần Phú, quận Hà Đông, Hà Nội",
+     "hint": "giao về số 27 đường Trần Phú, quận Hà Đông, Hà Nội"
+    },
+    {
+     "key": "recipient_name",
+     "value": "Mai",
+     "hint": "nói tên người nhận là Mai"
+    }
+   ],
+   "agent_vars": {
+    "product": {
+     "text": "Máy hút sữa điện đôi Spectra S1",
+     "desc": "tên sản phẩm ĐẦY ĐỦ đã gồm loại hàng (đừng viết thêm loại hàng phía trước)",
+     "entity": [
+      "sku",
+      "SKU-MB-PUMP1"
+     ]
+    },
+    "price": {
+     "text": "4.290.000đ",
+     "desc": "giá hôm nay (không còn quà)",
+     "entity": [
+      "price_vnd",
+      4290000
+     ]
+    },
+    "gift": {
+     "text": "Túi trữ sữa Sunmum 50 túi",
+     "desc": "quà tặng trước đây",
+     "entity": null
+    },
+    "promo_end": {
+     "text": "13/10",
+     "desc": "ngày khuyến mãi quà tặng đã kết thúc",
+     "entity": [
+      "promo_expiry",
+      "2026-10-13"
+     ]
+    },
+    "order_id": {
+     "text": "OD600001",
+     "desc": "mã đơn",
+     "entity": [
+      "order_id",
+      "OD600001"
+     ]
+    },
+    "delivery_days": {
+     "text": "2",
+     "desc": "số ngày giao",
+     "entity": null
+    },
+    "stock": {
+     "text": "hiện còn hàng",
+     "desc": "tình trạng tồn kho của sản phẩm (còn hàng/hết hàng)",
+     "entity": null
+    },
+    "readback_total": {
+     "text": "4.290.000đ",
+     "desc": "tổng tiền cả đơn (giá × số lượng) — dùng khi ĐỌC LẠI ĐƠN",
+     "entity": null
+    },
+    "payment_label": {
+     "text": "thanh toán khi nhận hàng (COD)",
+     "desc": "hình thức thanh toán chốt của đơn — dùng khi ĐỌC LẠI ĐƠN",
+     "entity": null
+    },
+    "address": {
+     "text": "số 27 đường Trần Phú, quận Hà Đông, Hà Nội",
+     "desc": "địa chỉ giao (khách vừa đọc) — CHỈ dùng sau khi khách đã đọc địa chỉ",
+     "entity": null,
+     "after": "address"
+    },
+    "recipient_name": {
+     "text": "Mai",
+     "desc": "tên người nhận — CHỈ dùng sau khi khách đã nói tên",
+     "entity": null,
+     "after": "recipient_name"
+    },
+    "caller_phone": {
+     "text": "0900010003",
+     "desc": "SĐT nhận hàng (số khách đang gọi/nhắn) — đọc lại để xác nhận",
+     "entity": [
+      "phone",
+      "0900010003"
+     ]
+    }
+   },
+   "n_turns": [
+    10,
+    14
+   ],
+   "style": "normal",
+   "expected": {
+    "must_carry_over": [
+     "product_advised"
+    ],
+    "must_not_ask": [
+     "product_advised"
+    ],
+    "success_if": {
+     "tool_called": "order.create",
+     "args_match": {
+      "sku": "SKU-MB-PUMP1",
+      "price_vnd": 4290000
+     },
+     "forbidden_claims": [
+      {
+       "field": "promo_PUMP-GIFT_active",
+       "value": true
+      }
+     ]
+    },
+    "ground_truth_facts": {
+     "price_vnd": 4290000,
+     "promo_PUMP-GIFT_active": false,
+     "freeship": true,
+     "in_stock": true
+    },
+    "expected_outcome": "chot_don"
+   },
+   "abs_date": "2026-10-15",
+   "days_later": 5,
+   "order_flow": true
+  }
+ ]
+}

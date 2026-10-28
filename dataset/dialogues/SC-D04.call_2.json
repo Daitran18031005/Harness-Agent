@@ -1,0 +1,144 @@
+{
+ "scenario_id": "SC-D04",
+ "call": "call_2",
+ "channel": "hotline",
+ "call_date": "2026-10-17",
+ "meta": {
+  "model": "gpt-6-luna",
+  "attempts": 2,
+  "ok": true,
+  "unresolved": [],
+  "rebuilt": true
+ },
+ "frame_sha256": "2e76571d1955ed33",
+ "allowed_numbers": [
+  7,
+  38,
+  7000000
+ ],
+ "turns": [
+  {
+   "idx": 1,
+   "speaker": "A",
+   "text": "Dạ shop BTC xin nghe, em có thể giúp gì cho mình ạ?",
+   "text_template": "Dạ shop BTC xin nghe, em có thể giúp gì cho mình ạ?",
+   "text_written": "Dạ shop BTC xin nghe, em có thể giúp gì cho mình ạ?",
+   "entities": {},
+   "text_spoken": "dạ shop bê tê xê xin nghe em có thể giúp gì cho mình ạ"
+  },
+  {
+   "idx": 2,
+   "speaker": "C",
+   "text": "Hôm trước nhắn chat họ báo Máy lọc không khí AirPure Y một giá, giờ gọi lại thấy gợi ý mẫu khác, thông tin lệch thế này bực thật. Phòng khoảng 38m², ngân sách tầm 7 triệu.",
+   "text_written": "Hôm trước nhắn chat họ báo Máy lọc không khí AirPure Y một giá, giờ gọi lại thấy gợi ý mẫu khác, thông tin lệch thế này bực thật. Phòng khoảng 38m², ngân sách tầm 7 triệu.",
+   "states": [
+    "room_area_m2",
+    "budget_vnd"
+   ],
+   "entities": {
+    "room_area_m2": 38,
+    "budget_vnd": 7000000
+   },
+   "text_spoken": "hôm trước nhắn chat họ báo máy lọc không khí e pia y một giá giờ gọi lại thấy gợi ý mẫu khác thông tin lệch thế này bực thật phòng khoảng ba mươi tám mét vuông ngân sách tầm bảy triệu"
+  },
+  {
+   "idx": 3,
+   "speaker": "A",
+   "text": "Em xin lỗi anh Đạt vì thông tin giữa các lần tư vấn chưa thống nhất. Theo thông tin mới anh vừa cung cấp, mẫu phù hợp là Máy lọc không khí Samsung AX40, giá 6.490.000đ; cuộc trước là Máy lọc không khí AirPure Y, giá 5.200.000đ. Em đã ghi nhận thông tin mới, anh cho em xin tên người nhận và địa chỉ giao hàng nhé.",
+   "text_template": "Em xin lỗi anh Đạt vì thông tin giữa các lần tư vấn chưa thống nhất. Theo thông tin mới anh vừa cung cấp, mẫu phù hợp là {product}, giá {price}; cuộc trước là {old_product}, giá {old_price}. Em đã ghi nhận thông tin mới, anh cho em xin tên người nhận và địa chỉ giao hàng nhé.",
+   "text_written": "Em xin lỗi anh Đạt vì thông tin giữa các lần tư vấn chưa thống nhất. Theo thông tin mới anh vừa cung cấp, mẫu phù hợp là Máy lọc không khí Samsung AX40, giá 6.490.000đ; cuộc trước là Máy lọc không khí AirPure Y, giá 5.200.000đ. Em đã ghi nhận thông tin mới, anh cho em xin tên người nhận và địa chỉ giao hàng nhé.",
+   "entities": {
+    "sku": "SKU-AP-Y",
+    "price_vnd": 5200000
+   },
+   "text_spoken": "em xin lỗi anh đạt vì thông tin giữa các lần tư vấn chưa thống nhất theo thông tin mới anh vừa cung cấp mẫu phù hợp là máy lọc không khí sam sung ây ích bốn mươi giá sáu triệu bốn trăm chín mươi nghìn cuộc trước là máy lọc không khí e pia y giá năm triệu hai trăm nghìn em đã ghi nhận thông tin mới anh cho em xin tên người nhận và địa chỉ giao hàng nhé"
+  },
+  {
+   "idx": 4,
+   "speaker": "C",
+   "text": "Khoan đã… vì sao đổi mẫu rồi vẫn hợp với nhu cầu của tôi?",
+   "text_written": "Khoan đã… vì sao đổi mẫu rồi vẫn hợp với nhu cầu của tôi?",
+   "states": [],
+   "entities": {},
+   "text_spoken": "khoan đã vì sao đổi mẫu rồi vẫn hợp với nhu cầu của tôi"
+  },
+  {
+   "idx": 5,
+   "speaker": "A",
+   "text": "Vì diện tích phòng và ngân sách anh vừa cập nhật khác với thông tin dùng để tư vấn lần trước, nên mẫu phù hợp được điều chỉnh. Anh đọc giúp em tên người nhận và địa chỉ giao hàng nhé.",
+   "text_template": "Vì diện tích phòng và ngân sách anh vừa cập nhật khác với thông tin dùng để tư vấn lần trước, nên mẫu phù hợp được điều chỉnh. Anh đọc giúp em tên người nhận và địa chỉ giao hàng nhé.",
+   "text_written": "Vì diện tích phòng và ngân sách anh vừa cập nhật khác với thông tin dùng để tư vấn lần trước, nên mẫu phù hợp được điều chỉnh. Anh đọc giúp em tên người nhận và địa chỉ giao hàng nhé.",
+   "entities": {},
+   "text_spoken": "vì diện tích phòng và ngân sách anh vừa cập nhật khác với thông tin dùng để tư vấn lần trước nên mẫu phù hợp được điều chỉnh anh đọc giúp em tên người nhận và địa chỉ giao hàng nhé"
+  },
+  {
+   "idx": 6,
+   "speaker": "C",
+   "text": "Giao về số 22 đường Giải Phóng, quận Hoàng Mai, Hà Nội. Người nhận là Đạt.",
+   "text_written": "Giao về số 22 đường Giải Phóng, quận Hoàng Mai, Hà Nội. Người nhận là Đạt.",
+   "states": [
+    "address",
+    "recipient_name"
+   ],
+   "entities": {
+    "address": "số 22 đường Giải Phóng, quận Hoàng Mai, Hà Nội"
+   },
+   "text_spoken": "giao về số hai mươi hai đường giải phóng quận hoàng mai hà nội người nhận là đạt"
+  },
+  {
+   "idx": 7,
+   "speaker": "A",
+   "text": "Em ghi nhận rồi ạ. Anh thanh toán COD và nhận hàng bằng số điện thoại anh đang gọi đến đây, đúng không ạ?",
+   "text_template": "Em ghi nhận rồi ạ. Anh thanh toán COD và nhận hàng bằng số điện thoại anh đang gọi đến đây, đúng không ạ?",
+   "text_written": "Em ghi nhận rồi ạ. Anh thanh toán COD và nhận hàng bằng số điện thoại anh đang gọi đến đây, đúng không ạ?",
+   "entities": {},
+   "text_spoken": "em ghi nhận rồi ạ anh thanh toán cê ô đê và nhận hàng bằng số điện thoại anh đang gọi đến đây đúng không ạ"
+  },
+  {
+   "idx": 8,
+   "speaker": "C",
+   "text": "COD, đúng số đang gọi.",
+   "text_written": "COD, đúng số đang gọi.",
+   "states": [
+    "payment"
+   ],
+   "entities": {
+    "payment": "COD"
+   },
+   "text_spoken": "cê ô đê đúng số đang gọi"
+  },
+  {
+   "idx": 9,
+   "speaker": "A",
+   "text": "Em đọc lại đơn: Máy lọc không khí Samsung AX40, giá 6.490.000đ, tổng 6.490.000đ, giao cho Đạt, SĐT 0900020004, địa chỉ số 22 đường Giải Phóng, quận Hoàng Mai, Hà Nội, hình thức thanh toán khi nhận hàng (COD). Anh xác nhận đặt đơn này chứ ạ?",
+   "text_template": "Em đọc lại đơn: {product}, giá {price}, tổng {readback_total}, giao cho {recipient_name}, SĐT {caller_phone}, địa chỉ {address}, hình thức {payment_label}. Anh xác nhận đặt đơn này chứ ạ?",
+   "text_written": "Em đọc lại đơn: Máy lọc không khí Samsung AX40, giá 6.490.000đ, tổng 6.490.000đ, giao cho Đạt, SĐT 0900020004, địa chỉ số 22 đường Giải Phóng, quận Hoàng Mai, Hà Nội, hình thức thanh toán khi nhận hàng (COD). Anh xác nhận đặt đơn này chứ ạ?",
+   "entities": {
+    "sku": "SKU-SS-AX40",
+    "price_vnd": 6490000,
+    "phone": "0900020004"
+   },
+   "text_spoken": "em đọc lại đơn máy lọc không khí sam sung ây ích bốn mươi giá sáu triệu bốn trăm chín mươi nghìn tổng sáu triệu bốn trăm chín mươi nghìn giao cho đạt số điện thoại không chín không không không hai không không không bốn địa chỉ số hai mươi hai đường giải phóng quận hoàng mai hà nội hình thức thanh toán khi nhận hàng cê ô đê anh xác nhận đặt đơn này chứ ạ"
+  },
+  {
+   "idx": 10,
+   "speaker": "C",
+   "text": "Đúng rồi, chốt đi em.",
+   "text_written": "Đúng rồi, chốt đi em.",
+   "states": [],
+   "entities": {},
+   "text_spoken": "đúng rồi chốt đi em"
+  },
+  {
+   "idx": 11,
+   "speaker": "A",
+   "text": "Em chốt đơn cho anh Đạt, mã đơn OD600001, dự kiến giao trong 2 ngày ạ.",
+   "text_template": "Em chốt đơn cho anh Đạt, mã đơn {order_id}, dự kiến giao trong {delivery_days} ngày ạ.",
+   "text_written": "Em chốt đơn cho anh Đạt, mã đơn OD600001, dự kiến giao trong 2 ngày ạ.",
+   "entities": {
+    "order_id": "OD600001"
+   },
+   "text_spoken": "em chốt đơn cho anh đạt mã đơn ô đê sáu không không không không một dự kiến giao trong hai ngày ạ"
+  }
+ ]
+}

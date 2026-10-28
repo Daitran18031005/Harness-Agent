@@ -1,0 +1,56 @@
+{
+  "scenario_id": "SC-D26",
+  "level": "M1",
+  "persona": "khach_so_gia",
+  "hard_case": "tu_choi_giua_gate",
+  "customer_phone": "0900020026",
+  "customer_name": "Sơn",
+  "honorific": "anh",
+  "notes": "Từ chối SAU khi nghe đọc lại đơn: không tạo đơn, không nối câu hỏi gate ở lượt sau.",
+  "archetype": "gate_decline",
+  "industry": "giày",
+  "south": false,
+  "calls": {
+    "call_1": {
+      "channel": "zalo_oa",
+      "channel_identity": "zalo.d26",
+      "call_date": "2026-10-15",
+      "customer_goal": "đặt Giày sneaker Urban Classic nhưng từ chối sau khi nghe đọc lại đơn",
+      "customer_turns": [
+        "Anh hỏi Giày sneaker Urban Classic size 41, màu đen còn hàng không, giá bao nhiêu?",
+        "Ờ, để anh xem đã…",
+        "Sơn nhé.",
+        "Giao về số 60 đường Láng, quận Cầu Giấy, Hà Nội. Số nhận hàng 0900020026 nhé.",
+        "COD nhé, mà anh hơi phân vân…",
+        "Thôi anh không lấy nữa, mắc quá."
+      ],
+      "facts_established": {
+        "product_advised": "SKU-SN-CAS",
+        "price_quoted_vnd": 890000,
+        "payment": "COD",
+        "size": 41,
+        "color": "den"
+      },
+      "success_if": {
+        "tool_called": null,
+        "agent_must_say": true,
+        "must_not_call_tools": [
+          "order.create"
+        ],
+        "forbidden_claims": [
+          "đã lên đơn",
+          "đã tạo đơn",
+          "mã đơn"
+        ]
+      },
+      "ground_truth_facts": {
+        "price_vnd": 890000,
+        "in_stock": true
+      },
+      "memory_expectation": {
+        "objection": "gia cao"
+      },
+      "expected_outcome": "tu_choi"
+    }
+  }
+}

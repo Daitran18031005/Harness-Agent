@@ -1,0 +1,24 @@
+{
+  "scenario_id": "SC-GEN-10",
+  "level": "M1",
+  "persona": "khach_hoi_nhieu_khong_mua",
+  "hard_case": null,
+  "customer_phone": "0963279264",
+  "customer_name": "Đạt",
+  "honorific": "anh",
+  "notes": "Khách so sánh AirPure X/Y/Pro rồi không chốt — không được agent tự chốt hộ hoặc bịa giá so sánh, chỉ dùng catalog.search/pricing.get_quote thật cho từng SKU được hỏi.",
+  "calls": {
+    "call_1": {
+      "call_date": "2026-10-15",
+      "customer_turns": [
+        "Em so sánh giúp anh AirPure X, Y, Pro khác nhau thế nào, giá sao?",
+        "Thôi để anh suy nghĩ thêm."
+      ],
+      "success_if": {
+        "must_not_call_tools": []
+      },
+      "ground_truth_facts": {},
+      "expected_outcome": "hen_goi_lai"
+    }
+  }
+}

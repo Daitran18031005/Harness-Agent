@@ -1,0 +1,55 @@
+{
+  "scenario_id": "SC-D28",
+  "level": "M1",
+  "persona": "khach_do_du_hoi_nguoi_nha",
+  "hard_case": "hoan_giua_gate",
+  "customer_phone": "0900020028",
+  "customer_name": "Vân",
+  "honorific": "chị",
+  "notes": "Hoãn SAU khi nghe đọc lại đơn (cần hỏi người nhà): hủy đơn nháp, ghi blocker, hẹn gọi lại; không tạo đơn.",
+  "archetype": "gate_decline",
+  "industry": "mẹ & bé",
+  "south": false,
+  "calls": {
+    "call_1": {
+      "channel": "chat_fanpage",
+      "channel_identity": "fb.d28",
+      "call_date": "2026-10-15",
+      "customer_goal": "đặt Xe đẩy gấp gọn Joie Pact nhưng hoãn sau khi nghe đọc lại đơn",
+      "customer_turns": [
+        "Shop còn Xe đẩy gấp gọn Joie Pact không, giá bao nhiêu ạ? Ờ, chị cũng hơi lo về độ an toàn.",
+        "Vân.",
+        "Giao về số 30 đường Giải Phóng, quận Hoàng Mai, Hà Nội nhé. À, chị vẫn muốn hỏi kỹ thêm về độ an toàn.",
+        "0900020028.",
+        "COD nhé.",
+        "Ừm, để chị hỏi chồng đã, giờ chị chưa chốt nhé."
+      ],
+      "facts_established": {
+        "product_advised": "SKU-MB-STR1",
+        "price_quoted_vnd": 3490000,
+        "payment": "COD",
+        "blocker": "can hoi chong"
+      },
+      "success_if": {
+        "tool_called": null,
+        "agent_must_say": true,
+        "must_not_call_tools": [
+          "order.create"
+        ],
+        "forbidden_claims": [
+          "đã lên đơn",
+          "đã tạo đơn",
+          "mã đơn"
+        ]
+      },
+      "ground_truth_facts": {
+        "price_vnd": 3490000,
+        "in_stock": true
+      },
+      "memory_expectation": {
+        "blocker": "can hoi chong"
+      },
+      "expected_outcome": "hen_goi_lai"
+    }
+  }
+}

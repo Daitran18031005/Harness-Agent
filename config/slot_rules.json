@@ -1,0 +1,143 @@
+{
+  "version": "slot-rules-v2-2026-10-21",
+  "_doc": "Luật chấm sản phẩm theo SLOT khách đã nêu — LÀ DỮ LIỆU, không hard-code tên sản phẩm/SKU. Mỗi luật nối một slot với MỘT THUỘC TÍNH CÓ THẬT trong catalog (attributes.* hoặc list_price_vnd). Luật chỉ áp dụng khi (a) slot đã biết và (b) sản phẩm CÓ thuộc tính đó; thiếu một trong hai thì trung tính (không cộng/trừ, ghi vào `unknown`). Điểm = tổng trọng số luật thỏa − trừ luật vi phạm; không có luật nào LOẠI sản phẩm (sản phẩm duy nhất thỏa ràng buộc an toàn vẫn được giữ dù vượt ngân sách), chỉ xếp hạng và nêu lý do. op: eq | gte (thuộc tính ≥ slot) | lte (thuộc tính ≤ slot) | over_budget (giá > slot, trừ theo mức vượt) | contains (thuộc tính chữ chứa slot). `question` = câu hỏi mẫu khi cần hỏi slot này. budget_tolerance: sản phẩm đứng đầu vượt ngân sách ≤ mức này → vẫn chốt 1 sản phẩm và nêu mức vượt; vượt hơn → trả 2 lựa chọn (đứng đầu + tốt nhất trong ngân sách). confirm_templates: câu XÁC NHẬN dùng khi LLM hỏi lặp một slot đã biết (thay vì hỏi mở).",
+  "settings": {
+    "top_k": 3,
+    "out_of_stock_penalty": 2.0,
+    "discontinued_penalty": 100.0,
+    "oversize_waste_penalty": 0.4,
+    "accessory_categories": [
+      "phu-kien",
+      "combo"
+    ],
+    "accessory_query_terms": [
+      "phu kien",
+      "combo",
+      "mang loc",
+      "loi loc",
+      "tui tru",
+      "tat the thao",
+      "thay the"
+    ],
+    "budget_tolerance": 0.2
+  },
+  "rules": [
+    {
+      "id": "child_safety",
+      "slot": "has_children",
+      "slot_equals": true,
+      "attribute": "child_safe_lock",
+      "op": "eq",
+      "value": true,
+      "weight": 5.0,
+      "violate_weight": 5.0,
+      "reason": "nhà có trẻ nhỏ → ưu tiên sản phẩm có khóa an toàn trẻ em",
+      "question": "Nhà mình có bé nhỏ không ạ?"
+    },
+    {
+      "id": "room_coverage",
+      "slot": "room_area_m2",
+      "attribute": "room_area_m2",
+      "op": "gte",
+      "weight": 4.0,
+      "violate_weight": 4.0,
+      "reason": "diện tích phủ phải ≥ diện tích phòng",
+      "question": "Phòng nhà mình rộng khoảng bao nhiêu mét vuông ạ?",
+      "prefer_closest": true
+    },
+    {
+      "id": "budget",
+      "slot": "budget_vnd",
+      "attribute": "list_price_vnd",
+      "op": "over_budget",
+      "weight": 3.0,
+      "violate_weight": 3.0,
+      "reason": "giá so với ngân sách khách nêu (vượt thì trừ điểm theo mức vượt, không loại)",
+      "question": "Ngân sách nhà mình khoảng bao nhiêu ạ?"
+    },
+    {
+      "id": "child_weight",
+      "slot": "child_weight_kg",
+      "attribute": "max_weight_kg",
+      "op": "gte",
+      "weight": 4.0,
+      "violate_weight": 4.0,
+      "reason": "tải trọng tối đa phải ≥ cân nặng của bé",
+      "question": "Bé nhà mình khoảng bao nhiêu ký ạ?"
+    },
+    {
+      "id": "bottle_volume",
+      "slot": "volume_ml",
+      "attribute": "volume_ml",
+      "op": "gte",
+      "weight": 2.0,
+      "violate_weight": 2.0,
+      "reason": "dung tích ≥ nhu cầu",
+      "question": "Mình cần bình loại bao nhiêu ml ạ?"
+    },
+    {
+      "id": "warranty",
+      "slot": "min_warranty_months",
+      "attribute": "warranty_months",
+      "op": "gte",
+      "weight": 2.0,
+      "violate_weight": 2.0,
+      "reason": "thời gian bảo hành ≥ mong muốn của khách",
+      "question": "Mình muốn bảo hành tối thiểu bao lâu ạ?"
+    },
+    {
+      "id": "water_stages",
+      "slot": "min_stages",
+      "attribute": "stages",
+      "op": "gte",
+      "weight": 1.5,
+      "violate_weight": 1.5,
+      "reason": "số cấp lọc ≥ mong muốn",
+      "question": "Mình muốn máy lọc bao nhiêu lõi/cấp ạ?"
+    },
+    {
+      "id": "material",
+      "slot": "material",
+      "attribute": "material",
+      "op": "contains",
+      "weight": 2.0,
+      "violate_weight": 1.0,
+      "reason": "chất liệu khớp mong muốn",
+      "question": "Mình thích chất liệu nào ạ?"
+    },
+    {
+      "id": "return_window",
+      "slot": "min_return_days",
+      "attribute": "return_days",
+      "op": "gte",
+      "weight": 1.0,
+      "violate_weight": 1.0,
+      "reason": "thời gian đổi trả ≥ mong muốn",
+      "question": "Mình cần được đổi trả trong bao nhiêu ngày ạ?"
+    }
+  ],
+  "question_priority": [
+    "has_children",
+    "room_area_m2",
+    "child_weight_kg",
+    "budget_vnd",
+    "volume_ml",
+    "material",
+    "min_warranty_months",
+    "min_stages",
+    "min_return_days"
+  ],
+  "confirm_templates": {
+    "room_area_m2": "Phòng nhà mình vẫn khoảng {value}m² đúng không ạ?",
+    "has_children": {
+      "true": "Nhà mình vẫn có bé nhỏ đúng không ạ?",
+      "false": "Nhà mình vẫn chưa có bé nhỏ đúng không ạ?"
+    },
+    "budget_vnd": "Ngân sách của mình vẫn khoảng {value} đúng không ạ?",
+    "product_advised": "Mình vẫn đang quan tâm {value} đúng không ạ?",
+    "size": "Mình vẫn lấy size {value} đúng không ạ?",
+    "color": "Mình vẫn lấy màu {value} đúng không ạ?",
+    "payment": "Mình vẫn thanh toán {value} đúng không ạ?",
+    "child_weight_kg": "Bé nhà mình vẫn khoảng {value}kg đúng không ạ?"
+  }
+}

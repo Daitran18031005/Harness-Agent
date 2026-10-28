@@ -1,0 +1,187 @@
+{
+ "scenario_id": "SC-D03",
+ "call": "call_2",
+ "channel": "hotline",
+ "call_date": "2026-10-05",
+ "meta": {
+  "model": "gpt-6-luna",
+  "attempts": 2,
+  "ok": true,
+  "unresolved": [],
+  "rebuilt": true
+ },
+ "frame_sha256": "85f0cf956f1a7998",
+ "allowed_numbers": [
+  4390000
+ ],
+ "turns": [
+  {
+   "idx": 1,
+   "speaker": "A",
+   "text": "Dạ shop BTC xin nghe, em có thể giúp gì cho mình ạ?",
+   "text_template": "Dạ shop BTC xin nghe, em có thể giúp gì cho mình ạ?",
+   "text_written": "Dạ shop BTC xin nghe, em có thể giúp gì cho mình ạ?",
+   "entities": {},
+   "text_spoken": "dạ shop bê tê xê xin nghe em có thể giúp gì cho mình ạ"
+  },
+  {
+   "idx": 2,
+   "speaker": "C",
+   "text": "Chị bực thật đấy, hôm trước nhắn Fanpage/Zalo họ báo 4.390.000đ, sao giờ hotline lại báo giá khác? Giá thấp nhất từng báo là bao nhiêu?",
+   "text_written": "Chị bực thật đấy, hôm trước nhắn Fanpage/Zalo họ báo 4.390.000đ, sao giờ hotline lại báo giá khác? Giá thấp nhất từng báo là bao nhiêu?",
+   "states": [
+    "prev_quote_vnd"
+   ],
+   "entities": {},
+   "text_spoken": "chị bực thật đấy hôm trước nhắn fanpage zalo họ báo bốn triệu ba trăm chín mươi nghìn sao giờ hotline lại báo giá khác giá thấp nhất từng báo là bao nhiêu"
+  },
+  {
+   "idx": 3,
+   "speaker": "A",
+   "text": "Em xin lỗi chị Châu vì thông tin khiến chị thấy mỗi kênh báo một giá. Khuyến mãi kết thúc ngày 30/9, nên mức 4.390.000đ ở kênh chat không còn áp dụng; giá hôm nay là 4.890.000đ. Em không thể giữ giá cũ ạ.",
+   "text_template": "Em xin lỗi chị Châu vì thông tin khiến chị thấy mỗi kênh báo một giá. Khuyến mãi kết thúc ngày {promo_end}, nên mức {old_price} ở kênh chat không còn áp dụng; giá hôm nay là {price}. Em không thể giữ giá cũ ạ.",
+   "text_written": "Em xin lỗi chị Châu vì thông tin khiến chị thấy mỗi kênh báo một giá. Khuyến mãi kết thúc ngày 30/9, nên mức 4.390.000đ ở kênh chat không còn áp dụng; giá hôm nay là 4.890.000đ. Em không thể giữ giá cũ ạ.",
+   "entities": {
+    "promo_expiry": "2026-09-30",
+    "price_vnd": 4890000
+   },
+   "text_spoken": "em xin lỗi chị châu vì thông tin khiến chị thấy mỗi kênh báo một giá khuyến mãi kết thúc ngày ba mươi tháng chín nên mức bốn triệu ba trăm chín mươi nghìn ở kênh chat không còn áp dụng giá hôm nay là bốn triệu tám trăm chín mươi nghìn em không thể giữ giá cũ ạ"
+  },
+  {
+   "idx": 4,
+   "speaker": "C",
+   "text": "Nhưng chị hỏi giá thấp nhất từng được báo cơ mà. Sao không áp dụng mức đó nữa?",
+   "text_written": "Nhưng chị hỏi giá thấp nhất từng được báo cơ mà. Sao không áp dụng mức đó nữa?",
+   "states": [],
+   "entities": {},
+   "text_spoken": "nhưng chị hỏi giá thấp nhất từng được báo cơ mà sao không áp dụng mức đó nữa"
+  },
+  {
+   "idx": 5,
+   "speaker": "A",
+   "text": "Dạ, mức chị được báo ở cuộc trước là giá khuyến mãi theo thời điểm, chị Châu ạ. Khuyến mãi đã kết thúc nên hiện tại em chỉ có thể báo giá hôm nay là 4.890.000đ. Em xin lỗi chị vì sự bất tiện này.",
+   "text_template": "Dạ, mức chị được báo ở cuộc trước là giá khuyến mãi theo thời điểm, chị Châu ạ. Khuyến mãi đã kết thúc nên hiện tại em chỉ có thể báo giá hôm nay là {price}. Em xin lỗi chị vì sự bất tiện này.",
+   "text_written": "Dạ, mức chị được báo ở cuộc trước là giá khuyến mãi theo thời điểm, chị Châu ạ. Khuyến mãi đã kết thúc nên hiện tại em chỉ có thể báo giá hôm nay là 4.890.000đ. Em xin lỗi chị vì sự bất tiện này.",
+   "entities": {
+    "price_vnd": 4890000
+   },
+   "text_spoken": "dạ mức chị được báo ở cuộc trước là giá khuyến mãi theo thời điểm chị châu ạ khuyến mãi đã kết thúc nên hiện tại em chỉ có thể báo giá hôm nay là bốn triệu tám trăm chín mươi nghìn em xin lỗi chị vì sự bất tiện này"
+  },
+  {
+   "idx": 6,
+   "speaker": "C",
+   "text": "À mà… hôm nay đặt thì thanh toán khi nhận hàng được không?",
+   "text_written": "À mà… hôm nay đặt thì thanh toán khi nhận hàng được không?",
+   "states": [],
+   "entities": {},
+   "text_spoken": "à mà hôm nay đặt thì thanh toán khi nhận hàng được không"
+  },
+  {
+   "idx": 7,
+   "speaker": "A",
+   "text": "Dạ được ạ. Chị Châu muốn chọn hình thức thanh toán nào để em lên đơn cho mình?",
+   "text_template": "Dạ được ạ. Chị Châu muốn chọn hình thức thanh toán nào để em lên đơn cho mình?",
+   "text_written": "Dạ được ạ. Chị Châu muốn chọn hình thức thanh toán nào để em lên đơn cho mình?",
+   "entities": {},
+   "text_spoken": "dạ được ạ chị châu muốn chọn hình thức thanh toán nào để em lên đơn cho mình"
+  },
+  {
+   "idx": 8,
+   "speaker": "C",
+   "text": "COD nhé em.",
+   "text_written": "COD nhé em.",
+   "states": [
+    "payment"
+   ],
+   "entities": {
+    "payment": "COD"
+   },
+   "text_spoken": "cê ô đê nhé em"
+  },
+  {
+   "idx": 9,
+   "speaker": "A",
+   "text": "Dạ, chị cho em xin tên người nhận và địa chỉ giao hàng với ạ.",
+   "text_template": "Dạ, chị cho em xin tên người nhận và địa chỉ giao hàng với ạ.",
+   "text_written": "Dạ, chị cho em xin tên người nhận và địa chỉ giao hàng với ạ.",
+   "entities": {},
+   "text_spoken": "dạ chị cho em xin tên người nhận và địa chỉ giao hàng với ạ"
+  },
+  {
+   "idx": 10,
+   "speaker": "C",
+   "text": "Người nhận là Châu, giao về số 9 phố Bạch Mai, quận Hai Bà Trưng, Hà Nội.",
+   "text_written": "Người nhận là Châu, giao về số 9 phố Bạch Mai, quận Hai Bà Trưng, Hà Nội.",
+   "states": [
+    "recipient_name",
+    "address"
+   ],
+   "entities": {
+    "address": "số 9 phố Bạch Mai, quận Hai Bà Trưng, Hà Nội"
+   },
+   "text_spoken": "người nhận là châu giao về số chín phố bạch mai quận hai bà trưng hà nội"
+  },
+  {
+   "idx": 11,
+   "speaker": "A",
+   "text": "Em xác nhận số đang gọi là 0900020003 để nhận hàng nhé chị Châu?",
+   "text_template": "Em xác nhận số đang gọi là {caller_phone} để nhận hàng nhé chị Châu?",
+   "text_written": "Em xác nhận số đang gọi là 0900020003 để nhận hàng nhé chị Châu?",
+   "entities": {
+    "phone": "0900020003"
+   },
+   "text_spoken": "em xác nhận số đang gọi là không chín không không không hai không không không ba để nhận hàng nhé chị châu"
+  },
+  {
+   "idx": 12,
+   "speaker": "C",
+   "text": "Đúng rồi.",
+   "text_written": "Đúng rồi.",
+   "states": [],
+   "entities": {},
+   "text_spoken": "đúng rồi"
+  },
+  {
+   "idx": 13,
+   "speaker": "A",
+   "text": "Em đọc lại đơn: Máy lọc không khí AirPure X, giá 4.890.000đ, tổng 4.890.000đ, giao cho Châu, SĐT 0900020003, địa chỉ số 9 phố Bạch Mai, quận Hai Bà Trưng, Hà Nội, hình thức thanh toán khi nhận hàng (COD). Chị xác nhận đặt đơn này chứ ạ?",
+   "text_template": "Em đọc lại đơn: {product}, giá {price}, tổng {readback_total}, giao cho {recipient_name}, SĐT {caller_phone}, địa chỉ {address}, hình thức {payment_label}. Chị xác nhận đặt đơn này chứ ạ?",
+   "text_written": "Em đọc lại đơn: Máy lọc không khí AirPure X, giá 4.890.000đ, tổng 4.890.000đ, giao cho Châu, SĐT 0900020003, địa chỉ số 9 phố Bạch Mai, quận Hai Bà Trưng, Hà Nội, hình thức thanh toán khi nhận hàng (COD). Chị xác nhận đặt đơn này chứ ạ?",
+   "entities": {
+    "sku": "SKU-AP-X",
+    "price_vnd": 4890000,
+    "phone": "0900020003"
+   },
+   "text_spoken": "em đọc lại đơn máy lọc không khí e pia x giá bốn triệu tám trăm chín mươi nghìn tổng bốn triệu tám trăm chín mươi nghìn giao cho châu số điện thoại không chín không không không hai không không không ba địa chỉ số chín phố bạch mai quận hai bà trưng hà nội hình thức thanh toán khi nhận hàng cê ô đê chị xác nhận đặt đơn này chứ ạ"
+  },
+  {
+   "idx": 14,
+   "speaker": "C",
+   "text": "Vâng, chốt đi em.",
+   "text_written": "Vâng, chốt đi em.",
+   "states": [],
+   "entities": {},
+   "text_spoken": "vâng chốt đi em"
+  },
+  {
+   "idx": 15,
+   "speaker": "A",
+   "text": "Dạ, em chốt đơn mã OD600001 cho chị Châu. Dự kiến giao trong 2 ngày ạ.",
+   "text_template": "Dạ, em chốt đơn mã {order_id} cho chị Châu. Dự kiến giao trong {delivery_days} ngày ạ.",
+   "text_written": "Dạ, em chốt đơn mã OD600001 cho chị Châu. Dự kiến giao trong 2 ngày ạ.",
+   "entities": {
+    "order_id": "OD600001"
+   },
+   "text_spoken": "dạ em chốt đơn mã ô đê sáu không không không không một cho chị châu dự kiến giao trong hai ngày ạ"
+  },
+  {
+   "idx": 16,
+   "speaker": "C",
+   "text": "Ừ, cảm ơn em.",
+   "text_written": "Ừ, cảm ơn em.",
+   "states": [],
+   "entities": {},
+   "text_spoken": "ừ cảm ơn em"
+  }
+ ]
+}

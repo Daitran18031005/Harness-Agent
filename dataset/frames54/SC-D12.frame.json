@@ -1,0 +1,258 @@
+{
+ "scenario": {
+  "scenario_id": "SC-D12",
+  "level": "M1",
+  "persona": "khach_quay_lai_sau_8_thang",
+  "hard_case": null,
+  "customer_phone": "0900020012",
+  "customer_name": "Phúc",
+  "honorific": "anh",
+  "notes": "Khách cũ có sẵn địa chỉ/tên/thanh toán từ đơn trước: cuộc 2 order gate chỉ XÁC NHẬN rồi đọc lại đơn (khách không đọc lại địa chỉ).",
+  "group": "A",
+  "archetype": "saved_address",
+  "industry": "máy lọc không khí",
+  "south": true
+ },
+ "calls": [
+  {
+   "name": "call_1",
+   "channel": "hotline",
+   "goal": "mua Máy lọc không khí AirPure Y",
+   "opening": "agent",
+   "customer_plot": "Khách mới gọi mua Máy lọc không khí AirPure Y, COD, giao về số 27 đường Hùng Vương, quận Ninh Kiều, Cần Thơ.",
+   "agent_plot": "Agent báo {product} giá {price}; theo quy trình đặt đơn (hỏi tên/địa chỉ/thanh toán, đọc lại đơn) rồi chốt: mã đơn {order_id}, giao {delivery_days} ngày.",
+   "customer_facts": [
+    {
+     "key": "product_asked",
+     "value": "SKU-AP-Y",
+     "hint": "hỏi mua Máy lọc không khí AirPure Y"
+    },
+    {
+     "key": "payment",
+     "value": "COD",
+     "hint": "COD"
+    },
+    {
+     "key": "address",
+     "value": "số 27 đường Hùng Vương, quận Ninh Kiều, Cần Thơ",
+     "hint": "giao về số 27 đường Hùng Vương, quận Ninh Kiều, Cần Thơ"
+    },
+    {
+     "key": "recipient_name",
+     "value": "Phúc",
+     "hint": "nói tên người nhận là Phúc"
+    }
+   ],
+   "agent_vars": {
+    "product": {
+     "text": "Máy lọc không khí AirPure Y",
+     "desc": "tên sản phẩm ĐẦY ĐỦ đã gồm loại hàng (đừng viết thêm loại hàng phía trước)",
+     "entity": [
+      "sku",
+      "SKU-AP-Y"
+     ]
+    },
+    "price": {
+     "text": "5.200.000đ",
+     "desc": "giá cuối (đã tính khuyến mãi)",
+     "entity": [
+      "price_vnd",
+      5200000
+     ]
+    },
+    "order_id": {
+     "text": "OD600001",
+     "desc": "mã đơn",
+     "entity": [
+      "order_id",
+      "OD600001"
+     ]
+    },
+    "delivery_days": {
+     "text": "3",
+     "desc": "số ngày giao",
+     "entity": null
+    },
+    "address": {
+     "text": "số 27 đường Hùng Vương, quận Ninh Kiều, Cần Thơ",
+     "desc": "địa chỉ giao (khách vừa đọc) — CHỈ dùng sau khi khách đã đọc địa chỉ",
+     "entity": null,
+     "after": "address"
+    },
+    "stock": {
+     "text": "hiện còn hàng",
+     "desc": "tình trạng tồn kho của sản phẩm (còn hàng/hết hàng)",
+     "entity": null
+    },
+    "readback_total": {
+     "text": "5.200.000đ",
+     "desc": "tổng tiền cả đơn (giá × số lượng) — dùng khi ĐỌC LẠI ĐƠN",
+     "entity": null
+    },
+    "payment_label": {
+     "text": "thanh toán khi nhận hàng (COD)",
+     "desc": "hình thức thanh toán chốt của đơn — dùng khi ĐỌC LẠI ĐƠN",
+     "entity": null
+    },
+    "recipient_name": {
+     "text": "Phúc",
+     "desc": "tên người nhận — CHỈ dùng sau khi khách đã nói tên",
+     "entity": null,
+     "after": "recipient_name"
+    },
+    "caller_phone": {
+     "text": "0900020012",
+     "desc": "SĐT nhận hàng (số khách đang gọi/nhắn) — đọc lại để xác nhận",
+     "entity": [
+      "phone",
+      "0900020012"
+     ]
+    }
+   },
+   "n_turns": [
+    9,
+    13
+   ],
+   "style": "normal",
+   "expected": {
+    "success_if": {
+     "tool_called": "order.create",
+     "args_match": {
+      "sku": "SKU-AP-Y",
+      "price_vnd": 5200000,
+      "payment": "COD"
+     }
+    },
+    "ground_truth_facts": {
+     "price_vnd": 5200000,
+     "in_stock": true
+    },
+    "facts_established": {
+     "product_advised": "SKU-AP-Y",
+     "price_quoted_vnd": 5200000,
+     "order_id": "OD600001",
+     "payment": "COD"
+    },
+    "expected_outcome": "chot_don"
+   },
+   "abs_date": "2026-10-13",
+   "call_date": "2026-10-13",
+   "order_flow": true
+  },
+  {
+   "name": "call_2",
+   "channel": "hotline",
+   "goal": "mua thêm Màng lọc thay thế AirPure X/Y cho đơn trước",
+   "opening": "agent",
+   "customer_plot": "Khách gọi lại: 'lấy thêm Màng lọc thay thế AirPure X/Y cho cái Máy lọc không khí AirPure Y hôm trước, giao như lần trước nhé'; khi agent xác nhận địa chỉ/người nhận/COD đã lưu thì trả lời ngắn 'đúng rồi' (KHÔNG đọc lại địa chỉ).",
+   "agent_plot": "Agent nhận ra khách và đơn trước {prev_product}; báo giá {price} của {product}; chỉ XÁC NHẬN địa chỉ/người nhận/SĐT/thanh toán đã lưu (không hỏi lại), đọc lại đơn, khách đồng ý rồi chốt: mã đơn {order_id}, giao {delivery_days} ngày.",
+   "customer_facts": [
+    {
+     "key": "product_asked",
+     "value": "SKU-AP-FLT-X",
+     "hint": "muốn mua thêm Màng lọc thay thế AirPure X/Y"
+    }
+   ],
+   "agent_vars": {
+    "product": {
+     "text": "Màng lọc thay thế AirPure X/Y",
+     "desc": "tên sản phẩm ĐẦY ĐỦ đã gồm loại hàng (đừng viết thêm loại hàng phía trước)",
+     "entity": [
+      "sku",
+      "SKU-AP-FLT-X"
+     ]
+    },
+    "price": {
+     "text": "690.000đ",
+     "desc": "giá cuối (đã tính khuyến mãi)",
+     "entity": [
+      "price_vnd",
+      690000
+     ]
+    },
+    "order_id": {
+     "text": "OD600001",
+     "desc": "mã đơn",
+     "entity": [
+      "order_id",
+      "OD600001"
+     ]
+    },
+    "delivery_days": {
+     "text": "3",
+     "desc": "số ngày giao",
+     "entity": null
+    },
+    "prev_product": {
+     "text": "Máy lọc không khí AirPure Y",
+     "desc": "sản phẩm khách đã mua ở đơn trước",
+     "entity": [
+      "sku",
+      "SKU-AP-Y"
+     ]
+    },
+    "readback_total": {
+     "text": "690.000đ",
+     "desc": "tổng tiền cả đơn (giá × số lượng) — dùng khi ĐỌC LẠI ĐƠN",
+     "entity": null
+    },
+    "payment_label": {
+     "text": "thanh toán khi nhận hàng (COD)",
+     "desc": "hình thức thanh toán chốt của đơn — dùng khi ĐỌC LẠI ĐƠN",
+     "entity": null
+    },
+    "address": {
+     "text": "số 27 đường Hùng Vương, quận Ninh Kiều, Cần Thơ",
+     "desc": "địa chỉ ĐÃ LƯU từ lần mua trước — chỉ để XÁC NHẬN, khách sẽ không đọc lại",
+     "entity": null
+    },
+    "recipient_name": {
+     "text": "Phúc",
+     "desc": "tên người nhận",
+     "entity": null
+    },
+    "caller_phone": {
+     "text": "0900020012",
+     "desc": "SĐT nhận hàng (số khách đang gọi/nhắn) — đọc lại để xác nhận",
+     "entity": [
+      "phone",
+      "0900020012"
+     ]
+    }
+   },
+   "n_turns": [
+    9,
+    13
+   ],
+   "style": "normal",
+   "expected": {
+    "must_carry_over": [
+     "product_advised",
+     "order_id",
+     "payment"
+    ],
+    "must_not_ask": [
+     "product_advised",
+     "payment"
+    ],
+    "success_if": {
+     "tool_called": "order.create",
+     "args_match": {
+      "sku": "SKU-AP-FLT-X",
+      "price_vnd": 690000,
+      "payment": "COD"
+     }
+    },
+    "ground_truth_facts": {
+     "price_vnd": 690000,
+     "in_stock": true
+    },
+    "expected_outcome": "chot_don"
+   },
+   "abs_date": "2026-10-17",
+   "days_later": 4,
+   "saved_address": "số 27 đường Hùng Vương, quận Ninh Kiều, Cần Thơ",
+   "order_flow": true
+  }
+ ]
+}

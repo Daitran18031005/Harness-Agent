@@ -1,0 +1,114 @@
+{
+  "scenario_id": "SC-B01",
+  "level": "M1",
+  "persona": "khach_da_mua_doi_size",
+  "hard_case": null,
+  "customer_phone": "0900010004",
+  "customer_name": "Quân",
+  "honorific": "anh",
+  "notes": "3 cuộc, 3 kênh (Fanpage→Zalo→Hotline): hỏi giá → chốt đơn → đổi size 43 có phụ thu biến thể (đáp án tính từ order.update thật của mock).",
+  "calls": {
+    "call_1": {
+      "channel": "chat_fanpage",
+      "channel_identity": "fb.quan.b01",
+      "call_date": "2026-10-15",
+      "customer_goal": "hỏi giá giày RunLite 2 Pro qua Fanpage",
+      "customer_turns": [
+        "RunLite 2 Pro size 41 màu đen, giá? Có giảm không?",
+        "0900010004",
+        "Tối anh nhắn chốt."
+      ],
+      "facts_established": {
+        "product_advised": "SKU-SN-RUN2",
+        "size": 41,
+        "color": "den",
+        "price_quoted_vnd": 1521000,
+        "promo_code": "RUN-10",
+        "channel": "fanpage",
+        "phone_provided": "0900010004"
+      },
+      "expected_outcome": "hen_goi_lai"
+    },
+    "call_2": {
+      "channel": "zalo_oa",
+      "channel_identity": "zalo_quan_b01",
+      "days_later": 1,
+      "customer_goal": "chốt đơn qua Zalo",
+      "customer_turns": [
+        "Anh hỏi giày RunLite hôm qua bên Facebook. Size 41 màu đen.",
+        "Ừ. Còn hàng không?",
+        "Giao về số 45 đường Lê Văn Sỹ, quận 3, TP.HCM. COD, người nhận Quân.",
+        "Đúng số này.",
+        "Ừ, chốt đi."
+      ],
+      "facts_established": {
+        "order_id": "OD600001",
+        "variant_sku": "SKU-SN-RUN2-41-DEN",
+        "payment": "COD"
+      },
+      "must_carry_over": [
+        "product_advised",
+        "size",
+        "color",
+        "price_quoted_vnd"
+      ],
+      "must_not_ask": [
+        "product_advised",
+        "size",
+        "color"
+      ],
+      "success_if": {
+        "tool_called": "order.create",
+        "args_match": {
+          "sku": "SKU-SN-RUN2-41-DEN",
+          "price_vnd": 1521000,
+          "payment": "COD"
+        }
+      },
+      "ground_truth_facts": {
+        "price_vnd": 1521000,
+        "promo_active": true,
+        "in_stock": true
+      },
+      "expected_outcome": "chot_don"
+    },
+    "call_3": {
+      "channel": "hotline",
+      "days_later": 2,
+      "customer_goal": "gọi hotline đổi sang size 43 (có phụ thu)",
+      "customer_turns": [
+        "Anh mới nhận giày, size 41 hơi chật. Đổi lên size 43 được không, mất phí gì không?",
+        "Em nói mấy lần rồi, anh đồng ý phụ thu. Làm thủ tục đổi giúp anh.",
+        "Đúng rồi, nhanh giúp anh.",
+        "Lần thứ ba rồi, xử lý ngay nhé."
+      ],
+      "must_carry_over": [
+        "order_id",
+        "variant_sku",
+        "size",
+        "color"
+      ],
+      "must_not_ask": [
+        "product_advised",
+        "order_id",
+        "color",
+        "payment"
+      ],
+      "success_if": {
+        "tool_called": "order.update",
+        "args_match": {
+          "order_id": "OD600001",
+          "new_variant_sku": "SKU-SN-RUN2-43-DEN",
+          "action": "exchange_size"
+        }
+      },
+      "ground_truth_facts": {
+        "return_days": 7,
+        "exchange_fee_vnd": 0,
+        "extra_payment_vnd": 219000,
+        "new_size_in_stock": true
+      },
+      "expected_outcome": "chot_don"
+    }
+  }
+}

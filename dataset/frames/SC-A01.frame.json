@@ -1,0 +1,265 @@
+{
+ "scenario": {
+  "scenario_id": "SC-A01",
+  "level": "M1",
+  "persona": "khach_do_du_hoi_nguoi_nha",
+  "hard_case": null,
+  "customer_phone": "0900010001",
+  "customer_name": "Thu",
+  "honorific": "chị",
+  "notes": "Đa kênh Fanpage→Hotline: nối danh tính qua SĐT; blocker 'hỏi chồng'; sản phẩm duy nhất có khóa trẻ em vượt ngân sách ~4% (luật ngân sách ≤ 20%: vẫn chốt và nêu mức vượt).",
+  "group": "A"
+ },
+ "calls": [
+  {
+   "name": "call_1",
+   "channel": "chat_fanpage",
+   "goal": "hỏi máy lọc không khí cho phòng ngủ có bé nhỏ",
+   "opening": "customer",
+   "customer_plot": "Khách nhắn Fanpage hỏi máy lọc không khí cho phòng ngủ. Khi được hỏi mới nói: phòng khoảng 25 mét vuông, nhà có bé 2 tuổi, ngân sách tầm 5 triệu. Nghe giá hơi vượt ngân sách; nói 'để chị hỏi chồng đã' và đọc SĐT để hotline gọi lại.",
+   "agent_plot": "Agent hỏi diện tích phòng và nhà có bé nhỏ không, đề xuất MỘT sản phẩm {product} giá {price} (nêu rõ vượt ngân sách {overage} và lý do chọn: có khóa an toàn trẻ em), nhắc quà {gift} đến hết {promo_end}; ghi nhận khách hỏi chồng và xin SĐT để gọi lại.",
+   "customer_facts": [
+    {
+     "key": "room_area_m2",
+     "value": 25,
+     "hint": "phòng khoảng 25m²"
+    },
+    {
+     "key": "has_children",
+     "value": true,
+     "hint": "nhà có bé 2 tuổi"
+    },
+    {
+     "key": "budget_vnd",
+     "value": 5000000,
+     "hint": "ngân sách tầm 5 triệu"
+    },
+    {
+     "key": "blocker",
+     "value": "can hoi chong",
+     "hint": "để chị hỏi chồng"
+    },
+    {
+     "key": "phone_provided",
+     "value": "0900010001",
+     "hint": "đọc SĐT 0900010001 để hotline gọi lại"
+    }
+   ],
+   "agent_vars": {
+    "product": {
+     "text": "Máy lọc không khí AirPure Y",
+     "desc": "tên sản phẩm đề xuất",
+     "entity": [
+      "sku",
+      "SKU-AP-Y"
+     ]
+    },
+    "price": {
+     "text": "5.200.000đ",
+     "desc": "giá cuối (đã tính khuyến mãi)",
+     "entity": [
+      "price_vnd",
+      5200000
+     ]
+    },
+    "overage": {
+     "text": "4%",
+     "desc": "mức giá vượt ngân sách khách nêu",
+     "entity": null
+    },
+    "gift": {
+     "text": "Màng lọc thay thế AirPure X/Y",
+     "desc": "quà tặng kèm",
+     "entity": null
+    },
+    "promo_end": {
+     "text": "22/10",
+     "desc": "ngày hết khuyến mãi",
+     "entity": [
+      "promo_expiry",
+      "2026-10-22"
+     ]
+    },
+    "stock": {
+     "text": "hiện còn hàng",
+     "desc": "tình trạng tồn kho của sản phẩm (còn hàng/hết hàng)",
+     "entity": null
+    }
+   },
+   "n_turns": [
+    7,
+    10
+   ],
+   "style": "normal",
+   "expected": {
+    "facts_established": {
+     "product_advised": "SKU-AP-Y",
+     "room_area_m2": 25,
+     "has_children": true,
+     "budget_vnd": 5000000,
+     "price_quoted_vnd": 5200000,
+     "promo_code": "GIFT-FILTER",
+     "promo_expiry": "2026-10-22",
+     "blocker": "can hoi chong",
+     "channel": "fanpage",
+     "phone_provided": "0900010001"
+    },
+    "expected_outcome": "hen_goi_lai"
+   },
+   "abs_date": "2026-10-15",
+   "channel_identity": "fb.thu.a01",
+   "call_date": "2026-10-15"
+  },
+  {
+   "name": "call_2",
+   "channel": "hotline",
+   "goal": "gọi hotline chốt đơn sau khi hỏi chồng",
+   "opening": "agent",
+   "customer_plot": "Khách gọi hotline: 'chị vừa nhắn Facebook hỏi máy lọc không khí'; chồng đã đồng ý; hỏi giá còn như cũ không; chốt lấy, giao về địa chỉ số 12 đường Nguyễn Trãi, quận Thanh Xuân, Hà Nội, thanh toán COD (khách không phải nhắc lại diện tích/bé/ngân sách).",
+   "agent_plot": "Agent nhận ra khách từ cuộc Fanpage, xác nhận {product} giá {price} còn quà {gift} đến {promo_end}, KHÔNG hỏi lại diện tích phòng/bé nhỏ/ngân sách/sản phẩm; xác nhận địa chỉ {address}; chốt đơn: nêu mã đơn {order_id}, giao trong {delivery_days} ngày.",
+   "customer_facts": [
+    {
+     "key": "blocker_resolved",
+     "value": true,
+     "hint": "chồng chị đồng ý rồi"
+    },
+    {
+     "key": "payment",
+     "value": "COD",
+     "hint": "thanh toán khi nhận hàng (COD)"
+    },
+    {
+     "key": "address",
+     "value": "số 12 đường Nguyễn Trãi, quận Thanh Xuân, Hà Nội",
+     "hint": "giao về số 12 đường Nguyễn Trãi, quận Thanh Xuân, Hà Nội"
+    },
+    {
+     "key": "recipient_name",
+     "value": "Thu",
+     "hint": "nói tên người nhận là Thu"
+    }
+   ],
+   "agent_vars": {
+    "product": {
+     "text": "Máy lọc không khí AirPure Y",
+     "desc": "tên sản phẩm khách đã hỏi bên Fanpage",
+     "entity": [
+      "sku",
+      "SKU-AP-Y"
+     ]
+    },
+    "price": {
+     "text": "5.200.000đ",
+     "desc": "giá cuối hôm nay",
+     "entity": [
+      "price_vnd",
+      5200000
+     ]
+    },
+    "gift": {
+     "text": "Màng lọc thay thế AirPure X/Y",
+     "desc": "quà tặng kèm",
+     "entity": null
+    },
+    "promo_end": {
+     "text": "22/10",
+     "desc": "ngày hết khuyến mãi",
+     "entity": [
+      "promo_expiry",
+      "2026-10-22"
+     ]
+    },
+    "order_id": {
+     "text": "OD600001",
+     "desc": "mã đơn vừa tạo",
+     "entity": [
+      "order_id",
+      "OD600001"
+     ]
+    },
+    "delivery_days": {
+     "text": "2",
+     "desc": "số ngày giao hàng dự kiến",
+     "entity": null
+    },
+    "address": {
+     "text": "số 12 đường Nguyễn Trãi, quận Thanh Xuân, Hà Nội",
+     "desc": "địa chỉ giao (khách vừa đọc) — CHỈ dùng sau khi khách đã đọc địa chỉ",
+     "entity": null,
+     "after": "address"
+    },
+    "stock": {
+     "text": "hiện còn hàng",
+     "desc": "tình trạng tồn kho của sản phẩm (còn hàng/hết hàng)",
+     "entity": null
+    },
+    "readback_total": {
+     "text": "5.200.000đ",
+     "desc": "tổng tiền cả đơn (giá × số lượng) — dùng khi ĐỌC LẠI ĐƠN",
+     "entity": null
+    },
+    "payment_label": {
+     "text": "thanh toán khi nhận hàng (COD)",
+     "desc": "hình thức thanh toán chốt của đơn — dùng khi ĐỌC LẠI ĐƠN",
+     "entity": null
+    },
+    "recipient_name": {
+     "text": "Thu",
+     "desc": "tên người nhận — CHỈ dùng sau khi khách đã nói tên",
+     "entity": null,
+     "after": "recipient_name"
+    },
+    "caller_phone": {
+     "text": "0900010001",
+     "desc": "SĐT nhận hàng (số khách đang gọi/nhắn) — đọc lại để xác nhận",
+     "entity": [
+      "phone",
+      "0900010001"
+     ]
+    }
+   },
+   "n_turns": [
+    11,
+    15
+   ],
+   "style": "normal",
+   "expected": {
+    "must_carry_over": [
+     "product_advised",
+     "price_quoted_vnd",
+     "room_area_m2",
+     "has_children",
+     "blocker"
+    ],
+    "must_not_ask": [
+     "product_advised",
+     "room_area_m2",
+     "has_children",
+     "budget_vnd"
+    ],
+    "success_if": {
+     "tool_called": "order.create",
+     "args_match": {
+      "sku": "SKU-AP-Y",
+      "price_vnd": 5200000,
+      "payment": "COD"
+     }
+    },
+    "ground_truth_facts": {
+     "price_vnd": 5200000,
+     "promo_active": true,
+     "in_stock": true,
+     "delivery_days": 2
+    },
+    "memory_expectation": {
+     "room_area_m2": 25,
+     "product_advised": "SKU-AP-Y"
+    },
+    "expected_outcome": "chot_don"
+   },
+   "abs_date": "2026-10-17",
+   "days_later": 2,
+   "order_flow": true
+  }
+ ]
+}

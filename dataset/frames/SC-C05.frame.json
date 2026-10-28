@@ -1,0 +1,152 @@
+{
+ "scenario": {
+  "scenario_id": "SC-C05",
+  "level": "M1",
+  "persona": "khach_da_kenh_fb_hotline",
+  "hard_case": null,
+  "customer_phone": "0900010010",
+  "customer_name": "Tú",
+  "honorific": "anh",
+  "notes": "Khách nhắn teencode/không dấu (customer_turns_asr, input_mode chat_teencode): kiểm chuẩn hóa tiếng Việt trước khi hiểu ý.",
+  "group": "C"
+ },
+ "calls": [
+  {
+   "name": "call_1",
+   "channel": "zalo_oa",
+   "goal": "hỏi quạt Senko qua Zalo, nhắn teencode không dấu",
+   "opening": "customer",
+   "customer_plot": "Khách nhắn Zalo hỏi quạt đứng Senko còn hàng không, giá bao nhiêu; rồi chốt lấy 1 cái, COD, ship về số 5 đường Nguyễn Thị Thập, quận 7, TP.HCM. VIẾT CÂU CÓ DẤU BÌNH THƯỜNG (hệ thống sẽ tự chuyển sang teencode/không dấu sau; tuyệt đối đừng tự viết teencode).",
+   "agent_plot": "Agent trả lời lịch sự bình thường (có dấu): {product} {stock_text}, giá {price}; chốt đơn: mã đơn {order_id}, giao {delivery_days} ngày về {address}.",
+   "customer_facts": [
+    {
+     "key": "product_asked",
+     "value": "SKU-FAN-SEN",
+     "hint": "hỏi quạt đứng Senko"
+    },
+    {
+     "key": "payment",
+     "value": "COD",
+     "hint": "COD"
+    },
+    {
+     "key": "address",
+     "value": "số 5 đường Nguyễn Thị Thập, quận 7, TP.HCM",
+     "hint": "ship về số 5 đường Nguyễn Thị Thập, quận 7, TP.HCM"
+    },
+    {
+     "key": "recipient_name",
+     "value": "Tú",
+     "hint": "nói tên người nhận là Tú"
+    },
+    {
+     "key": "phone_provided",
+     "value": "0900010010",
+     "hint": "đọc SĐT nhận hàng 0900010010"
+    }
+   ],
+   "agent_vars": {
+    "product": {
+     "text": "Quạt đứng Senko TS16",
+     "desc": "tên sản phẩm ĐẦY ĐỦ đã gồm loại hàng (đừng viết thêm loại hàng phía trước)",
+     "entity": [
+      "sku",
+      "SKU-FAN-SEN"
+     ]
+    },
+    "price": {
+     "text": "590.000đ",
+     "desc": "giá cuối",
+     "entity": [
+      "price_vnd",
+      590000
+     ]
+    },
+    "stock_text": {
+     "text": "còn hàng",
+     "desc": "tình trạng tồn kho (kết quả inventory.check)",
+     "entity": null
+    },
+    "order_id": {
+     "text": "OD600001",
+     "desc": "mã đơn",
+     "entity": [
+      "order_id",
+      "OD600001"
+     ]
+    },
+    "delivery_days": {
+     "text": "2",
+     "desc": "số ngày giao",
+     "entity": null
+    },
+    "address": {
+     "text": "số 5 đường Nguyễn Thị Thập, quận 7, TP.HCM",
+     "desc": "địa chỉ giao — CHỈ dùng sau khi khách đã đọc địa chỉ",
+     "entity": null,
+     "after": "address"
+    },
+    "stock": {
+     "text": "hiện còn hàng",
+     "desc": "tình trạng tồn kho của sản phẩm (còn hàng/hết hàng)",
+     "entity": null
+    },
+    "readback_total": {
+     "text": "590.000đ",
+     "desc": "tổng tiền cả đơn (giá × số lượng) — dùng khi ĐỌC LẠI ĐƠN",
+     "entity": null
+    },
+    "payment_label": {
+     "text": "thanh toán khi nhận hàng (COD)",
+     "desc": "hình thức thanh toán chốt của đơn — dùng khi ĐỌC LẠI ĐƠN",
+     "entity": null
+    },
+    "recipient_name": {
+     "text": "Tú",
+     "desc": "tên người nhận — CHỈ dùng sau khi khách đã nói tên",
+     "entity": null,
+     "after": "recipient_name"
+    },
+    "caller_phone": {
+     "text": "0900010010",
+     "desc": "SĐT nhận hàng (số khách đang gọi/nhắn) — đọc lại để xác nhận",
+     "entity": [
+      "phone",
+      "0900010010"
+     ],
+     "after": "phone_provided"
+    }
+   },
+   "n_turns": [
+    9,
+    12
+   ],
+   "style": "teencode",
+   "expected": {
+    "success_if": {
+     "tool_called": "order.create",
+     "args_match": {
+      "sku": "SKU-FAN-SEN",
+      "price_vnd": 590000,
+      "payment": "COD"
+     }
+    },
+    "ground_truth_facts": {
+     "price_vnd": 590000,
+     "in_stock": true
+    },
+    "facts_established": {
+     "product_advised": "SKU-FAN-SEN",
+     "price_quoted_vnd": 590000,
+     "payment": "COD"
+    },
+    "expected_outcome": "chot_don",
+    "input_mode": "chat_teencode"
+   },
+   "abs_date": "2026-10-15",
+   "channel_identity": "zalo_tu_c05",
+   "call_date": "2026-10-15",
+   "order_flow": true
+  }
+ ]
+}

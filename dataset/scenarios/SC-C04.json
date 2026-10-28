@@ -1,0 +1,43 @@
+{
+  "scenario_id": "SC-C04",
+  "level": "M1",
+  "persona": "khach_mua_nhieu_mon",
+  "hard_case": "cod_vuot_han_muc",
+  "customer_phone": "0900010009",
+  "customer_name": "Hạnh",
+  "honorific": "chị",
+  "notes": "COD vượt hạn mức 10 triệu (tool báo lỗi thật): agent phải nêu đúng hạn mức và chuyển sang chuyển khoản, không tự nói 'đã tạo đơn COD'.",
+  "calls": {
+    "call_1": {
+      "channel": "hotline",
+      "call_date": "2026-10-15",
+      "customer_goal": "mua 2 máy, COD vượt hạn mức → đổi sang chuyển khoản",
+      "customer_turns": [
+        "Mua 2 máy lọc không khí Samsung AX40, ban đầu chị muốn COD.",
+        "Ừ, chuyển khoản. Giao số 102 đường Cách Mạng Tháng Tám, quận 10, TP.HCM.",
+        "Đúng, người nhận Hạnh. Số đang gọi đó.",
+        "Ừ, đúng rồi.",
+        "Ừ, lên đơn đi em.",
+        "Đúng rồi."
+      ],
+      "facts_established": {
+        "product_advised": "SKU-SS-AX40",
+        "price_quoted_vnd": 6490000,
+        "payment": "COD"
+      },
+      "success_if": {
+        "tool_called": "order.create",
+        "args_match": {
+          "sku": "SKU-SS-AX40",
+          "qty": 2,
+          "payment": "bank"
+        }
+      },
+      "ground_truth_facts": {
+        "cod_limit_vnd": 10000000,
+        "total_vnd": 12980000
+      },
+      "expected_outcome": "chot_don"
+    }
+  }
+}

@@ -1,0 +1,133 @@
+{
+ "scenario_id": "SC-B02",
+ "call": "call_1",
+ "channel": "hotline",
+ "call_date": "2026-10-12",
+ "allowed_numbers": [],
+ "turns": [
+  {
+   "idx": 1,
+   "speaker": "A",
+   "text": "Dạ shop BTC xin nghe, em có thể giúp gì cho mình ạ?",
+   "text_template": "Dạ shop BTC xin nghe, em có thể giúp gì cho mình ạ?",
+   "text_written": "Dạ shop BTC xin nghe, em có thể giúp gì cho mình ạ?",
+   "entities": {},
+   "text_spoken": "dạ shop bê tê xê xin nghe em có thể giúp gì cho mình ạ"
+  },
+  {
+   "idx": 2,
+   "speaker": "C",
+   "text": "Spectra S1 giá bao nhiêu, có quà không?",
+   "text_written": "Spectra S1 giá bao nhiêu, có quà không?",
+   "states": [],
+   "entities": {},
+   "text_spoken": "xpec tra ét một giá bao nhiêu có quà không"
+  },
+  {
+   "idx": 3,
+   "speaker": "A",
+   "text": "Máy hút sữa Spectra S1 giá 4.290.000đ, tặng Túi trữ sữa Sunmum 50 túi ạ. Chị muốn lên đơn luôn không ạ?",
+   "text_template": "Máy hút sữa Spectra S1 giá {price}, tặng {gift} ạ. Chị muốn lên đơn luôn không ạ?",
+   "text_written": "Máy hút sữa Spectra S1 giá 4.290.000đ, tặng Túi trữ sữa Sunmum 50 túi ạ. Chị muốn lên đơn luôn không ạ?",
+   "entities": {
+    "price_vnd": 4290000
+   },
+   "text_spoken": "máy hút sữa xpec tra ét một giá bốn triệu hai trăm chín mươi nghìn tặng túi trữ sữa san mum năm mươi túi ạ chị muốn lên đơn luôn không ạ"
+  },
+  {
+   "idx": 4,
+   "speaker": "C",
+   "text": "Ừ, lên đơn.",
+   "text_written": "Ừ, lên đơn.",
+   "states": [],
+   "entities": {},
+   "text_spoken": "ừ lên đơn"
+  },
+  {
+   "idx": 5,
+   "speaker": "A",
+   "text": "Dạ, chị cho em xin địa chỉ giao hàng và tên người nhận ạ.",
+   "text_template": "Dạ, chị cho em xin địa chỉ giao hàng và tên người nhận ạ.",
+   "text_written": "Dạ, chị cho em xin địa chỉ giao hàng và tên người nhận ạ.",
+   "entities": {},
+   "text_spoken": "dạ chị cho em xin địa chỉ giao hàng và tên người nhận ạ"
+  },
+  {
+   "idx": 6,
+   "speaker": "C",
+   "text": "Số 33 phố Kim Mã, quận Đống Đa, Hà Nội. Người nhận Hương.",
+   "text_written": "Số 33 phố Kim Mã, quận Đống Đa, Hà Nội. Người nhận Hương.",
+   "states": [
+    "address",
+    "recipient_name"
+   ],
+   "entities": {
+    "address": "số 33 phố Kim Mã, quận Đống Đa, Hà Nội"
+   },
+   "text_spoken": "số ba mươi ba phố kim mã quận đống đa hà nội người nhận hương"
+  },
+  {
+   "idx": 7,
+   "speaker": "A",
+   "text": "Chị thanh toán COD và nhận hàng bằng số điện thoại đang gọi này, đúng không ạ?",
+   "text_template": "Chị thanh toán COD và nhận hàng bằng số điện thoại đang gọi này, đúng không ạ?",
+   "text_written": "Chị thanh toán COD và nhận hàng bằng số điện thoại đang gọi này, đúng không ạ?",
+   "entities": {},
+   "text_spoken": "chị thanh toán cê ô đê và nhận hàng bằng số điện thoại đang gọi này đúng không ạ"
+  },
+  {
+   "idx": 8,
+   "speaker": "C",
+   "text": "COD, số này đúng.",
+   "text_written": "COD, số này đúng.",
+   "states": [
+    "payment"
+   ],
+   "entities": {
+    "payment": "COD"
+   },
+   "text_spoken": "cê ô đê số này đúng"
+  },
+  {
+   "idx": 9,
+   "speaker": "A",
+   "text": "Em đọc lại đơn: Máy hút sữa điện đôi Spectra S1, giá 4.290.000đ, tổng 4.290.000đ, giao cho Hương, SĐT 0900010005, địa chỉ số 33 phố Kim Mã, quận Đống Đa, Hà Nội, hình thức thanh toán khi nhận hàng (COD). Chị xác nhận đặt đơn này chứ ạ?",
+   "text_template": "Em đọc lại đơn: {product}, giá {price}, tổng {readback_total}, giao cho {recipient_name}, SĐT {caller_phone}, địa chỉ {address}, hình thức {payment_label}. Chị xác nhận đặt đơn này chứ ạ?",
+   "text_written": "Em đọc lại đơn: Máy hút sữa điện đôi Spectra S1, giá 4.290.000đ, tổng 4.290.000đ, giao cho Hương, SĐT 0900010005, địa chỉ số 33 phố Kim Mã, quận Đống Đa, Hà Nội, hình thức thanh toán khi nhận hàng (COD). Chị xác nhận đặt đơn này chứ ạ?",
+   "entities": {
+    "sku": "SKU-MB-PUMP1",
+    "price_vnd": 4290000,
+    "phone": "0900010005"
+   },
+   "text_spoken": "em đọc lại đơn máy hút sữa điện đôi xpec tra ét một giá bốn triệu hai trăm chín mươi nghìn tổng bốn triệu hai trăm chín mươi nghìn giao cho hương số điện thoại không chín không không không một không không không năm địa chỉ số ba mươi ba phố kim mã quận đống đa hà nội hình thức thanh toán khi nhận hàng cê ô đê chị xác nhận đặt đơn này chứ ạ"
+  },
+  {
+   "idx": 10,
+   "speaker": "C",
+   "text": "Đúng rồi, chốt đi.",
+   "text_written": "Đúng rồi, chốt đi.",
+   "states": [],
+   "entities": {},
+   "text_spoken": "đúng rồi chốt đi"
+  },
+  {
+   "idx": 11,
+   "speaker": "A",
+   "text": "Dạ, đơn hàng mã OD600001, dự kiến giao 14/10 tại số 33 phố Kim Mã, quận Đống Đa, Hà Nội ạ.",
+   "text_template": "Dạ, đơn hàng mã {order_id}, dự kiến giao {delivery_date} tại {address} ạ.",
+   "text_written": "Dạ, đơn hàng mã OD600001, dự kiến giao 14/10 tại số 33 phố Kim Mã, quận Đống Đa, Hà Nội ạ.",
+   "entities": {
+    "order_id": "OD600001",
+    "delivery_date": "2026-10-14"
+   },
+   "text_spoken": "dạ đơn hàng mã ô đê sáu không không không không một dự kiến giao mười bốn tháng mười tại số ba mươi ba phố kim mã quận đống đa hà nội ạ"
+  }
+ ],
+ "meta": {
+  "model": "gpt-6-luna",
+  "attempts": 2,
+  "ok": true,
+  "unresolved": []
+ },
+ "frame_sha256": "3f4e96a17f28182f"
+}

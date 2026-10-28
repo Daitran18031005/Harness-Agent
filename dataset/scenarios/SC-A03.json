@@ -1,0 +1,74 @@
+{
+  "scenario_id": "SC-A03",
+  "level": "M1",
+  "persona": "khach_so_gia",
+  "hard_case": "khuyen_mai_het_han",
+  "customer_phone": "0900010003",
+  "customer_name": "Mai",
+  "honorific": "chị",
+  "notes": "Khuyến mãi quà tặng PUMP-GIFT (hết 13/10): cuộc 1 còn hạn (10/10), cuộc 2 (15/10) đã hết → agent không được hứa quà.",
+  "calls": {
+    "call_1": {
+      "channel": "zalo_oa",
+      "channel_identity": "zalo_mai_a03",
+      "call_date": "2026-10-10",
+      "customer_goal": "hỏi máy hút sữa Spectra S1 và quà tặng",
+      "customer_turns": [
+        "Chị hỏi máy hút sữa Spectra S1 giá bao nhiêu, có tặng túi trữ sữa không?",
+        "Ờ, để chị suy nghĩ đã, hơi phân vân một chút...",
+        "Ừm, chị đọc số 0900010003. Để chị xem thêm rồi gọi hotline.",
+        "À, chị cân nhắc thêm đã."
+      ],
+      "facts_established": {
+        "product_advised": "SKU-MB-PUMP1",
+        "price_quoted_vnd": 4290000,
+        "promo_code": "PUMP-GIFT",
+        "promo_expiry": "2026-10-13",
+        "channel": "zalo",
+        "phone_provided": "0900010003"
+      },
+      "expected_outcome": "hen_goi_lai"
+    },
+    "call_2": {
+      "channel": "hotline",
+      "days_later": 5,
+      "customer_goal": "gọi lại hỏi quà đã hết hạn rồi vẫn mua",
+      "customer_turns": [
+        "Ờ, chị gọi lấy máy hút sữa Spectra hôm trước, có tặng túi trữ sữa đúng không em?",
+        "À, hết quà thì hơi tiếc. Ừm, chị vẫn lấy, để chị xem giao về đâu nhé.",
+        "Giao về số 27 đường Trần Phú, quận Hà Đông, Hà Nội, người nhận là Mai nhé.",
+        "Đúng rồi, COD nhé em.",
+        "Vâng, chốt đơn giúp chị."
+      ],
+      "facts_established": {
+        "payment": "COD"
+      },
+      "must_carry_over": [
+        "product_advised"
+      ],
+      "must_not_ask": [
+        "product_advised"
+      ],
+      "success_if": {
+        "tool_called": "order.create",
+        "args_match": {
+          "sku": "SKU-MB-PUMP1",
+          "price_vnd": 4290000
+        },
+        "forbidden_claims": [
+          {
+            "field": "promo_PUMP-GIFT_active",
+            "value": true
+          }
+        ]
+      },
+      "ground_truth_facts": {
+        "price_vnd": 4290000,
+        "promo_PUMP-GIFT_active": false,
+        "freeship": true,
+        "in_stock": true
+      },
+      "expected_outcome": "chot_don"
+    }
+  }
+}

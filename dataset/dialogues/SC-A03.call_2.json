@@ -1,0 +1,135 @@
+{
+ "scenario_id": "SC-A03",
+ "call": "call_2",
+ "channel": "hotline",
+ "call_date": "2026-10-15",
+ "meta": {
+  "model": "gpt-6-luna",
+  "attempts": 2,
+  "ok": true,
+  "unresolved": [],
+  "rebuilt": true
+ },
+ "frame_sha256": "8a1e1ed03e309d79",
+ "allowed_numbers": [],
+ "turns": [
+  {
+   "idx": 1,
+   "speaker": "A",
+   "text": "Dạ shop BTC xin nghe, em có thể giúp gì cho mình ạ?",
+   "text_template": "Dạ shop BTC xin nghe, em có thể giúp gì cho mình ạ?",
+   "text_written": "Dạ shop BTC xin nghe, em có thể giúp gì cho mình ạ?",
+   "entities": {},
+   "text_spoken": "dạ shop bê tê xê xin nghe em có thể giúp gì cho mình ạ"
+  },
+  {
+   "idx": 2,
+   "speaker": "C",
+   "text": "Ờ, chị gọi lấy máy hút sữa Spectra hôm trước, có tặng túi trữ sữa đúng không em?",
+   "text_written": "Ờ, chị gọi lấy máy hút sữa Spectra hôm trước, có tặng túi trữ sữa đúng không em?",
+   "states": [],
+   "entities": {},
+   "text_spoken": "ờ chị gọi lấy máy hút sữa xpec tra hôm trước có tặng túi trữ sữa đúng không em"
+  },
+  {
+   "idx": 3,
+   "speaker": "A",
+   "text": "Dạ, khuyến mãi tặng Túi trữ sữa Sunmum 50 túi đã kết thúc ngày 13/10 nên hiện không còn quà ạ. Máy hút sữa điện đôi Spectra S1 hôm nay giá 4.290.000đ, hiện còn hàng; chị Mai vẫn muốn lấy chứ ạ?",
+   "text_template": "Dạ, khuyến mãi tặng {gift} đã kết thúc ngày {promo_end} nên hiện không còn quà ạ. {product} hôm nay giá {price}, {stock}; chị Mai vẫn muốn lấy chứ ạ?",
+   "text_written": "Dạ, khuyến mãi tặng Túi trữ sữa Sunmum 50 túi đã kết thúc ngày 13/10 nên hiện không còn quà ạ. Máy hút sữa điện đôi Spectra S1 hôm nay giá 4.290.000đ, hiện còn hàng; chị Mai vẫn muốn lấy chứ ạ?",
+   "entities": {
+    "promo_expiry": "2026-10-13",
+    "sku": "SKU-MB-PUMP1",
+    "price_vnd": 4290000
+   },
+   "text_spoken": "dạ khuyến mãi tặng túi trữ sữa san mum năm mươi túi đã kết thúc ngày mười ba tháng mười nên hiện không còn quà ạ máy hút sữa điện đôi xpec tra ét một hôm nay giá bốn triệu hai trăm chín mươi nghìn hiện còn hàng chị mai vẫn muốn lấy chứ ạ"
+  },
+  {
+   "idx": 4,
+   "speaker": "C",
+   "text": "À, hết quà thì hơi tiếc. Ừm, chị vẫn lấy, để chị xem giao về đâu nhé.",
+   "text_written": "À, hết quà thì hơi tiếc. Ừm, chị vẫn lấy, để chị xem giao về đâu nhé.",
+   "states": [],
+   "entities": {},
+   "text_spoken": "à hết quà thì hơi tiếc ừm chị vẫn lấy để chị xem giao về đâu nhé"
+  },
+  {
+   "idx": 5,
+   "speaker": "A",
+   "text": "Dạ, chị cho em xin địa chỉ giao hàng và tên người nhận với ạ.",
+   "text_template": "Dạ, chị cho em xin địa chỉ giao hàng và tên người nhận với ạ.",
+   "text_written": "Dạ, chị cho em xin địa chỉ giao hàng và tên người nhận với ạ.",
+   "entities": {},
+   "text_spoken": "dạ chị cho em xin địa chỉ giao hàng và tên người nhận với ạ"
+  },
+  {
+   "idx": 6,
+   "speaker": "C",
+   "text": "Giao về số 27 đường Trần Phú, quận Hà Đông, Hà Nội, người nhận là Mai nhé.",
+   "text_written": "Giao về số 27 đường Trần Phú, quận Hà Đông, Hà Nội, người nhận là Mai nhé.",
+   "states": [
+    "address",
+    "recipient_name"
+   ],
+   "entities": {
+    "address": "số 27 đường Trần Phú, quận Hà Đông, Hà Nội"
+   },
+   "text_spoken": "giao về số hai mươi bảy đường trần phú quận hà đông hà nội người nhận là mai nhé"
+  },
+  {
+   "idx": 7,
+   "speaker": "A",
+   "text": "Dạ, chị thanh toán COD và nhận hàng bằng số điện thoại đang gọi cho em, đúng không ạ?",
+   "text_template": "Dạ, chị thanh toán COD và nhận hàng bằng số điện thoại đang gọi cho em, đúng không ạ?",
+   "text_written": "Dạ, chị thanh toán COD và nhận hàng bằng số điện thoại đang gọi cho em, đúng không ạ?",
+   "entities": {},
+   "text_spoken": "dạ chị thanh toán cê ô đê và nhận hàng bằng số điện thoại đang gọi cho em đúng không ạ"
+  },
+  {
+   "idx": 8,
+   "speaker": "C",
+   "text": "Đúng rồi, COD nhé em.",
+   "text_written": "Đúng rồi, COD nhé em.",
+   "states": [
+    "payment"
+   ],
+   "entities": {
+    "payment": "COD"
+   },
+   "text_spoken": "đúng rồi cê ô đê nhé em"
+  },
+  {
+   "idx": 9,
+   "speaker": "A",
+   "text": "Dạ, em đọc lại đơn: Máy hút sữa điện đôi Spectra S1, giá 4.290.000đ, tổng 4.290.000đ, giao cho Mai, SĐT 0900010003, địa chỉ số 27 đường Trần Phú, quận Hà Đông, Hà Nội, hình thức thanh toán khi nhận hàng (COD). Chị xác nhận đặt đơn này chứ ạ?",
+   "text_template": "Dạ, em đọc lại đơn: {product}, giá {price}, tổng {readback_total}, giao cho {recipient_name}, SĐT {caller_phone}, địa chỉ {address}, hình thức {payment_label}. Chị xác nhận đặt đơn này chứ ạ?",
+   "text_written": "Dạ, em đọc lại đơn: Máy hút sữa điện đôi Spectra S1, giá 4.290.000đ, tổng 4.290.000đ, giao cho Mai, SĐT 0900010003, địa chỉ số 27 đường Trần Phú, quận Hà Đông, Hà Nội, hình thức thanh toán khi nhận hàng (COD). Chị xác nhận đặt đơn này chứ ạ?",
+   "entities": {
+    "sku": "SKU-MB-PUMP1",
+    "price_vnd": 4290000,
+    "phone": "0900010003"
+   },
+   "text_spoken": "dạ em đọc lại đơn máy hút sữa điện đôi xpec tra ét một giá bốn triệu hai trăm chín mươi nghìn tổng bốn triệu hai trăm chín mươi nghìn giao cho mai số điện thoại không chín không không không một không không không ba địa chỉ số hai mươi bảy đường trần phú quận hà đông hà nội hình thức thanh toán khi nhận hàng cê ô đê chị xác nhận đặt đơn này chứ ạ"
+  },
+  {
+   "idx": 10,
+   "speaker": "C",
+   "text": "Vâng, chốt đơn giúp chị.",
+   "text_written": "Vâng, chốt đơn giúp chị.",
+   "states": [],
+   "entities": {},
+   "text_spoken": "vâng chốt đơn giúp chị"
+  },
+  {
+   "idx": 11,
+   "speaker": "A",
+   "text": "Dạ, mã đơn của chị là OD600001. Đơn dự kiến giao trong 2 ngày ạ.",
+   "text_template": "Dạ, mã đơn của chị là {order_id}. Đơn dự kiến giao trong {delivery_days} ngày ạ.",
+   "text_written": "Dạ, mã đơn của chị là OD600001. Đơn dự kiến giao trong 2 ngày ạ.",
+   "entities": {
+    "order_id": "OD600001"
+   },
+   "text_spoken": "dạ mã đơn của chị là ô đê sáu không không không không một đơn dự kiến giao trong hai ngày ạ"
+  }
+ ]
+}

@@ -1,0 +1,87 @@
+{
+ "scenario": {
+  "scenario_id": "SC-D43",
+  "level": "M1",
+  "persona": "khach_hoi_ngoai_tai_lieu",
+  "hard_case": "hoi_ngoai_tai_lieu_chinh_sach",
+  "customer_phone": "0900020043",
+  "customer_name": "Quang",
+  "honorific": "anh",
+  "notes": "Hỏi chính sách không có trong tài liệu (thu cũ quạt, sửa tại nhà).",
+  "group": "C",
+  "archetype": "off_doc",
+  "industry": "quạt",
+  "south": false
+ },
+ "calls": [
+  {
+   "name": "call_1",
+   "channel": "hotline",
+   "goal": "hỏi chính sách lạ (bảo hành tại nhà, đổi cũ lấy mới) ngoài tài liệu",
+   "opening": "agent",
+   "customer_plot": "Khách hỏi quạt Panasonic F-409 giá bao nhiêu; hỏi thêm 'bên em có thu cũ đổi mới quạt cũ nhà mình không, có sửa tại nhà không?'; cuối cùng 'để anh suy nghĩ'.",
+   "agent_plot": "Agent báo {product} giá {price}, bảo hành {warranty} tháng chính hãng; với câu hỏi ngoài tài liệu nói thẳng là em chưa có thông tin và sẽ nhờ nhân viên phản hồi, KHÔNG bịa chính sách.",
+   "customer_facts": [
+    {
+     "key": "product_asked",
+     "value": "SKU-FAN-DC1",
+     "hint": "hỏi Quạt đứng DC inverter Panasonic F-409"
+    }
+   ],
+   "agent_vars": {
+    "product": {
+     "text": "Quạt đứng DC inverter Panasonic F-409",
+     "desc": "tên sản phẩm ĐẦY ĐỦ đã gồm loại hàng (đừng viết thêm loại hàng phía trước)",
+     "entity": [
+      "sku",
+      "SKU-FAN-DC1"
+     ]
+    },
+    "price": {
+     "text": "2.450.000đ",
+     "desc": "giá cuối (đã tính khuyến mãi)",
+     "entity": [
+      "price_vnd",
+      2450000
+     ]
+    },
+    "warranty": {
+     "text": "12",
+     "desc": "số tháng bảo hành",
+     "entity": [
+      "warranty_months",
+      12
+     ]
+    },
+    "stock": {
+     "text": "hiện còn hàng",
+     "desc": "tình trạng tồn kho của sản phẩm (còn hàng/hết hàng)",
+     "entity": null
+    }
+   },
+   "n_turns": [
+    7,
+    10
+   ],
+   "style": "normal",
+   "expected": {
+    "success_if": {
+     "tool_called": null,
+     "agent_must_say": true,
+     "forbidden_claims": [
+      "thu cũ đổi mới quạt",
+      "sửa tại nhà miễn phí",
+      "có thu cũ"
+     ]
+    },
+    "ground_truth_facts": {
+     "price_vnd": 2450000,
+     "warranty_months": 12
+    },
+    "expected_outcome": "hen_goi_lai"
+   },
+   "abs_date": "2026-10-15",
+   "call_date": "2026-10-15"
+  }
+ ]
+}

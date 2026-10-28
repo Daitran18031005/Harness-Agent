@@ -1,0 +1,232 @@
+{
+ "scenario": {
+  "scenario_id": "SC-D09",
+  "level": "M1",
+  "persona": "khach_so_gia",
+  "hard_case": "khuyen_mai_het_han",
+  "customer_phone": "0900020009",
+  "customer_name": "Minh",
+  "honorific": "anh",
+  "notes": "Khuyến mãi GIFT-FILTER hết 2026-10-22: cuộc 1 (2026-10-20) còn hạn, cuộc 2 (2026-10-24) đã hết → agent không giữ ưu đãi cũ.",
+  "group": "A",
+  "archetype": "promo_expired",
+  "industry": "máy lọc không khí",
+  "south": true
+ },
+ "calls": [
+  {
+   "name": "call_1",
+   "channel": "zalo_oa",
+   "goal": "hỏi Máy lọc không khí AirPure Y và khuyến mãi",
+   "opening": "customer",
+   "customer_plot": "Khách nhắn hỏi Máy lọc không khí AirPure Y giá bao nhiêu, nghe nói đang có khuyến mãi; nói 'để anh suy nghĩ rồi gọi hotline' và đọc SĐT.",
+   "agent_plot": "Agent báo {product} giá {price}, có tặng {gift} đến hết {promo_end}; xin SĐT để hotline gọi lại.",
+   "customer_facts": [
+    {
+     "key": "product_asked",
+     "value": "SKU-AP-Y",
+     "hint": "hỏi Máy lọc không khí AirPure Y"
+    },
+    {
+     "key": "phone_provided",
+     "value": "0900020009",
+     "hint": "đọc SĐT 0900020009"
+    }
+   ],
+   "agent_vars": {
+    "product": {
+     "text": "Máy lọc không khí AirPure Y",
+     "desc": "tên sản phẩm ĐẦY ĐỦ đã gồm loại hàng (đừng viết thêm loại hàng phía trước)",
+     "entity": [
+      "sku",
+      "SKU-AP-Y"
+     ]
+    },
+    "price": {
+     "text": "5.200.000đ",
+     "desc": "giá cuối (đã tính khuyến mãi)",
+     "entity": [
+      "price_vnd",
+      5200000
+     ]
+    },
+    "promo_end": {
+     "text": "22/10",
+     "desc": "ngày hết khuyến mãi",
+     "entity": [
+      "promo_expiry",
+      "2026-10-22"
+     ]
+    },
+    "gift": {
+     "text": "Màng lọc thay thế AirPure X/Y",
+     "desc": "quà tặng kèm",
+     "entity": null
+    },
+    "stock": {
+     "text": "hiện còn hàng",
+     "desc": "tình trạng tồn kho của sản phẩm (còn hàng/hết hàng)",
+     "entity": null
+    }
+   },
+   "n_turns": [
+    6,
+    8
+   ],
+   "style": "normal",
+   "expected": {
+    "facts_established": {
+     "product_advised": "SKU-AP-Y",
+     "price_quoted_vnd": 5200000,
+     "promo_code": "GIFT-FILTER",
+     "promo_expiry": "2026-10-22",
+     "channel": "zalo",
+     "phone_provided": "0900020009"
+    },
+    "expected_outcome": "hen_goi_lai"
+   },
+   "abs_date": "2026-10-20",
+   "channel_identity": "zalo.d09",
+   "call_date": "2026-10-20"
+  },
+  {
+   "name": "call_2",
+   "channel": "hotline",
+   "goal": "gọi lại khi khuyến mãi đã hết hạn rồi vẫn mua",
+   "opening": "agent",
+   "customer_plot": "Khách gọi: 'anh gọi lấy Máy lọc không khí AirPure Y hôm trước, vẫn có tặng Màng lọc thay thế AirPure X/Y đúng không?'; nghe tin khuyến mãi đã hết thì hơi tiếc nhưng vẫn lấy, COD, giao về số 78 đường Nguyễn Huệ, quận 1, TP.HCM.",
+   "agent_plot": "Agent nói rõ khuyến mãi đã kết thúc ngày {promo_end}; báo giá hôm nay {price}; KHÔNG còn quà {gift}, không hứa tặng bù; theo quy trình đặt đơn rồi chốt: mã đơn {order_id}, giao {delivery_days} ngày.",
+   "customer_facts": [
+    {
+     "key": "payment",
+     "value": "COD",
+     "hint": "COD"
+    },
+    {
+     "key": "address",
+     "value": "số 78 đường Nguyễn Huệ, quận 1, TP.HCM",
+     "hint": "giao về số 78 đường Nguyễn Huệ, quận 1, TP.HCM"
+    },
+    {
+     "key": "recipient_name",
+     "value": "Minh",
+     "hint": "nói tên người nhận là Minh"
+    }
+   ],
+   "agent_vars": {
+    "product": {
+     "text": "Máy lọc không khí AirPure Y",
+     "desc": "tên sản phẩm ĐẦY ĐỦ đã gồm loại hàng (đừng viết thêm loại hàng phía trước)",
+     "entity": [
+      "sku",
+      "SKU-AP-Y"
+     ]
+    },
+    "price": {
+     "text": "5.200.000đ",
+     "desc": "giá hôm nay (khuyến mãi đã kết thúc)",
+     "entity": [
+      "price_vnd",
+      5200000
+     ]
+    },
+    "promo_end": {
+     "text": "22/10",
+     "desc": "ngày khuyến mãi đã kết thúc",
+     "entity": [
+      "promo_expiry",
+      "2026-10-22"
+     ]
+    },
+    "order_id": {
+     "text": "OD600001",
+     "desc": "mã đơn",
+     "entity": [
+      "order_id",
+      "OD600001"
+     ]
+    },
+    "delivery_days": {
+     "text": "3",
+     "desc": "số ngày giao",
+     "entity": null
+    },
+    "address": {
+     "text": "số 78 đường Nguyễn Huệ, quận 1, TP.HCM",
+     "desc": "địa chỉ giao (khách vừa đọc) — CHỈ dùng sau khi khách đã đọc địa chỉ",
+     "entity": null,
+     "after": "address"
+    },
+    "gift": {
+     "text": "Màng lọc thay thế AirPure X/Y",
+     "desc": "quà tặng trước đây",
+     "entity": null
+    },
+    "stock": {
+     "text": "hiện còn hàng",
+     "desc": "tình trạng tồn kho của sản phẩm (còn hàng/hết hàng)",
+     "entity": null
+    },
+    "readback_total": {
+     "text": "5.200.000đ",
+     "desc": "tổng tiền cả đơn (giá × số lượng) — dùng khi ĐỌC LẠI ĐƠN",
+     "entity": null
+    },
+    "payment_label": {
+     "text": "thanh toán khi nhận hàng (COD)",
+     "desc": "hình thức thanh toán chốt của đơn — dùng khi ĐỌC LẠI ĐƠN",
+     "entity": null
+    },
+    "recipient_name": {
+     "text": "Minh",
+     "desc": "tên người nhận — CHỈ dùng sau khi khách đã nói tên",
+     "entity": null,
+     "after": "recipient_name"
+    },
+    "caller_phone": {
+     "text": "0900020009",
+     "desc": "SĐT nhận hàng (số khách đang gọi/nhắn) — đọc lại để xác nhận",
+     "entity": [
+      "phone",
+      "0900020009"
+     ]
+    }
+   },
+   "n_turns": [
+    10,
+    14
+   ],
+   "style": "normal",
+   "expected": {
+    "must_carry_over": [
+     "product_advised"
+    ],
+    "must_not_ask": [
+     "product_advised"
+    ],
+    "success_if": {
+     "tool_called": "order.create",
+     "args_match": {
+      "sku": "SKU-AP-Y",
+      "price_vnd": 5200000
+     },
+     "forbidden_claims": [
+      {
+       "field": "promo_GIFT-FILTER_active",
+       "value": true
+      }
+     ]
+    },
+    "ground_truth_facts": {
+     "price_vnd": 5200000,
+     "promo_GIFT-FILTER_active": false,
+     "in_stock": true
+    },
+    "expected_outcome": "chot_don"
+   },
+   "abs_date": "2026-10-24",
+   "days_later": 4,
+   "order_flow": true
+  }
+ ]
+}

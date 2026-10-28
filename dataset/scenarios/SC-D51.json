@@ -1,0 +1,51 @@
+{
+  "scenario_id": "SC-D51",
+  "level": "M1",
+  "persona": "khach_hoi_nhieu_khong_mua",
+  "hard_case": "so_noi_bang_chu",
+  "customer_phone": "0900020051",
+  "customer_name": "Hà",
+  "honorific": "chị",
+  "notes": "Số nói bằng chữ (customer_turns_asr, input_mode asr_transcript): ngân sách và SĐT đọc thành lời → kiểm ITN và Entity Accuracy.",
+  "archetype": "spoken_numbers",
+  "industry": "máy lọc không khí",
+  "south": false,
+  "calls": {
+    "call_1": {
+      "channel": "hotline",
+      "call_date": "2026-10-15",
+      "customer_goal": "hỏi Máy lọc không khí Xiaomi Smart 4 Pro bằng giọng nói: ngân sách và SĐT đọc bằng chữ",
+      "input_mode": "asr_transcript",
+      "customer_turns": [
+        "Chị hỏi Máy lọc không khí Xiaomi Smart 4 Pro, còn hàng không, giá bao nhiêu và bảo hành mấy tháng?",
+        "Ngân sách chị tầm 4.5 triệu.",
+        "À mà… chị đọc số để em gọi lại nhé: 0900020051.",
+        "Để chị tham khảo thêm rồi gọi lại."
+      ],
+      "customer_turns_asr": [
+        "chị hỏi máy lọc không khí xiao mi smart bốn pro còn hàng không giá bao nhiêu và bảo hành mấy tháng",
+        "ngân sách chị tầm bốn triệu năm trăm nghìn",
+        "à mà chị đọc số để em gọi lại nhé không chín không không không hai không không năm một",
+        "để chị tham khảo thêm rồi gọi lại"
+      ],
+      "facts_established": {
+        "product_advised": "SKU-XM-4P",
+        "price_quoted_vnd": 5490000,
+        "budget_vnd": 4500000
+      },
+      "success_if": {
+        "tool_called": null,
+        "agent_must_say": true,
+        "must_not_call_tools": [
+          "order.create"
+        ]
+      },
+      "ground_truth_facts": {
+        "price_vnd": 5490000,
+        "warranty_months": 24,
+        "in_stock": false
+      },
+      "expected_outcome": "hen_goi_lai"
+    }
+  }
+}

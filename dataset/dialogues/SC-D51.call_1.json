@@ -1,0 +1,117 @@
+{
+ "scenario_id": "SC-D51",
+ "call": "call_1",
+ "channel": "hotline",
+ "call_date": "2026-10-15",
+ "meta": {
+  "model": "gpt-6-luna",
+  "attempts": 2,
+  "ok": true,
+  "unresolved": [],
+  "rebuilt": true
+ },
+ "frame_sha256": "e62eb6c6d8311361",
+ "allowed_numbers": [
+  4500000
+ ],
+ "turns": [
+  {
+   "idx": 1,
+   "speaker": "A",
+   "text": "Dạ shop BTC xin nghe, em có thể giúp gì cho mình ạ?",
+   "text_template": "Dạ shop BTC xin nghe, em có thể giúp gì cho mình ạ?",
+   "text_written": "Dạ shop BTC xin nghe, em có thể giúp gì cho mình ạ?",
+   "entities": {},
+   "text_spoken": "dạ shop bê tê xê xin nghe em có thể giúp gì cho mình ạ"
+  },
+  {
+   "idx": 2,
+   "speaker": "C",
+   "text": "Chị hỏi Máy lọc không khí Xiaomi Smart 4 Pro, còn hàng không, giá bao nhiêu và bảo hành mấy tháng?",
+   "text_written": "Chị hỏi Máy lọc không khí Xiaomi Smart 4 Pro, còn hàng không, giá bao nhiêu và bảo hành mấy tháng?",
+   "states": [
+    "product_asked"
+   ],
+   "entities": {
+    "sku": "SKU-XM-4P"
+   },
+   "text_spoken": "chị hỏi máy lọc không khí xiao mi smart bốn pro còn hàng không giá bao nhiêu và bảo hành mấy tháng"
+  },
+  {
+   "idx": 3,
+   "speaker": "A",
+   "text": "Dạ, Máy lọc không khí Xiaomi Smart 4 Pro hiện hiện đang hết hàng, dự kiến có lại ngày 19/10, giá cuối là 5.490.000đ, bảo hành 24 tháng ạ. Sản phẩm hết hàng, ngày dự kiến có lại hiện chưa được cập nhật, chị Hà nhé.",
+   "text_template": "Dạ, Máy lọc không khí Xiaomi Smart 4 Pro hiện {stock}, giá cuối là {price}, bảo hành {warranty} tháng ạ. Sản phẩm hết hàng, ngày dự kiến có lại hiện chưa được cập nhật, chị Hà nhé.",
+   "text_written": "Dạ, Máy lọc không khí Xiaomi Smart 4 Pro hiện hiện đang hết hàng, dự kiến có lại ngày 19/10, giá cuối là 5.490.000đ, bảo hành 24 tháng ạ. Sản phẩm hết hàng, ngày dự kiến có lại hiện chưa được cập nhật, chị Hà nhé.",
+   "entities": {
+    "price_vnd": 5490000,
+    "warranty_months": 24
+   },
+   "text_spoken": "dạ máy lọc không khí xiao mi smart bốn pro hiện hiện đang hết hàng dự kiến có lại ngày mười chín tháng mười giá cuối là năm triệu bốn trăm chín mươi nghìn bảo hành hai mươi bốn tháng ạ sản phẩm hết hàng ngày dự kiến có lại hiện chưa được cập nhật chị hà nhé"
+  },
+  {
+   "idx": 4,
+   "speaker": "C",
+   "text": "Ngân sách chị tầm 4.5 triệu.",
+   "text_written": "Ngân sách chị tầm 4.5 triệu.",
+   "states": [
+    "budget_vnd"
+   ],
+   "entities": {
+    "budget_vnd": 4500000
+   },
+   "text_spoken": "ngân sách chị tầm bốn triệu năm trăm nghìn"
+  },
+  {
+   "idx": 5,
+   "speaker": "A",
+   "text": "Dạ, em ghi nhận ngân sách của chị Hà ạ.",
+   "text_template": "Dạ, em ghi nhận ngân sách của chị Hà ạ.",
+   "text_written": "Dạ, em ghi nhận ngân sách của chị Hà ạ.",
+   "entities": {},
+   "text_spoken": "dạ em ghi nhận ngân sách của chị hà ạ"
+  },
+  {
+   "idx": 6,
+   "speaker": "C",
+   "text": "À mà… chị đọc số để em gọi lại nhé: 0900020051.",
+   "text_written": "À mà… chị đọc số để em gọi lại nhé: 0900020051.",
+   "states": [
+    "phone_provided"
+   ],
+   "entities": {
+    "phone": "0900020051"
+   },
+   "text_spoken": "à mà chị đọc số để em gọi lại nhé không chín không không không hai không không năm một"
+  },
+  {
+   "idx": 7,
+   "speaker": "A",
+   "text": "Dạ, em xác nhận số chị vừa đọc là 0900020051, để chị gọi lại đúng số này ạ.",
+   "text_template": "Dạ, em xác nhận số chị vừa đọc là {caller_phone}, để chị gọi lại đúng số này ạ.",
+   "text_written": "Dạ, em xác nhận số chị vừa đọc là 0900020051, để chị gọi lại đúng số này ạ.",
+   "entities": {
+    "phone": "0900020051"
+   },
+   "text_spoken": "dạ em xác nhận số chị vừa đọc là không chín không không không hai không không năm một để chị gọi lại đúng số này ạ"
+  },
+  {
+   "idx": 8,
+   "speaker": "C",
+   "text": "Để chị tham khảo thêm rồi gọi lại.",
+   "text_written": "Để chị tham khảo thêm rồi gọi lại.",
+   "states": [],
+   "entities": {},
+   "text_spoken": "để chị tham khảo thêm rồi gọi lại"
+  },
+  {
+   "idx": 9,
+   "speaker": "A",
+   "text": "Dạ, em ghi nhận ạ. Chị Hà cứ tham khảo thêm, khi cần tư vấn chị gọi lại BTC nhé.",
+   "text_template": "Dạ, em ghi nhận ạ. Chị Hà cứ tham khảo thêm, khi cần tư vấn chị gọi lại BTC nhé.",
+   "text_written": "Dạ, em ghi nhận ạ. Chị Hà cứ tham khảo thêm, khi cần tư vấn chị gọi lại BTC nhé.",
+   "entities": {},
+   "text_spoken": "dạ em ghi nhận ạ chị hà cứ tham khảo thêm khi cần tư vấn chị gọi lại bê tê xê nhé"
+  }
+ ]
+}

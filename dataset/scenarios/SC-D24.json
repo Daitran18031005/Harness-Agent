@@ -1,0 +1,49 @@
+{
+  "scenario_id": "SC-D24",
+  "level": "M1",
+  "persona": "khach_mua_nhieu_mon",
+  "hard_case": "het_hang_bien_the",
+  "customer_phone": "0900020024",
+  "customer_name": "Nam",
+  "honorific": "anh",
+  "notes": "Biến thể size 38 màu đen CÒN hàng nhưng khách nói gọn: agent không được báo hết hàng, không hỏi lại size/màu.",
+  "archetype": "variant_oos",
+  "industry": "giày",
+  "south": false,
+  "calls": {
+    "call_1": {
+      "channel": "hotline",
+      "call_date": "2026-10-15",
+      "customer_goal": "hỏi gọn '38 đen' (CÒN hàng)",
+      "customer_turns": [
+        "Giày chạy bộ RunLite 2 Pro, 38 đen còn hàng không?",
+        "Nam.",
+        "Số 5 đường Phạm Văn Đồng, quận Bắc Từ Liêm, Hà Nội.",
+        "Đúng số này. COD.",
+        "Ừ, chốt đi."
+      ],
+      "facts_established": {
+        "product_advised": "SKU-SN-RUN2",
+        "variant_sku": "SKU-SN-RUN2-38-DEN",
+        "price_quoted_vnd": 1521000,
+        "payment": "COD",
+        "size": 38,
+        "color": "den"
+      },
+      "success_if": {
+        "tool_called": "order.create",
+        "args_match": {
+          "sku": "SKU-SN-RUN2-38-DEN",
+          "price_vnd": 1521000,
+          "payment": "COD"
+        }
+      },
+      "ground_truth_facts": {
+        "price_vnd": 1521000,
+        "in_stock": true,
+        "requested_variant_in_stock": true
+      },
+      "expected_outcome": "chot_don"
+    }
+  }
+}

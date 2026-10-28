@@ -1,0 +1,151 @@
+{
+ "scenario_id": "SC-D28",
+ "call": "call_1",
+ "channel": "chat_fanpage",
+ "call_date": "2026-10-15",
+ "allowed_numbers": [],
+ "turns": [
+  {
+   "idx": 1,
+   "speaker": "C",
+   "text": "Shop còn Xe đẩy gấp gọn Joie Pact không, giá bao nhiêu ạ? Ờ, chị cũng hơi lo về độ an toàn.",
+   "text_written": "Shop còn Xe đẩy gấp gọn Joie Pact không, giá bao nhiêu ạ? Ờ, chị cũng hơi lo về độ an toàn.",
+   "states": [
+    "product_asked"
+   ],
+   "entities": {
+    "sku": "SKU-MB-STR1"
+   },
+   "text_spoken": "shop còn xe đẩy gấp gọn giô i pact không giá bao nhiêu ạ ờ chị cũng hơi lo về độ an toàn"
+  },
+  {
+   "idx": 2,
+   "speaker": "A",
+   "text": "Dạ, Xe đẩy gấp gọn Joie Pact hiện hiện còn hàng, giá 3.490.000đ ạ. Riêng thông tin an toàn cụ thể em chưa có dữ liệu để xác nhận, em xin phép kiểm tra lại. Nếu chị muốn đặt, em xin tên người nhận ạ.",
+   "text_template": "Dạ, Xe đẩy gấp gọn Joie Pact hiện {stock}, giá {price} ạ. Riêng thông tin an toàn cụ thể em chưa có dữ liệu để xác nhận, em xin phép kiểm tra lại. Nếu chị muốn đặt, em xin tên người nhận ạ.",
+   "text_written": "Dạ, Xe đẩy gấp gọn Joie Pact hiện hiện còn hàng, giá 3.490.000đ ạ. Riêng thông tin an toàn cụ thể em chưa có dữ liệu để xác nhận, em xin phép kiểm tra lại. Nếu chị muốn đặt, em xin tên người nhận ạ.",
+   "entities": {
+    "price_vnd": 3490000
+   },
+   "text_spoken": "dạ xe đẩy gấp gọn giô i pact hiện hiện còn hàng giá ba triệu bốn trăm chín mươi nghìn ạ riêng thông tin an toàn cụ thể em chưa có dữ liệu để xác nhận em xin phép kiểm tra lại nếu chị muốn đặt em xin tên người nhận ạ"
+  },
+  {
+   "idx": 3,
+   "speaker": "C",
+   "text": "Vân.",
+   "text_written": "Vân.",
+   "states": [
+    "recipient_name"
+   ],
+   "entities": {},
+   "text_spoken": "vân"
+  },
+  {
+   "idx": 4,
+   "speaker": "A",
+   "text": "Dạ chị Vân cho em xin địa chỉ giao hàng với ạ.",
+   "text_template": "Dạ chị Vân cho em xin địa chỉ giao hàng với ạ.",
+   "text_written": "Dạ chị Vân cho em xin địa chỉ giao hàng với ạ.",
+   "entities": {},
+   "text_spoken": "dạ chị vân cho em xin địa chỉ giao hàng với ạ"
+  },
+  {
+   "idx": 5,
+   "speaker": "C",
+   "text": "Giao về số 30 đường Giải Phóng, quận Hoàng Mai, Hà Nội nhé. À, chị vẫn muốn hỏi kỹ thêm về độ an toàn.",
+   "text_written": "Giao về số 30 đường Giải Phóng, quận Hoàng Mai, Hà Nội nhé. À, chị vẫn muốn hỏi kỹ thêm về độ an toàn.",
+   "states": [
+    "address"
+   ],
+   "entities": {
+    "address": "số 30 đường Giải Phóng, quận Hoàng Mai, Hà Nội"
+   },
+   "text_spoken": "giao về số ba mươi đường giải phóng quận hoàng mai hà nội nhé à chị vẫn muốn hỏi kỹ thêm về độ an toàn"
+  },
+  {
+   "idx": 6,
+   "speaker": "A",
+   "text": "Dạ, em ghi nhận địa chỉ rồi ạ. Chị cho em xin số điện thoại nhận hàng để em đọc lại thông tin nhé.",
+   "text_template": "Dạ, em ghi nhận địa chỉ rồi ạ. Chị cho em xin số điện thoại nhận hàng để em đọc lại thông tin nhé.",
+   "text_written": "Dạ, em ghi nhận địa chỉ rồi ạ. Chị cho em xin số điện thoại nhận hàng để em đọc lại thông tin nhé.",
+   "entities": {},
+   "text_spoken": "dạ em ghi nhận địa chỉ rồi ạ chị cho em xin số điện thoại nhận hàng để em đọc lại thông tin nhé"
+  },
+  {
+   "idx": 7,
+   "speaker": "C",
+   "text": "0900020028.",
+   "text_written": "0900020028.",
+   "states": [
+    "phone_provided"
+   ],
+   "entities": {
+    "phone": "0900020028"
+   },
+   "text_spoken": "không chín không không không hai không không hai tám"
+  },
+  {
+   "idx": 8,
+   "speaker": "A",
+   "text": "Dạ, chị muốn thanh toán theo hình thức nào ạ?",
+   "text_template": "Dạ, chị muốn thanh toán theo hình thức nào ạ?",
+   "text_written": "Dạ, chị muốn thanh toán theo hình thức nào ạ?",
+   "entities": {},
+   "text_spoken": "dạ chị muốn thanh toán theo hình thức nào ạ"
+  },
+  {
+   "idx": 9,
+   "speaker": "C",
+   "text": "COD nhé.",
+   "text_written": "COD nhé.",
+   "states": [
+    "payment"
+   ],
+   "entities": {
+    "payment": "COD"
+   },
+   "text_spoken": "cê ô đê nhé"
+  },
+  {
+   "idx": 10,
+   "speaker": "A",
+   "text": "Dạ, em đọc lại thông tin để chị kiểm tra: Xe đẩy gấp gọn Joie Pact, giá 3.490.000đ, tổng tiền 3.490.000đ, người nhận Vân, SĐT 0900020028, địa chỉ số 30 đường Giải Phóng, quận Hoàng Mai, Hà Nội, thanh toán thanh toán khi nhận hàng (COD). Chị xác nhận giúp em ạ?",
+   "text_template": "Dạ, em đọc lại thông tin để chị kiểm tra: Xe đẩy gấp gọn Joie Pact, giá {price}, tổng tiền {readback_total}, người nhận {recipient_name}, SĐT {caller_phone}, địa chỉ {address}, thanh toán {payment_label}. Chị xác nhận giúp em ạ?",
+   "text_written": "Dạ, em đọc lại thông tin để chị kiểm tra: Xe đẩy gấp gọn Joie Pact, giá 3.490.000đ, tổng tiền 3.490.000đ, người nhận Vân, SĐT 0900020028, địa chỉ số 30 đường Giải Phóng, quận Hoàng Mai, Hà Nội, thanh toán thanh toán khi nhận hàng (COD). Chị xác nhận giúp em ạ?",
+   "entities": {
+    "price_vnd": 3490000,
+    "phone": "0900020028"
+   },
+   "text_spoken": "dạ em đọc lại thông tin để chị kiểm tra xe đẩy gấp gọn giô i pact giá ba triệu bốn trăm chín mươi nghìn tổng tiền ba triệu bốn trăm chín mươi nghìn người nhận vân số điện thoại không chín không không không hai không không hai tám địa chỉ số ba mươi đường giải phóng quận hoàng mai hà nội thanh toán thanh toán khi nhận hàng cê ô đê chị xác nhận giúp em ạ"
+  },
+  {
+   "idx": 11,
+   "speaker": "C",
+   "text": "Ừm, để chị hỏi chồng đã, giờ chị chưa chốt nhé.",
+   "text_written": "Ừm, để chị hỏi chồng đã, giờ chị chưa chốt nhé.",
+   "states": [
+    "blocker"
+   ],
+   "entities": {
+    "blocker": "can hoi chong"
+   },
+   "text_spoken": "ừm để chị hỏi chồng đã giờ chị chưa chốt nhé"
+  },
+  {
+   "idx": 12,
+   "speaker": "A",
+   "text": "Dạ, em ghi nhận chị Vân muốn trao đổi với chồng trước và chưa xác nhận đặt hàng. Khi chị đã trao đổi xong, em sẽ liên hệ lại để hỗ trợ chị ạ.",
+   "text_template": "Dạ, em ghi nhận chị Vân muốn trao đổi với chồng trước và chưa xác nhận đặt hàng. Khi chị đã trao đổi xong, em sẽ liên hệ lại để hỗ trợ chị ạ.",
+   "text_written": "Dạ, em ghi nhận chị Vân muốn trao đổi với chồng trước và chưa xác nhận đặt hàng. Khi chị đã trao đổi xong, em sẽ liên hệ lại để hỗ trợ chị ạ.",
+   "entities": {},
+   "text_spoken": "dạ em ghi nhận chị vân muốn trao đổi với chồng trước và chưa xác nhận đặt hàng khi chị đã trao đổi xong em sẽ liên hệ lại để hỗ trợ chị ạ"
+  }
+ ],
+ "meta": {
+  "model": "gpt-6-luna",
+  "attempts": 1,
+  "ok": true,
+  "unresolved": []
+ },
+ "frame_sha256": "31c4a4e92fbe531f"
+}

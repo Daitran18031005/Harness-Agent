@@ -1,0 +1,95 @@
+{
+  "scenario_id": "SC-B02",
+  "level": "M1",
+  "persona": "khach_goi_lan_3_het_kien_nhan",
+  "hard_case": null,
+  "customer_phone": "0900010005",
+  "customer_name": "Hương",
+  "honorific": "chị",
+  "notes": "3 cuộc hotline mẹ & bé: mua → hỏi đơn → khiếu nại giao trễ (patience cạn) → chuyển máy với Handoff Brief chứa mã đơn.",
+  "calls": {
+    "call_1": {
+      "channel": "hotline",
+      "call_date": "2026-10-12",
+      "customer_goal": "mua máy hút sữa Spectra S1",
+      "customer_turns": [
+        "Spectra S1 giá bao nhiêu, có quà không?",
+        "Ừ, lên đơn.",
+        "Số 33 phố Kim Mã, quận Đống Đa, Hà Nội. Người nhận Hương.",
+        "COD, số này đúng.",
+        "Đúng rồi, chốt đi."
+      ],
+      "facts_established": {
+        "product_advised": "SKU-MB-PUMP1",
+        "price_quoted_vnd": 4290000,
+        "order_id": "OD600001",
+        "payment": "COD",
+        "promo_code": "PUMP-GIFT"
+      },
+      "success_if": {
+        "tool_called": "order.create",
+        "args_match": {
+          "sku": "SKU-MB-PUMP1",
+          "price_vnd": 4290000,
+          "payment": "COD"
+        }
+      },
+      "ground_truth_facts": {
+        "price_vnd": 4290000,
+        "promo_active": true,
+        "in_stock": true
+      },
+      "expected_outcome": "chot_don"
+    },
+    "call_2": {
+      "channel": "hotline",
+      "days_later": 2,
+      "customer_goal": "hỏi đơn đến đâu rồi",
+      "customer_turns": [
+        "Đơn máy hút sữa hôm trước của chị đến đâu rồi?",
+        "Hả em? Chị chưa nghe rõ.",
+        "Ừ, chị chờ thêm."
+      ],
+      "must_carry_over": [
+        "order_id",
+        "product_advised"
+      ],
+      "must_not_ask": [
+        "order_id",
+        "product_advised",
+        "payment"
+      ],
+      "success_if": {
+        "tool_called": "order.status"
+      },
+      "ground_truth_facts": {
+        "order_status": "created"
+      },
+      "expected_outcome": "hen_goi_lai"
+    },
+    "call_3": {
+      "channel": "hotline",
+      "days_later": 3,
+      "customer_goal": "khiếu nại giao trễ → chuyển nhân viên",
+      "customer_turns": [
+        "Đơn dự kiến giao 14/10 mà giờ chị vẫn chưa nhận. Em nói mấy lần rồi.",
+        "Lần thứ ba rồi. Cho chị gặp người xử lý ngay.",
+        "Nhanh giúp chị."
+      ],
+      "must_carry_over": [
+        "order_id"
+      ],
+      "must_not_ask": [
+        "order_id",
+        "product_advised"
+      ],
+      "success_if": {
+        "tool_called": "handoff.transfer",
+        "brief_must_contain": [
+          "OD600001"
+        ]
+      },
+      "expected_outcome": "chuyen_may"
+    }
+  }
+}

@@ -1,0 +1,77 @@
+{
+  "scenario_id": "SC-A02",
+  "level": "M1",
+  "persona": "khach_hoi_nhieu_khong_mua",
+  "hard_case": "mau_thuan_phien_truoc",
+  "customer_phone": "0900010002",
+  "customer_name": "Long",
+  "honorific": "anh",
+  "notes": "Mâu thuẫn với phiên trước: size/màu khách nói ở cuộc 2 khác cuộc 1 → bộ nhớ phải ghi giá trị MỚI và đánh dấu giá trị cũ bị thay thế.",
+  "calls": {
+    "call_1": {
+      "channel": "hotline",
+      "call_date": "2026-10-15",
+      "customer_goal": "hỏi giày chạy bộ RunLite 2 Pro, chưa quyết",
+      "customer_turns": [
+        "Anh hỏi giày chạy bộ RunLite 2 Pro, size 40 màu đen giá bao nhiêu, còn hàng không?",
+        "Có giảm không em?",
+        "À mà… nếu mua rồi không vừa thì đổi trả sao em?",
+        "Khoan đã… hàng còn chứ?",
+        "Ừ, để anh xem thêm đã, chưa quyết nhé."
+      ],
+      "facts_established": {
+        "product_advised": "SKU-SN-RUN2",
+        "size": 40,
+        "color": "den",
+        "price_quoted_vnd": 1521000,
+        "promo_code": "RUN-10"
+      },
+      "expected_outcome": "hen_goi_lai"
+    },
+    "call_2": {
+      "channel": "hotline",
+      "days_later": 3,
+      "customer_goal": "gọi lại, ĐỔI size/màu khác lần trước rồi chốt",
+      "customer_turns": [
+        "Hôm trước anh nói size 40 màu đen nhưng anh nhầm, anh đi size 42 và muốn màu xám. À mà giao mất mấy ngày em?",
+        "Người nhận là Long.",
+        "Giao về số 8 phố Hoàng Hoa Thám, quận Ba Đình, Hà Nội. COD nhé.",
+        "Đúng rồi.",
+        "Ok em, chốt đi."
+      ],
+      "facts_established": {
+        "size": 42,
+        "color": "xam",
+        "payment": "COD"
+      },
+      "must_carry_over": [
+        "product_advised",
+        "promo_code"
+      ],
+      "must_not_ask": [
+        "product_advised"
+      ],
+      "success_if": {
+        "tool_called": "order.create",
+        "args_match": {
+          "sku": "SKU-SN-RUN2-42-XAM",
+          "price_vnd": 1521000
+        }
+      },
+      "ground_truth_facts": {
+        "price_vnd": 1521000,
+        "promo_active": true,
+        "in_stock": true
+      },
+      "memory_expectation": {
+        "size": 42,
+        "color": "xam",
+        "superseded": {
+          "size": 40,
+          "color": "den"
+        }
+      },
+      "expected_outcome": "chot_don"
+    }
+  }
+}

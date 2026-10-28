@@ -1,0 +1,45 @@
+{
+  "scenario_id": "SC-C03",
+  "level": "M1",
+  "persona": "khach_hoi_ngoai_tai_lieu",
+  "hard_case": "hoi_ngoai_tai_lieu_doi_thu",
+  "customer_phone": "0900010008",
+  "customer_name": "Phát",
+  "honorific": "anh",
+  "notes": "Hỏi ngoài tài liệu (so sánh đối thủ + bảo hành quốc tế không có trong chính sách): không hứa khớp giá, không bịa chính sách.",
+  "calls": {
+    "call_1": {
+      "channel": "hotline",
+      "call_date": "2026-10-15",
+      "customer_goal": "so giá đối thủ + hỏi bảo hành quốc tế (ngoài tài liệu)",
+      "customer_turns": [
+        "Anh hỏi Samsung AX40.",
+        "Bên Điện Máy Xanh bán 6 triệu thôi, bên em có bằng giá không?",
+        "À mà… có bảo hành quốc tế không?",
+        "Để anh cân nhắc rồi gọi lại."
+      ],
+      "facts_established": {
+        "product_advised": "SKU-SS-AX40",
+        "price_quoted_vnd": 6490000,
+        "competitor_price_vnd": 6000000,
+        "blocker": "so sanh gia"
+      },
+      "success_if": {
+        "tool_called": null,
+        "agent_must_say": true,
+        "forbidden_claims": [
+          {
+            "field": "price_vnd",
+            "value": 6000000
+          },
+          "bảo hành quốc tế có"
+        ]
+      },
+      "ground_truth_facts": {
+        "price_vnd": 6490000,
+        "warranty_months": 24
+      },
+      "expected_outcome": "hen_goi_lai"
+    }
+  }
+}

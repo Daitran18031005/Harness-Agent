@@ -1,0 +1,109 @@
+{
+ "scenario_id": "SC-D04",
+ "call": "call_1",
+ "channel": "zalo_oa",
+ "call_date": "2026-10-14",
+ "meta": {
+  "model": "gpt-6-luna",
+  "attempts": 2,
+  "ok": true,
+  "unresolved": [],
+  "rebuilt": true
+ },
+ "frame_sha256": "0c7904b0364fe02f",
+ "allowed_numbers": [
+  22,
+  5800000
+ ],
+ "turns": [
+  {
+   "idx": 1,
+   "speaker": "C",
+   "text": "Lọc không khí phòng ngủ?",
+   "text_written": "Lọc không khí phòng ngủ?",
+   "states": [],
+   "entities": {},
+   "text_spoken": "lọc không khí phòng ngủ"
+  },
+  {
+   "idx": 2,
+   "speaker": "A",
+   "text": "Dạ, em tư vấn máy lọc không khí cho anh Đạt nhé. Phòng ngủ nhà mình rộng khoảng bao nhiêu, nhà có trẻ nhỏ không và ngân sách dự kiến thế nào ạ?",
+   "text_template": "Dạ, em tư vấn máy lọc không khí cho anh Đạt nhé. Phòng ngủ nhà mình rộng khoảng bao nhiêu, nhà có trẻ nhỏ không và ngân sách dự kiến thế nào ạ?",
+   "text_written": "Dạ, em tư vấn máy lọc không khí cho anh Đạt nhé. Phòng ngủ nhà mình rộng khoảng bao nhiêu, nhà có trẻ nhỏ không và ngân sách dự kiến thế nào ạ?",
+   "entities": {},
+   "text_spoken": "dạ em tư vấn máy lọc không khí cho anh đạt nhé phòng ngủ nhà mình rộng khoảng bao nhiêu nhà có trẻ nhỏ không và ngân sách dự kiến thế nào ạ"
+  },
+  {
+   "idx": 3,
+   "speaker": "C",
+   "text": "Phòng ngủ cỡ 22 mét vuông, nhà đang có con nhỏ. Ngân sách khoảng 5,8 triệu.",
+   "text_written": "Phòng ngủ cỡ 22 mét vuông, nhà đang có con nhỏ. Ngân sách khoảng 5,8 triệu.",
+   "states": [
+    "room_area_m2",
+    "has_children",
+    "budget_vnd"
+   ],
+   "entities": {
+    "room_area_m2": 22,
+    "has_children": true,
+    "budget_vnd": 5800000
+   },
+   "text_spoken": "phòng ngủ cỡ hai mươi hai mét vuông nhà đang có con nhỏ ngân sách khoảng năm triệu tám trăm nghìn"
+  },
+  {
+   "idx": 4,
+   "speaker": "A",
+   "text": "Dạ, em đề xuất Máy lọc không khí AirPure Y, giá cuối đã tính khuyến mãi là 5.200.000đ, hiện hiện còn hàng. Anh cho em xin số điện thoại để hotline gọi lại tư vấn nhé?",
+   "text_template": "Dạ, em đề xuất {product}, giá cuối đã tính khuyến mãi là {price}, hiện {stock}. Anh cho em xin số điện thoại để hotline gọi lại tư vấn nhé?",
+   "text_written": "Dạ, em đề xuất Máy lọc không khí AirPure Y, giá cuối đã tính khuyến mãi là 5.200.000đ, hiện hiện còn hàng. Anh cho em xin số điện thoại để hotline gọi lại tư vấn nhé?",
+   "entities": {
+    "sku": "SKU-AP-Y",
+    "price_vnd": 5200000
+   },
+   "text_spoken": "dạ em đề xuất máy lọc không khí e pia y giá cuối đã tính khuyến mãi là năm triệu hai trăm nghìn hiện hiện còn hàng anh cho em xin số điện thoại để hotline gọi lại tư vấn nhé"
+  },
+  {
+   "idx": 5,
+   "speaker": "C",
+   "text": "Khoan đã… giá chốt chưa?",
+   "text_written": "Khoan đã… giá chốt chưa?",
+   "states": [],
+   "entities": {},
+   "text_spoken": "khoan đã giá chốt chưa"
+  },
+  {
+   "idx": 6,
+   "speaker": "A",
+   "text": "Dạ, 5.200.000đ là giá cuối đã tính khuyến mãi rồi ạ. Anh cho em xin số điện thoại để hotline tiện gọi lại nhé?",
+   "text_template": "Dạ, {price} là giá cuối đã tính khuyến mãi rồi ạ. Anh cho em xin số điện thoại để hotline tiện gọi lại nhé?",
+   "text_written": "Dạ, 5.200.000đ là giá cuối đã tính khuyến mãi rồi ạ. Anh cho em xin số điện thoại để hotline tiện gọi lại nhé?",
+   "entities": {
+    "price_vnd": 5200000
+   },
+   "text_spoken": "dạ năm triệu hai trăm nghìn là giá cuối đã tính khuyến mãi rồi ạ anh cho em xin số điện thoại để hotline tiện gọi lại nhé"
+  },
+  {
+   "idx": 7,
+   "speaker": "C",
+   "text": "Để anh xem thêm. Số anh là 0900020004.",
+   "text_written": "Để anh xem thêm. Số anh là 0900020004.",
+   "states": [
+    "phone_provided"
+   ],
+   "entities": {
+    "phone": "0900020004"
+   },
+   "text_spoken": "để anh xem thêm số anh là không chín không không không hai không không không bốn"
+  },
+  {
+   "idx": 8,
+   "speaker": "A",
+   "text": "Dạ, em ghi nhận rồi ạ. Hotline sẽ gọi lại để tư vấn cho anh Đạt nhé.",
+   "text_template": "Dạ, em ghi nhận rồi ạ. Hotline sẽ gọi lại để tư vấn cho anh Đạt nhé.",
+   "text_written": "Dạ, em ghi nhận rồi ạ. Hotline sẽ gọi lại để tư vấn cho anh Đạt nhé.",
+   "entities": {},
+   "text_spoken": "dạ em ghi nhận rồi ạ hotline sẽ gọi lại để tư vấn cho anh đạt nhé"
+  }
+ ]
+}

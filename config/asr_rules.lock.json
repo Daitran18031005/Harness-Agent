@@ -1,0 +1,18 @@
+{
+ "version": "asr-rules-v2-2026-10-21",
+ "locked_on": "2026-10-21",
+ "reason": "ITN v2: (1) 'lẻ/không' sau hàng nghìn/triệu đọc theo nghĩa đen (sáu trăm nghìn lẻ một = 600.001; sáu trăm lẻ một nghìn = 601.000); (2) số đếm đứng trước danh từ đơn vị (đơn, chiếc, cái, máy, bộ, đôi, tháng...) không thuộc số tiền (mười triệu một đơn = 10.000.000). Lỗi chung của tiếng Việt, không chỉnh theo tập test; luật v1 giữ ở runs/asr_rules_v1/.",
+ "dev_set": [
+  "D01",
+  "D02",
+  "D03",
+  "D04"
+ ],
+ "note": "Luật viết SAU KHI xem D01–D04. Mọi số entity accuracy trên D01–D04 là 'trong tập phát triển'; số trên audio mới chưa từng thấy phải báo RIÊNG.",
+ "files": {
+  "config/product_aliases.json": "3915bcdd91e2e5651920ab0377b3411e886e32d3143bed29efb658e26cdef4a8",
+  "src/channels/asr_entities.py": "197297338134fe072840f98082b786434e6955b47c1ed424bcfa82af8fff2f49",
+  "src/channels/asr_postprocess.py": "9562fdb78872163696a46fa5571e20037f135e9aa7fa8f8027df59147deb11b2"
+ },
+ "normalizer_itn": "a1aa8a73b1bece63a6cf09e311a9669ed8399a93529dc46b912c74b343a892f7"
+}

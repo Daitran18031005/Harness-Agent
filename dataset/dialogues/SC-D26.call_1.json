@@ -1,0 +1,153 @@
+{
+ "scenario_id": "SC-D26",
+ "call": "call_1",
+ "channel": "zalo_oa",
+ "call_date": "2026-10-15",
+ "meta": {
+  "model": "gpt-6-luna",
+  "attempts": 2,
+  "ok": true,
+  "unresolved": [],
+  "rebuilt": true
+ },
+ "frame_sha256": "0921a835fb627f8d",
+ "allowed_numbers": [
+  41
+ ],
+ "turns": [
+  {
+   "idx": 1,
+   "speaker": "C",
+   "text": "Anh hỏi Giày sneaker Urban Classic size 41, màu đen còn hàng không, giá bao nhiêu?",
+   "text_written": "Anh hỏi Giày sneaker Urban Classic size 41, màu đen còn hàng không, giá bao nhiêu?",
+   "states": [
+    "product_asked",
+    "size",
+    "color"
+   ],
+   "entities": {
+    "sku": "SKU-SN-CAS",
+    "size": 41,
+    "color": "den"
+   },
+   "text_spoken": "anh hỏi giày sneaker ơ bần cla xích size bốn mươi mốt màu đen còn hàng không giá bao nhiêu"
+  },
+  {
+   "idx": 2,
+   "speaker": "A",
+   "text": "Dạ, Giày sneaker Urban Classic hiện còn hàng, giá 890.000đ ạ.",
+   "text_template": "Dạ, Giày sneaker Urban Classic {stock}, giá {price} ạ.",
+   "text_written": "Dạ, Giày sneaker Urban Classic hiện còn hàng, giá 890.000đ ạ.",
+   "entities": {
+    "price_vnd": 890000
+   },
+   "text_spoken": "dạ giày sneaker ơ bần cla xích hiện còn hàng giá tám trăm chín mươi nghìn ạ"
+  },
+  {
+   "idx": 3,
+   "speaker": "C",
+   "text": "Ờ, để anh xem đã…",
+   "text_written": "Ờ, để anh xem đã…",
+   "states": [],
+   "entities": {},
+   "text_spoken": "ờ để anh xem đã"
+  },
+  {
+   "idx": 4,
+   "speaker": "A",
+   "text": "Anh Sơn cho em xin tên người nhận hàng ạ?",
+   "text_template": "Anh Sơn cho em xin tên người nhận hàng ạ?",
+   "text_written": "Anh Sơn cho em xin tên người nhận hàng ạ?",
+   "entities": {},
+   "text_spoken": "anh sơn cho em xin tên người nhận hàng ạ"
+  },
+  {
+   "idx": 5,
+   "speaker": "C",
+   "text": "Sơn nhé.",
+   "text_written": "Sơn nhé.",
+   "states": [
+    "recipient_name"
+   ],
+   "entities": {},
+   "text_spoken": "sơn nhé"
+  },
+  {
+   "idx": 6,
+   "speaker": "A",
+   "text": "Anh cho em xin địa chỉ giao hàng với ạ.",
+   "text_template": "Anh cho em xin địa chỉ giao hàng với ạ.",
+   "text_written": "Anh cho em xin địa chỉ giao hàng với ạ.",
+   "entities": {},
+   "text_spoken": "anh cho em xin địa chỉ giao hàng với ạ"
+  },
+  {
+   "idx": 7,
+   "speaker": "C",
+   "text": "Giao về số 60 đường Láng, quận Cầu Giấy, Hà Nội. Số nhận hàng 0900020026 nhé.",
+   "text_written": "Giao về số 60 đường Láng, quận Cầu Giấy, Hà Nội. Số nhận hàng 0900020026 nhé.",
+   "states": [
+    "address",
+    "phone_provided"
+   ],
+   "entities": {
+    "address": "số 60 đường Láng, quận Cầu Giấy, Hà Nội",
+    "phone": "0900020026"
+   },
+   "text_spoken": "giao về số sáu mươi đường láng quận cầu giấy hà nội số nhận hàng không chín không không không hai không không hai sáu nhé"
+  },
+  {
+   "idx": 8,
+   "speaker": "A",
+   "text": "Anh Sơn muốn thanh toán theo hình thức nào ạ?",
+   "text_template": "Anh Sơn muốn thanh toán theo hình thức nào ạ?",
+   "text_written": "Anh Sơn muốn thanh toán theo hình thức nào ạ?",
+   "entities": {},
+   "text_spoken": "anh sơn muốn thanh toán theo hình thức nào ạ"
+  },
+  {
+   "idx": 9,
+   "speaker": "C",
+   "text": "COD nhé, mà anh hơi phân vân…",
+   "text_written": "COD nhé, mà anh hơi phân vân…",
+   "states": [
+    "payment"
+   ],
+   "entities": {
+    "payment": "COD"
+   },
+   "text_spoken": "cê ô đê nhé mà anh hơi phân vân"
+  },
+  {
+   "idx": 10,
+   "speaker": "A",
+   "text": "Em đọc lại đơn: Giày sneaker Urban Classic, giá 890.000đ, tổng 890.000đ, giao cho Sơn, SĐT 0900020026, địa chỉ số 60 đường Láng, quận Cầu Giấy, Hà Nội, thanh toán thanh toán khi nhận hàng (COD). Anh xác nhận giúp em ạ?",
+   "text_template": "Em đọc lại đơn: {product}, giá {price}, tổng {readback_total}, giao cho {recipient_name}, SĐT {caller_phone}, địa chỉ {address}, thanh toán {payment_label}. Anh xác nhận giúp em ạ?",
+   "text_written": "Em đọc lại đơn: Giày sneaker Urban Classic, giá 890.000đ, tổng 890.000đ, giao cho Sơn, SĐT 0900020026, địa chỉ số 60 đường Láng, quận Cầu Giấy, Hà Nội, thanh toán thanh toán khi nhận hàng (COD). Anh xác nhận giúp em ạ?",
+   "entities": {
+    "sku": "SKU-SN-CAS",
+    "price_vnd": 890000,
+    "phone": "0900020026"
+   },
+   "text_spoken": "em đọc lại đơn giày sneaker ơ bần cla xích giá tám trăm chín mươi nghìn tổng tám trăm chín mươi nghìn giao cho sơn số điện thoại không chín không không không hai không không hai sáu địa chỉ số sáu mươi đường láng quận cầu giấy hà nội thanh toán thanh toán khi nhận hàng cê ô đê anh xác nhận giúp em ạ"
+  },
+  {
+   "idx": 11,
+   "speaker": "C",
+   "text": "Thôi anh không lấy nữa, mắc quá.",
+   "text_written": "Thôi anh không lấy nữa, mắc quá.",
+   "states": [],
+   "entities": {},
+   "text_spoken": "thôi anh không lấy nữa mắc quá"
+  },
+  {
+   "idx": 12,
+   "speaker": "A",
+   "text": "Em xin lỗi anh Sơn. Anh cho em hỏi lý do mình chưa lấy ạ? Khi nào cần, anh liên hệ lại với shop nhé.",
+   "text_template": "Em xin lỗi anh Sơn. Anh cho em hỏi lý do mình chưa lấy ạ? Khi nào cần, anh liên hệ lại với shop nhé.",
+   "text_written": "Em xin lỗi anh Sơn. Anh cho em hỏi lý do mình chưa lấy ạ? Khi nào cần, anh liên hệ lại với shop nhé.",
+   "entities": {},
+   "text_spoken": "em xin lỗi anh sơn anh cho em hỏi lý do mình chưa lấy ạ khi nào cần anh liên hệ lại với shop nhé"
+  }
+ ]
+}

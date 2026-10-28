@@ -1,0 +1,152 @@
+{
+ "scenario": {
+  "scenario_id": "SC-D26",
+  "level": "M1",
+  "persona": "khach_so_gia",
+  "hard_case": "tu_choi_giua_gate",
+  "customer_phone": "0900020026",
+  "customer_name": "Sơn",
+  "honorific": "anh",
+  "notes": "Từ chối SAU khi nghe đọc lại đơn: không tạo đơn, không nối câu hỏi gate ở lượt sau.",
+  "group": "C",
+  "archetype": "gate_decline",
+  "industry": "giày",
+  "south": false
+ },
+ "calls": [
+  {
+   "name": "call_1",
+   "channel": "zalo_oa",
+   "goal": "đặt Giày sneaker Urban Classic nhưng từ chối sau khi nghe đọc lại đơn",
+   "opening": "customer",
+   "customer_plot": "Khách hỏi Giày sneaker Urban Classic size 41 màu đen còn hàng không, giá bao nhiêu; chốt lấy và trả lời các câu hỏi của agent (tên người nhận Sơn, địa chỉ số 60 đường Láng, quận Cầu Giấy, Hà Nội, thanh toán COD). Tính cách: vui vẻ, nhiều chuyện. Nghe agent ĐỌC LẠI ĐƠN xong thì đổi ý, TỪ CHỐI rõ ràng: 'thôi anh không lấy nữa, mắc quá' (KHÔNG đồng ý đơn).",
+   "agent_plot": "Agent báo {product} giá {price}; theo quy trình đặt đơn: hỏi tên người nhận, địa chỉ, thanh toán; rồi ĐỌC LẠI ĐƠN đúng một lần ({product}, giá {price}, tổng {readback_total}, giao cho {recipient_name}, SĐT {caller_phone}, địa chỉ {address}, hình thức {payment_label}) và hỏi khách xác nhận. Khách từ chối thì KHÔNG tạo đơn, KHÔNG nêu mã đơn, KHÔNG nói đã lên đơn; xin lỗi nhẹ, hỏi lý do một lần, nói cần thì liên hệ lại; không nài ép.",
+   "customer_facts": [
+    {
+     "key": "product_asked",
+     "value": "SKU-SN-CAS",
+     "hint": "hỏi Giày sneaker Urban Classic"
+    },
+    {
+     "key": "size",
+     "value": 41,
+     "hint": "size 41"
+    },
+    {
+     "key": "color",
+     "value": "den",
+     "hint": "màu đen"
+    },
+    {
+     "key": "recipient_name",
+     "value": "Sơn",
+     "hint": "nói tên người nhận là Sơn"
+    },
+    {
+     "key": "payment",
+     "value": "COD",
+     "hint": "COD"
+    },
+    {
+     "key": "address",
+     "value": "số 60 đường Láng, quận Cầu Giấy, Hà Nội",
+     "hint": "giao về số 60 đường Láng, quận Cầu Giấy, Hà Nội"
+    },
+    {
+     "key": "phone_provided",
+     "value": "0900020026",
+     "hint": "đọc SĐT nhận hàng 0900020026"
+    }
+   ],
+   "agent_vars": {
+    "product": {
+     "text": "Giày sneaker Urban Classic",
+     "desc": "tên sản phẩm ĐẦY ĐỦ đã gồm loại hàng (đừng viết thêm loại hàng phía trước)",
+     "entity": [
+      "sku",
+      "SKU-SN-CAS"
+     ]
+    },
+    "price": {
+     "text": "890.000đ",
+     "desc": "giá cuối (đã tính khuyến mãi)",
+     "entity": [
+      "price_vnd",
+      890000
+     ]
+    },
+    "readback_total": {
+     "text": "890.000đ",
+     "desc": "tổng tiền cả đơn (giá × số lượng) — dùng khi ĐỌC LẠI ĐƠN",
+     "entity": null
+    },
+    "payment_label": {
+     "text": "thanh toán khi nhận hàng (COD)",
+     "desc": "hình thức thanh toán của đơn — dùng khi ĐỌC LẠI ĐƠN",
+     "entity": null
+    },
+    "recipient_name": {
+     "text": "Sơn",
+     "desc": "tên người nhận — CHỈ dùng sau khi khách đã nói tên",
+     "entity": null,
+     "after": "recipient_name"
+    },
+    "address": {
+     "text": "số 60 đường Láng, quận Cầu Giấy, Hà Nội",
+     "desc": "địa chỉ giao (khách vừa đọc) — CHỈ dùng sau khi khách đã đọc địa chỉ",
+     "entity": null,
+     "after": "address"
+    },
+    "caller_phone": {
+     "text": "0900020026",
+     "desc": "SĐT nhận hàng (số khách đang gọi/nhắn) — đọc lại để xác nhận",
+     "entity": [
+      "phone",
+      "0900020026"
+     ],
+     "after": "phone_provided"
+    },
+    "stock": {
+     "text": "hiện còn hàng",
+     "desc": "tình trạng tồn kho của sản phẩm (còn hàng/hết hàng)",
+     "entity": null
+    }
+   },
+   "n_turns": [
+    9,
+    12
+   ],
+   "style": "normal",
+   "expected": {
+    "success_if": {
+     "tool_called": null,
+     "agent_must_say": true,
+     "must_not_call_tools": [
+      "order.create"
+     ],
+     "forbidden_claims": [
+      "đã lên đơn",
+      "đã tạo đơn",
+      "mã đơn"
+     ]
+    },
+    "ground_truth_facts": {
+     "price_vnd": 890000,
+     "in_stock": true
+    },
+    "facts_established": {
+     "product_advised": "SKU-SN-CAS",
+     "price_quoted_vnd": 890000,
+     "payment": "COD"
+    },
+    "memory_expectation": {
+     "objection": "gia cao"
+    },
+    "expected_outcome": "tu_choi"
+   },
+   "abs_date": "2026-10-15",
+   "channel_identity": "zalo.d26",
+   "call_date": "2026-10-15"
+  }
+ ]
+}

@@ -1,0 +1,126 @@
+{
+ "scenario_id": "SC-A02",
+ "call": "call_1",
+ "channel": "hotline",
+ "call_date": "2026-10-15",
+ "meta": {
+  "model": "gpt-6-luna",
+  "attempts": 2,
+  "ok": true,
+  "unresolved": [],
+  "rebuilt": true
+ },
+ "frame_sha256": "8d3d19bfb662ca65",
+ "allowed_numbers": [
+  40
+ ],
+ "turns": [
+  {
+   "idx": 1,
+   "speaker": "A",
+   "text": "Dạ shop BTC xin nghe, em có thể giúp gì cho mình ạ?",
+   "text_template": "Dạ shop BTC xin nghe, em có thể giúp gì cho mình ạ?",
+   "text_written": "Dạ shop BTC xin nghe, em có thể giúp gì cho mình ạ?",
+   "entities": {},
+   "text_spoken": "dạ shop bê tê xê xin nghe em có thể giúp gì cho mình ạ"
+  },
+  {
+   "idx": 2,
+   "speaker": "C",
+   "text": "Anh hỏi giày chạy bộ RunLite 2 Pro, size 40 màu đen giá bao nhiêu, còn hàng không?",
+   "text_written": "Anh hỏi giày chạy bộ RunLite 2 Pro, size 40 màu đen giá bao nhiêu, còn hàng không?",
+   "states": [
+    "product_asked",
+    "size",
+    "color"
+   ],
+   "entities": {
+    "sku": "SKU-SN-RUN2",
+    "size": 40,
+    "color": "den"
+   },
+   "text_spoken": "anh hỏi giày chạy bộ run lai hai pro size bốn mươi màu đen giá bao nhiêu còn hàng không"
+  },
+  {
+   "idx": 3,
+   "speaker": "A",
+   "text": "Dạ, sản phẩm Giày chạy bộ RunLite 2 Pro size 40 màu đen hiện có giá 1.521.000đ, còn hiện còn hàng ạ.",
+   "text_template": "Dạ, sản phẩm {product} size 40 màu đen hiện có giá {price}, còn {stock} ạ.",
+   "text_written": "Dạ, sản phẩm Giày chạy bộ RunLite 2 Pro size 40 màu đen hiện có giá 1.521.000đ, còn hiện còn hàng ạ.",
+   "entities": {
+    "sku": "SKU-SN-RUN2",
+    "price_vnd": 1521000
+   },
+   "text_spoken": "dạ sản phẩm giày chạy bộ run lai hai pro size bốn mươi màu đen hiện có giá một triệu năm trăm hai mươi mốt nghìn còn hiện còn hàng ạ"
+  },
+  {
+   "idx": 4,
+   "speaker": "C",
+   "text": "Có giảm không em?",
+   "text_written": "Có giảm không em?",
+   "states": [],
+   "entities": {},
+   "text_spoken": "có giảm không em"
+  },
+  {
+   "idx": 5,
+   "speaker": "A",
+   "text": "Dạ, sản phẩm đang giảm 10%, chương trình đến 25/10 ạ.",
+   "text_template": "Dạ, sản phẩm đang giảm {discount}, chương trình đến {promo_end} ạ.",
+   "text_written": "Dạ, sản phẩm đang giảm 10%, chương trình đến 25/10 ạ.",
+   "entities": {
+    "promo_expiry": "2026-10-25"
+   },
+   "text_spoken": "dạ sản phẩm đang giảm mười phần trăm chương trình đến hai mươi lăm tháng mười ạ"
+  },
+  {
+   "idx": 6,
+   "speaker": "C",
+   "text": "À mà… nếu mua rồi không vừa thì đổi trả sao em?",
+   "text_written": "À mà… nếu mua rồi không vừa thì đổi trả sao em?",
+   "states": [],
+   "entities": {},
+   "text_spoken": "à mà nếu mua rồi không vừa thì đổi trả sao em"
+  },
+  {
+   "idx": 7,
+   "speaker": "A",
+   "text": "Dạ, sản phẩm Giày chạy bộ RunLite 2 Pro được đổi trả trong 7 ạ.",
+   "text_template": "Dạ, sản phẩm {product} được đổi trả trong {return_days} ạ.",
+   "text_written": "Dạ, sản phẩm Giày chạy bộ RunLite 2 Pro được đổi trả trong 7 ạ.",
+   "entities": {
+    "sku": "SKU-SN-RUN2"
+   },
+   "text_spoken": "dạ sản phẩm giày chạy bộ run lai hai pro được đổi trả trong bảy ạ"
+  },
+  {
+   "idx": 8,
+   "speaker": "C",
+   "text": "Khoan đã… hàng còn chứ?",
+   "text_written": "Khoan đã… hàng còn chứ?",
+   "states": [],
+   "entities": {},
+   "text_spoken": "khoan đã hàng còn chứ"
+  },
+  {
+   "idx": 9,
+   "speaker": "A",
+   "text": "Dạ, hiện sản phẩm Giày chạy bộ RunLite 2 Pro hiện còn hàng ạ.",
+   "text_template": "Dạ, hiện sản phẩm {product} {stock} ạ.",
+   "text_written": "Dạ, hiện sản phẩm Giày chạy bộ RunLite 2 Pro hiện còn hàng ạ.",
+   "entities": {
+    "sku": "SKU-SN-RUN2"
+   },
+   "text_spoken": "dạ hiện sản phẩm giày chạy bộ run lai hai pro hiện còn hàng ạ"
+  },
+  {
+   "idx": 10,
+   "speaker": "C",
+   "text": "Ừ, để anh xem thêm đã, chưa quyết nhé.",
+   "text_written": "Ừ, để anh xem thêm đã, chưa quyết nhé.",
+   "states": [],
+   "entities": {},
+   "text_spoken": "ừ để anh xem thêm đã chưa quyết nhé"
+  }
+ ]
+}

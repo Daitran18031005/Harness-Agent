@@ -1,0 +1,135 @@
+{
+ "scenario_id": "SC-C05",
+ "call": "call_1",
+ "channel": "zalo_oa",
+ "call_date": "2026-10-15",
+ "allowed_numbers": [],
+ "turns": [
+  {
+   "idx": 1,
+   "speaker": "C",
+   "text": "Quạt đứng Senko còn hàng không, giá bao nhiêu em?",
+   "text_written": "Quạt đứng Senko còn hàng không, giá bao nhiêu em?",
+   "states": [
+    "product_asked"
+   ],
+   "entities": {
+    "sku": "SKU-FAN-SEN"
+   },
+   "text_asr": "quat dung senko con hang ko gia bn e?",
+   "text_spoken": "quạt đứng sen cô còn hàng không giá bao nhiêu em"
+  },
+  {
+   "idx": 2,
+   "speaker": "A",
+   "text": "Dạ anh Tú, Quạt đứng Senko TS16 còn hàng, giá 590.000đ ạ.",
+   "text_template": "Dạ anh Tú, {product} {stock_text}, giá {price} ạ.",
+   "text_written": "Dạ anh Tú, Quạt đứng Senko TS16 còn hàng, giá 590.000đ ạ.",
+   "entities": {
+    "sku": "SKU-FAN-SEN",
+    "price_vnd": 590000
+   },
+   "text_spoken": "dạ anh tú quạt đứng sen cô ti ét mười sáu còn hàng giá năm trăm chín mươi nghìn ạ"
+  },
+  {
+   "idx": 3,
+   "speaker": "C",
+   "text": "Lấy một cái nhé. À mà giao mất bao lâu em?",
+   "text_written": "Lấy một cái nhé. À mà giao mất bao lâu em?",
+   "states": [],
+   "entities": {},
+   "text_asr": "lay mot cai nhe a ma giao mat bao lau e?",
+   "text_spoken": "lấy một cái nhé à mà giao mất bao lâu em"
+  },
+  {
+   "idx": 4,
+   "speaker": "A",
+   "text": "Dạ, thời gian giao là 2 ngày ạ. Anh cho em xin tên người nhận và địa chỉ giao hàng nhé?",
+   "text_template": "Dạ, thời gian giao là {delivery_days} ngày ạ. Anh cho em xin tên người nhận và địa chỉ giao hàng nhé?",
+   "text_written": "Dạ, thời gian giao là 2 ngày ạ. Anh cho em xin tên người nhận và địa chỉ giao hàng nhé?",
+   "entities": {},
+   "text_spoken": "dạ thời gian giao là hai ngày ạ anh cho em xin tên người nhận và địa chỉ giao hàng nhé"
+  },
+  {
+   "idx": 5,
+   "speaker": "C",
+   "text": "Người nhận là Tú, ship về số 5 đường Nguyễn Thị Thập, quận 7, TP.HCM.",
+   "text_written": "Người nhận là Tú, ship về số 5 đường Nguyễn Thị Thập, quận 7, TP.HCM.",
+   "states": [
+    "recipient_name",
+    "address"
+   ],
+   "entities": {
+    "address": "số 5 đường Nguyễn Thị Thập, quận 7, TP.HCM"
+   },
+   "text_asr": "nguoi nhan la tu ship ve so 5 duong nguyen thi thap quan 7 tp hcm",
+   "text_spoken": "người nhận là tú ship về số năm đường nguyễn thị thập quận bảy tp hcm"
+  },
+  {
+   "idx": 6,
+   "speaker": "A",
+   "text": "Dạ anh Tú, anh cho em xin số điện thoại nhận hàng và xác nhận mình thanh toán COD hay chuyển khoản ạ?",
+   "text_template": "Dạ anh Tú, anh cho em xin số điện thoại nhận hàng và xác nhận mình thanh toán COD hay chuyển khoản ạ?",
+   "text_written": "Dạ anh Tú, anh cho em xin số điện thoại nhận hàng và xác nhận mình thanh toán COD hay chuyển khoản ạ?",
+   "entities": {},
+   "text_spoken": "dạ anh tú anh cho em xin số điện thoại nhận hàng và xác nhận mình thanh toán cê ô đê hay chuyển khoản ạ"
+  },
+  {
+   "idx": 7,
+   "speaker": "C",
+   "text": "Số nhận hàng 0900010010, COD nhé.",
+   "text_written": "Số nhận hàng 0900010010, COD nhé.",
+   "states": [
+    "phone_provided",
+    "payment"
+   ],
+   "entities": {
+    "phone": "0900010010",
+    "payment": "COD"
+   },
+   "text_asr": "so nhan hang 0900010010 cod nhe",
+   "text_spoken": "số nhận hàng không chín không không không một không không một không cê ô đê nhé"
+  },
+  {
+   "idx": 8,
+   "speaker": "A",
+   "text": "Dạ anh Tú, em đọc lại đơn: Quạt đứng Senko TS16, giá 590.000đ, tổng 590.000đ, giao cho Tú, SĐT 0900010010, địa chỉ số 5 đường Nguyễn Thị Thập, quận 7, TP.HCM, hình thức thanh toán khi nhận hàng (COD). Mình xác nhận đặt đơn này chứ ạ?",
+   "text_template": "Dạ anh Tú, em đọc lại đơn: {product}, giá {price}, tổng {readback_total}, giao cho {recipient_name}, SĐT {caller_phone}, địa chỉ {address}, hình thức {payment_label}. Mình xác nhận đặt đơn này chứ ạ?",
+   "text_written": "Dạ anh Tú, em đọc lại đơn: Quạt đứng Senko TS16, giá 590.000đ, tổng 590.000đ, giao cho Tú, SĐT 0900010010, địa chỉ số 5 đường Nguyễn Thị Thập, quận 7, TP.HCM, hình thức thanh toán khi nhận hàng (COD). Mình xác nhận đặt đơn này chứ ạ?",
+   "entities": {
+    "sku": "SKU-FAN-SEN",
+    "price_vnd": 590000,
+    "phone": "0900010010"
+   },
+   "text_spoken": "dạ anh tú em đọc lại đơn quạt đứng sen cô ti ét mười sáu giá năm trăm chín mươi nghìn tổng năm trăm chín mươi nghìn giao cho tú số điện thoại không chín không không không một không không một không địa chỉ số năm đường nguyễn thị thập quận bảy tp hcm hình thức thanh toán khi nhận hàng cê ô đê mình xác nhận đặt đơn này chứ ạ"
+  },
+  {
+   "idx": 9,
+   "speaker": "C",
+   "text": "Ừ, chốt đi em.",
+   "text_written": "Ừ, chốt đi em.",
+   "states": [],
+   "entities": {},
+   "text_asr": "u chot di e",
+   "text_spoken": "ừ chốt đi em"
+  },
+  {
+   "idx": 10,
+   "speaker": "A",
+   "text": "Dạ, mã đơn OD600001, dự kiến giao trong 2 ngày ạ.",
+   "text_template": "Dạ, mã đơn {order_id}, dự kiến giao trong {delivery_days} ngày ạ.",
+   "text_written": "Dạ, mã đơn OD600001, dự kiến giao trong 2 ngày ạ.",
+   "entities": {
+    "order_id": "OD600001"
+   },
+   "text_spoken": "dạ mã đơn ô đê sáu không không không không một dự kiến giao trong hai ngày ạ"
+  }
+ ],
+ "meta": {
+  "model": "gpt-6-luna",
+  "attempts": 3,
+  "ok": true,
+  "unresolved": []
+ },
+ "frame_sha256": "626bdab846c72f30"
+}

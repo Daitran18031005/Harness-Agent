@@ -1,0 +1,234 @@
+{
+ "scenario": {
+  "scenario_id": "SC-D01",
+  "level": "M1",
+  "persona": "khach_do_du_hoi_nguoi_nha",
+  "hard_case": null,
+  "customer_phone": "0900020001",
+  "customer_name": "Thảo",
+  "honorific": "chị",
+  "notes": "A1 tư vấn qua chat → chốt hotline (máy lọc không khí cho phòng ngủ); sản phẩm đứng đầu theo luật slot.",
+  "group": "A",
+  "archetype": "adv",
+  "industry": "máy lọc không khí",
+  "south": false
+ },
+ "calls": [
+  {
+   "name": "call_1",
+   "channel": "chat_fanpage",
+   "goal": "hỏi tư vấn máy lọc không khí cho phòng ngủ qua chat",
+   "opening": "customer",
+   "customer_plot": "Khách nhắn hỏi máy lọc không khí cho phòng ngủ. Khi được hỏi mới nói: phòng khoảng 20m²; nhà có bé nhỏ; ngân sách tầm 5.5 triệu. Nghe giá xong nói 'để chị hỏi chồng đã' và đọc SĐT để hotline gọi lại.",
+   "agent_plot": "Agent hỏi các thông tin còn thiếu (một câu mỗi lượt), đề xuất MỘT sản phẩm {product} giá {price} (lý do chọn: nhà có trẻ nhỏ → ưu tiên sản phẩm có khóa an toàn trẻ em; diện tích phủ phải ≥ diện tích phòng); ghi nhận khách cần hỏi người nhà và xin SĐT để gọi lại.",
+   "customer_facts": [
+    {
+     "key": "room_area_m2",
+     "value": 20,
+     "hint": "phòng khoảng 20m²"
+    },
+    {
+     "key": "has_children",
+     "value": true,
+     "hint": "nhà có bé nhỏ"
+    },
+    {
+     "key": "budget_vnd",
+     "value": 5500000,
+     "hint": "ngân sách tầm 5.5 triệu"
+    },
+    {
+     "key": "blocker",
+     "value": "can hoi chong",
+     "hint": "để chị hỏi chồng đã"
+    },
+    {
+     "key": "phone_provided",
+     "value": "0900020001",
+     "hint": "đọc SĐT 0900020001 để hotline gọi lại"
+    }
+   ],
+   "agent_vars": {
+    "product": {
+     "text": "Máy lọc không khí AirPure Y",
+     "desc": "tên sản phẩm đề xuất",
+     "entity": [
+      "sku",
+      "SKU-AP-Y"
+     ]
+    },
+    "price": {
+     "text": "5.200.000đ",
+     "desc": "giá cuối (đã tính khuyến mãi)",
+     "entity": [
+      "price_vnd",
+      5200000
+     ]
+    },
+    "stock": {
+     "text": "hiện còn hàng",
+     "desc": "tình trạng tồn kho của sản phẩm (còn hàng/hết hàng)",
+     "entity": null
+    }
+   },
+   "n_turns": [
+    7,
+    10
+   ],
+   "style": "normal",
+   "expected": {
+    "facts_established": {
+     "product_advised": "SKU-AP-Y",
+     "room_area_m2": 20,
+     "has_children": true,
+     "budget_vnd": 5500000,
+     "price_quoted_vnd": 5200000,
+     "blocker": "can hoi chong",
+     "channel": "fanpage",
+     "phone_provided": "0900020001"
+    },
+    "expected_outcome": "hen_goi_lai"
+   },
+   "abs_date": "2026-10-14",
+   "channel_identity": "fb.d01",
+   "call_date": "2026-10-14"
+  },
+  {
+   "name": "call_2",
+   "channel": "hotline",
+   "goal": "gọi hotline chốt đơn sau khi hỏi người nhà",
+   "opening": "agent",
+   "customer_plot": "Khách gọi hotline: 'vừa nhắn hỏi máy lọc không khí cho phòng ngủ'; chồng đã đồng ý rồi; hỏi giá còn như cũ không; chốt lấy, giao về số 15 phố Tây Sơn, quận Đống Đa, Hà Nội, COD (không nhắc lại thông tin đã nói ở cuộc 1).",
+   "agent_plot": "Agent nhận ra khách từ cuộc chat, xác nhận {product} giá {price}, KHÔNG hỏi lại các thông tin đã có; theo quy trình đặt đơn rồi chốt: mã đơn {order_id}, giao {delivery_days} ngày.",
+   "customer_facts": [
+    {
+     "key": "blocker_resolved",
+     "value": true,
+     "hint": "chồng đã đồng ý rồi"
+    },
+    {
+     "key": "payment",
+     "value": "COD",
+     "hint": "thanh toán khi nhận hàng (COD)"
+    },
+    {
+     "key": "address",
+     "value": "số 15 phố Tây Sơn, quận Đống Đa, Hà Nội",
+     "hint": "giao về số 15 phố Tây Sơn, quận Đống Đa, Hà Nội"
+    },
+    {
+     "key": "recipient_name",
+     "value": "Thảo",
+     "hint": "nói tên người nhận là Thảo"
+    }
+   ],
+   "agent_vars": {
+    "product": {
+     "text": "Máy lọc không khí AirPure Y",
+     "desc": "tên sản phẩm khách đã hỏi ở cuộc trước",
+     "entity": [
+      "sku",
+      "SKU-AP-Y"
+     ]
+    },
+    "price": {
+     "text": "5.200.000đ",
+     "desc": "giá cuối hôm nay",
+     "entity": [
+      "price_vnd",
+      5200000
+     ]
+    },
+    "order_id": {
+     "text": "OD600001",
+     "desc": "mã đơn",
+     "entity": [
+      "order_id",
+      "OD600001"
+     ]
+    },
+    "delivery_days": {
+     "text": "2",
+     "desc": "số ngày giao dự kiến",
+     "entity": null
+    },
+    "address": {
+     "text": "số 15 phố Tây Sơn, quận Đống Đa, Hà Nội",
+     "desc": "địa chỉ giao (khách vừa đọc) — CHỈ dùng sau khi khách đã đọc địa chỉ",
+     "entity": null,
+     "after": "address"
+    },
+    "stock": {
+     "text": "hiện còn hàng",
+     "desc": "tình trạng tồn kho của sản phẩm (còn hàng/hết hàng)",
+     "entity": null
+    },
+    "readback_total": {
+     "text": "5.200.000đ",
+     "desc": "tổng tiền cả đơn (giá × số lượng) — dùng khi ĐỌC LẠI ĐƠN",
+     "entity": null
+    },
+    "payment_label": {
+     "text": "thanh toán khi nhận hàng (COD)",
+     "desc": "hình thức thanh toán chốt của đơn — dùng khi ĐỌC LẠI ĐƠN",
+     "entity": null
+    },
+    "recipient_name": {
+     "text": "Thảo",
+     "desc": "tên người nhận — CHỈ dùng sau khi khách đã nói tên",
+     "entity": null,
+     "after": "recipient_name"
+    },
+    "caller_phone": {
+     "text": "0900020001",
+     "desc": "SĐT nhận hàng (số khách đang gọi/nhắn) — đọc lại để xác nhận",
+     "entity": [
+      "phone",
+      "0900020001"
+     ]
+    }
+   },
+   "n_turns": [
+    11,
+    15
+   ],
+   "style": "normal",
+   "expected": {
+    "must_carry_over": [
+     "product_advised",
+     "price_quoted_vnd",
+     "room_area_m2",
+     "has_children",
+     "blocker"
+    ],
+    "must_not_ask": [
+     "product_advised",
+     "room_area_m2",
+     "has_children",
+     "budget_vnd"
+    ],
+    "success_if": {
+     "tool_called": "order.create",
+     "args_match": {
+      "sku": "SKU-AP-Y",
+      "price_vnd": 5200000,
+      "payment": "COD"
+     }
+    },
+    "ground_truth_facts": {
+     "price_vnd": 5200000,
+     "in_stock": true
+    },
+    "memory_expectation": {
+     "room_area_m2": 20,
+     "has_children": true,
+     "product_advised": "SKU-AP-Y"
+    },
+    "expected_outcome": "chot_don"
+   },
+   "abs_date": "2026-10-16",
+   "days_later": 2,
+   "order_flow": true
+  }
+ ]
+}

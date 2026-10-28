@@ -1,0 +1,42 @@
+{
+  "scenario_id": "SC-GEN-11",
+  "level": "M1",
+  "persona": "khach_het_kien_nhan",
+  "hard_case": null,
+  "customer_phone": "0924410646",
+  "customer_name": "Sơn",
+  "honorific": "anh",
+  "notes": "Khách đã cung cấp diện tích/ngân sách ngay turn 1 — agent không được hỏi lại các slot này ở turn sau trong CÙNG cuộc gọi (test RQR nội bộ 1 call, không chỉ carry-over liên call).",
+  "calls": {
+    "call_1": {
+      "call_date": "2026-10-15",
+      "customer_turns": [
+        "Anh cần máy lọc không khí cho phòng 40m², ngân sách 6 triệu, có bé nhỏ.",
+        "Vậy mẫu nào hợp lý nhất?"
+      ],
+      "facts_established": {
+        "room_area_m2": 40,
+        "budget_vnd": 6000000,
+        "has_children": true
+      },
+      "must_not_ask": [
+        "room_area_m2",
+        "budget_vnd",
+        "has_children"
+      ],
+      "success_if": {
+        "must_say_any": [
+          "AX40",
+          "Samsung AX40"
+        ]
+      },
+      "ground_truth_facts": {
+        "best_fit_sku": "SKU-SS-AX40",
+        "price_vnd": 6490000,
+        "child_safe_lock": true,
+        "room_area_m2": 40
+      },
+      "expected_outcome": "hen_goi_lai"
+    }
+  }
+}

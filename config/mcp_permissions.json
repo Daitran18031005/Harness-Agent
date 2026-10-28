@@ -1,0 +1,174 @@
+{
+  "version": "mcp-permissions-v4-2026-10-28",
+  "_doc": "Danh sách caller ĐƯỢC PHÉP gọi từng tool MCP. Mặc định TỪ CHỐI: caller không có trong danh sách (hoặc không khai báo caller) nhận {error: forbidden}. Caller do client truyền qua `_meta.caller` của yêu cầu MCP và được MỖI server kiểm lại (không tin gateway). Tool GHI (order.*, schedule.callback, handoff.transfer) chỉ dành cho lõi điều phối; tool quản trị (admin.*) chỉ dành cho bộ chạy đánh giá/test. mcp-memory (2026-10-22), hai tầng: TOOL CAO `memory.get_call_brief|search|timeline|commit_turn|commit_episode|delete_customer` dành cho các thành phần — đọc: `CallBriefBuilder`, `HarnessOrchestrator` (get_call_brief), `HarnessOrchestrator` (search), `StreamlitUI`/`Operator` (timeline); GHI: CHỈ `HarnessOrchestrator` (commit_turn, commit_episode; `HarnessCore` gọi qua orchestrator.commit_turn()); XÓA KHÁCH: CHỈ `Operator`. TOOL THẤP `memory.open|close|begin_turn|drain_writes|abort_turn|working_*|profile_*|facts_by_channel|episode*|merge_customer|query_policy|identity_link*` chỉ cho LÕI `HarnessCore`; `EvalRunner`/`TestHarness` là hạ tầng chạy đánh giá/test thay lõi (cùng quyền tầng thấp, không được commit_turn/commit_episode/delete_customer); `memory.admin_audit` chỉ EvalRunner/TestHarness.",
+  "tools": {
+    "crm.get_customer": [
+      "IdentityResolver",
+      "LLMOrchestrator",
+      "HarnessOrchestrator"
+    ],
+    "catalog.search": [
+      "LLMOrchestrator",
+      "HarnessOrchestrator",
+      "SkuResolver",
+      "ProductInfo",
+      "CallBriefBuilder"
+    ],
+    "inventory.check": [
+      "LLMOrchestrator",
+      "HarnessOrchestrator",
+      "SkuResolver",
+      "CallBriefBuilder"
+    ],
+    "pricing.get_quote": [
+      "LLMOrchestrator",
+      "LLMOrchestrator-AutoRepair",
+      "HarnessOrchestrator",
+      "CallBriefBuilder"
+    ],
+    "product.shortlist": [
+      "LLMOrchestrator",
+      "HarnessOrchestrator"
+    ],
+    "order.status": [
+      "CallBriefBuilder",
+      "LLMOrchestrator",
+      "HarnessOrchestrator"
+    ],
+    "order.create": [
+      "LLMOrchestrator",
+      "LLMOrchestrator-AutoRepair",
+      "HarnessOrchestrator"
+    ],
+    "order.update": [
+      "LLMOrchestrator",
+      "LLMOrchestrator-AutoRepair",
+      "HarnessOrchestrator"
+    ],
+    "schedule.callback": [
+      "LLMOrchestrator",
+      "HarnessOrchestrator"
+    ],
+    "handoff.transfer": [
+      "LLMOrchestrator",
+      "HarnessOrchestrator"
+    ],
+    "admin.reset_state": [
+      "EvalRunner",
+      "TestHarness"
+    ],
+    "admin.audit": [
+      "EvalRunner",
+      "TestHarness"
+    ],
+    "memory.open": [
+      "HarnessCore",
+      "EvalRunner",
+      "TestHarness"
+    ],
+    "memory.close": [
+      "HarnessCore",
+      "EvalRunner",
+      "TestHarness"
+    ],
+    "memory.begin_turn": [
+      "HarnessCore",
+      "EvalRunner",
+      "TestHarness"
+    ],
+    "memory.drain_writes": [
+      "HarnessCore",
+      "EvalRunner",
+      "TestHarness"
+    ],
+    "memory.abort_turn": [
+      "HarnessCore",
+      "EvalRunner",
+      "TestHarness"
+    ],
+    "memory.working_get": [
+      "HarnessCore",
+      "EvalRunner",
+      "TestHarness"
+    ],
+    "memory.working_set": [
+      "HarnessCore",
+      "EvalRunner",
+      "TestHarness"
+    ],
+    "memory.profile_set": [
+      "HarnessCore",
+      "EvalRunner",
+      "TestHarness"
+    ],
+    "memory.profile_get": [
+      "HarnessCore",
+      "EvalRunner",
+      "TestHarness"
+    ],
+    "memory.facts_by_channel": [
+      "HarnessCore",
+      "EvalRunner",
+      "TestHarness"
+    ],
+    "memory.profile_versions": [
+      "HarnessCore",
+      "EvalRunner",
+      "TestHarness"
+    ],
+    "memory.episode_add": [
+      "HarnessCore",
+      "EvalRunner",
+      "TestHarness"
+    ],
+    "memory.episodes_get": [
+      "HarnessCore",
+      "EvalRunner",
+      "TestHarness"
+    ],
+    "memory.merge_customer": [
+      "HarnessCore",
+      "EvalRunner",
+      "TestHarness"
+    ],
+    "memory.query_policy": [
+      "HarnessCore",
+      "EvalRunner",
+      "TestHarness"
+    ],
+    "memory.identity_links_load": [
+      "HarnessCore",
+      "EvalRunner",
+      "TestHarness"
+    ],
+    "memory.identity_link_save": [
+      "HarnessCore",
+      "EvalRunner",
+      "TestHarness"
+    ],
+    "memory.admin_audit": [
+      "EvalRunner",
+      "TestHarness"
+    ],
+    "memory.get_call_brief": [
+      "CallBriefBuilder",
+      "HarnessOrchestrator"
+    ],
+    "memory.search": [
+      "HarnessOrchestrator"
+    ],
+    "memory.timeline": [
+      "StreamlitUI",
+      "Operator"
+    ],
+    "memory.commit_turn": [
+      "HarnessOrchestrator"
+    ],
+    "memory.commit_episode": [
+      "HarnessOrchestrator"
+    ],
+    "memory.delete_customer": [
+      "Operator"
+    ]
+  }
+}
