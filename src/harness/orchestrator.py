@@ -360,6 +360,10 @@ class HarnessOrchestrator:
             llm_handled = True
         if (not llm_handled) and llm_client is not None and getattr(llm_client, "available", False):
             try:
+                def _focus() -> Optional[str]:
+                    """Sản phẩm CHA đang bàn lúc này (tra gần nhất trong cuộc gọi, kể cả lượt này); chưa tra gì thì là sản phẩm đã tư vấn."""
+                    return next(iter(self._discussed_parents(brief.product_advised, prior_call_log + live_calls)), brief.product_advised)
+
                 def _tool_executor(name: str, args: Dict[str, Any]) -> Tuple[Dict[str, Any], Dict[str, Any]]:
                     """Trả về (kết quả đã che PII cho LLM+trace, tham số THỰC SỰ đã chạy để ghi trace).
                     Token PII chỉ được mở cho tool/field trong danh sách cho phép (UNMASK_ALLOWED)."""
@@ -378,7 +382,7 @@ class HarnessOrchestrator:
                     exec_args = self._sanitize_basket(name, exec_args)
                     if name in ("pricing.get_quote", "inventory.check") and isinstance(exec_args.get("sku"), str) and not exec_args["sku"].upper().startswith("SKU-"):
                         # LLM hay truyền TÊN sản phẩm ("AirPure Y") làm sku → unknown_sku → không có báo giá để ghi nhớ (nguyên nhân CCR tụt ở SAMPLE-01, § 11.31)
-                        exec_args = {**exec_args, "sku": self._canonical_sku(exec_args["sku"], turn.normalized_text, brief.product_advised)}
+                        exec_args = {**exec_args, "sku": self._canonical_sku(exec_args["sku"], turn.normalized_text, _focus())}
 
                     if name == "pricing.get_quote" and caller_phone and not exec_args.get("customer_phone") and not brief.blocker:
                         # KM theo hồ sơ (vd thu cũ đổi mới) chỉ áp khi báo giá có SĐT; LLM hay bỏ SĐT ở lần gọi sau và nói giá thiếu KM (GĐ2 GEN-13)
@@ -412,7 +416,7 @@ class HarnessOrchestrator:
 
                     if name == "order.create":
                         if self.order_gate.enabled:
-                            exec_args = {**exec_args, "sku": self._canonical_sku(exec_args.get("sku"), turn.normalized_text, brief.product_advised)}
+                            exec_args = {**exec_args, "sku": self._canonical_sku(exec_args.get("sku"), turn.normalized_text, _focus())}
                         blocked = self._gate_order_create(working_session_id, args, exec_args, vault, profile, brief, caller_phone, current_date)
                         if blocked is not None:
                             return blocked, vault.redact_args_for_trace({k: v for k, v in exec_args.items() if k not in GATE_ONLY_ARGS})
@@ -427,7 +431,7 @@ class HarnessOrchestrator:
                     # tool thật báo SKU/variant không hợp lệ.
                     sku_field = "new_variant_sku" if "new_variant_sku" in exec_args else ("sku" if "sku" in exec_args else None)
                     if name in self.TOOLS_WITH_VARIANT_SKU and sku_field and result.get("error") in ("unknown_sku", "variant_not_found"):
-                        fixed_sku = self._repair_unknown_sku(exec_args[sku_field], turn.normalized_text, brief.product_advised)
+                        fixed_sku = self._repair_unknown_sku(exec_args[sku_field], turn.normalized_text, _focus())
                         if fixed_sku:
                             fixed_args = {**exec_args, sku_field: fixed_sku}
                             repaired = self.mcp.execute_tool(name, fixed_args, caller="LLMOrchestrator-AutoRepair")
@@ -438,7 +442,7 @@ class HarnessOrchestrator:
                         if "error" in result:
                             # Tầng 4 (Self-Healing): không tự sửa được -> trả kèm danh sách biến
                             # thể THẬT còn lại để LLM tự suy luận lại ở vòng sau.
-                            parent_guess = brief.product_advised or exec_args[sku_field].rsplit("-", 2)[0]
+                            parent_guess = _focus() or exec_args[sku_field].rsplit("-", 2)[0]
                             variants = self._fetch_variants(parent_guess)
                             if variants:
                                 result = {**result, "available_variants": [
@@ -448,12 +452,15 @@ class HarnessOrchestrator:
                                 ]}
 
                     if name == "catalog.search" and isinstance(result, dict) and not result.get("items") and not exec_args.get("sku"):
-                        result = self._empty_search_fallback(result, exec_args, turn.normalized_text, brief.product_advised, prior_call_log + live_calls, current_date)
+                        result = self._empty_search_fallback(result, exec_args, turn.normalized_text, _focus(), prior_call_log + live_calls, current_date)
                     if dedup_key is not None and "error" not in result:
                         write_cache[self._write_key(name, final_args)] = result
                         write_cache[dedup_key] = result
                         if name == "order.update" and final_args.get("action") == "return":
                             self._forget_returned_order(write_cache, final_args.get("order_id"))
+                    if name == "order.update" and isinstance(result, dict) and result.get("error") == "order_not_found":
+                        result = {**result, "hint": "Không có đơn này. Nếu khách CHƯA đặt đơn và chỉ muốn xem/chọn sản phẩm khác thì đây KHÔNG phải đổi đơn: "
+                                                    "tra catalog.search/product.shortlist rồi pricing.get_quote ĐÚNG SKU của sản phẩm khách nêu."}
                     trace_args = vault.redact_args_for_trace(final_args)
                     masked = vault.mask_value(result, caller_phone)
                     live_calls.append({"name": name, "tool": name, "args": trace_args, "result": masked})
@@ -463,10 +470,13 @@ class HarnessOrchestrator:
                 history = self._trim_history(list(working_state.messages_in_session)[-20:])
                 # Tầng 1 (Dynamic Tool Enum): nếu đã biết sản phẩm cha đang tư vấn, ép tools
                 # schema chỉ chấp nhận đúng variant_sku THẬT của sản phẩm đó cho sku/new_variant_sku.
-                dynamic_tools = with_order_gate_params(self._build_dynamic_tools(llm_client, brief.product_advised) or llm_client.get_base_tools())
+                def dynamic_tools():                                    # dựng lại MỖI vòng: sản phẩm khách vừa đổi sang (catalog.search ở vòng trước) vào được enum ngay vòng sau
+                    parents = self._discussed_parents(brief.product_advised, prior_call_log + pre_stock + live_calls)
+                    return with_order_gate_params(self._build_dynamic_tools(llm_client, parents) or llm_client.get_base_tools())
                 llm_started_at = time.perf_counter()
                 llm_text, llm_tool_calls, llm_usage = llm_client.chat_with_tools(
-                    messages=self._build_llm_messages(turn, brief, history, current_date, caller_phone, stock_calls=pre_stock, precomputed=self._precomp.get(working_session_id)),
+                    messages=self._build_llm_messages(turn, brief, history, current_date, caller_phone, stock_calls=pre_stock, precomputed=self._precomp.get(working_session_id),
+                                                      focus_parent=_focus()),
                     tool_executor=_tool_executor,
                     tools_override=dynamic_tools,
                     timing=llm_timing,
@@ -475,6 +485,7 @@ class HarnessOrchestrator:
                 llm_tool_calls = [c for c in llm_tool_calls if (c.get("result") or {}).get("error") not in ("order_gate_blocked", "handoff_blocked") and not (c.get("result") or {}).get("already_checked_this_turn")]    # lời gọi bị chặn/trùng với tra cứu của code KHÔNG vào tool_calls của trace
                 # Khiếu nại ĐƠN ĐÃ ĐẶT: lượt có tra order.status mà LLM không tự chuyển máy → CODE gọi chốt phân loại (có dữ kiện đơn); ca sự cố/ngoài phạm vi thì CODE chuyển máy và nối câu báo khách.
                 status_calls = [c for c in llm_tool_calls if c.get("name") == "order.status" and (c.get("result") or {}).get("orders")]
+                llm_text, llm_tool_calls = self._bind_price_to_product(llm_text, llm_tool_calls, _tool_executor, live_calls)
                 llm_text = self._ensure_scope_notice(llm_text, llm_tool_calls, handoff_check.get("v"))      # LLM tự chuyển máy ca ngoài phạm vi/an toàn: lời nói thật về giới hạn
                 if status_calls and not handoff_check and not any(c.get("name") == "handoff.transfer" for c in llm_tool_calls):
                     handoff_check["v"] = authorize_handoff(llm_client, turn.llm_text, last_agent, self._order_facts(status_calls, current_date))
@@ -1284,7 +1295,7 @@ class HarnessOrchestrator:
     def _build_llm_messages(self, turn: NormalizedTurn, brief: CallBrief,
                              history: List[Dict[str, str]], current_date: str,
                              caller_phone: Optional[str] = None, stock_calls: Optional[List[Dict[str, Any]]] = None,
-                             precomputed: Optional[Dict[str, Any]] = None) -> List[Dict[str, str]]:
+                             precomputed: Optional[Dict[str, Any]] = None, focus_parent: Optional[str] = None) -> List[Dict[str, str]]:
         """Dựng messages cho LLM function-calling, kèm lịch sử hội thoại trong phiên để LLM
         có trí nhớ nhiều lượt (VD: lượt 2 khách hỏi đổi size, lượt 3 xác nhận).
         LLM KHÔNG thấy SĐT/địa chỉ/CCCD thật: chỉ thấy token (xem src/privacy/pii_vault.py)."""
@@ -1304,8 +1315,11 @@ class HarnessOrchestrator:
             "Không nhận xét, so sánh tiêu cực về đối thủ; chỉ nêu điểm mạnh của shop dựa trên dữ liệu thật. "
             "BẮT BUỘC: khi khách đồng ý mua/chốt đơn, bạn PHẢI gọi tool order.create TRƯỚC — "
             "tuyệt đối không tự nói 'đã lên đơn'/'đã tạo đơn' nếu chưa thực sự gọi tool này trong "
-            "cùng lượt. Khi khách muốn đổi size/màu/sản phẩm, PHẢI gọi tool order.update TRƯỚC — "
+            "cùng lượt. Khi khách muốn đổi size/màu/sản phẩm CỦA MỘT ĐƠN ĐÃ ĐẶT (đã có order.create ở cuộc này, hoặc có 'order_id' trong thông tin đã biết, hoặc khách nói rõ đã đặt/đã mua), PHẢI gọi tool order.update TRƯỚC — "
             "tuyệt đối không tự nói 'đã đổi'/'đã làm thủ tục' nếu chưa gọi tool này. "
+            "CHƯA có đơn nào mà khách nói 'đổi sang/xem/lấy món khác', 'đổi ý' thì khách đang CHỌN LẠI SẢN PHẨM, không phải đổi đơn: KHÔNG gọi order.update; "
+            "tra catalog.search/product.shortlist cho sản phẩm khách nêu rồi báo giá bằng pricing.get_quote ĐÚNG SKU của sản phẩm đó. "
+            "Tên sản phẩm bạn nói và SKU bạn báo giá phải là MỘT sản phẩm. "
             "QUY TRÌNH ĐẶT ĐƠN do hệ thống kiểm soát: khi khách muốn mua, gọi order.create với những gì khách ĐÃ NÓI trong cuộc gọi này "
             "(recipient_name = tên người nhận, recipient_phone = SĐT nhận nếu khác số đang gọi, address, payment) — KHÔNG tự điền giá trị mặc định/đoán "
             "(không tự đặt payment=COD khi khách chưa nói). Nếu kết quả là error=order_gate_blocked: đơn CHƯA được tạo; hãy nói với khách ĐÚNG nội dung "
@@ -1317,7 +1331,9 @@ class HarnessOrchestrator:
             "tuyệt đối không nói 'không mất phí' nếu tool báo có phí. "
             "Nếu đã có Call Brief cuộc gọi trước (must_not_ask), KHÔNG hỏi lại các thông tin đã biết "
             "bằng câu hỏi mở — nếu cần xác nhận lại, chỉ hỏi xác nhận (confirm) một lần. "
-            "Khi tư vấn/chọn sản phẩm (chưa có 'sản phẩm đã tư vấn' trong Call Brief, hoặc khách muốn đổi sang sản phẩm khác), "
+            "Khách nêu ĐÍCH DANH một sản phẩm/mẫu (tên hoặc loại cụ thể như 'áo windbreaker', 'AirPure Y', kể cả gõ sai chính tả) thì gọi catalog.search theo tên đó "
+            "(tham số query) để lấy SKU và giá thật — KHÔNG dùng product.shortlist, và tuyệt đối không nói 'không có sản phẩm' khi chưa tra bằng catalog.search. "
+            "Khi tư vấn/chọn sản phẩm theo NHU CẦU (chưa có 'sản phẩm đã tư vấn' trong Call Brief, hoặc khách muốn đổi sang sản phẩm khác mà chưa nêu tên), "
             "PHẢI gọi tool product.shortlist TRƯỚC — chỉ truyền các slot khách ĐÃ nói (hệ thống tự bổ sung slot đã nhớ) — rồi chốt "
             "CHÍNH XÁC MỘT sản phẩm: sản phẩm đứng đầu danh sách (trường 'recommendation'); không liệt kê nhiều lựa chọn cùng lúc "
             "trừ khi khách chủ động hỏi so sánh. Nếu sản phẩm đứng đầu có mục 'violated' (vd vượt ngân sách), nói rõ mục đó và lý do "
@@ -1355,6 +1371,9 @@ class HarnessOrchestrator:
             "xử lý (gọi handoff.transfer), không tự hứa thời hạn."
         )
         facts = {k: v for k, v in (brief.profile_facts or {}).items() if k in self.LLM_PROFILE_KEYS}
+        other_product = bool(focus_parent and brief.product_advised and self._parent_sku(focus_parent) != self._parent_sku(brief.product_advised))
+        if other_product:                                  # khách đã chuyển sang sản phẩm khác: size/màu đã lưu là của sản phẩm CŨ, không đưa vào prompt
+            facts = {k: v for k, v in facts.items() if k not in ("size", "color", "variant_sku")}
         phone_line = "SĐT người gọi: CURRENT_CUSTOMER" if caller_phone else "SĐT người gọi: chưa xác định"
         channels = getattr(brief, "channels_seen", None) or []
         context_lines = [
@@ -1367,6 +1386,8 @@ class HarnessOrchestrator:
             f"kênh khách đã liên hệ: {channels or 'chưa rõ'}, "
             f"dữ liệu theo từng kênh: {getattr(brief, 'facts_by_channel', None) or 'chưa có'}, "
             f"câu mở đầu đề xuất: {brief.suggested_opening}",
+            "Size/màu/variant_sku trong 'thông tin đã biết' CHỈ là lựa chọn cho SẢN PHẨM ĐÃ TƯ VẤN; khách chuyển sang sản phẩm khác thì KHÔNG dùng, phải hỏi lại size/màu."
+            + (f" Khách ĐANG xem sản phẩm khác ({self._product_info(focus_parent).get('name') or focus_parent}), không phải '{brief.product_advised}'." if other_product else ""),
         ]
         if precomputed:
             st, pr = precomputed.get("stock"), precomputed.get("price")
@@ -1479,6 +1500,39 @@ class HarnessOrchestrator:
             "fallback_all": route.get("fallback_all"),
             "vnd_cost": round(sum(float(u.get("vnd_cost") or 0) for u in usages), 2),
             "latency_ms": sum(int(u.get("latency_ms") or 0) for u in usages)})
+
+    def _named_parents(self, text: str, exclude: set) -> List[str]:
+        """Sản phẩm CHA mà lời agent gọi đúng tên catalog (không phân biệt dấu/hoa thường), trừ `exclude` (quà tặng)."""
+        from src.agents.specialists import catalog_products
+        folded = _fold(text)
+        return [sku for sku, p in catalog_products().items() if sku not in exclude and p.get("name") and _fold(p["name"]) in folded]
+
+    def _bind_price_to_product(self, text: str, calls: List[Dict[str, Any]], run_tool, live_calls: List[Dict[str, Any]]):
+        """Tên sản phẩm trong câu trả lời và SKU được báo giá phải là MỘT sản phẩm. Lỗi thật (CHECKING § 11.102): LLM báo giá `SKU-JK-DWN-L-BE`
+        rồi nói "giá Áo khoác gió Windbreak là 1.490.000đ" (giá đúng 690.000). Guardrail số tiền không bắt được vì 1.490.000 có trong kết quả tool.
+        Khi lời nói gọi tên đúng MỘT sản phẩm (không tính quà tặng), nêu số tiền trùng giá của một sản phẩm KHÁC trong lượt, và sản phẩm đó chưa
+        được báo giá: CODE báo giá lại đúng sản phẩm và dựng câu từ kết quả tool."""
+        amounts = {v for v, _ in extract_amounts(text)}
+        quotes = [c for c in calls if c.get("name") == "pricing.get_quote" and isinstance((c.get("result") or {}).get("final_price_vnd"), (int, float))]
+        if not amounts or not quotes:
+            return text, calls
+        gifts = {p.get("gift_sku") for c in quotes for p in (c["result"].get("applied_promos") or []) if p.get("gift_sku")}
+        named = self._named_parents(text, gifts)
+        if len(named) != 1:
+            return text, calls
+        parent = named[0]
+        if any(self._parent_sku((c.get("args") or {}).get("sku") or "") == parent for c in quotes):
+            return text, calls
+        prices = {int(c["result"][k]) for c in quotes for k in ("final_price_vnd", "list_price_vnd") if isinstance(c["result"].get(k), (int, float))}
+        if not (amounts & prices):
+            return text, calls
+        sent = len(live_calls)
+        res, _ = run_tool("pricing.get_quote", {"sku": parent, "qty": 1})
+        final = res.get("final_price_vnd") if isinstance(res, dict) else None
+        if not isinstance(final, (int, float)):
+            return self.SAFE_FALLBACK_TEXT, calls + live_calls[sent:]
+        name = self._product_info(parent).get("name") or parent
+        return (f"Dạ em xin kiểm tra lại cho đúng sản phẩm ạ: {name} hiện có giá {int(final):,}đ.".replace(",", "."), calls + live_calls[sent:])
 
     def _ensure_identity_question(self, sid: str, text: str, brief: CallBrief) -> str:
         """SĐT dùng chung (brief.blocker = ambiguous_identity): lời agent PHẢI có câu xin xác nhận tên (đúng một lần/cuộc) dù khách mở đầu bằng câu hỏi khác;
@@ -1627,17 +1681,19 @@ class HarnessOrchestrator:
         items = res.get("items", [])
         return items[0].get("variants", []) if items else []
 
-    def _build_dynamic_tools(self, llm_client, parent_sku: Optional[str]) -> Optional[List[Dict[str, Any]]]:
+    def _build_dynamic_tools(self, llm_client, parent_sku) -> Optional[List[Dict[str, Any]]]:
         """Tầng 1 (Dynamic Tool Enum): nếu đã biết sản phẩm cha, tiêm enum=[variant_sku thật...]
         vào tools schema cho tham số sku/new_variant_sku — ép LLM chỉ chọn được token hợp lệ
         ngay từ đầu, chặn lỗi SKU tự ghép từ gốc. Không ảnh hưởng latency (catalog.search chạy
         local, không qua mạng; không thêm round-trip LLM nào)."""
-        if not parent_sku:
+        parents = [parent_sku] if isinstance(parent_sku, str) else [p for p in (parent_sku or []) if p]    # nhiều sản phẩm đang bàn → enum là HỢP của chúng
+        variant_skus: List[str] = []
+        for parent in parents:
+            variants = self._fetch_variants(parent)
+            if variants:
+                variant_skus += [parent] + [v["variant_sku"] for v in variants]
+        if not variant_skus:
             return None
-        variants = self._fetch_variants(parent_sku)
-        if not variants:
-            return None
-        variant_skus = [parent_sku] + [v["variant_sku"] for v in variants]
         return with_variant_enum(llm_client.get_base_tools(), variant_skus, tool_names=self.TOOLS_WITH_VARIANT_SKU)
 
     def _resolve_variant_by_attributes(self, parent_sku: str, user_text: str) -> Optional[str]:
@@ -1668,8 +1724,8 @@ class HarnessOrchestrator:
 
     def _discussed_parents(self, known_parent: Optional[str], call_log: List[Dict[str, Any]]) -> List[str]:
         """Sản phẩm CHA đang bàn trong cuộc gọi: sản phẩm đã tư vấn, rồi sản phẩm có biến thể trong các lần tra gần nhất (mới nhất trước), tối đa 3."""
-        parents = [known_parent] if known_parent else []
-        for tc in reversed(call_log):
+        parents: List[str] = []
+        for tc in reversed(call_log):                                  # MỚI NHẤT trước: khách đổi sang sản phẩm khác giữa cuộc thì sản phẩm đó là "đang bàn"
             args, res = tc.get("args") or {}, tc.get("result") or {}
             found = [it.get("sku") for it in (res.get("items") or [])[:3]] if tc.get("name") == "catalog.search" else \
                     [self._parent_sku(args["sku"])] if isinstance(args.get("sku"), str) and tc.get("name") in ("inventory.check", "pricing.get_quote", "order.create") else []
@@ -1678,7 +1734,9 @@ class HarnessOrchestrator:
                     parents.append(sku)
             if len(parents) >= 3:
                 break
-        return parents
+        if known_parent and known_parent not in parents:               # sản phẩm đã tư vấn từ đầu cuộc: vẫn còn trong tầm nhưng sau những gì vừa tra
+            parents.append(known_parent)
+        return parents[:3]
 
     def _check_named_variants(self, customer_texts: List[str], known_parent: Optional[str], call_log: List[Dict[str, Any]],
                               this_turn_calls: List[Dict[str, Any]], on: str) -> List[Dict[str, Any]]:

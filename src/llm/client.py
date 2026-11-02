@@ -404,7 +404,8 @@ class LLMClient:
 
         for _ in range(max_rounds):
             round_start = time.perf_counter()
-            text, tool_calls, usage, first_token_at = self._stream_round(working_messages, active_tools)
+            round_tools = active_tools() if callable(active_tools) else active_tools      # callable: dựng lại schema mỗi vòng (sản phẩm đang bàn có thể đổi giữa lượt)
+            text, tool_calls, usage, first_token_at = self._stream_round(working_messages, round_tools)
             round_ms.append(int(round((time.perf_counter() - round_start) * 1000)))
             api_calls += 1
             if usage is not None:

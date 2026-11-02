@@ -24,6 +24,12 @@ def catalog_product(sku: Optional[str]) -> Dict[str, Any]:
     return _CATALOG.get(s, {})
 
 
+def catalog_products() -> Dict[str, Dict[str, Any]]:
+    """Mọi sản phẩm CHA của catalog {sku: sản phẩm}."""
+    catalog_product(None)
+    return _CATALOG or {}
+
+
 def product_name(sku: Optional[str]) -> str:
     """Tên nói với khách: tên trong catalog; không có thì giữ mã (không bao giờ bịa tên)."""
     return catalog_product(sku).get("name") or (sku or "")
