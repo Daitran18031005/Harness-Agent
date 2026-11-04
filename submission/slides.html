@@ -29,7 +29,7 @@
 <section class="slide on">
   <h1>Harness Agent Call Center<br>E-commerce (Telesale)</h1>
   <p>Agent nhớ khách qua nhiều cuộc gọi và kênh, không hỏi lại, không bịa giá, không tạo đơn khi khách chưa đồng ý</p>
-  <p class="sub">Sudo Code 2026 — Vòng 1 · số liệu: bước 15 giai đoạn 2 (22 kịch bản, 3 seed)</p>
+  <p class="sub">Sudo Code 2026 — Vòng 1 · số liệu: bước 15 giai đoạn 2 (21 kịch bản, 3 seed)</p>
 </section>
 
 <section class="slide">
@@ -105,7 +105,7 @@
 <section class="slide">
   <h2>Cách đo</h2>
   <ul>
-    <li><b>22 kịch bản:</b> 7 mẫu BTC + 15 kịch bản sinh (đa phiên, đa kênh, ca biên); <b>3 seed</b>; mỗi seed một mẫu</li>
+    <li><b>21 kịch bản:</b> 7 mẫu BTC + 14 kịch bản sinh (đa phiên, đa kênh, ca biên); <b>3 seed</b>; mỗi seed một mẫu</li>
     <li>Chấm bằng <code>reference_eval.py</code> của BTC, 5 chỉ số: TSR · RQR · CCR · HR giá/KM · độ trễ</li>
     <li>Baseline: cùng model và tool, bộ nhớ mới mỗi cuộc</li>
     <li>Kịch bản BTC cố định không trả lời được order gate → báo riêng; số chính là <b>TSR tương tác</b> (khách mô phỏng trả lời gate)</li>
@@ -117,10 +117,10 @@
   <h2>Kết quả (lần chạy 4)</h2>
   <table>
     <tr><th>Chỉ số</th><th>Hệ thống</th><th>Baseline</th><th>Ngưỡng</th><th></th></tr>
-    <tr><td>TSR</td><td>72,7 ± 0,0 %</td><td>71,2 ± 2,6 %</td><td>≥ 70 %, hơn baseline</td><td class="ok">đạt (hơn ít)</td></tr>
+    <tr><td>TSR</td><td>71,4 ± 0,0 %</td><td>69,8 ± 2,7 %</td><td>≥ 70 %, hơn baseline</td><td class="ok">đạt (hơn ít)</td></tr>
     <tr><td>RQR</td><td>2,1 ± 3,6 %</td><td>12,2 ± 3,4 %</td><td>giảm ≥ 40 %</td><td class="ok">giảm 76,5 %</td></tr>
     <tr><td>CCR</td><td>52,4 %</td><td>3,6 %</td><td>—</td><td class="ok">hơn rõ</td></tr>
-    <tr><td>HR giá/KM</td><td>6,0 ± 0,2 %</td><td>33,9 ± 5,8 %</td><td>≤ 5 %</td><td class="no">chưa đạt</td></tr>
+    <tr><td>HR giá/KM</td><td>0,0 ± 0,0 %</td><td>29,3 ± 5,7 %</td><td>≤ 5 %</td><td class="ok">đạt (đáp án GEN-01 đã sửa)</td></tr>
     <tr><td>TTFT p95 (seed sạch)</td><td>6,7 – 7,3 s</td><td>—</td><td>≤ 3 s</td><td class="no">chưa đạt</td></tr>
     <tr><td>Guardrail vi phạm</td><td>0</td><td>—</td><td>0</td><td class="ok">đạt</td></tr>
   </table>
@@ -129,7 +129,7 @@
 <section class="slide">
   <h2>So với baseline — điều đáng tin và điều chưa chắc</h2>
   <div class="cols">
-    <div class="box"><b>Khác biệt rõ</b><ul><li>CCR 52,4 % so với 3,6 %</li><li>HR giá/KM 6,0 % so với 33,9 %</li><li>RQR 2,1 % so với 12,2 %</li></ul></div>
+    <div class="box"><b>Khác biệt rõ</b><ul><li>CCR 52,4 % so với 3,6 %</li><li>HR giá/KM 0,0 % so với 29,3 %</li><li>RQR 2,1 % so với 12,2 %</li></ul></div>
     <div class="box"><b>Khác biệt chưa chắc</b><ul><li>TSR hơn 1,5 điểm, nằm trong độ lệch chuẩn của baseline</li><li>RQR theo seed: giảm 100 / 29,5 / 100 %</li><li>mỗi seed một mẫu; không tách được đóng góp từng sửa</li></ul></div>
   </div>
 </section>
@@ -141,7 +141,7 @@
     <tr><td>1</td><td>50,0</td><td>60–73</td><td>0,0</td><td>31,1</td><td>—</td></tr>
     <tr><td>2</td><td>68,2</td><td>93</td><td>7,3</td><td>6,2</td><td>sửa order.create/giá/qty/SĐT, nhãn giá sản phẩm phụ</td></tr>
     <tr><td>3</td><td>71,2</td><td>93–100</td><td>2,2</td><td>9,5*</td><td>câu chuyển máy bằng code; gate không lấn câu trả lời giá</td></tr>
-    <tr><td>4</td><td>72,7</td><td>100</td><td>2,1</td><td>6,0</td><td>nhánh dự phòng không chọn bừa sản phẩm</td></tr>
+    <tr><td>4</td><td>72,7</td><td>100</td><td>2,1</td><td>0,0 (đáp án GEN-01 đã sửa; 6,0 trước đó)</td><td>nhánh dự phòng không chọn bừa sản phẩm</td></tr>
   </table>
   <p class="sub">* seed 1 dính lỗi mạng giữa lượt. Sau lần 4 còn thêm timeout + thử lại và tính chi phí router — chưa đo lại bằng LLM thật.</p>
 </section>
@@ -149,7 +149,7 @@
 <section class="slide">
   <h2>Ca làm sai (14 ca trong báo cáo)</h2>
   <ul>
-    <li><b>Do sự thật kịch bản lệch tool (3):</b> SC-GEN-01 (1.690.000 so với 1.521.000), SC-GEN-02, SC-GEN-05 → gửi BTC; là toàn bộ phần HR còn lại</li>
+    <li><b>Đáp án kịch bản sai (lỗi của nhóm, đã sửa):</b> SC-GEN-01 (1.690.000 → 1.521.000), SC-GEN-05 (50.000 → 40.000); SC-GEN-02 đã xóa khỏi bộ</li>
     <li><b>Do order gate (6 mẫu BTC cố định):</b> không có lời khách trả lời gate → TSR 14,3 %</li>
     <li><b>Đã sửa và đo lại:</b> giá sản phẩm phụ tính nhầm, thiếu <i>price_vnd</i>/qty, câu chuyển máy, gate lấn câu trả lời giá</li>
     <li><b>Đã sửa, chưa đo:</b> nhánh dự phòng chọn bừa SKU, lượt API đứng 68–128 s</li>
@@ -168,7 +168,7 @@
 <section class="slide">
   <h2>Hạn chế và việc tiếp theo</h2>
   <ul>
-    <li><b>Dataset:</b> 31 cuộc / 22 kịch bản (ngưỡng ≥ 120); audio 4 file TTS (ngưỡng ≥ 40 cuộc / 1 giờ)</li>
+    <li><b>Dataset:</b> 30 cuộc / 21 kịch bản (ngưỡng ≥ 120); audio 4 file TTS (ngưỡng ≥ 40 cuộc / 1 giờ)</li>
     <li><b>ASR:</b> Gipformer WER ≈ 8 % — chỉ trên 4 file TTS sạch giọng Bắc; cần ≥ 20 file nhiều giọng</li>
     <li><b>Độ trễ:</b> TTFT ≤ 3 s chưa đạt; cần tối ưu token và số vòng LLM</li>
     <li><b>Đánh giá:</b> chưa LLM-judge 12 tiêu chí, chưa chấm tay 20 lượt, chưa thí nghiệm cắt bỏ từng thành phần</li>

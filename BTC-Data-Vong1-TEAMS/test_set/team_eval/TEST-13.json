@@ -1,0 +1,55 @@
+{
+  "scenario_id": "TEST-13",
+  "level": "M1",
+  "persona": "khach_thich_khuyen_mai",
+  "hard_case": "het_hang_theo_timeline",
+  "customer_phone": "0981933190",
+  "customer_name": "Lan",
+  "honorific": "chị",
+  "notes": "Cuộc 1 (2026-10-15): RunLite 2 Pro size 41 màu đen còn 3 đôi. Cuộc 2 (2026-10-18): inventory_timeline ghi nhận hết hàng từ 17/10, nhập lại 24/10. Agent phải báo hết size 41 đen và hẹn ngày về hàng hoặc đổi size.",
+  "calls": {
+    "call_1": {
+      "call_date": "2026-10-15",
+      "customer_turns": [
+        "Em ơi giày RunLite 2 Pro màu đen size 41 còn hàng không em?",
+        "Để chị hỏi bạn xem size này vừa chân không rồi chị gọi lại."
+      ],
+      "facts_established": {
+        "product_advised": "SKU-SN-RUN2",
+        "variant_sku": "SKU-SN-RUN2-41-DEN",
+        "price_quoted_vnd": 1521000
+      },
+      "expected_outcome": "hen_goi_lai"
+    },
+    "call_2": {
+      "days_later": 3,
+      "customer_turns": [
+        "Alo em, hôm nay chị gọi lại chốt lấy đôi RunLite 2 Pro size 41 màu đen nhé.",
+        "Hết hàng rồi hả em? Khi nào mới có lại vậy?"
+      ],
+      "must_carry_over": [
+        "product_advised",
+        "variant_sku"
+      ],
+      "must_not_ask": [
+        "product_advised"
+      ],
+      "success_if": {
+        "must_not_call_tools": [
+          "order.create"
+        ],
+        "must_say_any": [
+          "hết hàng",
+          "tạm hết",
+          "24/10",
+          "24 tháng 10"
+        ]
+      },
+      "ground_truth_facts": {
+        "variant_in_stock": false,
+        "restock_date": "2026-10-24"
+      },
+      "expected_outcome": "hen_goi_lai"
+    }
+  }
+}

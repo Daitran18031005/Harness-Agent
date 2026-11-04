@@ -1,0 +1,62 @@
+{
+  "scenario_id": "TEST-40",
+  "level": "M1",
+  "persona": "khach_da_mua_doi_size",
+  "hard_case": null,
+  "customer_phone": "0900001016",
+  "customer_name": "Quyên",
+  "honorific": "chị",
+  "notes": "[Thời trang] Áo khoác gió Windbreak (SKU-JK-WND: 690.000đ). Đổi size lần đầu từ M sang L màu đen trong hạn 7 ngày. DT-01 & DT-03: phí 0đ, gọi order.update.",
+  "calls": {
+    "call_1": {
+      "call_date": "2026-10-12",
+      "customer_turns": [
+        "Em ơi áo khoác gió Windbreak màu đen size M giá bao nhiêu?",
+        "Ok lên đơn cho chị áo size M màu đen nhé, COD về 10 Chu Văn An, Ba Đình, Hà Nội."
+      ],
+      "facts_established": {
+        "product_advised": "SKU-JK-WND",
+        "variant_sku": "SKU-JK-WND-M-DEN",
+        "size": "M",
+        "color": "den",
+        "price_quoted_vnd": 690000,
+        "order_id": "OD682780",
+        "payment": "COD"
+      },
+      "expected_outcome": "chot_don"
+    },
+    "call_2": {
+      "days_later": 3,
+      "customer_turns": [
+        "Alo em, đơn OD682780 áo gió chị nhận rồi nhưng mặc bị kích vai quá.",
+        "Chị muốn đổi lên size L cùng màu đen có mất phí gì không em?",
+        "Ok làm thủ tục đổi sang size L giúp chị nhé."
+      ],
+      "must_carry_over": [
+        "order_id",
+        "variant_sku",
+        "size",
+        "color"
+      ],
+      "must_not_ask": [
+        "product_advised",
+        "order_id",
+        "color"
+      ],
+      "success_if": {
+        "tool_called": "order.update",
+        "args_match": {
+          "order_id": "OD682780",
+          "new_variant_sku": "SKU-JK-WND-L-DEN",
+          "action": "exchange_size"
+        }
+      },
+      "ground_truth_facts": {
+        "exchange_fee_vnd": 0,
+        "return_days": 7,
+        "price_vnd": 690000
+      },
+      "expected_outcome": "chot_don"
+    }
+  }
+}

@@ -249,6 +249,15 @@ def itn_digit_units(text: str) -> str:
     return _RE_K.sub(lambda m: _fmt_money(int(m.group(1)) * 1000), text)
 
 
+_RE_HALF_MILLION = re.compile(r"(?<![\d.,])(\d+)\s*(?:triệu|tr)\s+rưỡi\b", re.I)
+
+
+def itn_half_million(text: str) -> str:
+    """'5 triệu rưỡi' -> '5,5 triệu' (rồi itn_digit_units đổi thành 5.500.000). Hàm RIÊNG, không nằm trong phần ITN đã KHÓA
+    (trước đây chữ số + 'triệu rưỡi' ra '5.000.000 rưỡi', mất nửa triệu). shortcut: chỉ 'triệu', chưa có 'nghìn/k rưỡi', thêm khi gặp."""
+    return _RE_HALF_MILLION.sub(lambda m: f"{m.group(1)},5 triệu", text)
+
+
 # ---------------------------------------------------------------- ngày giờ tương đối
 # --- Số nhỏ nói bằng chữ cạnh đơn vị ("mười lõi", "mười lăm tháng mười", "hai mươi mét vuông") -> chữ số. Hàm RIÊNG, không nằm trong phần ITN đã KHÓA
 # (scripts/lock_asr_rules.py băm `itn_number_words` & các hàm tiền); chỉ ≤ 99, chỉ khi đứng cạnh đơn vị/tháng/ngày/size để không đổi nhầm "thứ hai", "năm ngoái".
@@ -441,6 +450,7 @@ class RequestNormalizer:
         before = text
         text = itn_phone_digits(text)
         text = itn_number_words(text)
+        text = itn_half_million(text)
         text = itn_digit_units(text)
         text = itn_small_numbers(text)
         if text != before:

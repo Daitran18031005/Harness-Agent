@@ -10,9 +10,11 @@ from datetime import date
 from typing import Any, Dict
 
 from fastapi import APIRouter, File, HTTPException, Query, Request, UploadFile
+from fastapi.responses import PlainTextResponse
 
 from src.channels.normalizer import InputChannel
 from src.common.dates import normalize_call_date
+from monitoring.metrics import observe_turn
 from src.llm.cost_tracker import BudgetExceeded
 
 from .schemas import (ASRResponse, CallBriefResponse, ChatRequest, ChatResponse, EndResponse, OrdersResponse, SessionCreate, SessionInfo,
@@ -73,6 +75,18 @@ def health(request: Request) -> Dict[str, Any]:
             "spent_vnd": round(tracker.spent_vnd(), 1) if tracker else None, "cap_vnd": getattr(tracker, "hard_cap_vnd", None)}
 
 
+@router.get("/metrics", response_class=PlainTextResponse)
+def metrics(request: Request):
+    """Số đo cho Prometheus/Grafana (monitoring/): độ trễ, chi phí, tool, guardrail, order gate của các lượt đã chạy qua API này."""
+    reg = request.app.state.metrics
+    tracker = getattr(_pipeline(request).llm_client, "cost_tracker", None)
+    if tracker is not None:
+        reg.set("llm_spent_vnd", round(tracker.spent_vnd(), 2))
+        if getattr(tracker, "hard_cap_vnd", None) is not None:
+            reg.set("llm_cap_vnd", tracker.hard_cap_vnd)
+    return PlainTextResponse(reg.render(), media_type="text/plain; version=0.0.4")
+
+
 @router.post("/sessions", response_model=SessionInfo)
 def create_session(body: SessionCreate, request: Request):
     return _open_session(request, body).info()
@@ -118,6 +132,10 @@ def chat(body: ChatRequest, request: Request):
         s.turn_num += 1
         s.customer_id = result.get("customer_id") or s.customer_id
         s.tool_log += [tool_entry(a) for a in p.mcp_gateway.audit_log[start:]]
+        try:
+            observe_turn(request.app.state.metrics, result["trace"], source="api", config="full")
+        except Exception:                            # giám sát không bao giờ được làm hỏng một lượt chat
+            logger.warning("[api] không ghi được số đo giám sát", exc_info=True)
         return {"session_id": s.session_id, "call_name": s.call_name, "turn_num": s.turn_num, "customer_id": s.customer_id,
                 "answer": result["answer"], "trace": slim_trace(result["trace"])}
 

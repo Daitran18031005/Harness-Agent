@@ -1,0 +1,44 @@
+{
+  "scenario_id": "TEST-36",
+  "level": "M1",
+  "persona": "khach_can_ship_gap",
+  "hard_case": "cod_can_xac_nhan",
+  "customer_phone": "0900001013",
+  "customer_name": "Tùng",
+  "honorific": "anh",
+  "notes": "[Mẹ & Bé] Máy hút sữa Medela Swing Maxi (SKU-MB-PUMP2: 5.990.000đ). Giá trị trên 2 triệu, VC-03 quy định needs_confirmation_call=true, agent phải thông báo cho khách.",
+  "calls": {
+    "call_1": {
+      "call_date": "2026-10-15",
+      "customer_turns": [
+        "Anh muốn đặt mua máy hút sữa Medela Swing Maxi giá 5.990.000đ cho vợ.",
+        "Giao COD về số 90 Lê Văn Sỹ, quận 3, TP.HCM giúp anh.",
+        "Lên đơn ngay giúp anh nhé."
+      ],
+      "facts_established": {
+        "product_advised": "SKU-MB-PUMP2",
+        "price_quoted_vnd": 5990000,
+        "payment": "COD"
+      },
+      "success_if": {
+        "tool_called": "order.create",
+        "args_match": {
+          "sku": "SKU-MB-PUMP2",
+          "price_vnd": 5990000,
+          "payment": "COD"
+        },
+        "must_say_any": [
+          "gọi xác nhận",
+          "xác nhận đơn",
+          "điện thoại xác nhận"
+        ]
+      },
+      "ground_truth_facts": {
+        "price_vnd": 5990000,
+        "needs_confirmation_call": true,
+        "payment": "COD"
+      },
+      "expected_outcome": "chot_don"
+    }
+  }
+}

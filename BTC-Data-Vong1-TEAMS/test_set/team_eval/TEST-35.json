@@ -1,0 +1,52 @@
+{
+  "scenario_id": "TEST-35",
+  "level": "M1",
+  "persona": "khach_do_du_hoi_nguoi_nha",
+  "hard_case": "het_hang_theo_timeline",
+  "customer_phone": "0900001012",
+  "customer_name": "Chi",
+  "honorific": "chị",
+  "notes": "[Mẹ & Bé] Xe đẩy Joie Pact (SKU-MB-STR1). Cuộc 1 (2026-10-15) còn 2 chiếc. Cuộc 2 (2026-10-26 - sau 11 ngày), inventory_timeline ghi nhận hết hàng từ 25/10 (qty=0). Agent phải báo hết hàng.",
+  "calls": {
+    "call_1": {
+      "call_date": "2026-10-15",
+      "customer_turns": [
+        "Em ơi xe đẩy gấp gọn Joie Pact bên em còn hàng không, giá bao nhiêu?",
+        "Ok để chị hỏi lại ý kiến ông bà xem thích mẫu này không rồi chị liên hệ lại nhé."
+      ],
+      "facts_established": {
+        "product_advised": "SKU-MB-STR1",
+        "price_quoted_vnd": 3490000
+      },
+      "expected_outcome": "hen_goi_lai"
+    },
+    "call_2": {
+      "days_later": 11,
+      "customer_turns": [
+        "Alo em, hôm nay chị gọi lại đặt chiếc xe đẩy Joie Pact hôm trước nhé.",
+        "Ủa hết hàng rồi hả em? Tiếc quá vậy."
+      ],
+      "must_carry_over": [
+        "product_advised"
+      ],
+      "must_not_ask": [
+        "product_advised"
+      ],
+      "success_if": {
+        "must_not_call_tools": [
+          "order.create"
+        ],
+        "must_say_any": [
+          "hết hàng",
+          "tạm hết",
+          "cháy hàng"
+        ]
+      },
+      "ground_truth_facts": {
+        "in_stock": false,
+        "stock_date": "2026-10-25"
+      },
+      "expected_outcome": "hen_goi_lai"
+    }
+  }
+}

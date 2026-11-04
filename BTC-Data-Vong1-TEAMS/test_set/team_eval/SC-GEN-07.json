@@ -1,0 +1,35 @@
+{
+  "scenario_id": "SC-GEN-07",
+  "level": "M1",
+  "persona": "khach_khiếu_nại",
+  "hard_case": "khieu_nai_loi_nsx",
+  "customer_phone": "0956517883",
+  "customer_name": "Thủy",
+  "honorific": "chị",
+  "notes": "Máy lọc không khí AirPure X bị lỗi nguồn sau 12 ngày sử dụng. Khách lo lắng vì quá 7 ngày đổi trả thường (DT-01). Agent phải giải thích đúng chính sách DT-05: lỗi nhà sản xuất được đổi mới 1-1 trong 30 ngày.",
+  "calls": {
+    "call_1": {
+      "call_date": "2026-10-15",
+      "customer_turns": [
+        "Em ơi cái máy lọc AirPure X chị mới mua được 12 ngày mà tự nhiên bật không lên nguồn nữa.",
+        "Quá 7 ngày rồi thì có được đổi máy khác không em hay chỉ sửa thôi?",
+        "Ok vậy em lên lịch kỹ thuật qua kiểm tra đổi máy mới cho chị nhé."
+      ],
+      "success_if": {
+        "must_say_any": [
+          "30 ngày",
+          "ba mươi ngày",
+          "đổi mới",
+          "lỗi nhà sản xuất",
+          "1 đổi 1"
+        ]
+      },
+      "ground_truth_facts": {
+        "policy_code": "DT-05",
+        "exchange_window_days": 30,
+        "defect_type": "manufacturer"
+      },
+      "expected_outcome": "hen_goi_lai"
+    }
+  }
+}

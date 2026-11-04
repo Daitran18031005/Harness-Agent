@@ -71,7 +71,7 @@ def main(argv=None) -> int:
     if args.ids:
         want = {x.strip() for x in args.ids.split(",")}
         frames = [f for f in frames if f["scenario"]["scenario_id"] in want]
-    for sub in ("frames", "scenarios", "dialogues", "review", "reports"):
+    for sub in ("frames", "agent_eval", "asr", "reports"):
         os.makedirs(os.path.join(args.out, sub), exist_ok=True)
     for fr in frames:
         with open(os.path.join(args.out, "frames", f"{fr['scenario']['scenario_id']}.frame.json"), "w", encoding="utf-8") as fh:
@@ -81,7 +81,7 @@ def main(argv=None) -> int:
         return 0
 
     # --- tiền kiểm KHÔNG tốn LLM: cuộc đã có lời thoại và vẫn đạt luật hiện hành thì GIỮ (dựng lại bằng mã hiện tại); cuộc còn lỗi → chờ sinh lại
-    dlg_dir = os.path.join(args.out, "dialogues")
+    dlg_dir = os.path.join(args.out, "asr")
     existing = load_dialogues(dlg_dir)
     other_lines = customer_lines(existing)
     kept = set()
@@ -166,11 +166,11 @@ def main(argv=None) -> int:
         sid = fr["scenario"]["scenario_id"]
         recs = {c["name"]: existing.get(f"{sid}/{c['name']}") for c in fr["calls"]}
         if all(recs.values()):
-            with open(os.path.join(args.out, "scenarios", f"{sid}.json"), "w", encoding="utf-8") as fh:
+            with open(os.path.join(args.out, "agent_eval", f"{sid}.json"), "w", encoding="utf-8") as fh:
                 json.dump(scenario_from(fr, recs), fh, ensure_ascii=False, indent=2)
             done.append(sid)
 
-    scenarios = load_scenarios([os.path.join(args.out, "scenarios")])
+    scenarios = load_scenarios([os.path.join(args.out, "agent_eval")])
     dialogues = load_dialogues(dlg_dir)
     issues = validate_all(scenarios, dialogues)
     by_sc = {}
@@ -186,7 +186,7 @@ def main(argv=None) -> int:
     review_name, review_title = REVIEW_FILE[args.which]
     review = review_markdown([f for f in frames if f["scenario"]["scenario_id"] in done], dialogues, by_sc, gen_log, total_cost, args.model,
                              title=review_title, cap_text=f"trần tích lũy {B.HARD_CAP_VND:,.0f} VND")
-    with open(os.path.join(args.out, "review", review_name), "w", encoding="utf-8") as fh:
+    with open(os.path.join(args.out, "reports", review_name), "w", encoding="utf-8") as fh:
         fh.write(review)
     with open(os.path.join(args.out, "reports", "generation_log.json"), "w", encoding="utf-8") as fh:
         json.dump({"model": args.model, "seed": args.seed, "set": args.which, "total_spent_vnd_all_runs": round(total_cost, 3), "hard_cap_vnd": B.HARD_CAP_VND,

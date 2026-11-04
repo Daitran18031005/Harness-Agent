@@ -1,0 +1,50 @@
+{
+  "scenario_id": "SC-GEN-02",
+  "level": "M1",
+  "persona": "khach_mua_cho_bo_me",
+  "hard_case": "cod_vuot_han_muc",
+  "customer_phone": "0911265844",
+  "customer_name": "Toàn",
+  "honorific": "anh",
+  "notes": "Mua 2 máy AirPure Pro (niêm yết 7.990.000đ/máy; ngày 15/10 máy 1 được AIR-OCT −300.000đ = 7.690.000đ, máy 2 được AIR-2ND-50 −50% = 3.995.000đ, tổng 11.685.000đ; KM-04 chọn chương trình lợi nhất cho TỪNG máy) thanh toán COD — vượt hạn mức COD thật 10.000.000đ của mock_tools.order_create, phải báo lỗi/đề xuất chuyển khoản, không được tự tạo đơn COD vượt hạn mức.",
+  "calls": {
+    "call_1": {
+      "call_date": "2026-10-15",
+      "customer_turns": [
+        "Em ơi anh muốn mua 2 máy lọc không khí AirPure Pro để biếu ông bà nội ngoại.",
+        "Tổng tiền hết bao nhiêu vậy em?",
+        "Anh muốn thanh toán khi nhận hàng (COD) nhé, giao về số 20 Hoàng Hoa Thám, Ba Đình, Hà Nội.",
+        "Ủa tại sao đơn này không được thanh toán COD vậy em?"
+      ],
+      "facts_established": {
+        "product_advised": "SKU-AP-PRO",
+        "qty": 2
+      },
+      "success_if": {
+        "forbidden_claims": [
+          {
+            "field": "order_created",
+            "value": true
+          },
+          {
+            "field": "cod_allowed",
+            "value": true
+          }
+        ],
+        "must_say_any": [
+          "10 triệu",
+          "10.000.000",
+          "hạn mức",
+          "chuyển khoản",
+          "thanh toán trước"
+        ]
+      },
+      "ground_truth_facts": {
+        "cod_limit_vnd": 10000000,
+        "cod_allowed": false,
+        "total_vnd": 11685000
+      },
+      "expected_outcome": "hen_goi_lai"
+    }
+  }
+}

@@ -1,3 +1,0 @@
-[SC-B01/call_3] P3 hồ sơ 'impatient': chỉ 1/4 lượt khách ≤ 6 từ (cần ≥ 33%) — rút ngắn, bỏ bớt câu đủ chủ vị
-
-1/17 cuộc vi phạm ≥ 1 luật; theo luật: {'P3': 1}

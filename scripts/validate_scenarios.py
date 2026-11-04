@@ -1,11 +1,11 @@
 """
 Kiểm tra tự động kịch bản + lời thoại (luật S1–S14, docs/DATASET_TEXT_PLAN.md § 5) và in báo cáo phân bố so với ngưỡng M1.
 
-    python scripts/validate_scenarios.py                       # 22 kịch bản hiện có (public_sample + generated_m1)
+    python scripts/validate_scenarios.py                       # bộ hiện có (public_sample + team_eval)
     python scripts/validate_scenarios.py --report              # + bảng phân bố so ngưỡng M1 (✔/✗)
-    python scripts/validate_scenarios.py --scenarios dataset/scenarios --dialogues dataset/dialogues --report
+    python scripts/validate_scenarios.py --scenarios dataset/agent_eval --dialogues dataset/asr --report
 
-Mã thoát: 0 nếu không có LỖI; 1 nếu có LỖI. `--no-existing` bỏ qua 22 kịch bản hiện có.
+Mã thoát: 0 nếu không có LỖI; 1 nếu có LỖI. `--no-existing` bỏ qua bộ hiện có (public_sample + team_eval).
 """
 import argparse
 import json
@@ -17,7 +17,7 @@ CODE_DIR = os.path.abspath(os.path.join(HERE, ".."))
 sys.path.insert(0, CODE_DIR)
 
 BTC = os.path.join(CODE_DIR, "BTC-Data-Vong1-TEAMS")
-EXISTING = [os.path.join(BTC, "test_set", "public_sample"), os.path.join(BTC, "test_set", "generated_m1")]
+EXISTING = [os.path.join(BTC, "test_set", "public_sample"), os.path.join(BTC, "test_set", "team_eval")]
 
 # Ngưỡng M1 (DATASET_PLAN § 1) — phần "đích" lấy từ cơ cấu đã duyệt
 THRESHOLDS = [("calls", "Hội thoại (cuộc gọi/chat)", 120), ("multi_session", "Khách đa phiên (≥ 2 cuộc)", 30), ("ge3_sessions", "Khách ≥ 3 phiên", 1),
@@ -28,7 +28,7 @@ HARD_TYPES = ["đổi ý", "mâu thuẫn với phiên trước", "KM hết hạn
 def main(argv=None) -> int:
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--scenarios", action="append", default=[], help="thư mục kịch bản BTC-format (lặp lại được)")
-    ap.add_argument("--dialogues", default=None, help="thư mục lời thoại từng lượt (dataset/dialogues)")
+    ap.add_argument("--dialogues", default=None, help="thư mục lời thoại từng lượt (dataset/asr)")
     ap.add_argument("--no-existing", action="store_true")
     ap.add_argument("--report", action="store_true")
     ap.add_argument("--json", default=None, help="ghi báo cáo JSON")

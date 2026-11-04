@@ -1,0 +1,44 @@
+{
+  "scenario_id": "TEST-34",
+  "level": "M1",
+  "persona": "khach_mua_nhieu_mon",
+  "hard_case": "combo_tiet_kiem",
+  "customer_phone": "0900001011",
+  "customer_name": "Lâm",
+  "honorific": "anh",
+  "notes": "[Mẹ & Bé] Combo SKU-BDL-MOM (Spectra S1 + máy hâm Fatz + 50 túi trữ sữa) giá 4.790.000đ. Mua lẻ 4.290.000 + 490.000 + 119.000 = 4.899.000đ, tiết kiệm 109.000đ. Agent tư vấn gói combo và chốt đơn.",
+  "calls": {
+    "call_1": {
+      "call_date": "2026-10-15",
+      "customer_turns": [
+        "Vợ anh sắp sinh, anh muốn mua máy hút sữa Spectra S1 với máy hâm sữa Fatz, có gói combo nào tiện lợi và rẻ hơn không em?",
+        "Combo Spectra S1 kèm máy hâm Fatz và túi trữ sữa giá bao nhiêu em?",
+        "Tiết kiệm được hơn 100k hả em, cũng tốt. Lên đơn combo đó cho anh nhé, COD về 25 Nguyễn Du, Hai Bà Trưng, Hà Nội."
+      ],
+      "facts_established": {
+        "product_advised": "SKU-BDL-MOM",
+        "price_quoted_vnd": 4790000,
+        "payment": "COD"
+      },
+      "success_if": {
+        "tool_called": "order.create",
+        "args_match": {
+          "sku": "SKU-BDL-MOM",
+          "price_vnd": 4790000,
+          "payment": "COD"
+        },
+        "must_say_any": [
+          "combo",
+          "4.790.000",
+          "tiết kiệm"
+        ]
+      },
+      "ground_truth_facts": {
+        "combo_sku": "SKU-BDL-MOM",
+        "price_vnd": 4790000,
+        "saving_vnd": 109000
+      },
+      "expected_outcome": "chot_don"
+    }
+  }
+}

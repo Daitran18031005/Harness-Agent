@@ -1,0 +1,64 @@
+{
+  "scenario_id": "TEST-05",
+  "level": "M1",
+  "persona": "khach_da_mua_doi_size",
+  "hard_case": "doi_size_lan_hai",
+  "customer_phone": "0936270107",
+  "customer_name": "Tuấn",
+  "honorific": "anh",
+  "notes": "Đổi size lần thứ 2 trên cùng một đơn. Cuộc 1: mua Urban Classic 39 đen. Cuộc 2: đổi lên 40 (lần 1 miễn phí, DT-03), vẫn kích mũi nên đổi tiếp lên 41: từ lần 2 khách chịu 30.000đ/chiều x 2 = 60.000đ (order.update trả fee_vnd=60000). Agent phải báo đúng phí 60k.",
+  "calls": {
+    "call_1": {
+      "call_date": "2026-10-10",
+      "customer_goal": "mua giày Urban Classic size 39 màu đen",
+      "customer_turns": [
+        "Em ơi giày sneaker Urban Classic màu đen size 39 còn hàng không em?",
+        "Ok lên đơn cho anh, thanh toán COD, giao về 12 Nguyễn Trãi, Thanh Xuân, Hà Nội."
+      ],
+      "facts_established": {
+        "product_advised": "SKU-SN-CAS",
+        "variant_sku": "SKU-SN-CAS-39-DEN",
+        "color": "den",
+        "price_quoted_vnd": 890000,
+        "payment": "COD"
+      },
+      "expected_outcome": "chot_don"
+    },
+    "call_2": {
+      "days_later": 3,
+      "customer_goal": "đổi size hai lần liên tiếp",
+      "customer_turns": [
+        "Alo em, đôi Urban Classic anh mới nhận hơi chật, đổi lên size 40 màu đen được không em?",
+        "Ok em làm thủ tục đổi giúp anh nhé.",
+        "Mà đi thử size 40 vẫn hơi kích mũi, giờ anh đổi tiếp lên size 41 màu đen thì phí bao nhiêu em?",
+        "Ừ 60k phí vận chuyển hai chiều đúng không, em làm thủ tục đổi tiếp lên size 41 cho anh nhé."
+      ],
+      "must_carry_over": [
+        "variant_sku",
+        "color"
+      ],
+      "must_not_ask": [
+        "product_advised",
+        "color"
+      ],
+      "success_if": {
+        "tool_called": "order.update",
+        "args_match": {
+          "action": "exchange_size",
+          "new_variant_sku": "SKU-SN-CAS-41-DEN"
+        },
+        "must_say_any": [
+          "60.000",
+          "60k",
+          "60 nghìn",
+          "sáu mươi"
+        ]
+      },
+      "ground_truth_facts": {
+        "exchange_fee_vnd": 60000,
+        "policy_code": "DT-03"
+      },
+      "expected_outcome": "chot_don"
+    }
+  }
+}

@@ -90,6 +90,13 @@ class ITNLiteralZeroAndCountNounTest(unittest.TestCase):
                                 ("mười triệu", "10.000.000"), ("bốn triệu tám trăm chín mươi", "4.890.000")):
             self.assertEqual(self.f(spoken), written, spoken)
 
+    def test_digit_form_trieu_ruoi_keeps_the_half_million(self):
+        for typed, written in (("ngân sách tầm 5 triệu rưỡi thôi", "5.500.000"), ("2 triệu rưỡi", "2.500.000"), ("2tr rưỡi nhé", "2.500.000"),
+                               ("5 triệu rưỡi, Hà Nội", "5.500.000")):
+            self.assertIn(written, norm(typed).normalized_text, typed)
+        self.assertNotIn("rưỡi", norm("5 triệu rưỡi").normalized_text)
+        self.assertEqual(norm("5 triệu").normalized_text, "5.000.000")            # không có 'rưỡi' thì giữ nguyên
+
     def test_noun_rule_needs_a_money_magnitude_and_exactly_one_trailing_digit_word(self):
         self.assertEqual(self.f("một đơn"), "một đơn")                       # không có bậc nghìn/triệu → không đổi
         self.assertEqual(self.f("năm triệu hai trăm máy"), "5.200.000 máy")  # nhiều từ số sau triệu: là số tiền, không phải số đếm

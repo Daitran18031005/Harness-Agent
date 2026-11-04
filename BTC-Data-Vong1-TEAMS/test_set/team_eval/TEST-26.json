@@ -1,0 +1,39 @@
+{
+  "scenario_id": "TEST-26",
+  "level": "M1",
+  "persona": "khach_so_gia",
+  "hard_case": "vuot_ngan_sach_2_lua_chon",
+  "customer_phone": "0900001003",
+  "customer_name": "Đạt",
+  "honorific": "anh",
+  "notes": "Khách cần máy lọc phòng 35m², ngân sách 2,5 triệu. Chỉ có Xiaomi Smart 4 Lite (43m², 2.990.000đ, vượt ngân sách 19,6%) phủ đủ diện tích; AirPure Mini (2.190.000đ) trong ngân sách nhưng chỉ phủ 12m². Agent phải nêu 2 lựa chọn, không tự chốt.",
+  "calls": {
+    "call_1": {
+      "call_date": "2026-10-15",
+      "customer_turns": [
+        "Anh cần tìm máy lọc không khí cho phòng khách khoảng 35m², nhưng ngân sách anh có hai triệu rưỡi thôi.",
+        "Có mẫu nào giá hai triệu rưỡi mà lọc được 35m² không em?",
+        "Để anh cân nhắc xem có nâng thêm ngân sách không rồi anh báo lại."
+      ],
+      "facts_established": {
+        "room_area_m2": 35,
+        "budget_vnd": 2500000
+      },
+      "success_if": {
+        "must_say_any": [
+          "lựa chọn",
+          "phương án",
+          "vượt ngân sách",
+          "AirPure Mini",
+          "Xiaomi Smart 4 Lite",
+          "2.990.000"
+        ]
+      },
+      "ground_truth_facts": {
+        "budget_overage_pct": 19.6,
+        "price_vnd": 2990000
+      },
+      "expected_outcome": "hen_goi_lai"
+    }
+  }
+}

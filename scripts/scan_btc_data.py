@@ -22,6 +22,10 @@ DEFAULT_DIR = os.path.join(CODE_DIR, "BTC-Data-Vong1-TEAMS", "test_set", "public
 NORM = RequestNormalizer()
 
 
+def _n(x):
+    return f"{x:,}" if isinstance(x, int) else str(x)   # SKU không có trong catalog => None, không được làm sập bản quét
+
+
 def call_dates(spec):
     from src.eval.runner import ScenarioRunner
     out, prev = {}, "2026-10-15"
@@ -67,14 +71,14 @@ def main(argv=None):
             if sku and "price_quoted_vnd" in fe:
                 q = mock_tools.pricing_get_quote(sku, dates[cn], 1, phone)
                 if q.get("final_price_vnd") != fe["price_quoted_vnd"] and q.get("list_price_vnd") != fe["price_quoted_vnd"]:
-                    findings.append((sid, cn, f"facts_established.price_quoted_vnd={fe['price_quoted_vnd']:,} khác mock_tools.pricing.get_quote({sku}, {dates[cn]}) = final {q.get('final_price_vnd'):,} / list {q.get('list_price_vnd'):,}"))
+                    findings.append((sid, cn, f"facts_established.price_quoted_vnd={fe['price_quoted_vnd']:,} khác mock_tools.pricing.get_quote({sku}, {dates[cn]}) = final {_n(q.get('final_price_vnd'))} / list {_n(q.get('list_price_vnd'))}"))
             gt = spec.get("ground_truth_facts") or {}
             target = (spec.get("success_if") or {}).get("args_match", {}) or {}
             sku2 = target.get("sku")
             if sku2 and "price_vnd" in gt:
                 q = mock_tools.pricing_get_quote(sku2, dates[cn], 1, phone)
                 if q.get("final_price_vnd") != gt["price_vnd"]:
-                    findings.append((sid, cn, f"ground_truth_facts.price_vnd={gt['price_vnd']:,} khác mock_tools.pricing.get_quote({sku2}, {dates[cn]}) = {q.get('final_price_vnd'):,}"))
+                    findings.append((sid, cn, f"ground_truth_facts.price_vnd={gt['price_vnd']:,} khác mock_tools.pricing.get_quote({sku2}, {dates[cn]}) = {_n(q.get('final_price_vnd'))}"))
             # 3) mã đơn không thể sinh ra
             oid = target.get("order_id")
             if oid and oid.startswith("OD") and oid != "OD600001":

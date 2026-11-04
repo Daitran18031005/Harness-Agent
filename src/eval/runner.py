@@ -30,7 +30,7 @@ from src.harness.guardrail import GuardrailAndFallback
 from src.harness.orchestrator import HarnessOrchestrator
 from src.llm.client import LLMClient
 from src.tools.mcp_gateway import MCPToolGateway
-from src.tracing.tracer import TurnTracer, measure_latency, INPUT_MODES
+from src.tracing.tracer import TurnTracer, measure_latency, INPUT_MODES, monitoring_extras
 
 load_dotenv()
 
@@ -287,10 +287,7 @@ class ScenarioRunner:
                         extra["order_gate"] = meta["order_gate"]                   # order gate đã chặn/hỏi/đọc lại đơn ở lượt này
                     if injected:
                         extra["_injected"] = True                                  # lượt khách mô phỏng của --gate-assist (không phải lời kịch bản BTC)
-                    lt = meta.get("llm_timing") or {}
-                    if "rounds_before_first_token" in lt:
-                        extra["latency_detail"] = {k: lt[k] for k in ("rounds_before_first_token", "round_ms", "tool_ms",
-                                                                        "final_round_ttft_ms", "prompt_tokens", "cached_tokens") if k in lt}
+                    extra.update(monitoring_extras(meta))                          # latency_detail (phân rã TTFT) + guardrail
                     pending_row = dict(
                         run_id=run_id, config=trace_config, scenario_id=sid, call=call_name, turn=t_idx,
                         customer_text=turn.normalized_text, agent_text=resp_text,

@@ -1,0 +1,62 @@
+{
+  "scenario_id": "SC-GEN-05",
+  "level": "M1",
+  "persona": "khach_da_mua_doi_size",
+  "hard_case": "doi_size_phu_thu_bien_the",
+  "customer_phone": "0930976582",
+  "customer_name": "Cường",
+  "honorific": "anh",
+  "notes": "Đổi RunLite 2 Pro size 40 -> 43 màu đen. Biến thể 43 có price_delta_vnd=50.000đ, DT-03 miễn phí dịch vụ đổi lần đầu. Lúc đổi (03/10) RUN2-SALE −20% còn hiệu lực nên order.update tính chênh giá thật = 1.392.000 − 1.352.000 = 40.000đ.",
+  "calls": {
+    "call_1": {
+      "call_date": "2026-09-28",
+      "customer_turns": [
+        "Em ơi giày chạy RunLite 2 Pro màu đen size 40 có hàng không?",
+        "Ok lên đơn cho anh size 40 màu đen nhé, thanh toán COD, giao về 28 Trần Hưng Đạo, Hoàn Kiếm, Hà Nội."
+      ],
+      "facts_established": {
+        "product_advised": "SKU-SN-RUN2",
+        "variant_sku": "SKU-SN-RUN2-40-DEN",
+        "size": 40,
+        "color": "den",
+        "price_quoted_vnd": 1352000,
+        "order_id": "OD682770",
+        "payment": "COD"
+      },
+      "expected_outcome": "chot_don"
+    },
+    "call_2": {
+      "days_later": 5,
+      "customer_turns": [
+        "Alo, anh Cường đây, đôi RunLite 2 Pro size 40 anh đi bị chật quá, muốn đổi sang size 43 cùng màu đen.",
+        "Size 43 có phụ thu gì thêm không em?",
+        "Được, thêm 40k không sao, em hỗ trợ đổi size 43 giúp anh nhé."
+      ],
+      "must_carry_over": [
+        "order_id",
+        "variant_sku",
+        "size",
+        "color"
+      ],
+      "must_not_ask": [
+        "product_advised",
+        "order_id",
+        "color"
+      ],
+      "success_if": {
+        "tool_called": "order.update",
+        "args_match": {
+          "order_id": "OD682770",
+          "new_variant_sku": "SKU-SN-RUN2-43-DEN",
+          "action": "exchange_size"
+        }
+      },
+      "ground_truth_facts": {
+        "variant_price_delta_vnd": 50000,
+        "service_fee_vnd": 0,
+        "extra_payment_vnd": 40000
+      },
+      "expected_outcome": "chot_don"
+    }
+  }
+}

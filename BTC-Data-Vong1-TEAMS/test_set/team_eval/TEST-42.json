@@ -1,0 +1,41 @@
+{
+  "scenario_id": "TEST-42",
+  "level": "M1",
+  "persona": "khach_hoi_nhieu_khong_mua",
+  "hard_case": "sku_ngung_ban",
+  "customer_phone": "0900001018",
+  "customer_name": "Nga",
+  "honorific": "chị",
+  "notes": "[Thời trang] Khách hỏi mua giày chạy RunLite 1 bản 2025 cũ (SKU-SN-RUN1-OLD đã ngừng bán). Agent thông báo đã ngừng bán và đề xuất mẫu thay thế SKU-SN-RUN1 (niêm yết 1.290.000đ, ngày 15/10 có RUN-10 −10% còn 1.161.000đ).",
+  "calls": {
+    "call_1": {
+      "call_date": "2026-10-15",
+      "customer_turns": [
+        "Em ơi shop còn bán đôi giày chạy RunLite 1 bản cũ 2025 không em?",
+        "Ủa mẫu đó ngưng bán rồi hả em? Mẫu mới thay thế là đôi nào, giá bao nhiêu?"
+      ],
+      "facts_established": {
+        "product_asked": "SKU-SN-RUN1-OLD"
+      },
+      "success_if": {
+        "must_not_call_tools": [
+          "order.create"
+        ],
+        "must_say_any": [
+          "ngừng bán",
+          "ngưng kinh doanh",
+          "RunLite 1",
+          "1.290.000",
+          "1.161.000"
+        ]
+      },
+      "ground_truth_facts": {
+        "discontinued": true,
+        "successor_sku": "SKU-SN-RUN1",
+        "successor_price_vnd": 1161000,
+        "successor_list_price_vnd": 1290000
+      },
+      "expected_outcome": "hen_goi_lai"
+    }
+  }
+}

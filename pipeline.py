@@ -27,7 +27,7 @@ from src.agents.specialists import A2AAgentNetwork
 from src.harness.guardrail import GuardrailAndFallback
 from src.harness.orchestrator import HarnessOrchestrator
 from src.llm.client import LLMClient
-from src.tracing.tracer import TurnTracer, measure_latency
+from src.tracing.tracer import TurnTracer, measure_latency, monitoring_extras
 
 load_dotenv()
 
@@ -135,7 +135,7 @@ class CallCenterHarnessPipeline:
             call_brief_latency_ms=brief_ms if (turn_num == 1 and call_name != "call_1") else None,
             memory_writes=self.orchestrator.commit_turn(),
             customer_input_mode="asr_transcript" if is_audio else "clean",
-            extra={k: v for k, v in (("memory_extractor", meta.get("memory_extraction")), ("order_gate", meta.get("order_gate")), ("reply_reading", meta.get("reply_reading")), ("gate_open", meta.get("gate_open")), ("handoff_check", meta.get("handoff_check")), ("precomputed", meta.get("precomputed"))) if v} or None
+            extra={k: v for k, v in (("memory_extractor", meta.get("memory_extraction")), ("order_gate", meta.get("order_gate")), ("reply_reading", meta.get("reply_reading")), ("gate_open", meta.get("gate_open")), ("handoff_check", meta.get("handoff_check")), ("precomputed", meta.get("precomputed"))) if v} | monitoring_extras(meta) or None
         )
 
         return {

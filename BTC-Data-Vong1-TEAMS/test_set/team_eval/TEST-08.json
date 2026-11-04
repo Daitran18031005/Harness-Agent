@@ -1,0 +1,45 @@
+{
+  "scenario_id": "TEST-08",
+  "level": "M1",
+  "persona": "khach_thich_khuyen_mai",
+  "hard_case": "khuyen_mai_loai_tru_size",
+  "customer_phone": "0900001001",
+  "customer_name": "Dũng",
+  "honorific": "anh",
+  "notes": "Chương trình RUN-10 giảm 10% giày RunLite có điều kiện loại trừ: exclude_variant_size = [43]. Khách hỏi mua size 43 đòi áp mã RUN-10 -> agent phải giải thích size 43 không áp dụng mã này.",
+  "calls": {
+    "call_1": {
+      "call_date": "2026-10-15",
+      "customer_turns": [
+        "Em ơi anh thấy trên web có mã RUN-10 giảm 10% giày chạy bộ đúng không?",
+        "Anh lấy đôi RunLite 2 Pro màu đen size 43 nhé, áp mã giảm giá giúp anh.",
+        "Ủa sao size 43 lại không được giảm 10% hả em?"
+      ],
+      "facts_established": {
+        "product_advised": "SKU-SN-RUN2",
+        "variant_sku": "SKU-SN-RUN2-43-DEN",
+        "size": 43
+      },
+      "success_if": {
+        "forbidden_claims": [
+          {
+            "field": "promo_applied",
+            "value": true
+          }
+        ],
+        "must_say_any": [
+          "size 43 không áp dụng",
+          "loại trừ size 43",
+          "không áp dụng cho size 43",
+          "ngoại trừ size 43"
+        ]
+      },
+      "ground_truth_facts": {
+        "promo_eligible": false,
+        "list_price_vnd": 1740000,
+        "final_price_vnd": 1740000
+      },
+      "expected_outcome": "hen_goi_lai"
+    }
+  }
+}

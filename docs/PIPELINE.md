@@ -45,6 +45,7 @@ Khi không có khóa/hết credit/lỗi API (và chưa có tool ghi nào chạy)
 - `run_eval.py --scenarios --config full|baseline_no_memory|both --out-dir --seed --repeats [--gate-assist] --max-cost-vnd` (trần chi phí cứng luôn bật, gồm cả chi phí router chính sách) → `BTC-Data-Vong1-TEAMS/eval/reference_eval.py`; `scripts/gd2_report.py` gộp 7 mẫu BTC + 15 kịch bản sinh, mean ± std theo seed. Chấm lại từ trace không tốn LLM: `python -m evaluation --trace …`.
 - ASR local: Gipformer 1.5 68M (mặc định) / faster-whisper (dự phòng), VAD Silero + năng lượng — xem README mục ASR.
 - **Backend API** (`api/`, bước 17) và **giao diện web** (`ui/index.html`, bước 18, phục vụ cùng origin): `python scripts/run_demo.py` → `http://127.0.0.1:8000/` (Call Brief, dòng thời gian bộ nhớ, nhật ký tool, đơn hàng, ASR). Streamlit `ui_app.py` còn dùng làm trang quản trị.
+- **Giám sát (Grafana):** `monitoring/` — API phát `GET /metrics`, `monitoring.trace_exporter` phát số từ trace các lần đo, `docker compose` dựng Prometheus + Grafana với dashboard nạp sẵn (độ trễ so ngưỡng BTC, chi phí, tool, guardrail, order gate). Xem [monitoring/README.md](../monitoring/README.md).
 - Dataset: `src/dataset/`, `scripts/generate_dataset_text.py` (trần tích lũy 10.000 VND bằng mã) — đang tạm dừng.
 
 ## 6. Chưa làm / hạn chế (đối chiếu PLAN.md)

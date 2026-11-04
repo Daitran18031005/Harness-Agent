@@ -1,0 +1,59 @@
+{
+  "scenario_id": "TEST-37",
+  "level": "M1",
+  "persona": "khach_da_kenh_fb_hotline",
+  "hard_case": null,
+  "customer_phone": "0992298369",
+  "customer_name": "Ngọc",
+  "honorific": "chị",
+  "notes": "[Mẹ & Bé] Máy tiệt trùng sấy khô Moaz Bebe (SKU-MB-STER: 1.890.000đ). Cuộc 1 chat Zalo OA để lại SĐT 0992298369; Cuộc 2 gọi hotline chốt đơn, agent phải nhận diện danh tính và giữ giá 1.890.000đ.",
+  "calls": {
+    "call_1": {
+      "channel": "zalo_oa",
+      "channel_identity": "zalo.ngoc.test37",
+      "call_date": "2026-10-15",
+      "customer_goal": "hỏi máy tiệt trùng Moaz Bebe qua Zalo",
+      "customer_turns": [
+        "Shop ơi máy tiệt trùng sấy khô Moaz Bebe giá bao nhiêu?",
+        "SĐT mình là 0992298369, mai mình gọi hotline đặt nhé."
+      ],
+      "facts_established": {
+        "product_advised": "SKU-MB-STER",
+        "price_quoted_vnd": 1890000,
+        "phone_provided": "0992298369",
+        "channel": "zalo_oa"
+      },
+      "expected_outcome": "hen_goi_lai"
+    },
+    "call_2": {
+      "channel": "hotline",
+      "days_later": 1,
+      "customer_turns": [
+        "Alo, chị vừa nhắn Zalo hỏi máy tiệt trùng Moaz Bebe hôm qua đó em.",
+        "Giá vẫn 1.890.000đ đúng không? Lên đơn cho chị giao COD về số 15 Ô Chợ Dừa, Đống Đa, Hà Nội."
+      ],
+      "must_carry_over": [
+        "product_advised",
+        "price_quoted_vnd"
+      ],
+      "must_not_ask": [
+        "product_advised",
+        "price_quoted_vnd"
+      ],
+      "success_if": {
+        "tool_called": "order.create",
+        "args_match": {
+          "sku": "SKU-MB-STER",
+          "price_vnd": 1890000,
+          "payment": "COD"
+        }
+      },
+      "ground_truth_facts": {
+        "price_vnd": 1890000,
+        "in_stock": true,
+        "freeship": true
+      },
+      "expected_outcome": "chot_don"
+    }
+  }
+}

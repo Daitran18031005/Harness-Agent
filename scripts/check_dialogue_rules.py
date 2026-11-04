@@ -1,7 +1,7 @@
 """
 Kiểm các lời thoại ĐÃ SINH bằng luật P1–P4 mới (src/dataset/rules.py) — không gọi LLM, không tốn tiền.
 
-    python scripts/check_dialogue_rules.py [--dialogues dataset/dialogues]
+    python scripts/check_dialogue_rules.py [--dialogues dataset/asr]
 """
 import argparse
 import os
@@ -14,7 +14,7 @@ sys.path.insert(0, CODE_DIR)
 
 def main(argv=None) -> int:
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    ap.add_argument("--dialogues", default=os.path.join(CODE_DIR, "dataset", "dialogues"))
+    ap.add_argument("--dialogues", default=os.path.join(CODE_DIR, "dataset", "asr"))
     args = ap.parse_args(argv)
     sys.stdout.reconfigure(encoding="utf-8")
     from src.dataset.specs import build_sample10

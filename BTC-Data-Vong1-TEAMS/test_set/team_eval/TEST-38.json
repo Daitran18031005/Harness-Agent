@@ -1,0 +1,37 @@
+{
+  "scenario_id": "TEST-38",
+  "level": "M1",
+  "persona": "khach_hoi_ngoai_tai_lieu",
+  "hard_case": "pham_vi_bao_hanh",
+  "customer_phone": "0900001014",
+  "customer_name": "Hằng",
+  "honorific": "chị",
+  "notes": "[Mẹ & Bé] Máy hút sữa Spectra S1 (SKU-MB-PUMP1). BH-01 / catalog: bảo hành 12 tháng. BH-02: lỗi kỹ thuật nhà sản xuất (motor, bo mạch...) được bảo hành; hao mòn tự nhiên (van, màng, phụ kiện tiêu hao) không bảo hành.",
+  "calls": {
+    "call_1": {
+      "call_date": "2026-10-15",
+      "customer_turns": [
+        "Em ơi máy hút sữa Spectra S1 bảo hành bao lâu vậy em?",
+        "Thế mấy cái phụ kiện như van một chiều với phễu hút có được bảo hành 12 tháng luôn không em?",
+        "À thân máy 12 tháng còn phụ kiện tiêu hao hao mòn thì không bảo hành đúng không em? Ok chị hiểu rồi."
+      ],
+      "facts_established": {
+        "product_advised": "SKU-MB-PUMP1"
+      },
+      "success_if": {
+        "must_say_any": [
+          "12 tháng",
+          "thân máy",
+          "không bảo hành",
+          "tiêu hao",
+          "hao mòn"
+        ]
+      },
+      "ground_truth_facts": {
+        "warranty_months": 12,
+        "warranty_accessories": false
+      },
+      "expected_outcome": "hen_goi_lai"
+    }
+  }
+}

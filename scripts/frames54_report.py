@@ -1,9 +1,9 @@
 """
 Báo cáo KHUNG 54 kịch bản còn lại (CHƯA gọi LLM, 0 VND): bảng phân bố + 5 khung chọn ngẫu nhiên (seed cố định) + kiểm ràng buộc.
 
-    python scripts/frames54_report.py [--seed 42] [--out dataset/review]
+    python scripts/frames54_report.py [--seed 42] [--out dataset/reports]
 
-Ghi: <out>/frames54_distribution.md, <out>/frames54_random5.md, <out>/../frames54/SC-Dxx.frame.json (khung đầy đủ để duyệt).
+Ghi: <out>/frames54_distribution.md, <out>/frames54_random5.md, <out>/../frames/SC-Dxx.frame.json (khung đầy đủ để duyệt).
 """
 import argparse
 import collections
@@ -25,7 +25,7 @@ def table(title, counter, total=None):
 def main(argv=None) -> int:
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--seed", type=int, default=42)
-    ap.add_argument("--out", default=os.path.join(CODE_DIR, "dataset", "review"))
+    ap.add_argument("--out", default=os.path.join(CODE_DIR, "dataset", "reports"))
     args = ap.parse_args(argv)
     if hasattr(sys.stdout, "reconfigure"):
         sys.stdout.reconfigure(encoding="utf-8")
@@ -33,7 +33,7 @@ def main(argv=None) -> int:
     from src.dataset.rules import is_order_call
     frames = build_frames54()
     os.makedirs(args.out, exist_ok=True)
-    fdir = os.path.join(os.path.dirname(args.out), "frames54")
+    fdir = os.path.join(os.path.dirname(args.out), "frames")
     os.makedirs(fdir, exist_ok=True)
     for fr in frames:
         with open(os.path.join(fdir, f"{fr['scenario']['scenario_id']}.frame.json"), "w", encoding="utf-8") as fh:
@@ -86,7 +86,7 @@ def main(argv=None) -> int:
     picks = sorted(rng.sample(range(len(frames)), 5))
     out = [f"# 5 khung chọn ngẫu nhiên (seed {args.seed}: " + ", ".join(frames[i]["scenario"]["scenario_id"] for i in picks) + ")\n",
            "Mỗi khung gồm: thông tin khách, từng cuộc (kênh/ngày/mục tiêu), **dàn ý khách và agent** (LLM chỉ viết lời từ đây), **fact khách PHẢI nói**, **ô trống lời agent** (giá trị do code tính), "
-           "và **đáp án định dạng BTC**. File đầy đủ: `dataset/frames54/SC-Dxx.frame.json`.\n"]
+           "và **đáp án định dạng BTC**. File đầy đủ: `dataset/frames/SC-Dxx.frame.json`.\n"]
     for i in picks:
         f = frames[i]
         s = f["scenario"]

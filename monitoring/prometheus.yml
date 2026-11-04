@@ -1,0 +1,12 @@
+global:
+  scrape_interval: 15s
+scrape_configs:
+  - job_name: harness-api            # máy chủ API trực tiếp (uvicorn api.app:app --port 8000)
+    metrics_path: /metrics
+    static_configs:
+      - targets: ["host.docker.internal:8000"]
+  - job_name: harness-traces         # kết quả các lần chạy đánh giá (python -m monitoring.trace_exporter)
+    metrics_path: /metrics
+    scrape_interval: 30s
+    static_configs:
+      - targets: ["host.docker.internal:9108"]

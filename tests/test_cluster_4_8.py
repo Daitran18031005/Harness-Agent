@@ -83,6 +83,27 @@ class SafeWriteTest(unittest.TestCase):  # bước 4
         self.assertEqual(res["final_price_vnd"], res["list_price_vnd"])
         self.assertNotIn("basket_skus", tc[0]["args"])
 
+    def test_two_units_same_sku_quote_includes_second_item_promo(self):
+        """GEN-02: 2 máy AirPure Pro ngày 15/10 — máy 1 AIR-OCT 7.690.000 + máy 2 AIR-2ND-50 3.995.000 = 11.685.000 (không phải 15.380.000)."""
+        t, b = self._turn("0911265844", "2026-10-15")
+        quote = {"sku": "SKU-AP-PRO", "qty": 2}
+        self.orch.llm_client = FakeLLM({"calls": [("pricing.get_quote", quote)], "text": "Dạ tổng 11.685.000đ ạ."})
+        _, tc, _ = self.orch.process_turn(t, b, current_date="2026-10-15")
+        res = tc[0]["result"]
+        self.assertEqual(res["unit_prices_vnd"], [7690000, 3995000])
+        self.assertEqual(res["total_vnd"], 11685000)
+        self.assertEqual(res["final_price_vnd"], 7690000)       # order.create vẫn kiểm giá theo đơn vị 1
+        self.assertNotIn("basket_skus", tc[0]["args"])          # LLM không bị ép truyền giỏ; không đụng order.create
+
+    def test_quote_total_added_only_for_multi_unit_or_basket(self):
+        t, b = self._turn("0911265844", "2026-10-15")
+        self.orch.llm_client = FakeLLM({"calls": [("pricing.get_quote", {"sku": "SKU-AP-PRO", "qty": 1})], "text": "Dạ ạ."})
+        _, tc, _ = self.orch.process_turn(t, b, current_date="2026-10-15")
+        self.assertNotIn("total_vnd", tc[0]["result"])           # 1 máy, không giỏ: kết quả như cũ
+        self.orch.llm_client = FakeLLM({"calls": [("pricing.get_quote", {"sku": "SKU-SN-CAS-39-DEN", "qty": 2})], "text": "Dạ ạ."})
+        _, tc, _ = self.orch.process_turn(t, b, current_date="2026-10-15")
+        self.assertEqual(tc[0]["result"]["total_vnd"], 2 * tc[0]["result"]["final_price_vnd"])   # không có KM 'máy thứ 2': giá × 2
+
     def test_sanitize_basket_keeps_genuine_other_items(self):
         f = type(self.orch)._sanitize_basket
         out = f("pricing.get_quote", {"sku": "SKU-AP-X", "basket_skus": ["sku-ap-x", "SKU-SS-AX40", "SKU-SS-AX40"]})

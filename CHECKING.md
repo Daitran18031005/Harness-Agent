@@ -8,7 +8,25 @@
 
 ---
 
-## 0. Phương pháp kiểm tra & tóm tắt kết luận
+## Trạng thái hiện tại (cập nhật 2026-11-04, sau § 11.108)
+
+> **Đọc phần này trước.** §§ 0–10 là **ảnh chụp kiểm tra ban đầu (2026-10-11 → 10-21)**; nhiều kết luận trong đó (hệ thống thua baseline, 1/3 ngưỡng, latency giả, MCP/A2A hình thức, 864 test…) **đã lỗi thời** và được giữ để đối chiếu. Trạng thái hiện hành: **§ 12** (tổng hợp) và nhật ký **§ 11** (chi tiết từng việc, đánh số theo thời gian; § 11.43+ nằm SAU § 12 trong file).
+
+| Hạng mục | Hiện tại (2026-11-04) |
+|---|---|
+| Mã | Pipeline đầu-cuối + 3 MCP server thật, API FastAPI, giao diện `ui/`, order gate, bộ đọc lời khách bằng LLM, `price_basket` (giá báo == giá đơn). **977 test offline, 0 đỏ** (`runs/_unittest_monitoring.txt`; chạy trong conda `nlp_env`, `MCP_TRANSPORT=inproc MEMORY_TRANSPORT=local`). Thêm 2026-11-04: bộ kịch bản `team_eval` gộp (§ 11.107), sửa ITN "5 triệu rưỡi", giám sát Prometheus + Grafana (§ 11.108) |
+| Số đo mới nhất (bước 15 GĐ2, lần 6, `runs/gd2_run6/`, 22 kịch bản × 2 cấu hình × 3 seed, LLM thật) | TSR **66,7** (ngưỡng ≥ 70 → **chưa đạt**; baseline 68,2 → **chưa hơn baseline**) · RQR **0,0** (đạt) · HR giá/KM **0,0** (đạt) · CCR 53,6 · TTFT p95 **7,7 s** (ngưỡng ≤ 3 s → **chưa đạt**) · guardrail 0 vi phạm |
+| Chi phí LLM đã tiêu | dataset 2.076,3 / 10.000 VND (sổ cái trong mã); GĐ2 mỗi lần 10,7–13,6 nghìn VND (lần 6: 13.387,5); chạy thử UI/ui_replay: vài trăm VND mỗi lần |
+| Dữ liệu | từ 2026-11-04 bộ đo là 49 kịch bản (7 BTC + 42 `team_eval`, § 11.107; lần 1–6 đo trên bộ cũ 22 kịch bản, đáp án GEN-01/02/05 đã sửa — lỗi do nhóm, không phải BTC); dataset mới mới có lô đại diện, còn 44 khung chưa sinh; audio ≥ 40 cuộc chưa có |
+| **Chặn đo mới** | **Khóa `OPENAI_API_KEY` trong `.env` đã hết hạn (HTTP 401 `expired_secret_key`, kiểm 2026-11-04)** nên chưa chạy được lần đo trên bộ 49 kịch bản, chưa đo TTFT mới, chưa sinh UI bằng OpenUI. Cần chủ dự án tạo khóa mới |
+| Việc chặn nộp M1 | TSR chưa đạt, TTFT chưa đạt, `submission/` còn số của lần 4, video + slide `.pptx` chưa có, dataset/audio thiếu, duyệt tay 15% chưa làm |
+| Giám sát / UI | Grafana: **xong, đã chạy thật** (`monitoring/`, dashboard 19 panel). OpenUI (W&B): **chưa** — không tải được từ github.com/ghcr.io ở thời điểm kiểm và chưa có LLM; đề bài đã viết sẵn ở `ui/OPENUI_PROMPT.md` |
+| Thư gửi BTC | đã soạn (`docs/BAO_CAO_LOI_GUI_BTC.md`) và **chủ dự án đã gửi** (2026-11-04); chờ phản hồi mục 2–4, 8 |
+| Điều cần quyết | tiêu chí chấm SC-GEN-02; trần chi phí cho lần chạy xác nhận (≈ 13.400 VND); có sinh tiếp dataset không; 5 đề nghị gửi BTC (§ 12.2) |
+
+---
+
+## 0. Phương pháp kiểm tra & tóm tắt kết luận (ẢNH CHỤP 2026-10-11 → 10-21 — đã lỗi thời, xem "Trạng thái hiện tại" ở trên)
 
 ### 0.1. Đã làm gì
 
@@ -372,6 +390,8 @@ Nguồn: đề bài PDF (mục C.4, Phụ lục A), `DIEU-CHINH-DE.md`, `GIAI-DA
 ---
 
 ## 5. Chỉ số đo hiện tại: Baseline vs Harness vs Mục tiêu BTC
+
+> **Lỗi thời (ảnh chụp 2026-10-11).** Số đo hiện hành: § 12.1 (bảng lịch sử GĐ2 lần 1–6) và § 11.106.
 
 ### 5.1. Lần chạy LLM thật mới nhất (2026-10-11, `runs/report.json`, đã tái lập lại bằng `reference_eval.py` — khớp 100%)
 
@@ -1706,7 +1726,7 @@ Sửa 5 lỗi ở § 11.34, mỗi lỗi có test hồi quy (`BatchFixesTest` + 1
 **ui_replay (`runs/ui_replay_6.txt`):** thêm hội thoại D (số nói bằng chữ) và E (đổi ngày; dòng `@ngày` = cuộc mới). Kết quả theo mục — xem báo cáo trong phiên. **Còn lỗi thấy trong lần chạy này:** (1) hội thoại A: LLM chỉ gọi `catalog.search` (không `inventory.check`) rồi nói "38 xám/38 đen không có sẵn" ở 4 lượt liên tiếp dù 38 đen còn 5 → guardrail 2b không có bằng chứng nên không can thiệp (lần chạy trước LLM có gọi `inventory.check` nên đúng; LLM không tất định); (2) B lượt 2: LLM gọi `handoff.transfer` khi khách chưa đồng ý chuyển máy (bị chặn `brief_invalid`, không chuyển thật); (3) lời LLM lộ mã "SKU-AP-FLT-X" (E lượt 2) và Call Brief mở đầu bằng mã ngắn "chị AP-X"; (4) D lượt 2: LLM gợi ý "Máy lọc nước UF" cho "phòng 20 mét vuông, bé 3 tuổi" (lẫn danh mục); (5) lỗi lặp SĐT của B không tái hiện trong lần chạy này (LLM không hỏi SĐT), chỉ có bằng chứng từ test.
 
 
-## 12. Tổng hợp tiến độ (2026-10-27; cập nhật 2026-10-28 sau § 11.43–11.84)
+## 12. Tổng hợp tiến độ (2026-10-27; cập nhật 2026-10-28 sau § 11.43–11.84; cập nhật lại 2026-11-04 sau § 11.85–11.106)
 
 > Tóm tắt toàn bộ kế hoạch ([docs/PLAN.md](docs/PLAN.md)) đã làm và chưa làm. Chi tiết từng việc nằm ở § 11.x; kiến trúc hiện tại ở [docs/PIPELINE.md](docs/PIPELINE.md). Mọi số liệu dưới đây đọc từ nhật ký/lệnh đã chạy, không ước lượng thêm.
 
@@ -1725,40 +1745,66 @@ Sửa 5 lỗi ở § 11.34, mỗi lỗi có test hồi quy (`BatchFixesTest` + 1
 | | 12 khung đổi (mâu thuẫn phiên trước + 5 kiểu "tái hiện lỗi demo") giữ tổng 86; nhãn `hard_case` mới trong validator | ✅ | § 11.33 |
 | | Trần chi phí tích lũy 10.000 VND bằng mã, `--batch`, `--dry-run`; **lô đại diện 10 khung / 12 cuộc đã sinh và đạt kiểm tra tự động** (606,0 VND + D28 sinh lại) | ✅ | § 11.34–11.39 |
 | **Sửa hệ thống** | Nhánh dự phòng không bịa thông số/quà/SKU thô; guardrail "hết hàng" khớp `inventory.check`; tầng đầu ra: không lặp câu hỏi cùng slot, bỏ markdown; số nói bằng chữ ("mười lõi", "mười lăm tháng mười"); đổi ngày = cuộc mới, tự chốt cuộc cũ; sửa tên "Lan Chị"; Streamlit `width="stretch"`; viết `docs/PIPELINE.md` | ✅ | § 11.40–11.42 |
-| **Kiểm** | Bộ test offline **864 test, 0 đỏ** (2026-10-28, `runs/_unittest_full37.txt`; 745 test ở cả `local`/`inproc` tại 2026-10-27); `ui_replay.py` nay 10 hội thoại A–J (trần cứng 550 VND) là bộ hồi quy thường trực | ✅ | § 11.41–11.42, 11.75–11.78 |
+| **Kiểm** | Bộ test offline **963 test, 0 đỏ** (2026-11-02, `runs/_unittest_basket_sync2.txt`; 864 ở 2026-10-28); `ui_replay.py` 10 hội thoại A–J (trần cứng 550 VND) là bộ hồi quy LLM thật. **Chạy test: conda `nlp_env` (Python 3.12) + `MCP_TRANSPORT=inproc MEMORY_TRANSPORT=local`; Python hệ thống thiếu `sklearn` làm test treo** | ✅ | § 11.41–11.42, 11.75–11.78, 11.103–11.106 |
 | **Hiểu lời khách (LLM-first)** | `reply_reader` (LLM + trích dẫn nguyên văn, code chỉ kiểm chứng), chốt đồng ý `verify` 2 lớp độc lập, cổng mở đơn bằng code (6 lớp tín hiệu, đọc muộn, SKU đơn, chống mơ hồ, hết hạn nháp), hỏi SĐT lần trước (C), reply `no_basis` do code dựng (D), `product_advised` từ shortlist (E), che mã SKU | ✅ mã + test; **LLM thật A–F: 5/6 đạt** (§ 11.75); chưa đo trên câu khách thật | § 11.43–11.75 |
 | **Chuyển máy** | `handoff.transfer` chốt theo LÝ DO: ca ngoài phạm vi/an toàn → chuyển ngay (chốt độc lập + trích dẫn); mặc cả → cần khách yêu cầu/đồng ý; ép chuyển ca khiếu nại đơn đã đặt (code); brief do code điền trường thiếu; episode giữa cuộc không bị đếm là "cuộc trước"; khách CRM không bị xin lại SĐT | ✅ mã + test; **LLM thật B, G, H, I, J đạt** (một lần/ca) | § 11.76–11.80 |
 | **Bước 14a** | Package `evaluation/` chấm lại từ trace, ca sai, đọc vẹt, bảng 20 lượt; gỡ 4 file dead code `src/eval/` | ✅ không LLM; bảng chấm tay chưa có người điền | § 11.81 |
 | **Bước 11** | Router chọn policy 2 tầng + phương án lai (2 kết quả đầu từ file chọn, bù từ toàn bộ đã lọc ngày) | ◐ đo LLM thật: router thuần 74,6% < 81,4% (không đạt); hybrid k=2 88,1% chỉ tính OFFLINE (quá khớp), chưa đo lại; chi phí/độ trễ router chưa vào trace/trần | § 11.82 |
 | **Bước 17** | Backend FastAPI `api/` (6 endpoint + sessions/health), tự cấp `call_name`/`turn_num`, trace rút gọn + che PII | ✅ 17 test, chạy thử uvicorn không LLM; phiên xen kẽ THEO LƯỢT (khóa pipeline), chưa song song thật | § 11.83 |
+| **Bước 13** | Chủ động đưa thông tin: tra sẵn giá/tồn kho/KM/bảo hành lúc nhận diện khách (mã + test); chạy chung trong GĐ2 từ lần 2, **chưa A/B riêng** | ◐ | § 11.85 |
+| **Bước 11** | Chi phí + quyết định router chính sách vào trace và trần chi phí (đã tính trong chi phí GĐ2 từ lần 5); chất lượng router: thuần 74,6% < 81,4%, hybrid 88,1% chỉ OFFLINE | ◐ | § 11.82, 11.96 |
+| **Bước 18** | Giao diện web `ui/index.html` (dựng tay, **không dùng W&B OpenUI**) + `scripts/run_demo.py`; chạy thử LLM thật theo DEMO_SCRIPT (168 VND); nhận địa chỉ không cần đường/quận (§ 11.100); khách đổi sang sản phẩm khác giữa cuộc (§ 11.102, 302 VND) | ✅ mã + test; chưa kiểm điện thoại/Safari | § 11.97, 11.99, 11.100, 11.102 |
+| **Hồ sơ nộp** | `submission/` (README, ARCHITECTURE, DATASET, EVALUATION_REPORT, DEMO_SCRIPT, slides.html). **Số liệu trong đó là của lần 4 (HR đã chấm lại = 0,0 sau sửa đáp án); chưa cập nhật theo lần 6 (TSR 66,7)** | ◐ | § 11.98, 11.103a |
+| **Bước 15 GĐ2** (22 kịch bản × 2 cấu hình × 3 seed, LLM thật, trên MCP) | **6 lần chạy** (bảng dưới). Lần 6 là mới nhất, 22 kịch bản, đáp án đã sửa | ◐ **chưa đạt TSR ≥ 70 và TTFT ≤ 3 s** | § 11.87–11.94, 11.103b, 11.106 |
+| **Dọn dự án** | Chuyển file/thư mục không dùng sang `Harness_Agent/NotRelated/` (không xóa); `.gitignore` loại `runs/*` trừ báo cáo `gd2_run*` | ✅ | § 11.101 |
+| **Đáp án kịch bản sinh** | `SC-GEN-01` (RUN-10 bị bỏ sót), `SC-GEN-05` (RUN2-SALE), `SC-GEN-02` (AIR-OCT + AIR-2ND-50 → **11.685.000**, suy từ chính sách, BTC chưa xác nhận) — **lỗi của nhóm, không phải BTC**; sửa trong `generate_dataset.py` + `generated_m1/` | ✅ | § 11.103a, 11.104 |
+| **Giá báo == giá đơn** | `src/harness/basket.py::price_basket` (nơi duy nhất tính tiền giỏ) dùng cho `get_quote`, đọc lại đơn và chốt cuối trước `order.create`; lệch ⇒ KHÔNG tạo đơn, code chuyển nhân viên; hạn mức COD/ngưỡng xác nhận tính trên tổng giỏ; `correct_basket_totals` sửa số LLM tự nhân (sửa này **chưa đo LLM thật**) | ✅ mã + test; ◐ đo | § 11.104–11.106 |
 
-**Chi phí đã tiêu (đo, VND):** dataset 2.076,3 / 10.000 (trần tích lũy trong mã); `ui_replay` 247,0 + 361,0; các lần chạy bước 15 GĐ1 ghi ở § 11.20–11.31 (mỗi lần dưới trần riêng; riêng § 11.30 vượt trần "một lần chạy" 5.000 VND → 6.556 VND). Giá `gpt-6-luna` trong `config/pricing.yaml` vẫn là giá tạm OpenRouter, **chưa đối chiếu giá OpenAI**.
+**Lịch sử bước 15 GĐ2 (cấu hình full; chi phí thật VND):**
 
-### 12.2. Chưa làm
+| Lần | Thay đổi chính | TSR | RQR | HR giá/KM | TTFT p95 | Chi phí |
+|---|---|---:|---:|---:|---:|---:|
+| 1 (§ 11.87) | chạy đầu | 50,0 | 0,0 | 31,1 | 12,9 s | 10.716,5 |
+| 2 (§ 11.90) | sửa theo § 11.89 (gate điền `price_vnd`…) | 68,2 | 7,3 | 6,2 | 8,3 s | 11.330,8 |
+| 3 (§ 11.92) | sửa theo § 11.91 | 71,2 | 2,2 | 9,5 | 14,0 s | 11.706,8 |
+| 4 (§ 11.94) | nhánh dự phòng mất LLM | **72,7** | 2,1 | 6,0 (0,0 sau sửa đáp án GEN-01) | 26,2 s (3 lượt API treo) | 11.638,9 |
+| 5 (§ 11.103b) | timeout + thử lại; **21 kịch bản** (GEN-02 thiếu lúc chạy) | 69,8 | 0,0 | 1,9 | 6,5 s | 13.638,1 |
+| 6 (§ 11.106) | `price_basket`, đáp án GEN đã sửa; 22 kịch bản | **66,7** | 0,0 | 0,0 | 7,7 s | 13.387,5 |
+
+Lần 6 so lần 4: TSR giảm do SC-GEN-02 (3 seed; order gate chặn trước `order.create` khi tổng đúng vượt hạn mức COD — xung đột với tiêu chí chấm `tool_called: order.create`, không phải lỗi hành vi) và SC-GEN-13 seed 2 (LLM hỏi lại thay vì gọi `order.create`). Các lần không cùng cơ sở (đáp án/kịch bản đổi giữa chừng) — chỉ so sánh có điều kiện.
+
+**Chi phí đã tiêu (đo, VND):** dataset 2.076,3 / 10.000 (trần tích lũy trong mã, còn 7.923,7); bước 15 GĐ2 sáu lần: 10.716,5 · 11.330,8 · 11.706,8 · 11.638,9 · 13.638,1 · 13.387,5 (≈ 72.400 tổng; mỗi lần dưới trần 7.000 + 7.500); `ui_replay` 247,0 + 361,0; chạy thử UI 168; phát lại đổi sản phẩm 302; các lần chạy GĐ1 ghi ở § 11.20–11.31 (riêng § 11.30 vượt trần "một lần chạy" 5.000 → 6.556). Giá `gpt-6-luna` trong `config/pricing.yaml` vẫn là giá tạm OpenRouter, **chưa đối chiếu giá OpenAI**.
+
+### 12.2. Chưa làm (2026-11-04)
 
 | Hạng mục | Vì sao còn thiếu / điều kiện |
 |---|---|
-| **Bước 15 GĐ2** (22 kịch bản × 2 cấu hình × 3 seed, ≥ 100 lượt, chạy trên MCP) — nguồn của **mọi số liệu nộp** (RQR, TSR, HR, CCR, TTFT/Total p95) | cần dataset + duyệt trần chi phí; hiện **chưa có số hợp lệ nào đạt ngưỡng BTC** |
-| **Dataset còn 44 khung** + audio ≥ 40 cuộc / ≥ 1 giờ + ghi âm Nam (Đại) / Trung (Hậu) có giấy đồng ý + 16a GĐ2 (≥ 20 file, áp luật quay lại whisper) | đang **tạm dừng** theo yêu cầu 2026-10-27; chờ duyệt lô tiếp theo |
-| Duyệt tay 15% (checklist [docs/DATASET_REVIEW_CHECKLIST.md](docs/DATASET_REVIEW_CHECKLIST.md)), chia dev/held-out | cần người duyệt (chủ dự án + Kiệt) |
-| Bước 13: mã + test xong (§ 11.85), **chưa đo LLM thật**; còn lại: 14b (LLM-judge + simulator, M2), 16 (vòng cải tiến), 18 (UI OpenUI, cần 17 ✅) | 13: chờ đo; 14b/16/18 chưa bắt đầu |
-| Đo lại bước 11 bằng LLM thật với mã hybrid (≈ 465 VND/60 câu) và nối chi phí router vào trace/trần chi phí | cần duyệt trần; làm cùng bước 13 (`PolicyRouter.drain_usage()`) |
-| Đo chốt đồng ý / cổng mở đơn trên **câu khách thật** (`eval_consent_guard.py --cases`, `eval_gate_open.py --cases`); đo token/TTFT/tổng thời gian rồi tối ưu (thứ tự chủ dự án chốt: sau end-to-end) | chờ file JSONL câu thật và trần chi phí |
-| Order gate ở server `mcp-crm` (hiện chỉ ở orchestrator); hai phiên SONG SONG thật trên cùng DB (hiện xen kẽ theo lượt qua khóa pipeline, § 11.83) | cần ngữ cảnh lượt theo phiên trong `MemoryService`/mcp-memory |
-| Gỡ `src/agents` "A2A" (`src/eval/*` chết đã gỡ ở § 11.81) | đổi chữ ký orchestrator; chờ quyết định |
-| **Hồ sơ nộp M1:** báo cáo đánh giá (≥ 10 ca sai), mô tả dataset, ước lượng tác động kinh doanh, video demo 5–8 phút, slide ≤ 15, cập nhật README gốc | chưa có |
+| **Số đo chính thức đạt ngưỡng** (TSR ≥ 70 và hơn baseline; TTFT p95 ≤ 3 s) | lần 6: TSR 66,7, TTFT 7,7 s. Cần: quyết tiêu chí chấm SC-GEN-02; chạy lại sau `correct_basket_totals` (≈ 13.400 VND, **cần duyệt trần**); tối ưu token/TTFT (thứ tự chủ dự án chốt: sau end-to-end) |
+| Cập nhật `submission/` theo số lần 6 (EVALUATION_REPORT, README, DEMO_SCRIPT, slides) | hiện vẫn là số lần 4 (TSR 72,7 "đạt") — **không còn đúng** |
+| **Dataset còn 44 khung** + audio ≥ 40 cuộc / ≥ 1 giờ + ghi âm Nam (Đại) / Trung (Hậu) có giấy đồng ý + 16a GĐ2 (≥ 20 file, luật quay lại whisper) | **tạm dừng** theo yêu cầu 2026-10-27; M1 cần ≥ 30 khách đa phiên (đếm 2026-10-21: 9; chưa đếm lại với lô dataset mới) |
+| Duyệt tay 15% (checklist [docs/DATASET_REVIEW_CHECKLIST.md](docs/DATASET_REVIEW_CHECKLIST.md)), điền `manual_review.csv`, chia dev/held-out | cần người duyệt |
+| Bước 14b (LLM-judge + simulator, M2), bước 16 (vòng cải tiến) | chưa bắt đầu |
+| Đo chốt đồng ý / cổng mở đơn trên **câu khách thật** (`eval_consent_guard.py --cases`, `eval_gate_open.py --cases`) | chờ file JSONL từ chủ dự án + trần chi phí |
+| Order gate ở `mcp-crm`; hai phiên SONG SONG thật trên cùng DB | cần ngữ cảnh lượt theo phiên trong `MemoryService`/mcp-memory |
+| Gỡ `src/agents` "A2A" | đổi chữ ký orchestrator; chờ quyết định |
+| **Hồ sơ nộp M1:** video demo 5–8 phút, slide `.pptx` (thiếu `python-pptx`), điền tay `manual_review.csv`, cập nhật README gốc | chưa có |
 | Đối chiếu giá `gpt-6-luna` với OpenAI | việc của chủ dự án |
+| **Đề nghị gửi BTC** (không tự lách): (1) `order.create` nhận `basket_skus` hoặc nhiều dòng giá; (2) AIR-2ND-50 với từ 3 máy ("máy thứ 4 có giảm không?"); (3) AIR-OCT có áp cho máy 1 khi máy 2 hưởng AIR-2ND-50 (11.685.000 hay 11.985.000); (4) xác nhận đáp án GEN-02; (5) cách chấm kịch bản có order gate (mẫu BTC cố định TSR 14,3%) | § 11.105 |
 
-### 12.3. Lỗi đã biết còn lại (đo được ở lần `ui_replay` gần nhất, `runs/ui_replay_6.txt`)
+### 12.3. Lỗi đã biết còn lại (2026-11-04)
 
-1. **"Hết hàng sai"**: khi LLM chỉ gọi `catalog.search` (không `inventory.check`) nó vẫn nói "38 đen không có sẵn" dù còn hàng (hội thoại A, 4 lượt liền); guardrail 2b không có bằng chứng nên không can thiệp. **Việc kế tiếp đề xuất:** code tự tra biến thể khách hỏi trước khi trả lời.
-2. ~~LLM gọi `handoff.transfer` khi khách chưa đồng ý; lộ mã SKU; lẫn danh mục~~ — **đã có chốt cấu trúc** (§ 11.73, 11.76–11.80); còn: chốt khiếu nại chỉ chạy khi LLM có gọi `order.status`, ca đo mới một lần.
-3. Cuộc từ chối/hoãn trong dataset: lời đáp của agent chỉ kiểm bằng từ khóa; lỗi "hiện hiện còn hàng" (LLM viết "hiện" trước ô `{stock}`); lỗi cũ S3 `blocker` của SC-C03.
-4. Liên thông kênh Zalo ẩn danh → hotline bằng SĐT khác không tự nhận ra (chủ ý: không nối theo lời khai).
-5. Đã biết từ bước 15 GĐ1: tư vấn chọn nhầm sản phẩm ở SAMPLE-01 (dao động theo lần chạy), TTFT p95 4,9 s (mục tiêu ≤ 3 s; chưa đủ 100 lượt để kết luận), `blocker` không được tính là "đã dùng" trong CCR.
+1. **TSR bộ mẫu BTC cố định 14,3%** (cả baseline): lời khách cố định không trả lời câu hỏi của order gate ⇒ không có đơn — hệ quả chủ ý (§ 11.31); TSR chính là cột "sinh (tương tác)".
+2. **SC-GEN-02**: tiêu chí chấm `tool_called: order.create` mâu thuẫn với bất biến "không thử khi biết chắc sẽ sai" (§ 11.106) ⇒ trượt 3/3 seed dù hành vi đúng. Cần đổi `success_if` hoặc bỏ ca.
+3. **Biến thiên LLM**: có lúc hỏi lại "chị có muốn em lên đơn không?" thay vì gọi `order.create` (SC-GEN-13 seed 2 lần 6; SC-GEN-15 lần 5); SAMPLE-03 hỏi lại mã đơn (mã OD682761 của BTC không có trong mock). Mỗi seed một mẫu, std ±2,7.
+4. **Tổng nhiều máy**: LLM tự nhân giá × qty và nói số khác `total_vnd` (GEN-02 lượt 1, lần 6) — đã sửa bằng `correct_basket_totals`, **chưa đo LLM thật**; số làm tròn ("khoảng 15,4 triệu") không bắt được.
+5. **Giới hạn thiết kế `price_basket`**: chỉ áp KM "máy thứ 2" cho đúng 2 máy cùng SKU; ≥ 3 máy và giỏ nhiều SKU có KM giỏ ⇒ không áp giảm / chuyển nhân viên vì `order.create` không nhận `basket_skus`. Đơn 2 máy cùng loại giờ KHÔNG đặt được ngay (chuyển nhân viên) ⇒ TSR nhóm ca này giảm. Không kiểm lại sau khi đơn đã tạo.
+6. **CCR**: SAMPLE-02/03/04/05 và SC-GEN-05/06 vẫn "chưa mang sang" một số trường (product_advised, competitor_price_vnd, promo_code, size…) — chưa phân tích sâu; `blocker` không tính là "đã dùng".
+7. **TTFT p95 7,7 s** (trung vị khoảng 3,5 s); timeout + thử lại đã loại các lượt treo 60–128 s.
+8. **Liên thông kênh** Zalo ẩn danh → hotline bằng SĐT khác không tự nhận ra (chủ ý).
+9. **Quy trình**: `generated_m1/` và `generate_dataset.py` bị hai phiên sửa song song trong lần chạy 5 (SC-GEN-02 từng vắng khi chạy ⇒ 21 kịch bản); khi chạy đo phải chốt bộ kịch bản trước. Router chính sách: multi-hop full recall @3 = 8,3%; từ chối câu `unanswerable` 0%.
 
-### 12.4. Thứ tự đề xuất tiếp theo (cập nhật 2026-10-28)
-1. **Đo bước 13 bằng LLM thật** (§ 11.85) + nối chi phí/độ trễ router bước 11 vào trace. 2. Chạy lại `ui_replay.py` A–J với trần được duyệt để lấy bức tranh tổng sau bước 13. 3. Chủ dự án gửi câu khách thật (JSONL) → đo chốt đồng ý/cổng mở đơn. 4. Đo token/TTFT/tổng thời gian và tối ưu. 5. Duyệt lô dataset kế tiếp (hoặc để tạm dừng) + trần chi phí bước 15 GĐ2 (trên MCP) → bước 14b, 16, 18. 6. Hồ sơ nộp (báo cáo, README, demo, slide).
+### 12.4. Thứ tự đề xuất tiếp theo (2026-11-04)
+1. **Chủ dự án quyết:** tiêu chí chấm SC-GEN-02; trần cho lần chạy xác nhận (≈ 13.400 VND). 2. Chạy lại GĐ2 trên bộ 22 kịch bản đã chốt → số chính thức; cập nhật `submission/` (đừng giữ số lần 4). 3. Gửi BTC 5 đề nghị (§ 12.2). 4. Tối ưu token/TTFT (mục tiêu ≤ 3 s). 5. Duyệt lô dataset kế tiếp (hoặc để tạm dừng) → audio, 16a GĐ2, chia dev/held-out; duyệt tay 15%. 6. Đo chốt đồng ý/cổng mở đơn bằng câu khách thật. 7. Hồ sơ nộp: video, slide `.pptx`, README gốc; sau M1: 14b, 16.
 
 ### 11.43. Sửa "hết hàng sai": code tự tra `inventory.check` cho biến thể khách nêu (2026-10-27) — KHÔNG gọi API, chưa chạy lại LLM thật
 
@@ -2271,3 +2317,85 @@ Nguồn: ảnh chụp giao diện + `runs/api_session.jsonl` (`call_3`, khách W
 - *Sửa thêm:* prompt "khách nêu ĐÍCH DANH một sản phẩm/mẫu → `catalog.search` theo tên, không dùng `product.shortlist`; không nói 'không có sản phẩm' khi chưa tra" (+ test).
 - *Lần 2 (sau sửa; chạm trần ở lượt 4 → `/chat` trả 402, không sập):* lượt 2 tìm thấy Windbreak 690.000đ, còn hàng (nhưng vẫn qua `product.shortlist` lần này — LLM không luôn theo luật mới); lượt 3 báo 690.000đ ngay từ `get_quote` `SKU-JK-WND`, không cần chốt (3).
 - **Kết luận:** 3 lỗi người dùng thấy (đi tìm đơn để đổi, giá sai 1.490.000 cho Windbreak, size/màu cũ áp sang món mới) **không tái hiện** ở hai lần chạy; nhưng một mẫu mỗi lần, LLM biến thiên (lượt 2 chạy 1 nói sai "không có", chạy 2 đúng) và **chưa kiểm** hết các cách khách diễn đạt; lượt 2 vẫn có thể dùng `shortlist` thay `catalog.search`.
+
+### 11.103a. Sửa đáp án SC-GEN-01 / GEN-05 / GEN-02 (2026-11-02; KHÔNG gọi LLM)
+Các ghi chú § 11.88–11.94 ("sự thật kịch bản lệch tool, chờ BTC") **sai hướng**: SC-GEN-01 do `generate_dataset.py` của nhóm sinh, không phải của BTC. Ngày call_2 (16/10) khuyến mãi `RUN-10` (giảm 10%, 12–25/10, áp cho `SKU-SN-RUN2`, `promotions.json`) đang hiệu lực; 1.690.000 × 0,9 = 1.521.000 = giá tool trả. Đáp án kịch bản chỉ tính `RUN2-SALE` hết hạn nên ghi 1.690.000.
+**Sửa:** `ground_truth_facts.price_vnd` 1.690.000 → 1.521.000 trong `generate_dataset.py` và `test_set/generated_m1/SC-GEN-01.json` (+ `notes`). `EVALUATION_REPORT.md` mục 5 đính chính. **Chưa làm:** chấm lại trace `runs/gd2_run4` để có HR giá/KM mới; kiểm GEN-02 / GEN-05 xem có cùng nguyên nhân không. Trường `forbidden_claims promo_active=true` giữ nguyên: nó nói về `RUN2-SALE`, nhưng agent nói "giảm 10%" (RUN-10) có thể bị hiểu là `promo_active` — cần xem khi chấm lại.
+**Chấm lại (2026-11-02, KHÔNG gọi LLM):** `python scripts/gd2_report.py --root runs/gd2_run4 --out-dir <thư mục tạm>` (không ghi đè `runs/gd2_run4/gd2_report.*`). Full: HR giá/KM **6,0 → 0,0** (ba seed 0,0); baseline 33,9 → 29,3; TSR, RQR, CCR, TTFT không đổi. HR ≤ 5% **ĐẠT** — lưu ý: đáp án sửa SAU khi thấy điểm; căn cứ là `promotions.json` (RUN-10), kiểm lại được độc lập. Các lần chạy 1–3 chưa chấm lại.
+**GEN-02 / GEN-05 (đã kiểm, CHƯA sửa):** cả hai cũng là đáp án kịch bản sai, agent đúng theo tool. GEN-05 call_2 (25/09): RUN2-SALE −20% đang chạy → chênh thật 40.000 = 50.000 × 0,8 (tool `order_update` lấy giá mới − giá đơn đều đã giảm); `facts_established.price_quoted_vnd` 1.690.000 của call_1 (20/09) cũng bỏ sót RUN2-SALE (đúng 1.352.000). GEN-02 call_1 (15/10): AIR-OCT −300.000/máy → 2 × 7.690.000 = 15.380.000; nhưng AIR-2ND-50 (máy thứ 2 −50%, cùng đơn) cũng có thể áp (tổng 11.985.000) nên tổng đúng chưa rõ; mục đích ca (COD > 10.000.000) đúng với mọi cách tính. Hai ca này không nằm trong công thức HR giá/KM. Cần quyết: sửa đáp án hay bỏ trường `total_vnd`. Cập nhật `submission/` (EVALUATION_REPORT, README, DEMO_SCRIPT, slides).
+**Sửa GEN-05 (2026-11-02, KHÔNG gọi LLM):** `variant_price_delta_vnd` 50.000 → 40.000 (call_2, 25/09, RUN2-SALE −20% đang chạy) và `facts_established.price_quoted_vnd` call_1 1.690.000 → 1.352.000 (20/09), cả `generate_dataset.py` và `generated_m1/SC-GEN-05.json` (+ `notes`). Chấm lại `gd2_run4`: chỉ số tổng không đổi (GEN-05 ngoài công thức HR giá/KM; HR full vẫn 0,0). `runs/gd2_run4/failures_all.txt` là bản cũ, chưa tạo lại. GEN-02 vẫn chưa sửa (tổng đúng chưa rõ: AIR-OCT hay AIR-2ND-50).
+**Sửa GEN-02 (2026-11-02, KHÔNG gọi LLM):** `total_vnd` 15.980.000 → **11.985.000** (`generate_dataset.py` + `generated_m1/SC-GEN-02.json` + `notes`). Căn cứ: `products.json` (AirPure Pro 7.990.000) + `promotions.json` (ngày 15/10: AIR-2ND-50 −50% máy thứ 2, 05/10–04/11; AIR-OCT −300.000/máy) + KM-04 (chọn chương trình có lợi nhất; không cộng hai chương trình không stackable): 7.990.000 + 3.995.000 = 11.985.000 < 2 × 7.690.000 = 15.380.000. Mục đích ca (COD > 10.000.000) vẫn đúng. Giả định: coi AIR-OCT và AIR-2ND-50 không dùng chung được trên cùng đơn (KM-03/04); nếu BTC cho dùng AIR-OCT cho máy đầu thì đúng là 11.685.000.
+> **Đính chính thứ tự (2026-11-04):** các đoạn về GEN-02 dưới đây do HAI phiên làm song song và thay nhau: 15.980.000 → 11.985.000 (phiên khác) → xóa file theo yêu cầu chủ dự án → tạo lại với 15.380.000 → **11.685.000 (HIỆN HÀNH, § 11.104)**; `SC-GEN-02.json` CÓ trong bộ (22 kịch bản). Mục này từng đánh số trùng § 11.103; nay là 11.103a (đáp án) và 11.103b (chạy lần 5).
+**Lỗi agent lộ ra (CHƯA sửa lúc ghi; đã sửa ở § 11.105–11.106):** trace `gd2_run4` cho thấy agent gọi `pricing.get_quote(sku, qty=2)` KHÔNG truyền `basket_skus`, nên mock chỉ xét AIR-OCT (7.690.000/máy, 15.380.000) → agent báo khách cao hơn chính sách 3.395.000. Khi có `basket_skus` mock lại trả 3.995.000/máy (áp 50% cho CẢ hai máy, tổng 7.990.000 — lệch KM-05 nên không dùng được như hiện tại). Cần quyết: xử lý ở tầng agent (tự tính AIR-2ND-50 từ hai báo giá) hay báo BTC lỗi mock. Chấm lại gd2_run4: chỉ số tổng không đổi (total_vnd ngoài công thức HR giá/KM); GEN-02 nay bị `hr` lệch thật ở các lượt báo tổng.
+**Xóa SC-GEN-02 (2026-11-02, theo yêu cầu chủ dự án):** xóa `generated_m1/SC-GEN-02.json` và khối tương ứng trong `generate_dataset.py` (không bị sinh lại); bản sao lưu ở thư mục tạm của phiên (scratchpad `SC-GEN-02.json.bak`, mất khi phiên dọn). Bộ còn 21 kịch bản (7 BTC + 14 sinh), 30 cuộc. Chấm lại `gd2_run4` (trace vẫn gồm GEN-02, bị bỏ qua khi chấm): **TSR 72,7 → 71,4** (15/21; baseline 71,2 → 69,8), RQR/CCR/HR/TTFT không đổi; vẫn ≥ 70 và hơn baseline, nhưng biên 70% hẹp hơn (thêm 1 ca trượt là rớt). `submission/` đã cập nhật số TSR và số lượng ở các chỗ chính; **chưa rà hết** mọi chỗ nhắc "22 kịch bản/15 sinh" (README, slides, bảng lịch sử các lần chạy). Lỗi agent báo tổng hai máy cao hơn chính sách (xem trên) còn nguyên nhưng không còn ca nào đo nó.
+**Sửa GEN-02 (2026-11-02, KHÔNG gọi LLM):** `total_vnd` 15.980.000 → **15.380.000** (+ `notes`) trong `generate_dataset.py` và `generated_m1/SC-GEN-02.json`. Căn cứ: `AIR-OCT` −300.000/máy (`SKU-AP-PRO`, 05–30/10) đang chạy ngày 15/10 → 2 × 7.690.000; kiểm bằng `mock_tools.order_create(qty=2, COD, on=2026-10-15)` → `cod_limit_exceeded`, `total_vnd` 15.380.000. **Giới hạn:** `AIR-2ND-50` (máy thứ 2 −50%) chỉ được tool áp khi truyền `basket_skus` (khi đó 7.990.000 + 3.995.000 = 11.985.000, vẫn > 10.000.000); với `qty=2` cùng SKU tool không áp nên chọn 15.380.000 theo tool. **Sự cố:** `generated_m1/SC-GEN-02.json` bị XÓA khỏi thư mục lúc ~18:45 (không phải do tôi; bản cũ còn ở `generated_m1_v1/`); khi chấm lại `gd2_report` chỉ còn 21 kịch bản (TSR 71,4 — số sai). Đã tạo lại đúng file này từ `generate_dataset.py` (chỉ SC-GEN-02); chấm lại `gd2_run4` đủ 22 kịch bản: TSR 72,7, RQR 2,07, CCR 52,4, HR giá/KM 0,0 (không đổi).
+
+### 11.103b. Bước 15 GĐ2 — chạy lần 5 (2026-11-02; trần 7.000 + 7.500 như lần trước, chủ dự án duyệt "đo lại bằng LLM thật")
+`runs/gd2_run5/`. **Chi phí thật: mẫu BTC 6.335,2 + sinh 7.302,9 = 13.638,1 VND** (lần 4: 11.638,9; lần này đã gồm chi phí router chính sách), không chạm trần; 0 lỗi kết nối. Chạy trực tiếp trên `BTC-Data-Vong1-TEAMS/test_set/{public_sample,generated_m1}`.
+**KHÔNG so sánh thẳng với lần 4:** trong lúc chạy, thư mục `generated_m1/` đang bị sửa (file đổi 2/11 18:30–18:49, `generate_dataset.py` cũng đổi — không phải do phiên này): `SC-GEN-01` (giá cuộc 2 1.690.000 → 1.521.000), `SC-GEN-05` (giá đã báo 1.352.000, chênh biến thể 50.000 → 40.000), `SC-GEN-02` (tổng 15.980.000 → 15.380.000) — đúng 3 chỗ sự thật lệch tool ở § 11.94. **Lúc chạy `SC-GEN-02` không có trong thư mục nên báo cáo chỉ có 21 kịch bản (14 sinh), 89–91 lượt/seed**; file này được ghi lại lúc 18:49, sau khi chạy.
+| Chỉ số (full) | Lần 4 (22 kịch bản) | Lần 5 (21 kịch bản, GT đã sửa một phần) | Ngưỡng |
+|---|---:|---:|---|
+| TSR | 72,7 ± 0,0 (baseline 71,2) | 69,8 ± 2,7 (baseline **69,8**) | ≥ 70 → CHƯA ĐẠT; hơn baseline: không |
+| TSR bộ sinh | 100 ×3 | 92,9 / 100 / 100 | — |
+| RQR | 2,1 ± 3,6 (baseline 12,2) | **0,0 ± 0,0** (baseline 4,8) | giảm ≥ 40% → ĐẠT |
+| HR giá/KM | 6,0 ± 0,2 (baseline 33,9) | **1,9 ± 3,2** (baseline 16,1) | ≤ 5% → ĐẠT (nhưng xem dưới) |
+| CCR | 52,4 | 53,6 | — |
+| TTFT p95 | 6,7–7,3 s (seed sạch) | **6,5 ± 0,3 s** (6,8 / 6,2 / 6,6; trung vị 3,5–3,9 s, tối đa 9,8–11,7 s) | ≤ 3 s → CHƯA ĐẠT |
+Guardrail 0 vi phạm.
+**Diễn giải:** (1) HR giảm do **sửa đáp án kịch bản** (GEN-01/05 nay khớp tool), không do hệ thống tốt lên; ca còn lại: seed 2 `SAMPLE-01` cuộc 2 nói 4.890.000 (giá AirPure X) trong khi sự thật 5.200.000. (2) TSR 69,8 là do bộ kịch bản có 21 chứ không phải 22 kịch bản (mỗi kịch bản = 4,8 điểm) cộng một ca mới trượt: seed 1 `SC-GEN-15` cuộc 1 (agent mở gate bằng lời LLM nhưng không có `order.create`; lần 4 đạt 3/3 — một mẫu, chưa rõ biến thiên hay lỗi mới). TSR full bằng baseline vì cả hai cùng 100% ở bộ sinh. (3) **TTFT không còn lượt đứng 60–128 s** (tối đa 9,8–11,7 s so với 64–128 s ở lần 4): timeout + thử lại có tác dụng; p95 vẫn gấp đôi mục tiêu. (4) Chi phí tăng khoảng 17%: một phần là chi phí router nay được tính; phần còn lại chưa tách.
+**Cần làm để có số chính thức:** chốt bộ kịch bản (đủ 22, GT đã sửa) rồi chạy lại một lần (≈ 13.700 VND; trần nên nâng, vd 7.500 + 8.000), sau đó cập nhật `submission/EVALUATION_REPORT.md`, `slides.html`, PLAN. Số ở các tài liệu nộp hiện vẫn là của lần 4.
+
+### 11.104. Báo giá từng máy khi mua 2 máy cùng SKU — KM "máy thứ 2" (2026-11-02; KHÔNG gọi LLM thật)
+**Vấn đề:** `pricing.get_quote(sku, qty=2)` trả MỘT giá/đơn vị và chỉ xét AIR-OCT (7.690.000); KM `AIR-2ND-50` cần `basket_skus` = máy kia, mà `_sanitize_basket` (từ SAMPLE-05) bỏ chính SKU khỏi giỏ → với 2 máy cùng SKU KM này không bao giờ hiện, agent báo 15.380.000 (cao hơn chính sách). Truyền thẳng `basket_skus=[sku]` cho `qty=2` cũng sai: mock tính giá máy 2 (3.995.000) cho CẢ hai máy → `order.create` ra 7.990.000 (thấp hơn chính sách 3.695.000) — đã kiểm bằng `mock_tools.order_create`.
+**Sửa (chủ dự án chọn "tách giá từng máy"):** `Orchestrator._per_unit_quote` — với `pricing.get_quote` có `qty == 2`, không giỏ, code báo giá riêng máy 1 (không giỏ) và máy 2 (giỏ = [chính SKU]); nếu máy 2 rẻ hơn nhờ KM `percent_second_item` thì kết quả có thêm `unit_prices_vnd`, `total_vnd` (= máy 1 + máy 2), `second_unit_promos`, `note`. `final_price_vnd` giữ nguyên (đơn vị 1) vì `order.create` kiểm giá theo nó; `_sanitize_basket` và `order.create` KHÔNG đổi. Test: `tests/test_cluster_4_8.py` (+2).
+**GEN-02 đặt lại 11.685.000** (theo chủ dự án): máy 1 AIR-OCT 7.690.000 + máy 2 AIR-2ND-50 3.995.000 (KM-03/04: loại không cộng dồn trên CÙNG một sản phẩm → chọn lợi nhất cho từng máy). Thay các giá trị 15.980.000 → 15.380.000 → 11.985.000 ở các ghi chú trước (11.985.000 giả định AIR-OCT không áp cho máy 1). `generated_m1/SC-GEN-02.json` có lại trong bộ (ghi chú "Xóa SC-GEN-02" ở trên bị thay thế; bộ 22 kịch bản).
+**Còn hở (cần quyết):** `order.create(qty=2)` vẫn tính `total = giá đơn vị 1 × 2` = 15.380.000, KHÔNG khớp `total_vnd` 11.685.000 đã báo; ca COD > 10.000.000 nhận `cod_limit_exceeded` với `total_vnd` 15.380.000 → nếu agent đọc lại số này sẽ lệch số đã báo. Mock không có cách đặt một đơn 2 máy khác giá; chỉ tách thành hai đơn hoặc báo BTC. **Chưa chạy lại LLM thật**; `gd2_run4`/`gd2_run5` là trước sửa này (GEN-02 trong chúng sẽ bị `hr` lệch với đáp án mới ở các lượt báo 15.380.000).
+
+### 11.105. Giá báo == giá đơn khi mua nhiều máy: `price_basket` + chốt trước `order.create` (2026-11-02; KHÔNG gọi LLM thật)
+**Nguyên nhân (§ 11.104 còn hở):** `_per_unit_quote` báo tổng đúng theo chính sách (AirPure Pro ×2 ngày 15/10 = 7.690.000 + 3.995.000 = 11.685.000) nhưng `order.create(qty=2)` ghi `final_price_vnd × qty` = 15.380.000; mỗi nơi (báo giá, đọc lại đơn của order gate, hạn mức COD của backend) tự tính tiền riêng. Kiểm thêm: `order.create` KHÔNG nhận `basket_skus` ở schema BTC (`tools.schema.json` chỉ có ở `pricing.get_quote`) và `create_order`/`crm_server` của nhóm không chuyển tham số này → với giỏ nhiều SKU khác nhau backend luôn ghi giá KHÔNG có KM giỏ (đã thấy `price_mismatch`: expected 4.890.000, given 2.445.000).
+**Sửa:**
+- `src/harness/basket.py::price_basket(quote, lines, on, phone, address)` — NƠI DUY NHẤT tính tiền giỏ. Mỗi dòng: giá theo chính sách (báo giá có `basket_skus` = SKU khác trong giỏ) và giá backend sẽ ghi (báo giá KHÔNG giỏ × qty); `qty == 2` cùng SKU: giá máy 2 từ báo giá `basket_skus=[sku]` khi có KM loại `percent_second_item` (đọc từ kết quả tool, không tên sản phẩm). Trả `total_vnd`, `order_total_vnd`, `synced`. **`qty ≥ 3` và dòng có giỏ khác: KHÔNG áp giảm thêm** (`shortcut:` trong mã — "máy thứ 4 có giảm không?" không rõ; KM-06 đơn ≥ 3 sản phẩm cùng loại do quản lý duyệt).
+- Dùng cùng hàm ở: (a) kết quả `pricing.get_quote` cho LLM (thêm `unit_prices_vnd`, `total_vnd`, `order_total_vnd`, `price_synced`, `note` khi qty ≥ 2 hoặc có giỏ; 1 máy không giỏ: như cũ); (b) tổng "đọc lại đơn" của order gate (`_gate_order_create`); (c) chốt cuối `_sync_guard` ở CẢ HAI chỗ gọi `order.create` (đường LLM và `_driver_create`), chạy cả khi order gate tắt.
+- **Bất biến:** `synced=False` → KHÔNG gọi `order.create`; CODE gọi `handoff.transfer` (brief do `_complete_handoff_brief` điền, lý do ghi cả hai con số; một phiếu cho mỗi phiên+SKU+qty) và dựng câu nói an toàn chỉ có MỘT con số (`total_vnd`); chuyển máy lỗi thì câu nói không khẳng định đã chuyển.
+- **COD:** hạn mức 10.000.000 tính trên `total_vnd` đúng của CẢ giỏ ở order gate (chặn trước khi hỏi địa chỉ; không tách đơn để lách); ngưỡng "COD > 2.000.000 cần gọi xác nhận" tính trên tổng giỏ (`_basket_confirm_flag`). Hạn mức/ngưỡng là hằng số `COD_LIMIT_VND`/`COD_CONFIRM_VND` (`shortcut:` — lấy từ mock_tools/VC-03, chưa có file dữ liệu). Khi đúng ≤ 10.000.000 nhưng cách tính cũ > 10.000.000 (AP-Y ×2: 7.800.000 vs 10.400.000) KHÔNG nói "vượt hạn mức COD" (đơn không tạo vì lệch giá, chuyển nhân viên).
+- Gỡ `_per_unit_quote` (§ 11.104). `_sanitize_basket` giữ nguyên (SAMPLE-05).
+**Test:** `tests/test_basket_sync.py` (20: `price_basket` — 2 máy, 1 máy, giày ×2, 3 máy, 2 SKU khác nhau, SKU không có KM giỏ, SKU lỗi, ngưỡng COD; luồng orchestrator — không tạo đơn + một phiếu chuyển máy + nhắc lại không lặp phiếu, 1 máy tạo đơn, giày ×2 tổng báo == tổng đơn, 3 máy báo == đơn, giỏ 2 SKU có/không KM giỏ, COD trên tổng đúng, COD không chặn nhầm theo cách cũ, COD cả giỏ, cờ xác nhận theo giỏ, `_sanitize_basket`); `tests/test_cluster_4_8.py` sửa 1 test. `tests/test_order_gate.py` sửa 1 test (COD ×2 máy lọc không khí AX40 nay có tổng đúng 9.735.000 ≤ 10.000.000 nên đi nhánh chuyển nhân viên; test chuyển sang máy lọc nước RO10, không có KM cặp). Toàn bộ: 959 test, 0 lỗi (`runs/_unittest_basket_sync.txt`; lần chạy đầu có 1 lỗi ở test_order_gate nói trên).
+**Giới hạn / chưa kiểm:** chưa chạy LLM thật, chưa đo gd2 (trace `gd2_run4/5` là TRƯỚC thay đổi này). Đáp án GEN-02 = 11.685.000 là SUY từ chính sách (KM-03/04/05 + mock), BTC chưa xác nhận — không phải số chính thức. Với AirPure ×2 hệ quả là khách KHÔNG đặt được đơn ngay mà được chuyển nhân viên (TSR các ca đặt 2 máy cùng loại giảm; đúng thiết kế an toàn). `order_total_vnd` cho giỏ nhiều SKU là tổng các dòng "giá không KM giỏ". Chỉ phát hiện lệch trong phạm vi `pricing.get_quote`; không kiểm lại sau khi đơn đã tạo (backend không có lệnh tính thử).
+**Đề nghị gửi BTC (không tự lách):** (1) cho `order.create` nhận `basket_skus` (mock đã nhận nhưng schema công bố không có) hoặc nhận nhiều dòng giá; (2) quy tắc AIR-2ND-50 cho qty ≥ 3 ("máy thứ 4 có giảm không?"); (3) AIR-OCT có áp cho máy 1 khi máy 2 hưởng AIR-2ND-50 không (11.685.000 hay 11.985.000); (4) xác nhận đáp án GEN-02.
+
+### 11.106. Bước 15 GĐ2 — chạy lần 6 sau § 11.105 (2026-11-02; trần 7.000 + 7.500 như lần trước, chủ dự án duyệt "chạy LLM thật để đo lại")
+`runs/gd2_run6/` (`gd2_report.md/json`; ca trượt: `_ev1.._ev3/failures.txt`). **Chi phí thật: mẫu BTC 6.212,6 + sinh 7.174,9 = 13.387,5 VND**; không chạm trần. 22 kịch bản (GEN-01, 02, 05 đã sửa đáp án), 89 lượt/seed, 1 dòng "Connection error" (đã thử lại).
+| Chỉ số (full) | Lần 4 (đáp án cũ) | Lần 6 | Ngưỡng |
+|---|---:|---:|---|
+| TSR | 72,7 ± 0,0 (baseline 71,2) | **66,7 ± 2,7** (baseline 68,2) | ≥ 70 và hơn baseline → **CHƯA ĐẠT** |
+| TSR bộ sinh | 100 ×3 | 93,3 / 86,7 / 93,3 | — |
+| RQR | 2,1 (baseline 12,2) | **0,0** (baseline 7,1) | giảm ≥ 40% → ĐẠT |
+| CCR | 52,4 | 53,6 | — |
+| HR giá/KM | 6,0 (0,0 sau sửa đáp án) | **0,0** (baseline 23,2) | ≤ 5 → ĐẠT |
+| TTFT p95 | 26.177 ms (nhiễu mạng) | **7.718 ± 672 ms** (total p95 9.505) | ≤ 3.000 → CHƯA ĐẠT |
+Guardrail 0 vi phạm; 1,15 cuộc tới chốt; 2,85 lượt/cuộc.
+**Ca trượt TSR so với lần 4:** (1) **SC-GEN-02 (cả 3 seed) — do thiết kế § 11.105:** kịch bản chấm `tool_called: order.create`, nhưng khi tổng đúng 11.685.000 > hạn mức COD, order gate chặn TRƯỚC khi gọi `order.create` (câu code dựng: "vượt hạn mức COD (tổng 11.685.000)… chuyển khoản") nên không có lời gọi nào để chấm. Không phải lỗi hành vi; là xung đột giữa tiêu chí chấm của kịch bản (kỳ vọng một lần THỬ order.create) và bất biến "không thử khi biết chắc sẽ sai". (2) SC-GEN-13 seed 2: LLM hỏi "chị có muốn em lên đơn không?" thay vì gọi `order.create` (biến thiên LLM đã biết, qty=1, không liên quan thay đổi mới; seed 1, 3 đạt). Mẫu BTC cố định vẫn 14,3% (order gate, § 11.31). TSR full KHÔNG hơn baseline (66,7 vs 68,2) — baseline cũng trượt GEN-02 khác nguyên nhân; không kết luận được hơn kém khi std ±2,7.
+**Lỗi thật lộ ra (chưa sửa lúc đo):** GEN-02 lượt 1 — agent nói "giá sau khuyến mãi cho 2 máy là 15.380.000" trong khi kết quả `get_quote` đã có `total_vnd` 11.685.000 (LLM tự nhân giá × 2; `derived_numbers` của guardrail cho phép `a × qty`), lượt 2 code dựng câu nói 11.685.000 → hai con số khác nhau trong cùng cuộc (đúng điều yêu cầu cấm). **Sửa sau đo (§ 11.106 tiếp):** `basket.correct_basket_totals` — số `final × qty` hoặc `order_total_vnd` khác `total_vnd` trong lời nói được thay bằng `total_vnd` (chỉ một SKU, qty ≥ 2, không giỏ khác); orchestrator gọi ngay sau `_bind_price_to_product`; test `CorrectTotalsTest` (4). **CHƯA đo lại bằng LLM thật** (chạy lần 6 là TRƯỚC sửa này). Giới hạn: chỉ thay được số viết đầy đủ ("15.380.000", "15,380,000"); số làm tròn ("khoảng 15,4 triệu") không bắt được.
+**Test sau sửa:** toàn bộ bộ test offline xanh (`runs/_unittest_basket_sync2.txt`).
+**Chưa kiểm:** đáp án GEN-02 = 11.685.000 là suy từ chính sách (BTC chưa xác nhận); tiêu chí chấm GEN-02 (cần quyết: đổi `success_if` thành "không tạo đơn COD + nói hạn mức" hay bỏ ca); TTFT vẫn 7,7 s > 3 s (cần tối ưu riêng).
+
+### 11.107. Sửa success_if SC-GEN-02, gộp bộ kịch bản đánh giá, sắp xếp `dataset/`, rà lỗi BTC (2026-11-04) — KHÔNG gọi LLM, chưa đo lại
+
+**Việc làm (theo yêu cầu chủ dự án):**
+1. **SC-GEN-02**: `success_if` bỏ `tool_called: order.create`, theo đúng mô tả (COD vượt hạn mức 10.000.000đ → báo/đề xuất chuyển khoản, không tạo đơn COD): `forbidden_claims` [`order_created=true`, `cod_allowed=true`] + `must_say_any` ["10 triệu", "10.000.000", "hạn mức", "chuyển khoản", "thanh toán trước"]. Không còn phụ thuộc tổng tiền. Trước đây ca này trượt 3/3 seed dù hành vi đúng (§ 12.3 mục 2) — **chưa chạy lại** nên chưa biết TSR mới.
+2. **`test_set/` gộp**: `generated_m1`, `generated_m1_v1`, `custom_test_45` → `team_eval/` (42 kịch bản / 63 cuộc); `public_sample/` giữ nguyên. Bảng gộp + từng lỗi đã sửa: `BTC-Data-Vong1-TEAMS/test_set/team_eval/README.md`. Bản gốc chuyển (không xóa) sang `NotRelated/truoc_khi_sap_xep_2026-11-04/test_set/`. `custom_test_45` có hàng chục chỗ giá/ngày KM/bảo hành/giá nhập lệch `mock_tools`; mọi `order.create` kỳ vọng đã được mô phỏng bằng mock (tạo được, giá khớp) và có test `tests/test_team_eval_set.py` (5 test).
+3. **`dataset/` sắp xếp** còn 4 thư mục: `frames/` (64 khung), `agent_eval/` (20 kịch bản), `asr/` (29 lời thoại sinh audio + đo ASR), `reports/` (sổ cái chi phí + bản duyệt). `frames54/` (chép trùng, D26/D28 lỗi thời) và `rules_report_after.txt` chuyển vào `NotRelated/`. Sổ cái chi phí **nguyên vẹn** (2.076,3 VND, vẫn ở `dataset/reports/generation_runs.jsonl`). Cập nhật đường dẫn trong `scripts/{generate_dataset_text,frames54_report,check_dialogue_rules,validate_scenarios,gd2_report}.py`, `tests/{_helpers,test_dataset_extra_frames}.py`; `generate_dataset.py` lưu trữ.
+4. **Validator** (`src/dataset/validate.py`): nhãn `het_hang_*` không còn bị coi là "KM hết hạn"; `pii_protection` được có CCCD/STK giả; `fact_in_text` thử lại sau ITN. `scripts/scan_btc_data.py` không còn sập khi SKU không có trong catalog.
+5. **BTC**: `docs/BTC_DATA_ISSUES.md` viết lại thành bảng 9 mục kèm đề xuất xử lý **chờ duyệt**. Mục mới: mock AIR-2ND-50 cho **cả hai máy giống nhau** cùng −50% (`order_create(qty=2, basket_skus=[PRO])` → 7.990.000), nên tổng đơn 2 máy có 3 đáp án (15.380.000 / 7.990.000 / 11.685.000).
+
+**Kiểm:** bộ test offline 968 test, 0 đỏ (`runs/_unittest_team_eval_merge.txt`, nlp_env, `MCP_TRANSPORT=inproc MEMORY_TRANSPORT=local`). `validate_scenarios` trên public_sample + team_eval: 0 lỗi ở team_eval; còn SAMPLE-01 (lỗi BTC) và 1 cảnh báo SAMPLE-06.
+**Chưa làm / chưa kiểm:** chưa chạy `run_eval` LLM thật trên bộ 49 kịch bản (cần duyệt trần chi phí) nên chưa có TSR mới; số lần 1–6 không so sánh được với bộ mới. `submission/` vẫn mang số lần 4.
+**Lỗi hệ thống mới thấy (chưa sửa):** `RequestNormalizer` đọc "5 triệu rưỡi" (viết số) thành `5.000.000 rưỡi` (mất nửa triệu); "năm triệu rưỡi" (chữ) thì đúng.
+
+### 11.108. Giám sát Prometheus + Grafana (2026-11-04) — KHÔNG gọi LLM; đã chạy Docker thật
+
+**Làm:** thư mục `monitoring/` — (1) `metrics.py`: registry tự viết (counter/gauge/histogram, định dạng văn bản Prometheus, không thêm phụ thuộc) + `observe_turn(row)` tính số đo từ đúng dòng trace; (2) API: `GET /metrics`, mỗi lượt `/chat` được ghi (lỗi giám sát không làm hỏng lượt); (3) `trace_exporter.py`: phát số từ file trace `runs/gd2_run*/**` (bỏ thư mục `_merged/_ev*` để khỏi đếm đôi); (4) `docker-compose.yml` (Prometheus v2.55.1 + Grafana 11.3.1), cấu hình scrape, provisioning datasource + dashboard `harness.json` (19 panel: TTFT/Total/Call Brief p95 so ngưỡng BTC, phân rã TTFT, chi phí, tool, guardrail, order gate). Trace thêm 2 trường tùy chọn qua `monitoring_extras` (`latency_detail`, `guardrail`) ở pipeline và runner.
+**Kiểm:** `tests/test_monitoring.py` (8 test): định dạng văn bản hợp lệ, histogram tích lũy, số đo từ dòng trace, `/metrics` không lộ SĐT, lỗi giám sát không phá lượt chat, exporter bỏ dòng dở dang, và **mọi số đo dashboard dùng đều do mã phát ra**. Chạy thử exporter qua HTTP trên `runs/` thật (2.379 dòng, 24 chuỗi `turns_total`). `docker compose config` hợp lệ.
+**Chạy thật (2026-11-04):** `docker compose up -d` (Docker Desktop, image `prom/prometheus:v2.55.1`, `grafana/grafana:11.3.1`): Prometheus lấy được job `harness-traces` (job `harness-api` báo `down` vì lúc đó API không chạy); Grafana nạp datasource + dashboard (19 panel); cả 22 truy vấn của dashboard chạy không lỗi (các panel "máy chủ trực tiếp" rỗng đúng như dự kiến khi API không chạy); xem giao diện trong trình duyệt: số liệu hiện đủ (3.258 lượt, TTFT p95 9,84 s đỏ, Total p95 12,0 s đỏ, Call Brief 84 ms, 0 vi phạm guardrail) — là tổng mọi lần đo GĐ2 và cả hai cấu hình, lọc theo lần chạy ở bộ lọc phía trên. **Lưu ý:** tiến trình phải nghe `0.0.0.0` (không phải 127.0.0.1) thì container mới lấy được số — đã ghi vào README/compose.
+**Chưa làm / chưa kiểm:** chưa chạy luồng `harness-api` với lượt chat thật (cần khóa API hợp lệ hoặc nhánh dự phòng); không có Alertmanager; registry nằm trong tiến trình (API một worker).
+**Quan sát từ trace GĐ2 lần 6 (để giảm TTFT):** chờ token đầu của vòng LLM cuối chỉ ≈ 1 s (p50) trong khi TTFT trung vị ≈ 4 s ⇒ phần lớn TTFT nằm ở các bước TRƯỚC vòng cuối (đọc ý khách bằng LLM, vòng LLM chọn tool, tool).

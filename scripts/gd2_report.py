@@ -21,7 +21,7 @@ sys.path.insert(0, CODE_DIR)
 from evaluation.scoring import REFERENCE_EVAL, load_reference, score   # noqa: E402
 
 BTC_SAMPLES = os.path.join(CODE_DIR, "BTC-Data-Vong1-TEAMS", "test_set", "public_sample")
-GEN_SAMPLES = os.path.join(CODE_DIR, "BTC-Data-Vong1-TEAMS", "test_set", "generated_m1")
+GEN_SAMPLES = os.path.join(CODE_DIR, "BTC-Data-Vong1-TEAMS", "test_set", "team_eval")
 
 
 def _runs(folder: str, cfg: str) -> dict:

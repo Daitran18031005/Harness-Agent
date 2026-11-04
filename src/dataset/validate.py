@@ -93,7 +93,11 @@ def fact_in_text(key: str, value: Any, text: str) -> bool:
         if v.isdigit():
             return bool(re.search(rf"(?:size|sz|co)\s*{int(v)}\b", f)) or bool(re.search(rf"\b{int(v)}\b", f))
         return bool(re.search(rf"(?:size|sz|co|ao)\s*{re.escape(v)}\b", f))          # size chữ (S/M/L/XL): bắt buộc có từ 'size' để khỏi nhầm chữ cái rời
-    return fact_mentioned(key, value, text)
+    if fact_mentioned(key, value, text):
+        return True
+    # số nói bằng chữ ("ba mươi lăm mét vuông"): thử lại trên bản đã chuẩn hóa (ITN) giống đường vào của hệ thống
+    from src.channels.normalizer import InputChannel, RequestNormalizer
+    return fact_mentioned(key, value, RequestNormalizer().normalize(text, InputChannel.HOTLINE, "0900000000").normalized_text)
 
 
 # ------------------------------------------------------------------------------------------------ kịch bản (S1–S9)
@@ -238,7 +242,7 @@ def validate_scenario(spec: Dict[str, Any], all_phones: Optional[Dict[str, List[
         if "mau_thuan" in hc:
             if len(calls) < 2 or not any("superseded" in (c.get("memory_expectation") or {}) for c in calls.values()):
                 add("S7", "LỖI", "hard_case 'mâu thuẫn' cần ≥ 2 cuộc và memory_expectation.superseded")
-        elif "het_han" in hc:
+        elif "het_han" in hc and "het_hang" not in hc:   # "het_hang_*" (hết hàng) KHÔNG phải "hết hạn"
             gts = [c.get("ground_truth_facts") or {} for c in calls.values()]
             if not any(("promo_active" in g and g["promo_active"] is False) or any(re.fullmatch(r"promo_.+_active", k) and v is False for k, v in g.items()) for g in gts):
                 add("S7", "LỖI", "hard_case 'KM hết hạn' cần ground_truth_facts báo KM không còn hiệu lực (False)")
@@ -284,7 +288,7 @@ def validate_scenario(spec: Dict[str, Any], all_phones: Optional[Dict[str, List[
         for ph in re.findall(r"(?<!\d)0\d{9}(?!\d)", re.sub(r"(?<=\d)[ .\-](?=\d)", "", text)):
             if not (ph == phone or FAKE_PHONE.match(ph) or ph in crm_phones):
                 add("S9", "LỖI", f"lời khách chứa SĐT lạ {ph}", cn)
-        if re.search(r"(?<!\d)\d{12}(?!\d)", text):
+        if hc != "pii_protection" and re.search(r"(?<!\d)\d{12}(?!\d)", text):   # pii_protection: CCCD/STK giả là chủ đích của ca kiểm che PII
             add("S9", "LỖI", "lời khách chứa chuỗi 12 chữ số (giống CCCD)", cn)
     return issues
 
@@ -490,7 +494,7 @@ def hard_case_type(hc: Optional[str]) -> Optional[str]:
         return "đổi ý"
     if "mau_thuan" in h:
         return "mâu thuẫn với phiên trước"
-    if "het_han" in h:
+    if "het_han" in h and "het_hang" not in h:
         return "KM hết hạn"
     if "ngoai_tai_lieu" in h or "chinh_sach" in h or "doi_thu" in h or "y_te" in h:
         return "hỏi ngoài tài liệu"

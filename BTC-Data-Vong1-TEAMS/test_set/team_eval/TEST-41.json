@@ -1,0 +1,40 @@
+{
+  "scenario_id": "TEST-41",
+  "level": "M1",
+  "persona": "khach_thich_khuyen_mai",
+  "hard_case": "mua_kem_phu_kien",
+  "customer_phone": "0900001017",
+  "customer_name": "Quân",
+  "honorific": "anh",
+  "notes": "[Thời trang] Giày sneaker Urban Classic (SKU-SN-CAS: 890.000đ) mua kèm tất thể thao RunLite 3 đôi (SKU-SN-SOCK: 149.000đ). Agent tư vấn và tạo đơn sản phẩm chính kèm phụ kiện.",
+  "calls": {
+    "call_1": {
+      "call_date": "2026-10-15",
+      "customer_turns": [
+        "Anh lấy đôi sneaker Urban Classic size 41 màu trắng giá 890k nhé.",
+        "Shop có bán tất thể thao cổ ngắn đi kèm không em?",
+        "Ok lấy cho anh 1 set tất thể thao RunLite 3 đôi 149k luôn nhé, giao COD về 19 Phạm Ngọc Thạch, Đống Đa, Hà Nội."
+      ],
+      "facts_established": {
+        "product_advised": "SKU-SN-CAS",
+        "variant_sku": "SKU-SN-CAS-41-TRANG",
+        "accessory_sku": "SKU-SN-SOCK",
+        "price_quoted_vnd": 890000,
+        "payment": "COD"
+      },
+      "success_if": {
+        "tool_called": "order.create",
+        "args_match": {
+          "sku": "SKU-SN-CAS-41-TRANG",
+          "price_vnd": 890000,
+          "payment": "COD"
+        }
+      },
+      "ground_truth_facts": {
+        "item_price_vnd": 890000,
+        "accessory_price_vnd": 149000
+      },
+      "expected_outcome": "chot_don"
+    }
+  }
+}

@@ -77,3 +77,14 @@ def measure_latency(t_start: float, t_end: float, llm_timing: Optional[Dict[str,
     else:
         ttft_ms = total_ms
     return {"ttft_ms": ttft_ms, "total_ms": total_ms}
+
+
+def monitoring_extras(meta: Dict[str, Any]) -> Dict[str, Any]:
+    """Trường phụ của dòng trace cho giám sát (Grafana): phân rã TTFT theo vòng LLM + kết quả guardrail. Chỉ thêm khi có dữ liệu; không khóa trong schema BTC."""
+    lt = meta.get("llm_timing") or {}
+    out: Dict[str, Any] = {}
+    if "rounds_before_first_token" in lt:
+        out["latency_detail"] = {k: lt[k] for k in ("rounds_before_first_token", "round_ms", "tool_ms", "final_round_ttft_ms", "prompt_tokens", "cached_tokens") if k in lt}
+    if meta.get("violation") or meta.get("guardrail_approved") is False:
+        out["guardrail"] = {"approved": bool(meta.get("guardrail_approved")), "violation": meta.get("violation")}
+    return out

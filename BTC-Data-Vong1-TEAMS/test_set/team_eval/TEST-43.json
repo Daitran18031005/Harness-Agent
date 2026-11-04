@@ -1,0 +1,46 @@
+{
+  "scenario_id": "TEST-43",
+  "level": "M1",
+  "persona": "khach_mua_nhieu_mon",
+  "hard_case": "khuyen_mai_may_thu_hai",
+  "customer_phone": "0900001019",
+  "customer_name": "Hưng",
+  "honorific": "anh",
+  "notes": "[Gia dụng] Mua AirPure Pro (7.990.000đ, AIR-OCT −300.000đ = 7.690.000đ) và AirPure Mini (2.190.000đ, AIR-2ND-50 −50% = 1.095.000đ): tổng 8.785.000đ. Tool order.create hiện không nhận basket_skus nên chỉ dòng Pro kiểm được bằng args_match.",
+  "calls": {
+    "call_1": {
+      "call_date": "2026-10-15",
+      "customer_turns": [
+        "Anh muốn mua 1 máy AirPure Pro cho phòng khách và 1 máy AirPure Mini cho phòng ngủ.",
+        "Shop đang có chương trình giảm 50% cho máy thứ 2 đúng không em?",
+        "Vậy chiếc Mini được giảm 50% còn hơn 1 triệu đúng không, tổng đơn hết bao nhiêu và giao COD cho anh nhé."
+      ],
+      "facts_established": {
+        "primary_sku": "SKU-AP-PRO",
+        "second_sku": "SKU-AP-MINI",
+        "promo_code": "AIR-2ND-50",
+        "payment": "COD"
+      },
+      "success_if": {
+        "tool_called": "order.create",
+        "args_match": {
+          "sku": "SKU-AP-PRO",
+          "price_vnd": 7690000,
+          "payment": "COD"
+        },
+        "must_say_any": [
+          "50%",
+          "1.095.000",
+          "AIR-2ND-50"
+        ]
+      },
+      "ground_truth_facts": {
+        "primary_price_vnd": 7690000,
+        "second_discounted_vnd": 1095000,
+        "total_vnd": 8785000,
+        "promo_code": "AIR-2ND-50"
+      },
+      "expected_outcome": "chot_don"
+    }
+  }
+}

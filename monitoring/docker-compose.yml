@@ -1,0 +1,29 @@
+# Giám sát Harness Agent: Prometheus (lấy số) + Grafana (dashboard). Chạy từ thư mục Code/monitoring:
+#   docker compose up -d        -> Grafana http://localhost:3000 (admin / admin, chỉ dùng trên máy local), Prometheus http://localhost:9090
+# Nguồn số (chạy ngoài Docker, trên máy host):
+#   API trực tiếp:   uvicorn api.app:app --host 0.0.0.0 --port 8000        -> http://localhost:8000/metrics
+#   Kết quả đo:      python -m monitoring.trace_exporter --host 0.0.0.0    -> http://localhost:9108/metrics
+# Phải nghe trên 0.0.0.0: container không tới được 127.0.0.1 của máy host (Windows có thể hỏi cho phép tường lửa; số đo không chứa PII).
+services:
+  prometheus:
+    image: prom/prometheus:v2.55.1
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml:ro
+    ports:
+      - "9090:9090"
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+  grafana:
+    image: grafana/grafana:11.3.1
+    depends_on:
+      - prometheus
+    environment:
+      GF_SECURITY_ADMIN_USER: admin
+      GF_SECURITY_ADMIN_PASSWORD: admin
+      GF_USERS_ALLOW_SIGN_UP: "false"
+      GF_DASHBOARDS_DEFAULT_HOME_DASHBOARD_PATH: /var/lib/grafana/dashboards/harness.json
+    volumes:
+      - ./grafana/provisioning:/etc/grafana/provisioning:ro
+      - ./grafana/dashboards:/var/lib/grafana/dashboards:ro
+    ports:
+      - "3000:3000"

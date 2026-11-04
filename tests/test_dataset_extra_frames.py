@@ -344,11 +344,11 @@ class DeclineFlowRuleTest(unittest.TestCase):
         import json
         from src.dataset.frames54 import build_frames54
         from src.dataset.rules import check_decline_flow
-        base = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "dataset", "dialogues")
+        base = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "dataset", "asr")
         frames = {f["scenario"]["scenario_id"]: f for f in build_frames54()}
         path = os.path.join(base, "SC-D26.call_1.json")
         if not os.path.exists(path):
-            self.skipTest("chưa có dataset/dialogues/SC-D26")
+            self.skipTest("chưa có dataset/asr/SC-D26")
         with open(path, encoding="utf-8") as fh:
             rec = json.load(fh)
         self.assertEqual(check_decline_flow(rec["turns"], frames["SC-D26"]["calls"][0]), [])      # D26 đã có lượt agent cuối
@@ -523,7 +523,7 @@ class GenerateScriptTest(unittest.TestCase):
         self.assertIn("SC-D01, SC-D02", out)
         self.assertNotIn("SC-D11", out)
         self.assertFalse(os.path.exists(self.ledger))
-        self.assertEqual(os.listdir(os.path.join(self.out, "dialogues")), [])
+        self.assertEqual(os.listdir(os.path.join(self.out, "asr")), [])
 
     def test_batch_flag_changes_the_batch_size(self):
         rc, out = self.run_main("--set", "frames54", "--dry-run", "--batch", "3")

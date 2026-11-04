@@ -11,14 +11,14 @@
 | — trong đó 7 mẫu BTC cố định | 14,3 % | 14,3 % | — | bị order gate chặn theo thiết kế (mục 4) |
 | RQR — câu hỏi lặp | **2,1 ± 3,6 %** | 12,2 ± 3,4 % | giảm ≥ 40 % | **Đạt**: giảm 76,5 % (theo seed 100 / 29,5 / 100 %: **độ biến thiên lớn**) |
 | CCR — mang ngữ cảnh sang cuộc sau | **52,4 ± 2,1 %** | 3,6 ± 0,0 % | — | hơn rõ rệt; vẫn còn thiếu một nửa |
-| HR giá/KM — bịa giá/khuyến mãi | **6,0 ± 0,2 %** | 33,9 ± 5,8 % | ≤ 5 % | **Chưa đạt** (phần còn lại là sự thật kịch bản lệch tool, mục 5) |
+| HR giá/KM — bịa giá/khuyến mãi | **0,0 ± 0,0 %** | 29,3 ± 5,7 % | ≤ 5 % | **Đạt** — chấm lại cùng trace sau khi sửa đáp án SC-GEN-01 (trước đó 6,0 %; mục 5 ca 1). Đáp án sửa SAU khi thấy điểm, có căn cứ độc lập từ `promotions.json` |
 | Guardrail — vi phạm | 0 | — | 0 | Đạt |
 | Cuộc gọi tới chốt | 1,12 | — | — | — |
 | Lượt/cuộc | 2,95 | — | — | — |
 | Call Brief p95 | 67 ms | — | — | tra sẵn bằng code, không LLM |
 | TTFT p95 | 26,2 s trung bình 3 seed; **seed sạch 6,7 và 7,3 s** (trung vị 3,6–3,7 s) | — | ≤ 3 s | **Chưa đạt** (mục 3) |
 
-Theo seed (hệ thống): TSR 72,7 / 72,7 / 72,7; RQR 0,0 / 6,2 / 0,0; HR giá/KM 5,9 / 5,9 / 6,2; CCR 53,6 / 50,0 / 53,6.
+Theo seed (hệ thống): TSR 72,7 / 72,7 / 72,7; RQR 0,0 / 6,2 / 0,0; HR giá/KM 0,0 / 0,0 / 0,0 (sau khi sửa đáp án GEN-01; trước đó 5,9 / 5,9 / 6,2); CCR 53,6 / 50,0 / 53,6.
 
 ## 2. Trước và sau cải tiến (cùng bộ 22 kịch bản, cấu hình hệ thống)
 
@@ -27,9 +27,9 @@ Theo seed (hệ thống): TSR 72,7 / 72,7 / 72,7; RQR 0,0 / 6,2 / 0,0; HR giá/K
 | 1 (§ 11.87) | — | 50,0 ± 4,5 | 60 / 73 / 67 | 0,0 | 31,1 ± 7,2 | 12,9 s | 10.716 VND |
 | 2 (§ 11.90) | 5 sửa từ phân tích lỗi (giá/qty/SĐT trong tool, câu hỏi định danh, phân loại giá sản phẩm phụ, gate sau câu trả lời) | 68,2 | 93 / 93 / 93 | 7,3 ± 6,5 | 6,2 ± 0,5 | 8,3 s | 11.331 VND |
 | 3 (§ 11.92) | câu chuyển máy ca ngoài phạm vi bằng code; gate không lấn câu trả lời giá/KM | 71,2 ± 2,6 | 93 / 100 / 100 | 2,2 ± 3,9 | 9,5 ± 6,2 (seed 1 dính lỗi mạng) | 14,0 s | 11.707 VND |
-| 4 (§ 11.94) | nhánh dự phòng mất LLM không chọn cứng sản phẩm (không kích hoạt vì không có lỗi mạng) | **72,7 ± 0,0** | **100 / 100 / 100** | **2,1 ± 3,6** | **6,0 ± 0,2** | 26,2 s (seed 1 có 3 lượt API đứng) | 11.639 VND |
+| 4 (§ 11.94) | nhánh dự phòng mất LLM không chọn cứng sản phẩm (không kích hoạt vì không có lỗi mạng) | **72,7 ± 0,0** | **100 / 100 / 100** | **2,1 ± 3,6** | **0,0** (trước khi sửa đáp án GEN-01: 6,0 ± 0,2) | 26,2 s (seed 1 có 3 lượt API đứng) | 11.639 VND |
 
-Mỗi lần có nhiều sửa cùng lúc và mỗi seed một mẫu nên **không tách được đóng góp từng sửa**; chiều cải thiện rõ ở TSR (50 → 72,7) và HR (31,1 → 6,0). Sau lần 4 còn thêm timeout + thử lại cho cuộc gọi LLM (§ 11.95) và router chính sách tính chi phí vào trần (§ 11.96) — **chưa đo bằng LLM thật**.
+Mỗi lần có nhiều sửa cùng lúc và mỗi seed một mẫu nên **không tách được đóng góp từng sửa**; chiều cải thiện rõ ở TSR (50 → 72,7) và HR (31,1 → 6,0 theo đáp án cũ; 0,0 sau khi sửa đáp án GEN-01 — các lần 1–3 chưa chấm lại nên cột HR không cùng cơ sở). Sau lần 4 còn thêm timeout + thử lại cho cuộc gọi LLM (§ 11.95) và router chính sách tính chi phí vào trần (§ 11.96) — **chưa đo bằng LLM thật**.
 
 ## 3. Độ trễ
 
@@ -43,9 +43,9 @@ Order gate (luôn bật) chỉ tạo đơn sau khi **khách xác nhận** bản 
 
 | # | Ca | Hiện tượng | Nguyên nhân | Trạng thái |
 |---|---|---|---|---|
-| 1 | SC-GEN-01 cuộc 2 | giá nói 1.521.000, sự thật kịch bản 1.690.000 → tính là bịa giá | khuyến mãi RUN-10 hiệu lực 12–25/10 nên tool trả 1.521.000; sự thật kịch bản lệch tool (không phải LLM bịa) | **chờ BTC xác nhận**; là toàn bộ phần HR còn lại |
-| 2 | SC-GEN-02 cuộc 1 | tổng 15.380.000 so với 15.980.000 | cùng loại: sự thật kịch bản lệch tool | chờ BTC (ngoài công thức HR giá/KM) |
-| 3 | SC-GEN-05 cuộc 2 | chênh biến thể 40.000 so với 50.000 | cùng loại | chờ BTC |
+| 1 | SC-GEN-01 cuộc 2 | giá nói 1.521.000, sự thật kịch bản 1.690.000 → tính là bịa giá | khuyến mãi RUN-10 (giảm 10%, 12–25/10) đang hiệu lực ở ngày cuộc 2 (16/10) nên tool trả 1.521.000; đáp án kịch bản (do nhóm sinh) bỏ sót RUN-10 — không phải LLM bịa, không phải lỗi BTC | **đã sửa đáp án kịch bản thành 1.521.000** (2026-11-02); số HR trong bảng trên là số TRƯỚC khi sửa, chưa chấm lại |
+| 2 | SC-GEN-02 cuộc 1 | tổng 15.380.000 so với 15.980.000 | đáp án kịch bản sai: AIR-OCT (−300.000/máy) đang chạy ngày 15/10; `order_create` của BTC trả `cod_limit_exceeded` với `total_vnd` 15.380.000 | **đã sửa đáp án** (2026-11-02) thành 15.380.000 |
+| 3 | SC-GEN-05 cuộc 2 | chênh biến thể 40.000 so với 50.000 | đáp án kịch bản sai: RUN2-SALE (−20%) đang chạy nên chênh thật là 50.000 × 0,8 = 40.000 | **đã sửa đáp án** (2026-11-02) thành 40.000; giá cuộc 1 sửa 1.352.000 |
 | 4 | SAMPLE-01, 02, 04, 05, 06 (tạo đơn) và SAMPLE-03 (cập nhật đơn) cuộc 2 | không có `order.create/update` khớp | order gate chặn vì kịch bản cố định không trả lời gate | theo thiết kế; xem mục 4 |
 | 5 | SAMPLE-03 cuộc 2 | hỏi lại "mã đơn hàng" ở lượt 2–3 (xuất hiện ở 4/9 lượt đo từ lần 2 đến lần 4) | LLM biến thiên; mã đơn BTC (OD682761) không có trong mock tool, hệ thống không thể tự biết | chưa sửa; hỏi BTC về mã đơn |
 | 6 | SAMPLE-02 cuộc 2 | không mang `product_advised`, `competitor_price_vnd`, `objection` | chưa phân tích sâu nguyên nhân; cần đọc trace (có thể do agent không nhắc lại các thông tin này bằng lời) | chưa sửa (CCR còn 52 %) |
@@ -58,7 +58,7 @@ Order gate (luôn bật) chỉ tạo đơn sau khi **khách xác nhận** bản 
 | 13 | 3 lượt lần 4, seed 1 | TTFT 68–128 s | không có timeout hữu hạn (SDK 600 s) | **đã sửa** (§ 11.95), chưa đo lại |
 | 14 | GEN-02 lượt 1 (lần 1–2) | báo "giá cuối cho 2 máy" bằng giá một máy | LLM nhầm đơn vị giá | giảm nhờ luật prompt + gate đọc lại tổng; chưa có chốt bằng code |
 
-Ca 1–3 (3 chỗ sự thật kịch bản lệch tool) cần gửi BTC; nếu BTC xác nhận sự thật của GEN-01 thì HR giá/KM về 0 ở các seed không bị lỗi mạng.
+Ca 1 đã sửa đáp án và chấm lại từ trace lần 4 (HR giá/KM 6,0 → 0,0). Ca 2–3 đã kiểm (2026-11-02): cả hai cũng là đáp án kịch bản sai, không phải lỗi agent — GEN-05: khuyến mãi RUN2-SALE (−20%, đến 07/10) đang chạy ở ngày cuộc 2 (25/09) nên chênh thật là 40.000 = 50.000 × 0,8; GEN-02: AIR-OCT (−300.000/máy) đang chạy ngày 15/10 nên 2 × 7.690.000 = 15.380.000, nhưng AIR-2ND-50 (máy thứ 2 giảm 50%) cũng có thể áp nên tổng đúng chưa rõ. GEN-02 và GEN-05 đã sửa đáp án (2026-11-02). Cả hai không ảnh hưởng HR giá/KM (chấm lại: vẫn 0,0).
 
 ## 6. Chi phí
 
@@ -74,12 +74,12 @@ Trần chi phí cứng luôn bật (`--max-cost-vnd`), kiểm trước mỗi l�
 
 ## 7. Tác động kinh doanh (ước lượng — *giả định, không phải số đo*)
 
-Số đo thật dùng làm đầu vào: RQR 12,2 % → 2,1 % (câu hỏi thừa trên tổng câu hỏi agent ở cuộc gọi lại), CCR 3,6 % → 52,4 %, HR giá/KM 33,9 % → 6,0 %, 1,12 cuộc tới chốt.
+Số đo thật dùng làm đầu vào: RQR 12,2 % → 2,1 % (câu hỏi thừa trên tổng câu hỏi agent ở cuộc gọi lại), CCR 3,6 % → 52,4 %, HR giá/KM 29,3 % → 0,0 % (đáp án GEN-01 đã sửa), 1,12 cuộc tới chốt.
 
 | Tác động | Cách ước lượng | Ví dụ với giả định |
 |---|---|---|
 | Rút ngắn thời gian xử lý | (12,2 − 2,1)% × số câu hỏi/cuộc gọi lại × giây/câu hỏi thừa | giả định 5 câu hỏi/cuộc và 8 giây/câu → ≈ 4 giây/cuộc gọi lại (nhỏ; lợi ích chính là trải nghiệm khách) |
-| Giảm tư vấn sai giá/khuyến mãi | (33,9 − 6,0)% số câu nói giá/KM | trên 1.000 câu nói giá, ≈ 280 câu ít sai hơn; mỗi câu sai có thể kéo theo khiếu nại/hoàn COD (chưa đo) |
+| Giảm tư vấn sai giá/khuyến mãi | (29,3 − 0,0)% số câu nói giá/KM | trên 1.000 câu nói giá, ≈ 290 câu ít sai hơn; mỗi câu sai có thể kéo theo khiếu nại/hoàn COD (chưa đo) |
 | Tăng khả năng chốt ở cuộc gọi lại | CCR cao hơn → không bắt khách nhắc lại thông tin; số cuộc tới chốt 1,12 | chưa có dữ liệu chốt đơn thật để quy ra tỷ lệ |
 
 Các giả định (số câu hỏi/cuộc, giây/câu) do nhóm đặt; cần thay bằng số của doanh nghiệp.

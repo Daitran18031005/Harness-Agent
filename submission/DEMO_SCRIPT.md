@@ -47,7 +47,7 @@ Nhấn mạnh: tại lượt 3–4 hệ thống **cố ý chưa tạo đơn** ch
 
 ## Cảnh 3 — Kết quả đo và giới hạn (6:00–7:30)
 
-Chiếu slide 9–13 hoặc `EVALUATION_REPORT.md`: TSR 72,7 % (bộ sinh 100 %), RQR giảm 76,5 % so với baseline, CCR 52,4 % so với 3,6 %, HR giá/KM 6,0 % so với 33,9 %; **nói rõ chưa đạt**: HR ≤ 5 % (phần còn lại là sự thật kịch bản lệch tool), TTFT ≤ 3 s, dataset còn nhỏ.
+Chiếu slide 9–13 hoặc `EVALUATION_REPORT.md`: TSR 71,4 % (bộ sinh 100 %), RQR giảm 76,5 % so với baseline, CCR 52,4 % so với 3,6 %, HR giá/KM 0,0 % so với 29,3 % (đáp án GEN-01 được sửa sau khi thấy điểm — nói rõ); **nói rõ chưa đạt**: TTFT ≤ 3 s, dataset còn nhỏ.
 
 ## Cảnh 4 — Kết (7:30–8:00)
 

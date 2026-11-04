@@ -1,0 +1,44 @@
+{
+  "scenario_id": "TEST-44",
+  "level": "M1",
+  "persona": "khach_so_gia",
+  "hard_case": "combo_tiet_kiem",
+  "customer_phone": "0900001020",
+  "customer_name": "Phong",
+  "honorific": "anh",
+  "notes": "[Gia dụng] Combo SKU-BDL-AIR (AirPure Y + 2 màng lọc thay thế) giá 6.390.000đ. Mua lẻ 5.200.000 + 2 x 690.000 = 6.580.000đ, tiết kiệm 190.000đ. Agent tư vấn và tạo đơn combo.",
+  "calls": {
+    "call_1": {
+      "call_date": "2026-10-15",
+      "customer_turns": [
+        "Anh định mua máy AirPure Y và muốn mua thêm 2 màng lọc sơ cua để thay sau này.",
+        "Bên em có gói combo nào giá tốt hơn mua lẻ không em?",
+        "Combo 6.390.000đ rẻ hơn mua lẻ gần 200k đúng không, ok lên đơn combo đó cho anh nhé, COD về 18 Nguyễn Trãi, Thanh Xuân, Hà Nội."
+      ],
+      "facts_established": {
+        "product_advised": "SKU-BDL-AIR",
+        "price_quoted_vnd": 6390000,
+        "payment": "COD"
+      },
+      "success_if": {
+        "tool_called": "order.create",
+        "args_match": {
+          "sku": "SKU-BDL-AIR",
+          "price_vnd": 6390000,
+          "payment": "COD"
+        },
+        "must_say_any": [
+          "combo",
+          "6.390.000",
+          "tiết kiệm"
+        ]
+      },
+      "ground_truth_facts": {
+        "combo_sku": "SKU-BDL-AIR",
+        "price_vnd": 6390000,
+        "saving_vnd": 190000
+      },
+      "expected_outcome": "chot_don"
+    }
+  }
+}

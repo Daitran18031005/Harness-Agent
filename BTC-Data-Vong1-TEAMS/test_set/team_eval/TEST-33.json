@@ -1,0 +1,44 @@
+{
+  "scenario_id": "TEST-33",
+  "level": "M1",
+  "persona": "khach_do_du_hoi_nguoi_nha",
+  "hard_case": "so_sanh_san_pham_cung_loai",
+  "customer_phone": "0900001010",
+  "customer_name": "Yến",
+  "honorific": "chị",
+  "notes": "[Mẹ & Bé] Khách so sánh Xe đẩy gấp gọn Joie Pact (SKU-MB-STR1: 3.490.000đ) và Xe đẩy 2 chiều Combi Sugocal (SKU-MB-STR2: 6.790.000đ). Nhu cầu du lịch xách tay máy bay -> tư vấn Joie Pact.",
+  "calls": {
+    "call_1": {
+      "call_date": "2026-10-15",
+      "customer_turns": [
+        "Em ơi chị đang phân vân giữa xe đẩy Joie Pact và Combi Sugocal 2 chiều, hai xe này khác nhau thế nào em?",
+        "Nhà chị hay đi du lịch máy bay thì mẫu nào tiện gấp gọn xách tay lên cabin hơn em?",
+        "Ok vậy chiếc Joie Pact giá 3.490.000đ đúng không, lên đơn cho chị giao về 42 Liễu Giai, Ba Đình, Hà Nội, thanh toán COD."
+      ],
+      "facts_established": {
+        "product_advised": "SKU-MB-STR1",
+        "price_quoted_vnd": 3490000,
+        "payment": "COD"
+      },
+      "success_if": {
+        "tool_called": "order.create",
+        "args_match": {
+          "sku": "SKU-MB-STR1",
+          "price_vnd": 3490000,
+          "payment": "COD"
+        },
+        "must_say_any": [
+          "Joie Pact",
+          "gấp gọn",
+          "máy bay",
+          "Combi"
+        ]
+      },
+      "ground_truth_facts": {
+        "product_advised": "SKU-MB-STR1",
+        "price_vnd": 3490000
+      },
+      "expected_outcome": "chot_don"
+    }
+  }
+}

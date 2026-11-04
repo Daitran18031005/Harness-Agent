@@ -27,6 +27,7 @@ from src.harness.guardrail import GuardrailAndFallback, GuardrailDecision
 from src.llm.client import with_variant_enum, LLMRoundLimit
 from src.privacy.pii_vault import PiiVault
 from src.harness.money import extract_amounts
+from src.harness.basket import price_basket, cod_exceeds, cod_needs_confirmation, correct_basket_totals, COD_LIMIT_VND
 from src.harness.extractor import extract_claims, extract_questions
 from src.catalog import ProductRetriever, ClarificationPolicy
 from src.harness.fact_usage import fact_mentioned, used_by_agent
@@ -79,6 +80,7 @@ class HarnessOrchestrator:
         self._confirmed: Dict[str, set] = {}      # slot đã được XÁC NHẬN lại trong cuộc gọi (chỉ xác nhận 1 lần)
         self._reask: Dict[str, Dict[str, int]] = {}   # slot -> số lượt LIÊN TIẾP đã hỏi mở mà khách chưa trả lời (src/harness/reask.py)
         self._gate_retry_args: Dict[str, Dict[str, Any]] = {}   # tham số order.create để LLM gọi lại sau khi khách đồng ý
+        self._unsynced_handed_off: set = set()                  # (phiên, sku, qty) đã chuyển nhân viên vì giá đơn nhiều máy lệch: không tạo phiếu lặp
         self._gate_extra_calls: Dict[str, List[Dict[str, Any]]] = {}   # tool cổng tự gọi trong lượt (báo giá để đọc lại đơn) — đưa vào trace
         self.order_gate = OrderGate()             # cổng đặt đơn bằng code (src/harness/order_gate.py)
         memory.register_delete_listener(self._forget_customer)  # xóa khách -> xóa cả trạng thái theo cuộc gọi
@@ -212,6 +214,82 @@ class HarnessOrchestrator:
         if others:
             out["basket_skus"] = others
         return out
+
+    def _quote_fn(self, record: Optional[List[Dict[str, Any]]] = None):
+        """Hàm `quote(args)` cho `price_basket`: chạy `pricing.get_quote` qua MCP. `record` (nếu có) nhận LỜI GỌI ĐẦU TIÊN để đưa vào trace."""
+        def quote(a: Dict[str, Any]) -> Dict[str, Any]:
+            r = self.mcp.execute_tool("pricing.get_quote", a, caller="LLMOrchestrator")
+            if record is not None and not record:
+                record.append({"args": a, "result": r})
+            return r
+        return quote
+
+    @staticmethod
+    def _order_lines(exec_args: Dict[str, Any]) -> List[Dict[str, Any]]:
+        """Các dòng giỏ của MỘT lời gọi order.create/get_quote: SKU chính × qty + các SKU khác trong `basket_skus` (mỗi SKU 1)."""
+        others = HarnessOrchestrator._sanitize_basket("order.create", exec_args).get("basket_skus") or []
+        return [{"sku": exec_args.get("sku"), "qty": int(exec_args.get("qty") or 1)}] + [{"sku": s, "qty": 1} for s in others]
+
+    def _attach_basket_total(self, result: Dict[str, Any], args: Dict[str, Any]) -> Dict[str, Any]:
+        """`pricing.get_quote` cho nhiều máy/nhiều SKU: thêm tổng do `price_basket` tính để LLM không tự nhân/cộng (qty=1 không giỏ: giữ nguyên kết quả cũ)."""
+        lines = self._order_lines(args)
+        if len(lines) == 1 and lines[0]["qty"] == 1:
+            return result
+        pb = price_basket(self._quote_fn(), lines, args.get("on"), args.get("customer_phone"), args.get("address"))
+        if "error" in pb:
+            return result
+        note = ("Tổng của giỏ là total_vnd (đã tính theo từng máy/từng SKU) — KHÔNG tự nhân hay cộng." if pb["synced"] else
+                "Tổng đúng theo chính sách là total_vnd, nhưng hệ thống đặt đơn hiện ghi order_total_vnd (không biểu diễn được KM 'máy thứ 2' trong một dòng). Báo khách total_vnd; "
+                "khi khách chốt mua, hệ thống sẽ tự chuyển nhân viên xác nhận giá — KHÔNG hứa đặt được đơn ngay.")
+        return {**result, "unit_prices_vnd": pb["lines"][0]["unit_prices_vnd"], "total_vnd": pb["total_vnd"], "order_total_vnd": pb["order_total_vnd"],
+                "price_synced": pb["synced"], **({"second_unit_promos": pb["lines"][0]["second_unit_promos"]} if pb["lines"][0]["second_unit_promos"] else {}), "note": note}
+
+    def _sync_block(self, sid: str, pb: Dict[str, Any], exec_args: Dict[str, Any], item_name: str, vault: PiiVault, brief: CallBrief,
+                    caller_phone: Optional[str], on: str) -> Dict[str, Any]:
+        """Tổng chính sách != tổng backend sẽ ghi → KHÔNG tạo đơn. CODE chuyển nhân viên (một phiếu cho mỗi phiên+SKU+qty) và dựng câu nói an toàn: một con số duy nhất (total_vnd)."""
+        hon = brief.honorific or "anh/chị"
+        total, ordered = pb["total_vnd"], pb["order_total_vnd"]
+        key = (sid, str(exec_args.get("sku")), int(exec_args.get("qty") or 1))
+        ok = key in self._unsynced_handed_off
+        if not ok:
+            reason = (f"Giá đơn nhiều máy lệch: theo chính sách/KM tổng {total}đ, hệ thống đặt đơn sẽ ghi {ordered}đ ({item_name}, SL {key[2]}). "
+                      f"Cần nhân viên xác nhận giá và tạo đơn thủ công.")
+            hb = self._complete_handoff_brief({"escalation_reason": reason, "conversation_summary": reason, "price_quoted_vnd": int(total),
+                                               "open_questions": ["Xác nhận giá đơn nhiều máy"], "next_action": "Gọi khách xác nhận giá và tạo đơn"},
+                                              brief, "", caller_phone, vault, on)
+            args = {"brief": hb}
+            res = self.mcp.execute_tool("handoff.transfer", args, caller="LLMOrchestrator")
+            self._gate_extra_calls.setdefault(sid, []).append({"name": "handoff.transfer", "tool": "handoff.transfer", "args": vault.redact_args_for_trace(args),
+                                                               "result": vault.mask_value(res, caller_phone)})
+            ok = isinstance(res, dict) and "error" not in res
+            if ok:
+                self._unsynced_handed_off.add(key)
+        Hon = hon[:1].upper() + hon[1:]
+        say = (f"Dạ tổng đơn {item_name} theo chương trình khuyến mãi là {_money(total)} ạ. Với đơn nhiều máy hưởng khuyến mãi này, em cần nhân viên xác nhận lại giá trên hệ thống "
+               f"trước khi lên đơn, nên em đã chuyển thông tin cho nhân viên, nhân viên sẽ gọi lại {hon} xác nhận giá ạ." if ok else
+               f"Dạ tổng đơn {item_name} theo chương trình khuyến mãi là {_money(total)} ạ. Hiện em chưa lên được đơn này trên hệ thống ạ. {Hon} cho em xin thời gian để nhân viên gọi lại xác nhận giá nhé?")
+        out = self._gate_block(sid, "price_unsynced", say, [_money(total)])
+        out["order_gate"]["price_total_vnd"], out["order_gate"]["backend_total_vnd"] = total, ordered
+        return out
+
+    def _sync_guard(self, sid: str, exec_args: Dict[str, Any], vault: PiiVault, brief: CallBrief, caller_phone: Optional[str],
+                    on: str) -> Tuple[Optional[Dict[str, Any]], Optional[Dict[str, Any]]]:
+        """Chốt cuối TRƯỚC khi gọi order.create: (kết quả chặn | None, price_basket). Chặn khi tổng báo khách != tổng backend sẽ ghi (bất kể order gate bật hay tắt)."""
+        if not exec_args.get("sku"):
+            return None, None
+        addr = exec_args.get("address")
+        addr = addr if isinstance(addr, str) and "<ADDR_" not in addr else None
+        pb = price_basket(self._quote_fn(), self._order_lines(exec_args), on, exec_args.get("customer_phone") or caller_phone, addr)
+        if "error" in pb or pb["synced"]:
+            return None, pb if "error" not in pb else None
+        return self._sync_block(sid, pb, exec_args, str(exec_args.get("sku")), vault, brief, caller_phone, on), pb
+
+    @staticmethod
+    def _basket_confirm_flag(result: Dict[str, Any], pb: Optional[Dict[str, Any]], payment: Any) -> Dict[str, Any]:
+        """Ngưỡng 'COD > 2.000.000 cần gọi xác nhận' tính trên TỔNG ĐÚNG của cả giỏ, không theo từng dòng đơn."""
+        if pb and isinstance(result, dict) and result.get("status") == "created" and str(payment or "").upper() == "COD" and cod_needs_confirmation(pb["total_vnd"]):
+            return {**result, "needs_confirmation_call": True}
+        return result
 
     @staticmethod
     def _forget_returned_order(write_cache: Dict[tuple, Dict[str, Any]], order_id: Optional[str]) -> None:
@@ -421,8 +499,17 @@ class HarnessOrchestrator:
                         if blocked is not None:
                             return blocked, vault.redact_args_for_trace({k: v for k, v in exec_args.items() if k not in GATE_ONLY_ARGS})
                         exec_args = {k: v for k, v in exec_args.items() if k not in GATE_ONLY_ARGS}
+                    pb_final = None
+                    if name == "order.create":             # bất biến: tổng báo khách == tổng backend sẽ ghi; lệch thì KHÔNG tạo đơn (cả khi order gate tắt)
+                        guard, pb_final = self._sync_guard(working_session_id, exec_args, vault, brief, caller_phone, current_date)
+                        if guard is not None:
+                            return guard, vault.redact_args_for_trace(exec_args)
                     result = self.mcp.execute_tool(name, exec_args, caller="LLMOrchestrator")
                     final_args = exec_args
+                    if name == "order.create":
+                        result = self._basket_confirm_flag(result, pb_final, exec_args.get("payment"))
+                    if name == "pricing.get_quote" and "error" not in result:
+                        result = self._attach_basket_total(result, exec_args)
                     if name in ("order.create", "order.update") and "error" not in result:
                         self._precomp.pop(working_session_id, None)      # đơn đã đổi giá/KM/tồn kho: kết quả tra sẵn hết giá trị
 
@@ -486,6 +573,7 @@ class HarnessOrchestrator:
                 # Khiếu nại ĐƠN ĐÃ ĐẶT: lượt có tra order.status mà LLM không tự chuyển máy → CODE gọi chốt phân loại (có dữ kiện đơn); ca sự cố/ngoài phạm vi thì CODE chuyển máy và nối câu báo khách.
                 status_calls = [c for c in llm_tool_calls if c.get("name") == "order.status" and (c.get("result") or {}).get("orders")]
                 llm_text, llm_tool_calls = self._bind_price_to_product(llm_text, llm_tool_calls, _tool_executor, live_calls)
+                llm_text = correct_basket_totals(llm_text, prior_call_log + llm_tool_calls)      # tổng nhiều máy do price_basket tính; LLM nhân giá × qty thì code sửa lại số
                 llm_text = self._ensure_scope_notice(llm_text, llm_tool_calls, handoff_check.get("v"))      # LLM tự chuyển máy ca ngoài phạm vi/an toàn: lời nói thật về giới hạn
                 if status_calls and not handoff_check and not any(c.get("name") == "handoff.transfer" for c in llm_tool_calls):
                     handoff_check["v"] = authorize_handoff(llm_client, turn.llm_text, last_agent, self._order_facts(status_calls, current_date))
@@ -817,12 +905,12 @@ class HarnessOrchestrator:
             v = next((x for x in variants if x.get("variant_sku") == sku), {})
             color = v.get("color") or m.group(3).lower()
             label = f"size {v.get('size', m.group(2))}, màu {COLOR_DISPLAY.get(color, color)}"
-        quote_args = {"sku": sku, "on": on, "qty": qty, "customer_phone": caller_phone}
-        quote = self.mcp.execute_tool("pricing.get_quote", quote_args, caller="HarnessOrchestrator") if sku else {}
-        if sku and isinstance(quote, dict) and "error" not in quote:
+        rec: List[Dict[str, Any]] = []
+        pb = price_basket(self._quote_fn(rec), self._order_lines({**exec_args, "sku": sku, "qty": qty}), on, caller_phone) if sku else {"error": "no_sku"}
+        if rec and "error" not in rec[0]["result"]:
             self._gate_extra_calls.setdefault(sid, []).append({"name": "pricing.get_quote", "tool": "pricing.get_quote",
-                                                                "args": vault.redact_args_for_trace(quote_args), "result": vault.mask_value(quote, caller_phone)})
-        unit = quote.get("final_price_vnd") if isinstance(quote, dict) and "error" not in quote else exec_args.get("price_vnd")
+                                                                "args": vault.redact_args_for_trace(rec[0]["args"]), "result": vault.mask_value(rec[0]["result"], caller_phone)})
+        unit = pb["lines"][0]["order_unit_vnd"] if "error" not in pb else exec_args.get("price_vnd")
         product = ProductInfo(name=self._product_info(parent).get("name") or sku, variant_label=label, needs_variant=bool(variants),
                               is_variant=bool(m), unit_price=unit)
         hon = brief.honorific or "anh/chị"
@@ -844,6 +932,13 @@ class HarnessOrchestrator:
                                         f"Dạ giá hiện tại của {item_name} là {_money(unit)}, em chưa có quyền giảm thêm ạ. {Hon} có muốn lấy theo mức giá này không, "
                                         f"hoặc em gợi ý mẫu khác phù hợp ngân sách hơn, hay nhờ nhân viên có thẩm quyền hỗ trợ thêm về giá ạ?", [_money(unit)])
             exec_args["price_vnd"] = int(unit)
+        if "error" not in pb:                                  # tổng ĐÚNG của cả giỏ: hạn mức COD tính trên đó (không tách đơn để lách), rồi bất biến báo giá == ghi đơn
+            backend_catches = pb["synced"] and pb["lines"][0]["order_line_total_vnd"] > COD_LIMIT_VND      # dòng đơn đủ lớn để backend tự báo cod_limit_exceeded với đúng tổng: giữ luồng cũ (đọc lại đơn rồi mới báo)
+            if str(exec_args.get("payment") or "").upper() == "COD" and cod_exceeds(pb["total_vnd"]) and not backend_catches:
+                return self._gate_block(sid, "cod_limit", f"Dạ đơn này vượt hạn mức thanh toán COD {_money(COD_LIMIT_VND)} một đơn (tổng {_money(pb['total_vnd'])}) nên em chưa đặt COD được ạ. "
+                                                          f"{Hon} chuyển sang chuyển khoản giúp em được không ạ?", [_money(pb["total_vnd"])])
+            if not pb["synced"]:
+                return self._sync_block(sid, pb, exec_args, item_name, vault, brief, caller_phone, on)
         if unit and exec_args.get("price_vnd") in (None, ""):
             exec_args["price_vnd"] = int(unit)                       # hợp đồng tool: order.create nhận price_vnd (giá SAU KM của MỘT sản phẩm); kịch bản đối chiếu trường này
         rphone_real, rphone_tok = exec_args.get("recipient_phone"), args.get("recipient_phone")
@@ -860,7 +955,7 @@ class HarnessOrchestrator:
         known = OrderKnown(name=name, address=saved_addr, address_token=vault.address_token_for(saved_addr) if saved_addr else None,
                            payment=profile.get("payment_method"), caller_phone=caller_phone)
         dec = self.order_gate.evaluate(sid, draft, known, product, addressing=brief.honorific or "anh/chị",
-                                       addr_stated=vault.is_customer_token, total=(unit * qty if unit else None))
+                                       addr_stated=vault.is_customer_token, total=(pb["lines"][0]["line_total_vnd"] if "error" not in pb else (unit * qty if unit else None)))
         if dec["allow"]:
             return None
         if dec["action"] == "give_up":                                 # hỏi lặp 3 lần không được → bỏ đơn nháp (không nối câu hỏi ở các lượt sau)
@@ -1054,13 +1149,17 @@ class HarnessOrchestrator:
             say = blocked["order_gate"]["say"]
             return {"reply": vault.unmask_text(say, caller_phone), "reply_masked": say, "calls": extra}
         call_args = self._sanitize_basket("order.create", {k: v for k, v in exec_args.items() if k not in GATE_ONLY_ARGS})
+        guard, pb = self._sync_guard(sid, call_args, vault, brief, caller_phone, on)
+        if guard is not None:
+            say = guard["order_gate"]["say"]
+            return {"reply": vault.unmask_text(say, caller_phone), "reply_masked": say, "calls": list(self._gate_extra_calls.get(sid, []))}
         key = self._write_key("order.create", call_args)
         hon = brief.honorific or "anh/chị"
         if key in write_cache:
             r = write_cache[key]
             text = f"Dạ đơn này em đã lên rồi ạ, mã đơn {r.get('order_id')}."
             return {"reply": text, "reply_masked": text, "calls": extra}
-        result = self.mcp.execute_tool("order.create", call_args, caller="LLMOrchestrator")
+        result = self._basket_confirm_flag(self.mcp.execute_tool("order.create", call_args, caller="LLMOrchestrator"), pb, call_args.get("payment"))
         call = {"name": "order.create", "tool": "order.create", "args": vault.redact_args_for_trace(call_args), "result": vault.mask_value(result, caller_phone)}
         st = self.order_gate.state(sid)
         if result.get("status") == "created":

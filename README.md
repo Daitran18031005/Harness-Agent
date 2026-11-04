@@ -12,6 +12,16 @@ cp .env.example .env              # điền OPENAI_API_KEY (file .env KHÔNG đ�
 python -m unittest discover -s tests -t .
 ```
 
+## Dữ liệu và bộ kịch bản (sắp xếp 2026-11-04)
+
+- `BTC-Data-Vong1-TEAMS/test_set/public_sample/` (7 kịch bản BTC, không sửa) + `team_eval/` (42 kịch bản nhóm, gộp từ `generated_m1` và `custom_test_45`; đã đối chiếu `mock_tools`) = **bộ đánh giá hằng ngày 49 kịch bản**. Chi tiết gộp và lỗi đã sửa: `test_set/team_eval/README.md`.
+- `dataset/`: `frames/` (khung kịch bản), `agent_eval/` (bộ đánh giá agent sinh bằng LLM), `asr/` (lời thoại để sinh audio và đo ASR), `reports/` (sổ cái chi phí). Xem `dataset/README.md`.
+- Lỗi/nghi vấn của gói BTC và thư gửi BTC: `docs/BTC_DATA_ISSUES.md`, `docs/BAO_CAO_LOI_GUI_BTC.md`.
+
+## Giám sát (Prometheus + Grafana)
+
+API phát `GET /metrics`; `python -m monitoring.trace_exporter --host 0.0.0.0` phát số từ trace các lần đo; `docker compose up -d` trong `monitoring/` dựng Prometheus + Grafana với dashboard nạp sẵn (TTFT/Total/Call Brief so ngưỡng BTC, chi phí, tool, guardrail, order gate). Xem `monitoring/README.md`.
+
 ## Order gate và cách đo (quyết định 2026-10-22)
 
 - **Order gate luôn bật ở mọi cấu hình** (demo, UI, eval): trước khi tạo đơn, code kiểm checklist (sản phẩm/biến thể, số lượng, tên & SĐT nhận, địa chỉ, thanh toán) → hỏi/xác nhận → đọc lại đơn một lần → chỉ tạo đơn khi lượt sau khách đồng ý rõ ràng. Không có cờ/biến môi trường để tắt (`OrderGate.enabled` chỉ đọc; chỉ test đơn vị mới gọi được `disable_for_unit_tests`, có test quét mã nguồn).

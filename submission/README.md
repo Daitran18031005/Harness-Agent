@@ -14,7 +14,7 @@ Bộ hồ sơ nộp (thư mục `submission/`):
 | [DEMO_SCRIPT.md](DEMO_SCRIPT.md) | kịch bản video demo 5–8 phút (2 cuộc gọi cùng một khách) |
 | [slides.html](slides.html) | 15 slide (mở bằng trình duyệt, ←/→ để chuyển, in ra PDF được) |
 
-> **Trung thực về phạm vi:** số liệu chính thức là bước 15 giai đoạn 2 (22 kịch bản, 3 seed, 1 mẫu mỗi seed). Dataset mới đạt khoảng một phần tư ngưỡng
+> **Trung thực về phạm vi:** số liệu chính thức là bước 15 giai đoạn 2 (21 kịch bản, 3 seed, 1 mẫu mỗi seed). Dataset mới đạt khoảng một phần tư ngưỡng
 > bảng C.1; ASR mới đo trên 4 file TTS; chưa có LLM-judge (bước 14b); **video demo chưa quay** (chỉ có kịch bản). Mục "Chưa làm" ở cuối nêu đủ.
 
 ## 1. Cài đặt
@@ -45,8 +45,8 @@ Cùng máy chủ cung cấp REST API (`/docs`): `POST /sessions`, `POST /chat`, 
 ```bash
 # mẫu BTC cố định (7 kịch bản) — baseline và hệ thống, 3 seed, trần chi phí cứng
 python run_eval.py --scenarios BTC-Data-Vong1-TEAMS/test_set/public_sample --config both --out-dir runs/my/sample --seed 42 --repeats 3 --max-cost-vnd 7000
-# bộ sinh (15 kịch bản) — khách mô phỏng trả lời order gate
-python run_eval.py --scenarios BTC-Data-Vong1-TEAMS/test_set/generated_m1 --config both --out-dir runs/my/gen --seed 42 --repeats 3 --gate-assist --max-cost-vnd 7500
+# bộ đánh giá chung của nhóm (42 kịch bản, gộp 2026-11-04) — khách mô phỏng trả lời order gate
+python run_eval.py --scenarios BTC-Data-Vong1-TEAMS/test_set/team_eval --config both --out-dir runs/my/gen --seed 42 --repeats 3 --gate-assist --max-cost-vnd 7500
 # báo cáo 5 chỉ số, mean ± std qua seed, đối chiếu ngưỡng
 python scripts/gd2_report.py --root runs/my
 ```
@@ -67,6 +67,7 @@ api/  ui/              FastAPI (bước 17) + giao diện web một trang (bư�
 evaluation/            chấm lại từ trace bằng reference_eval của BTC (process riêng, không import pipeline)
 scripts/               run_eval phụ trợ, gd2_report, run_demo, seed_demo_db, package_submission, eval_policy_router…
 tests/                 bộ test offline
+monitoring/            Prometheus + Grafana: /metrics của API, exporter trace, dashboard (docker compose)
 docs/ CHECKING.md      kế hoạch, nhật ký từng bước (số liệu, lỗi, quyết định)
 ```
 
@@ -78,9 +79,9 @@ python scripts/package_submission.py        # ../Code_submission.zip; loại .en
 
 ## 6. Chưa làm / hạn chế đã biết
 
-- **Dataset** 31 cuộc / 22 kịch bản so với ngưỡng ≥ 120 cuộc; audio 4 file (≈ 2,5 phút) so với ≥ 40 cuộc / ≥ 1 giờ. Chi tiết: [DATASET.md](DATASET.md).
+- **Dataset** 30 cuộc / 21 kịch bản so với ngưỡng ≥ 120 cuộc; audio 4 file (≈ 2,5 phút) so với ≥ 40 cuộc / ≥ 1 giờ. Chi tiết: [DATASET.md](DATASET.md).
 - **ASR**: WER chỉ đo trên 4 file TTS sạch giọng Bắc; chưa có số riêng cho số tiền/SĐT trên ≥ 20 file.
-- **Chỉ số chưa đạt ngưỡng:** HR giá/KM 6,0% (ngưỡng ≤ 5%; phần còn lại là sự thật kịch bản lệch tool, chờ BTC), TTFT p95 6,7–7,3 s ở seed sạch (ngưỡng ≤ 3 s).
+- **Chỉ số chưa đạt ngưỡng:** TTFT p95 6,7–7,3 s ở seed sạch (ngưỡng ≤ 3 s).
 - **TSR của 7 mẫu BTC cố định** chỉ 14,3% vì order gate chặn tạo đơn khi lời khách không trả lời câu hỏi của gate (thiết kế; xem báo cáo).
 - Chưa có LLM-judge 12 tiêu chí (14b) và chưa điền file chấm tay 20 lượt (người chấm).
 - Chưa quay video demo; slide ở dạng HTML (chưa xuất `.pptx`).

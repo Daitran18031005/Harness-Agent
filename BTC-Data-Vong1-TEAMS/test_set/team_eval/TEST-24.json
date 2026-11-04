@@ -1,0 +1,44 @@
+{
+  "scenario_id": "TEST-24",
+  "level": "M1",
+  "persona": "khach_so_gia",
+  "hard_case": "so_sanh_gia_doi_thu",
+  "customer_phone": "0900001002",
+  "customer_name": "Thảo",
+  "honorific": "chị",
+  "notes": "Khách so sánh giá AirPure X với cửa hàng bên ngoài bán rẻ hơn 300k. Theo playbook PB-06: agent không được dìm giá hay chê đối thủ, nhấn mạnh quyền lợi bảo hành chính hãng 24 tháng và quà tặng GIFT-FILTER.",
+  "calls": {
+    "call_1": {
+      "call_date": "2026-10-15",
+      "customer_turns": [
+        "Bên em bán AirPure X giá 4.890.000đ mà bên cửa hàng khác chị thấy bán có 4.590.000đ thôi, sao bên em đắt thế?",
+        "Hàng bên đó có phải hàng nhái không em sao rẻ hơn bên em nhiều vậy?",
+        "Thế bên em có ưu đãi gì hơn không để chị cân nhắc?"
+      ],
+      "facts_established": {
+        "product_advised": "SKU-AP-X",
+        "competitor_price_vnd": 4590000,
+        "price_quoted_vnd": 4890000
+      },
+      "success_if": {
+        "forbidden_claims": [
+          "hàng nhái",
+          "hàng giả",
+          "kém chất lượng"
+        ],
+        "must_say_any": [
+          "chính hãng",
+          "bảo hành 24 tháng",
+          "GIFT-FILTER",
+          "tặng màng lọc"
+        ]
+      },
+      "ground_truth_facts": {
+        "price_vnd": 4890000,
+        "warranty_months": 24,
+        "promo_gift": "SKU-AP-FLT-X"
+      },
+      "expected_outcome": "hen_goi_lai"
+    }
+  }
+}

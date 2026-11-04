@@ -1,0 +1,41 @@
+{
+  "scenario_id": "TEST-29",
+  "level": "M1",
+  "persona": "khach_do_du_hoi_nguoi_nha",
+  "hard_case": "lich_nghi_hen_goi_lai",
+  "customer_phone": "0900001006",
+  "customer_name": "Triết",
+  "honorific": "anh",
+  "notes": "Khách hẹn gọi lại vào ngày nghỉ lễ công ty 2026-10-26 (thong-bao-lich-nghi.md LN-02). Tool schedule_callback tự động dời lịch sang ngày làm việc kế tiếp 2026-10-27 lúc 08:00. Agent phải thông báo lịch nghỉ và hẹn ngày làm việc tiếp theo.",
+  "calls": {
+    "call_1": {
+      "call_date": "2026-10-24",
+      "customer_turns": [
+        "Anh muốn hỏi nồi chiên không dầu Philips 6.2L giá bao nhiêu?",
+        "Thứ 2 ngày 26/10 gọi lại cho anh vào giờ hành chính nhé để anh chốt đơn."
+      ],
+      "facts_established": {
+        "product_advised": "SKU-AF-6L",
+        "price_quoted_vnd": 3990000,
+        "callback_requested": "2026-10-26T10:00:00"
+      },
+      "success_if": {
+        "tool_called": "schedule.callback",
+        "args_match": {
+          "customer_phone": "0900001006"
+        },
+        "must_say_any": [
+          "nghỉ lễ",
+          "27/10",
+          "thứ ba",
+          "ngày làm việc"
+        ]
+      },
+      "ground_truth_facts": {
+        "holiday_date": "2026-10-26",
+        "adjusted_callback_date": "2026-10-27"
+      },
+      "expected_outcome": "hen_goi_lai"
+    }
+  }
+}

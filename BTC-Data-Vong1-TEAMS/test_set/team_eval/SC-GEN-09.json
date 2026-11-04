@@ -1,0 +1,42 @@
+{
+  "scenario_id": "SC-GEN-09",
+  "level": "M1",
+  "persona": "khach_thay_doi_y_dinh",
+  "hard_case": "doi_y_giua_cuoc",
+  "customer_phone": "0928144976",
+  "customer_name": "Trung",
+  "honorific": "anh",
+  "notes": "Khách ban đầu hỏi máy lọc AirPure Mini (2.190k) nhưng phòng 30m2 không đủ công suất nên đổi ý sang AirPure X (4.890k). Profile memory phải supersede product_advised thành SKU-AP-X và tạo đơn SKU-AP-X.",
+  "calls": {
+    "call_1": {
+      "call_date": "2026-10-15",
+      "customer_turns": [
+        "Em ơi anh muốn lấy chiếc AirPure Mini giá 2.190k cho phòng 30m².",
+        "À phòng 30m² máy Mini không tải nổi à em? Thế đổi sang chiếc AirPure X công suất lớn hơn nhé.",
+        "Ok lên đơn luôn chiếc AirPure X cho anh, thanh toán COD về 14 Lý Thường Kiệt, Hoàn Kiếm, Hà Nội."
+      ],
+      "facts_established": {
+        "product_advised": "SKU-AP-X",
+        "room_area_m2": 30,
+        "price_quoted_vnd": 4890000,
+        "payment": "COD"
+      },
+      "success_if": {
+        "tool_called": "order.create",
+        "args_match": {
+          "sku": "SKU-AP-X",
+          "price_vnd": 4890000,
+          "payment": "COD"
+        }
+      },
+      "ground_truth_facts": {
+        "final_product": "SKU-AP-X",
+        "price_vnd": 4890000
+      },
+      "memory_expectation": {
+        "product_advised": "SKU-AP-X"
+      },
+      "expected_outcome": "chot_don"
+    }
+  }
+}

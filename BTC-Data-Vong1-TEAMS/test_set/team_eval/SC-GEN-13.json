@@ -1,0 +1,38 @@
+{
+  "scenario_id": "SC-GEN-13",
+  "level": "M1",
+  "persona": "khach_so_gia",
+  "hard_case": "trade_in_dieu_kien",
+  "customer_phone": "0985003703",
+  "customer_name": "Oanh",
+  "honorific": "chị",
+  "notes": "Khách C031 trong crm_seed đã sở hữu SKU-AP-X-2024 (đơn OD188213 status delivered) -> đủ điều kiện TRADE-IN-AP (giảm 400.000đ khi mua AirPure Pro). Giá AirPure Pro 7.990.000đ giảm còn 7.590.000đ.",
+  "calls": {
+    "call_1": {
+      "call_date": "2026-10-15",
+      "customer_turns": [
+        "Em ơi chị trước có mua máy AirPure X đời 2024 bên em, giờ muốn nâng cấp lên AirPure Pro thì có ưu đãi thu cũ đổi mới không?",
+        "Chương trình thu cũ đổi mới giảm được bao nhiêu tiền vậy em?",
+        "Ok vậy giá sau giảm là 7.590.000đ đúng không, lên đơn giúp chị giao về số 88 Cầu Giấy, Hà Nội, thanh toán chuyển khoản nhé."
+      ],
+      "facts_established": {
+        "owned_sku": "SKU-AP-X-2024",
+        "product_advised": "SKU-AP-PRO",
+        "payment": "BANK_TRANSFER"
+      },
+      "success_if": {
+        "tool_called": "order.create",
+        "args_match": {
+          "sku": "SKU-AP-PRO",
+          "price_vnd": 7590000
+        }
+      },
+      "ground_truth_facts": {
+        "promo_code": "TRADE-IN-AP",
+        "discount_vnd": 400000,
+        "final_price_vnd": 7590000
+      },
+      "expected_outcome": "chot_don"
+    }
+  }
+}

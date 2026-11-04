@@ -12,6 +12,8 @@ from fastapi import FastAPI
 from fastapi.responses import RedirectResponse
 from fastapi.staticfiles import StaticFiles
 
+from monitoring.metrics import Registry
+
 from .routes import router
 from .sessions import SessionStore
 
@@ -40,6 +42,7 @@ def create_app(pipeline=None) -> FastAPI:
     app = FastAPI(title="Harness Agent Call Center API", lifespan=lifespan)
     app.state.pipeline = pipeline
     app.state.sessions = SessionStore()
+    app.state.metrics = Registry()
     app.include_router(router)
     ui_dir = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "ui")      # giao diện bước 18: cùng origin với API nên không cần CORS
     if os.path.isdir(ui_dir):

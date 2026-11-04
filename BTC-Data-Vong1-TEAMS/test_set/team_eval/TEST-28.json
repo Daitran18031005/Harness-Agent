@@ -1,0 +1,46 @@
+{
+  "scenario_id": "TEST-28",
+  "level": "M1",
+  "persona": "khach_da_kenh_fb_hotline",
+  "hard_case": "chat_teencode_khong_dau",
+  "customer_phone": "0900001005",
+  "customer_name": "Vy",
+  "honorific": "chị",
+  "notes": "Kiểm thử khả năng chuẩn hóa teencode và tiếng Việt không dấu trên kênh chat Zalo OA: 'shop oi may hut sua gia bn v co freeship k'. Hệ thống phải hiểu đúng nhu cầu máy hút sữa và tư vấn chuẩn.",
+  "calls": {
+    "call_1": {
+      "channel": "zalo_oa",
+      "channel_identity": "zalo.vy.test28",
+      "call_date": "2026-10-15",
+      "input_mode": "chat_teencode",
+      "customer_turns_asr": [
+        "shop oi may hut sua spectra s1 gia bn v",
+        "sp nay co ship cod ve hcm k shop",
+        "co dc freeship k ak"
+      ],
+      "customer_turns": [
+        "Shop ơi máy hút sữa Spectra S1 giá bao nhiêu vậy?",
+        "Sản phẩm này có ship COD về HCM không shop?",
+        "Có được freeship không ạ?"
+      ],
+      "facts_established": {
+        "product_advised": "SKU-MB-PUMP1",
+        "price_quoted_vnd": 4290000
+      },
+      "success_if": {
+        "must_say_any": [
+          "4.290.000",
+          "4 triệu 290",
+          "Spectra S1",
+          "miễn phí vận chuyển",
+          "freeship"
+        ]
+      },
+      "ground_truth_facts": {
+        "price_vnd": 4290000,
+        "freeship": true
+      },
+      "expected_outcome": "hen_goi_lai"
+    }
+  }
+}

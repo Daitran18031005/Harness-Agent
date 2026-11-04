@@ -1,0 +1,49 @@
+{
+  "scenario_id": "TEST-27",
+  "level": "M1",
+  "persona": "khach_hoi_nhieu_khong_mua",
+  "hard_case": "itn_so_noi_bang_chu",
+  "customer_phone": "0900001004",
+  "customer_name": "Sơn",
+  "honorific": "anh",
+  "notes": "Kiểm thử chuẩn hóa số nói bằng chữ qua ASR (ITN): 'ba mươi lăm mét vuông', 'năm triệu rưỡi'. Hệ thống phải nhận dạng và trích xuất đúng room_area_m2=35, budget_vnd=5500000.",
+  "calls": {
+    "call_1": {
+      "call_date": "2026-10-15",
+      "input_mode": "asr_transcript",
+      "customer_turns_asr": [
+        "a lô em ơi anh tìm máy lọc không khí cho phòng ba mươi lăm mét vuông",
+        "ngân sách anh có khoảng năm triệu rưỡi đổ lại thôi em",
+        "mẫu đó giá chính xác bao nhiêu tiền vậy em"
+      ],
+      "customer_turns": [
+        "a lô em ơi anh tìm máy lọc không khí cho phòng ba mươi lăm mét vuông",
+        "ngân sách anh có khoảng năm triệu rưỡi đổ lại thôi em",
+        "mẫu đó giá chính xác bao nhiêu tiền vậy em"
+      ],
+      "facts_established": {
+        "room_area_m2": 35,
+        "budget_vnd": 5500000
+      },
+      "must_not_ask": [
+        "room_area_m2",
+        "budget_vnd"
+      ],
+      "success_if": {
+        "must_say_any": [
+          "5.490.000",
+          "5 triệu 490",
+          "4.890.000",
+          "4 triệu 890",
+          "AirPure X",
+          "Xiaomi"
+        ]
+      },
+      "ground_truth_facts": {
+        "room_area_m2": 35,
+        "budget_vnd": 5500000
+      },
+      "expected_outcome": "hen_goi_lai"
+    }
+  }
+}

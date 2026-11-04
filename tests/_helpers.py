@@ -17,7 +17,7 @@ os.environ.setdefault("MEMORY_TRANSPORT", "local")
 
 BTC_DIR = os.path.join(CODE_DIR, "BTC-Data-Vong1-TEAMS")
 PUBLIC_DIR = os.path.join(BTC_DIR, "test_set", "public_sample")
-GENERATED_DIR = os.path.join(BTC_DIR, "test_set", "generated_m1")
+GENERATED_DIR = os.path.join(BTC_DIR, "test_set", "team_eval")
 
 
 def advisor_suggests(test, sku="SKU-AP-Y"):

@@ -1,14 +1,14 @@
 # Dataset — mô tả ngắn
 
-Đối chiếu bảng C.1 / C.4 của đề. Số đếm lấy từ `BTC-Data-Vong1-TEAMS/test_set/{public_sample,generated_m1}`, `asr/audio`, `catalog`, `simulator` (đếm 2026-10-21, còn đúng cho bộ đang dùng để đo ở bước 15). Chi tiết kế hoạch mở rộng: [../docs/DATASET_PLAN.md](../docs/DATASET_PLAN.md).
+Đối chiếu bảng C.1 / C.4 của đề. Số đếm lấy từ `BTC-Data-Vong1-TEAMS/test_set/{public_sample,team_eval}` (từ 2026-11-04 `generated_m1` đã gộp vào `team_eval`; số đếm trong bảng dưới là của bộ cũ 21–22 kịch bản dùng cho bước 15, chưa đếm lại với 49 kịch bản mới), `asr/audio`, `catalog`, `simulator` (đếm 2026-10-21, còn đúng cho bộ đang dùng để đo ở bước 15). Chi tiết kế hoạch mở rộng: [../docs/DATASET_PLAN.md](../docs/DATASET_PLAN.md).
 
 ## 1. Thành phần
 
 | Thành phần | Nguồn | Số lượng |
 |---|---|---|
 | Kịch bản mẫu | BTC cấp (`public_sample`) | 7 kịch bản (SAMPLE-01…07) |
-| Kịch bản sinh thêm | nhóm sinh bằng `generate_dataset.py` → `generated_m1` | 15 kịch bản (SC-GEN-01…15) |
-| Tổng | | **22 kịch bản = 31 cuộc gọi/chat**, 74 lượt khách |
+| Kịch bản sinh thêm | nhóm sinh/viết tay → `team_eval` (nguồn gốc là các file JSON; `generate_dataset.py` đã lưu trữ) | 14 kịch bản (SC-GEN-01, 03…15; đã bỏ SC-GEN-02) |
+| Tổng | | **21 kịch bản = 30 cuộc gọi/chat**, 72 lượt khách |
 | Khách đa phiên (≥ 2 cuộc) | 9 kịch bản | ngưỡng ≥ 30 |
 | Khách đa kênh (gọi + chat) | SAMPLE-04, SAMPLE-06, SC-GEN-06 | 3 khách, ngưỡng ≥ 10 |
 | Audio | 4 file TTS (D01–D04) | ≈ 148 giây, ngưỡng ≥ 40 cuộc / ≥ 1 giờ |
@@ -21,7 +21,7 @@ Kịch bản sinh thêm dùng **dữ liệu thật của BTC** (SKU, giá, khuy�
 
 ## 2. Cách sinh
 
-- `generate_dataset.py`: sinh kịch bản đa phiên / đa kênh / ca biên theo khung có sẵn, ghi vào thư mục mới `generated_m1/` (chỉ thêm, không sửa file BTC). Mỗi kịch bản gồm lời khách từng lượt, sự kiện phải mang sang (`must_carry_over`), điều không được hỏi lại (`must_not_ask`), điều kiện thành công (`success_if`) và `ground_truth_facts`.
+- `generate_dataset.py` (đã lưu trữ ở `NotRelated/`; nội dung nay là các file JSON trong `team_eval/`): sinh kịch bản đa phiên / đa kênh / ca biên theo khung có sẵn (chỉ thêm, không sửa file BTC). Mỗi kịch bản gồm lời khách từng lượt, sự kiện phải mang sang (`must_carry_over`), điều không được hỏi lại (`must_not_ask`), điều kiện thành công (`success_if`) và `ground_truth_facts`.
 - Dataset mở rộng bằng LLM (`src/dataset/`, `scripts/generate_dataset_text.py`): khung hội thoại → lời thoại → kiểm tra tự động (đúng SKU/giá/ngày theo tool thật). **Đã tạm dừng:** mới sinh một lô đại diện (10 khung = 12 cuộc, đều đạt kiểm tra tự động), chi phí 2.076 / 10.000 VND trần; chưa đưa vào bộ test.
 - Audio: TTS một giọng; nhiễu và kênh điện thoại mô phỏng (`audio_sim.py`), **không phải** giọng thật nhiều vùng.
 
@@ -39,7 +39,7 @@ Kịch bản sinh thêm dùng **dữ liệu thật của BTC** (SKU, giá, khuy�
 
 1. **Chưa đạt ngưỡng số lượng:** 31 cuộc so với ≥ 120; đa phiên 9 so với ≥ 30; đa kênh 3 so với ≥ 10; chưa có kịch bản 3 cuộc; chưa có ca "mâu thuẫn với phiên trước".
 2. **Audio quá ít và quá sạch:** 4 file TTS giọng Bắc; không có giọng Nam/Trung hay nhiễu thật nên mọi số WER chỉ nói được cho phạm vi đó (n = 4).
-3. **Sự thật kịch bản lệch tool ở 3 chỗ** (đã ghi nhận để gửi BTC): SC-GEN-01 (giá 1.690.000 so với tool 1.521.000 do khuyến mãi RUN-10 hiệu lực 12–25/10), SC-GEN-02 (tổng 15.980.000 so với 15.380.000), SC-GEN-05 (chênh biến thể 50.000 so với 40.000). Cả baseline lẫn hệ thống đều dính; ảnh hưởng chỉ số HR (xem báo cáo).
+3. **Đáp án kịch bản từng sai so với tool/chính sách** (lỗi của nhóm sinh dữ liệu, không phải BTC; đã sửa 2026-11-02): SC-GEN-01 (1.690.000 → 1.521.000, quên RUN-10 hiệu lực 12–25/10) và SC-GEN-05 (chênh size 50.000 → 40.000, giá cuộc 1 1.690.000 → 1.352.000, quên RUN2-SALE). SC-GEN-02 (đáp án tổng tiền sai) đã **bị xóa khỏi bộ**.
 4. **Kịch bản cố định** do BTC viết không có lời khách trả lời câu hỏi của order gate nên TSR của 7 mẫu bị gate chặn theo thiết kế; kịch bản sinh có "khách mô phỏng" trả lời gate (`--gate-assist`, lượt chèn gắn `_injected` trong trace).
 
 ## 5. Thông tin cá nhân

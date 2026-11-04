@@ -335,9 +335,9 @@ class DriverTest(GateBase):
         self.assertEqual(self.llm.calls, 2)
 
     def test_cod_limit_error_is_explained_and_bank_transfer_completes_the_order(self):
-        sku, args = "SKU-SS-AX40", dict(qty=2, price_vnd=6490000, recipient_name="Lan", address="<ADDR_1>", payment="COD")
+        sku, args = "SKU-WF-RO10", dict(qty=2, price_vnd=6890000, recipient_name="Lan", address="<ADDR_1>", payment="COD")
         o = lambda **kw: ("order.create", {"customer_phone": "CURRENT_CUSTOMER", "sku": sku, **{**args, **kw}})
-        self.turn(NEW_PHONE, "anh lấy hai máy lọc không khí Samsung AX40, tên người nhận là Lan, giao về số 12 đường Nguyễn Trãi, quận Thanh Xuân, Hà Nội, COD", [o()])
+        self.turn(NEW_PHONE, "anh lấy hai máy lọc nước RO10, tên người nhận là Lan, giao về số 12 đường Nguyễn Trãi, quận Thanh Xuân, Hà Nội, COD", [o()])
         self.turn(NEW_PHONE, "đúng rồi, số này", [])                              # xác nhận SĐT → đọc lại đơn COD
         txt, tc, meta = self.turn(NEW_PHONE, "ok", [])                           # đồng ý → code tạo đơn → hệ thống báo vượt hạn mức COD
         self.assertEqual(self.created(tc), [])
