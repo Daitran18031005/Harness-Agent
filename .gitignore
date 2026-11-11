@@ -47,3 +47,6 @@ runs/m1_final/*
 
 # Cấu hình công cụ cục bộ
 .claude/
+
+# Trọng số model TTS (≈ 313 MB) — tải riêng, không đưa vào git (có file > 100 MB, GitHub từ chối)
+model_TTS/

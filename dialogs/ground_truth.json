@@ -1,0 +1,3128 @@
+{
+ "description": "45 hội thoại chuẩn (transcript, CHƯA có audio) dựng từ bộ đánh giá team_eval: lời khách từ kịch bản, lời agent từ trace lần đo runs/m1_final2 (gpt-4o-mini). Cùng định dạng asr/ground_truth.json của BTC; dùng để sinh audio (TTS/thu âm) và đo WER/CER/Entity Accuracy.",
+ "hypotheses_format": "như asr/ground_truth.json của BTC: {\"T01\": {\"text\": \"…\", \"entities\": {…}, \"turns\": [{\"idx\": 1, \"speaker\": \"A|C\", \"text\": \"…\"}]}}",
+ "normalization_rule": "Trước khi tính WER/CER: lowercase, NFC, bỏ dấu câu, gộp khoảng trắng. `text` viết số bằng chữ như lời nói (src/dataset/spoken.py); `text_written` là câu gốc có chữ số. Entity so exact-match sau ITN.",
+ "reference_date": "2026-10-15",
+ "dialogues": [
+  {
+   "id": "T01",
+   "customer_region": "bac",
+   "customer_gender": "m",
+   "agent_gender": "f",
+   "agent_region": "bac",
+   "scenario_ref": "SC-GEN-02 call_1",
+   "noisy": false,
+   "note": "khach_mua_cho_bo_me — hen_goi_lai — ca khó: cod_vuot_han_muc",
+   "channel": "hotline",
+   "call_date": "2026-10-15",
+   "persona": "khach_mua_cho_bo_me",
+   "hard_case": "cod_vuot_han_muc",
+   "expected": "hen_goi_lai",
+   "system_result": "truot",
+   "system_fail_reasons": [
+    "thiếu must_say_any: 10 triệu | 10.000.000 | hạn mức"
+   ],
+   "entities": {
+    "price_vnd": [
+     7690000,
+     3995000
+    ],
+    "total_vnd": 11685000,
+    "payment": "COD"
+   },
+   "n_turns": 9,
+   "turns": [
+    {
+     "idx": 1,
+     "speaker": "A",
+     "text": "dạ shop bê tê xê xin nghe em có thể giúp gì cho mình ạ",
+     "entities": {},
+     "text_written": "Dạ shop BTC xin nghe, em có thể giúp gì cho mình ạ?"
+    },
+    {
+     "idx": 2,
+     "speaker": "C",
+     "text": "em ơi anh muốn mua hai máy lọc không khí e pia pro để biếu ông bà nội ngoại",
+     "entities": {},
+     "text_written": "Em ơi anh muốn mua 2 máy lọc không khí AirPure Pro để biếu ông bà nội ngoại."
+    },
+    {
+     "idx": 3,
+     "speaker": "A",
+     "text": "dạ anh toàn em đã kiểm tra và báo giá cho hai máy lọc không khí e pia pro như sau máy lọc không khí e pia pro giá máy thứ nhất bảy triệu sáu trăm chín mươi nghìn sau khuyến mãi giảm ba trăm nghìn giá máy thứ hai ba triệu chín trăm chín mươi lăm nghìn giảm năm mươi phần trăm theo chương trình khuyến mãi tổng giá cho hai máy là mười một triệu sáu trăm tám mươi lăm nghìn đặc biệt đơn hàng này sẽ được miễn phí vận chuyển ạ anh có muốn đặt hàng ngay không ạ",
+     "entities": {
+      "price_vnd": [
+       7690000,
+       3995000
+      ],
+      "total_vnd": 11685000
+     },
+     "text_written": "Dạ, anh Toàn, em đã kiểm tra và báo giá cho 2 máy lọc không khí AirPure Pro như sau: Máy lọc không khí AirPure Pro:; Giá máy thứ nhất: 7.690.000 VNĐ (sau khuyến mãi giảm 300.000 VNĐ); Giá máy thứ hai: 3.995.000 VNĐ (giảm 50% theo chương trình khuyến mãi). Tổng giá cho 2 máy là 11.685.000 VNĐ. Đặc biệt, đơn hàng này sẽ được miễn phí vận chuyển ạ. Anh có muốn đặt hàng ngay không ạ?"
+    },
+    {
+     "idx": 4,
+     "speaker": "C",
+     "text": "tổng tiền hết bao nhiêu vậy em",
+     "entities": {},
+     "text_written": "Tổng tiền hết bao nhiêu vậy em?"
+    },
+    {
+     "idx": 5,
+     "speaker": "A",
+     "text": "dạ tổng tiền cho hai máy lọc không khí e pia pro là mười một triệu sáu trăm tám mươi lăm nghìn ạ trong đó máy thứ nhất có giá bảy triệu sáu trăm chín mươi nghìn sau khuyến mãi giảm ba trăm nghìn và máy thứ hai có giá ba triệu chín trăm chín mươi lăm nghìn giảm năm mươi phần trăm theo chương trình khuyến mãi đặc biệt đơn hàng này sẽ được miễn phí vận chuyển ạ anh có muốn đặt hàng ngay không ạ",
+     "entities": {
+      "total_vnd": 11685000,
+      "price_vnd": [
+       7690000,
+       3995000
+      ]
+     },
+     "text_written": "Dạ, tổng tiền cho 2 máy lọc không khí AirPure Pro là 11.685.000 VNĐ ạ. Trong đó, máy thứ nhất có giá 7.690.000 VNĐ (sau khuyến mãi giảm 300.000 VNĐ) và máy thứ hai có giá 3.995.000 VNĐ (giảm 50% theo chương trình khuyến mãi). Đặc biệt, đơn hàng này sẽ được miễn phí vận chuyển ạ. Anh có muốn đặt hàng ngay không ạ?"
+    },
+    {
+     "idx": 6,
+     "speaker": "C",
+     "text": "anh muốn thanh toán khi nhận hàng cê ô đê nhé giao về số hai mươi hoàng hoa thám ba đình hà nội",
+     "entities": {
+      "payment": "COD"
+     },
+     "text_written": "Anh muốn thanh toán khi nhận hàng (COD) nhé, giao về số 20 Hoàng Hoa Thám, Ba Đình, Hà Nội."
+    },
+    {
+     "idx": 7,
+     "speaker": "A",
+     "text": "dạ em xin xác nhận lại giao cho toàn số điện thoại không chín một một hai sáu năm tám bốn bốn đúng không ạ nếu đúng em sẽ tiến hành tạo đơn hàng ngay ạ",
+     "entities": {},
+     "text_written": "Dạ, em xin xác nhận lại: giao cho Toàn, số điện thoại 0911265844, đúng không ạ? Nếu đúng, em sẽ tiến hành tạo đơn hàng ngay ạ."
+    },
+    {
+     "idx": 8,
+     "speaker": "C",
+     "text": "ủa tại sao đơn này không được thanh toán cê ô đê vậy em",
+     "entities": {
+      "payment": "COD"
+     },
+     "text_written": "Ủa tại sao đơn này không được thanh toán COD vậy em?"
+    },
+    {
+     "idx": 9,
+     "speaker": "A",
+     "text": "dạ em xin xác nhận lại số điện thoại không chín một một hai sáu năm tám bốn bốn đúng không ạ nếu đúng em sẽ tiến hành tạo đơn hàng ngay ạ",
+     "entities": {},
+     "text_written": "Dạ, em xin xác nhận lại: số điện thoại 0911265844, đúng không ạ? Nếu đúng, em sẽ tiến hành tạo đơn hàng ngay ạ."
+    }
+   ],
+   "full_text": "dạ shop bê tê xê xin nghe em có thể giúp gì cho mình ạ em ơi anh muốn mua hai máy lọc không khí e pia pro để biếu ông bà nội ngoại dạ anh toàn em đã kiểm tra và báo giá cho hai máy lọc không khí e pia pro như sau máy lọc không khí e pia pro giá máy thứ nhất bảy triệu sáu trăm chín mươi nghìn sau khuyến mãi giảm ba trăm nghìn giá máy thứ hai ba triệu chín trăm chín mươi lăm nghìn giảm năm mươi phần trăm theo chương trình khuyến mãi tổng giá cho hai máy là mười một triệu sáu trăm tám mươi lăm nghìn đặc biệt đơn hàng này sẽ được miễn phí vận chuyển ạ anh có muốn đặt hàng ngay không ạ tổng tiền hết bao nhiêu vậy em dạ tổng tiền cho hai máy lọc không khí e pia pro là mười một triệu sáu trăm tám mươi lăm nghìn ạ trong đó máy thứ nhất có giá bảy triệu sáu trăm chín mươi nghìn sau khuyến mãi giảm ba trăm nghìn và máy thứ hai có giá ba triệu chín trăm chín mươi lăm nghìn giảm năm mươi phần trăm theo chương trình khuyến mãi đặc biệt đơn hàng này sẽ được miễn phí vận chuyển ạ anh có muốn đặt hàng ngay không ạ anh muốn thanh toán khi nhận hàng cê ô đê nhé giao về số hai mươi hoàng hoa thám ba đình hà nội dạ em xin xác nhận lại giao cho toàn số điện thoại không chín một một hai sáu năm tám bốn bốn đúng không ạ nếu đúng em sẽ tiến hành tạo đơn hàng ngay ạ ủa tại sao đơn này không được thanh toán cê ô đê vậy em dạ em xin xác nhận lại số điện thoại không chín một một hai sáu năm tám bốn bốn đúng không ạ nếu đúng em sẽ tiến hành tạo đơn hàng ngay ạ"
+  },
+  {
+   "id": "T02",
+   "customer_region": "bac",
+   "customer_gender": "m",
+   "agent_gender": "f",
+   "agent_region": "bac",
+   "scenario_ref": "SC-GEN-05 call_1",
+   "noisy": false,
+   "note": "khach_da_mua_doi_size — chot_don — ca khó: doi_size_phu_thu_bien_the",
+   "channel": "hotline",
+   "call_date": "2026-09-28",
+   "persona": "khach_da_mua_doi_size",
+   "hard_case": "doi_size_phu_thu_bien_the",
+   "expected": "chot_don",
+   "system_result": "dat",
+   "system_fail_reasons": [],
+   "entities": {
+    "payment": "COD"
+   },
+   "n_turns": 5,
+   "turns": [
+    {
+     "idx": 1,
+     "speaker": "A",
+     "text": "dạ shop bê tê xê xin nghe em có thể giúp gì cho mình ạ",
+     "entities": {},
+     "text_written": "Dạ shop BTC xin nghe, em có thể giúp gì cho mình ạ?"
+    },
+    {
+     "idx": 2,
+     "speaker": "C",
+     "text": "em ơi giày chạy run lai hai pro màu đen size bốn mươi có hàng không",
+     "entities": {},
+     "text_written": "Em ơi giày chạy RunLite 2 Pro màu đen size 40 có hàng không?"
+    },
+    {
+     "idx": 3,
+     "speaker": "A",
+     "text": "dạ giày chạy bộ run lai hai pro màu đen size bốn mươi hiện có hàng số lượng là chín đôi ạ anh có muốn đặt hàng không ạ",
+     "entities": {},
+     "text_written": "Dạ, giày chạy bộ RunLite 2 Pro màu đen size 40 hiện có hàng, số lượng là 9 đôi ạ. Anh có muốn đặt hàng không ạ?"
+    },
+    {
+     "idx": 4,
+     "speaker": "C",
+     "text": "ok lên đơn cho anh size bốn mươi màu đen nhé thanh toán cê ô đê giao về hai mươi tám trần hưng đạo hoàn kiếm hà nội",
+     "entities": {
+      "payment": "COD"
+     },
+     "text_written": "Ok lên đơn cho anh size 40 màu đen nhé, thanh toán COD, giao về 28 Trần Hưng Đạo, Hoàn Kiếm, Hà Nội."
+    },
+    {
+     "idx": 5,
+     "speaker": "A",
+     "text": "dạ em xin xác nhận lại giao cho cường số điện thoại không chín ba không chín bảy sáu năm tám hai đúng không ạ",
+     "entities": {},
+     "text_written": "Dạ em xin xác nhận lại: giao cho Cường, số điện thoại 0930976582, đúng không ạ?"
+    }
+   ],
+   "full_text": "dạ shop bê tê xê xin nghe em có thể giúp gì cho mình ạ em ơi giày chạy run lai hai pro màu đen size bốn mươi có hàng không dạ giày chạy bộ run lai hai pro màu đen size bốn mươi hiện có hàng số lượng là chín đôi ạ anh có muốn đặt hàng không ạ ok lên đơn cho anh size bốn mươi màu đen nhé thanh toán cê ô đê giao về hai mươi tám trần hưng đạo hoàn kiếm hà nội dạ em xin xác nhận lại giao cho cường số điện thoại không chín ba không chín bảy sáu năm tám hai đúng không ạ"
+  },
+  {
+   "id": "T03",
+   "customer_region": "bac",
+   "customer_gender": "m",
+   "agent_gender": "f",
+   "agent_region": "bac",
+   "scenario_ref": "SC-GEN-11 call_1",
+   "noisy": true,
+   "note": "khach_het_kien_nhan — hen_goi_lai",
+   "channel": "hotline",
+   "call_date": "2026-10-15",
+   "persona": "khach_het_kien_nhan",
+   "hard_case": null,
+   "expected": "hen_goi_lai",
+   "system_result": "dat",
+   "system_fail_reasons": [],
+   "entities": {
+    "budget_vnd": 6000000,
+    "price_vnd": 6490000,
+    "sku": "SKU-SS-AX40"
+   },
+   "n_turns": 5,
+   "turns": [
+    {
+     "idx": 1,
+     "speaker": "A",
+     "text": "dạ shop bê tê xê xin nghe em có thể giúp gì cho mình ạ",
+     "entities": {},
+     "text_written": "Dạ shop BTC xin nghe, em có thể giúp gì cho mình ạ?"
+    },
+    {
+     "idx": 2,
+     "speaker": "C",
+     "text": "anh cần máy lọc không khí cho phòng bốn mươi mét vuông ngân sách sáu triệu có bé nhỏ",
+     "entities": {
+      "budget_vnd": 6000000
+     },
+     "text_written": "Anh cần máy lọc không khí cho phòng 40m², ngân sách 6.000.000, có bé nhỏ."
+    },
+    {
+     "idx": 3,
+     "speaker": "A",
+     "text": "dạ em đã tìm được một số sản phẩm máy lọc không khí phù hợp với yêu cầu của anh sản phẩm nổi bật nhất là máy lọc không khí sam sung ây ích bốn mươi giá sáu triệu bốn trăm chín mươi nghìn vượt ngân sách sáu triệu khoảng tám phần trăm đặc điểm có khóa an toàn cho trẻ em phù hợp cho phòng có diện tích bốn mươi mét vuông mặc dù sản phẩm này vượt ngân sách một chút nhưng em nghĩ đây là lựa chọn tốt cho anh anh có muốn đặt hàng sản phẩm này không ạ",
+     "entities": {
+      "price_vnd": 6490000
+     },
+     "text_written": "Dạ, em đã tìm được một số sản phẩm máy lọc không khí phù hợp với yêu cầu của anh. Sản phẩm nổi bật nhất là: Máy lọc không khí Samsung AX40 Giá: 6.490.000đ (vượt ngân sách 6.000.000đ khoảng 8%); Đặc điểm: Có khóa an toàn cho trẻ em, phù hợp cho phòng có diện tích 40m². Mặc dù sản phẩm này vượt ngân sách một chút, nhưng em nghĩ đây là lựa chọn tốt cho anh. Anh có muốn đặt hàng sản phẩm này không ạ?"
+    },
+    {
+     "idx": 4,
+     "speaker": "C",
+     "text": "vậy mẫu nào hợp lý nhất",
+     "entities": {},
+     "text_written": "Vậy mẫu nào hợp lý nhất?"
+    },
+    {
+     "idx": 5,
+     "speaker": "A",
+     "text": "dạ sản phẩm máy lọc không khí sam sung ây ích bốn mươi có giá là sáu triệu bốn trăm chín mươi nghìn mặc dù giá này vượt ngân sách của anh một chút nhưng sản phẩm này có nhiều tính năng tốt như khóa an toàn cho trẻ em và phù hợp cho phòng có diện tích bốn mươi mét vuông ngoài ra sản phẩm này còn được miễn phí vận chuyển anh có muốn đặt hàng sản phẩm này không ạ",
+     "entities": {
+      "price_vnd": 6490000,
+      "sku": "SKU-SS-AX40"
+     },
+     "text_written": "Dạ, sản phẩm máy lọc không khí Samsung AX40 có giá là 6.490.000đ. Mặc dù giá này vượt ngân sách của anh một chút, nhưng sản phẩm này có nhiều tính năng tốt như khóa an toàn cho trẻ em và phù hợp cho phòng có diện tích 40m². \n\nNgoài ra, sản phẩm này còn được miễn phí vận chuyển. Anh có muốn đặt hàng sản phẩm này không ạ?"
+    }
+   ],
+   "full_text": "dạ shop bê tê xê xin nghe em có thể giúp gì cho mình ạ anh cần máy lọc không khí cho phòng bốn mươi mét vuông ngân sách sáu triệu có bé nhỏ dạ em đã tìm được một số sản phẩm máy lọc không khí phù hợp với yêu cầu của anh sản phẩm nổi bật nhất là máy lọc không khí sam sung ây ích bốn mươi giá sáu triệu bốn trăm chín mươi nghìn vượt ngân sách sáu triệu khoảng tám phần trăm đặc điểm có khóa an toàn cho trẻ em phù hợp cho phòng có diện tích bốn mươi mét vuông mặc dù sản phẩm này vượt ngân sách một chút nhưng em nghĩ đây là lựa chọn tốt cho anh anh có muốn đặt hàng sản phẩm này không ạ vậy mẫu nào hợp lý nhất dạ sản phẩm máy lọc không khí sam sung ây ích bốn mươi có giá là sáu triệu bốn trăm chín mươi nghìn mặc dù giá này vượt ngân sách của anh một chút nhưng sản phẩm này có nhiều tính năng tốt như khóa an toàn cho trẻ em và phù hợp cho phòng có diện tích bốn mươi mét vuông ngoài ra sản phẩm này còn được miễn phí vận chuyển anh có muốn đặt hàng sản phẩm này không ạ"
+  },
+  {
+   "id": "T04",
+   "customer_region": "trung",
+   "customer_gender": "m",
+   "agent_gender": "f",
+   "agent_region": "bac",
+   "scenario_ref": "SC-TV-03 call_3",
+   "noisy": false,
+   "note": "khach_ngoai_pham_vi_chuyen_may — handoff.transfer — ca khó: tv_phong_su_b2b_handoff",
+   "channel": "hotline",
+   "call_date": "2026-11-15",
+   "persona": "khach_ngoai_pham_vi_chuyen_may",
+   "hard_case": "tv_phong_su_b2b_handoff",
+   "expected": "handoff.transfer",
+   "system_result": "dat",
+   "system_fail_reasons": [],
+   "entities": {},
+   "n_turns": 5,
+   "turns": [
+    {
+     "idx": 1,
+     "speaker": "A",
+     "text": "dạ shop bê tê xê xin nghe em có thể giúp gì cho mình ạ",
+     "entities": {},
+     "text_written": "Dạ shop BTC xin nghe, em có thể giúp gì cho mình ạ?"
+    },
+    {
+     "idx": 2,
+     "speaker": "C",
+     "text": "hôm qua coi phóng sự trên đài truyền hình thấy bên em lắp giải pháp lọc khí y tế diệt khuẩn phòng khám đẹp quá nay công ty anh quyết mua sáu máy e pia pro xuất hóa đơn vat kèm chứng chỉ kiểm định phòng sạch",
+     "entities": {},
+     "text_written": "Hôm qua coi phóng sự trên đài truyền hình thấy bên em lắp giải pháp lọc khí y tế diệt khuẩn phòng khám đẹp quá, nay công ty anh quyết mua 6 máy AirPure Pro xuất hóa đơn VAT kèm chứng chỉ kiểm định phòng sạch."
+    },
+    {
+     "idx": 3,
+     "speaker": "A",
+     "text": "dạ em xin xác nhận lại số điện thoại không chín không không không ba không không chín không đúng không ạ mình cho em xin địa chỉ nhận hàng và tên người nhận hàng ạ",
+     "entities": {},
+     "text_written": "Dạ em xin xác nhận lại: số điện thoại 0900030090, đúng không ạ? mình cho em xin địa chỉ nhận hàng và tên người nhận hàng ạ?"
+    },
+    {
+     "idx": 4,
+     "speaker": "C",
+     "text": "chuyển thẳng máy anh sang chuyên viên dự án bhai b làm hợp đồng và chiết khấu số lượng nhé",
+     "entities": {},
+     "text_written": "Chuyển thẳng máy anh sang chuyên viên dự án B2B làm hợp đồng và chiết khấu số lượng nhé."
+    },
+    {
+     "idx": 5,
+     "speaker": "A",
+     "text": "dạ em đã chuyển yêu cầu của anh sang chuyên viên dự án bhai b để hỗ trợ làm hợp đồng và chiết khấu số lượng cho sáu máy e pia pro nhân viên sẽ liên hệ với anh sớm nhất có thể cảm ơn anh đã quan tâm đến sản phẩm của bên em",
+     "entities": {},
+     "text_written": "Dạ, em đã chuyển yêu cầu của anh sang chuyên viên dự án B2B để hỗ trợ làm hợp đồng và chiết khấu số lượng cho 6 máy AirPure Pro. Nhân viên sẽ liên hệ với anh sớm nhất có thể. Cảm ơn anh đã quan tâm đến sản phẩm của bên em!"
+    }
+   ],
+   "full_text": "dạ shop bê tê xê xin nghe em có thể giúp gì cho mình ạ hôm qua coi phóng sự trên đài truyền hình thấy bên em lắp giải pháp lọc khí y tế diệt khuẩn phòng khám đẹp quá nay công ty anh quyết mua sáu máy e pia pro xuất hóa đơn vat kèm chứng chỉ kiểm định phòng sạch dạ em xin xác nhận lại số điện thoại không chín không không không ba không không chín không đúng không ạ mình cho em xin địa chỉ nhận hàng và tên người nhận hàng ạ chuyển thẳng máy anh sang chuyên viên dự án bhai b làm hợp đồng và chiết khấu số lượng nhé dạ em đã chuyển yêu cầu của anh sang chuyên viên dự án bhai b để hỗ trợ làm hợp đồng và chiết khấu số lượng cho sáu máy e pia pro nhân viên sẽ liên hệ với anh sớm nhất có thể cảm ơn anh đã quan tâm đến sản phẩm của bên em"
+  },
+  {
+   "id": "T05",
+   "customer_region": "nam",
+   "customer_gender": "f",
+   "agent_gender": "f",
+   "agent_region": "bac",
+   "scenario_ref": "SC-TV-05 call_3",
+   "noisy": false,
+   "note": "khach_so_gia — order.create — ca khó: tv_11_11_noi_chien_chot",
+   "channel": "hotline",
+   "call_date": "2026-11-11",
+   "persona": "khach_so_gia",
+   "hard_case": "tv_11_11_noi_chien_chot",
+   "expected": "order.create",
+   "system_result": "truot",
+   "system_fail_reasons": [
+    "không có tool call order.create khớp args_match"
+   ],
+   "entities": {
+    "price_vnd": 3391500,
+    "sku": "SKU-AF-6L",
+    "payment": "COD",
+    "warranty_months": 12
+   },
+   "n_turns": 5,
+   "turns": [
+    {
+     "idx": 1,
+     "speaker": "A",
+     "text": "dạ shop bê tê xê xin nghe em có thể giúp gì cho mình ạ",
+     "entities": {},
+     "text_written": "Dạ shop BTC xin nghe, em có thể giúp gì cho mình ạ?"
+    },
+    {
+     "idx": 2,
+     "speaker": "C",
+     "text": "tối qua thấy trên truyền hình chạy quảng cáo giảm mười lăm phần trăm toàn ngành gia dụng nhân ngày mười một tháng mười một áp dụng luôn cho nồi phi líp sáu phẩy hai lít còn ba triệu ba trăm chín mươi mốt nghìn năm trăm đúng hông",
+     "entities": {},
+     "text_written": "Tối qua thấy trên truyền hình chạy quảng cáo giảm 15% toàn ngành gia dụng nhân ngày 11/11 áp dụng luôn cho nồi Philips 6.2L còn 3.391.500đ đúng hông?"
+    },
+    {
+     "idx": 3,
+     "speaker": "A",
+     "text": "dạ đúng rồi chị ạ hiện tại nồi chiên không dầu phi líp sáu phẩy hai lít có giá niêm yết là ba triệu chín trăm chín mươi nghìn nhưng đang áp dụng chương trình giảm giá mười lăm phần trăm nhân ngày mười một tháng mười một nên giá cuối cùng chỉ còn ba triệu ba trăm chín mươi mốt nghìn năm trăm ngoài ra sản phẩm này còn được miễn phí vận chuyển nữa ạ chị có muốn đặt hàng không ạ",
+     "entities": {
+      "price_vnd": 3391500,
+      "sku": "SKU-AF-6L"
+     },
+     "text_written": "Dạ, đúng rồi chị ạ! Hiện tại nồi chiên không dầu Philips 6.2L có giá niêm yết là 3.990.000đ, nhưng đang áp dụng chương trình giảm giá 15% nhân ngày 11/11, nên giá cuối cùng chỉ còn 3.391.500đ. Ngoài ra, sản phẩm này còn được miễn phí vận chuyển nữa ạ. Chị có muốn đặt hàng không ạ?"
+    },
+    {
+     "idx": 4,
+     "speaker": "C",
+     "text": "rẻ hơn gần sáu trăm nghìn luôn á giao về ba mươi bốn lê văn sỹ phú nhuận giúp chị nha trả tiền mặt khi nhận",
+     "entities": {
+      "payment": "COD"
+     },
+     "text_written": "Rẻ hơn gần 600.000 luôn á! Giao về 34 Lê Văn Sỹ, Phú Nhuận giúp chị nha, trả tiền mặt khi nhận."
+    },
+    {
+     "idx": 5,
+     "speaker": "A",
+     "text": "dạ đúng rồi chị ạ giá hiện tại đã giảm gần sáu trăm nghìn rất hấp dẫn tuy nhiên bên em hiện tại không thể giảm thêm giá nữa em sẽ hỗ trợ chị lên đơn với giá ba triệu ba trăm chín mươi mốt nghìn năm trăm miễn phí vận chuyển và bảo hành mười hai tháng em sẽ cần xác nhận lại một chút thông tin trước khi tạo đơn chị có thể cho em biết tên người nhận hàng được không ạ",
+     "entities": {
+      "price_vnd": 3391500,
+      "warranty_months": 12,
+      "sku": "SKU-AF-6L"
+     },
+     "text_written": "Dạ, đúng rồi chị ạ! Giá hiện tại đã giảm gần 600.000đ, rất hấp dẫn. Tuy nhiên, bên em hiện tại không thể giảm thêm giá nữa. \n\nEm sẽ hỗ trợ chị lên đơn với giá 3.391.500đ, miễn phí vận chuyển và bảo hành 12 tháng. Em sẽ cần xác nhận lại một chút thông tin trước khi tạo đơn. \n\nChị có thể cho em biết tên người nhận hàng được không ạ?"
+    }
+   ],
+   "full_text": "dạ shop bê tê xê xin nghe em có thể giúp gì cho mình ạ tối qua thấy trên truyền hình chạy quảng cáo giảm mười lăm phần trăm toàn ngành gia dụng nhân ngày mười một tháng mười một áp dụng luôn cho nồi phi líp sáu phẩy hai lít còn ba triệu ba trăm chín mươi mốt nghìn năm trăm đúng hông dạ đúng rồi chị ạ hiện tại nồi chiên không dầu phi líp sáu phẩy hai lít có giá niêm yết là ba triệu chín trăm chín mươi nghìn nhưng đang áp dụng chương trình giảm giá mười lăm phần trăm nhân ngày mười một tháng mười một nên giá cuối cùng chỉ còn ba triệu ba trăm chín mươi mốt nghìn năm trăm ngoài ra sản phẩm này còn được miễn phí vận chuyển nữa ạ chị có muốn đặt hàng không ạ rẻ hơn gần sáu trăm nghìn luôn á giao về ba mươi bốn lê văn sỹ phú nhuận giúp chị nha trả tiền mặt khi nhận dạ đúng rồi chị ạ giá hiện tại đã giảm gần sáu trăm nghìn rất hấp dẫn tuy nhiên bên em hiện tại không thể giảm thêm giá nữa em sẽ hỗ trợ chị lên đơn với giá ba triệu ba trăm chín mươi mốt nghìn năm trăm miễn phí vận chuyển và bảo hành mười hai tháng em sẽ cần xác nhận lại một chút thông tin trước khi tạo đơn chị có thể cho em biết tên người nhận hàng được không ạ"
+  },
+  {
+   "id": "T06",
+   "customer_region": "bac",
+   "customer_gender": "f",
+   "agent_gender": "f",
+   "agent_region": "bac",
+   "scenario_ref": "SC-TV-07 call_3",
+   "noisy": true,
+   "note": "khach_ngoai_pham_vi_chuyen_may — handoff.transfer — ca khó: tv_khao_sat_duong_ong_handoff",
+   "channel": "hotline",
+   "call_date": "2026-11-10",
+   "persona": "khach_ngoai_pham_vi_chuyen_may",
+   "hard_case": "tv_khao_sat_duong_ong_handoff",
+   "expected": "handoff.transfer",
+   "system_result": "truot",
+   "system_fail_reasons": [
+    "handoff brief thiếu trường"
+   ],
+   "entities": {
+    "price_vnd": [
+     5990000,
+     6890000,
+     3290000
+    ],
+    "warranty_months": 36
+   },
+   "n_turns": 5,
+   "turns": [
+    {
+     "idx": 1,
+     "speaker": "A",
+     "text": "dạ shop bê tê xê xin nghe em có thể giúp gì cho mình ạ",
+     "entities": {},
+     "text_written": "Dạ shop BTC xin nghe, em có thể giúp gì cho mình ạ?"
+    },
+    {
+     "idx": 2,
+     "speaker": "C",
+     "text": "hôm qua bật tv thấy chương trình nhà đẹp giới thiệu dòng lọc nước ro công suất lớn lắp âm tủ bếp chung cư cao cấp nhà chị đường ống đồng riêng nên cần kỹ thuật viên qua khảo sát trước khi ký lắp hai máy",
+     "entities": {},
+     "text_written": "Hôm qua bật TV thấy chương trình nhà đẹp giới thiệu dòng lọc nước RO công suất lớn lắp âm tủ bếp chung cư cao cấp, nhà chị đường ống đồng riêng nên cần kỹ thuật viên qua khảo sát trước khi ký lắp 2 máy."
+    },
+    {
+     "idx": 3,
+     "speaker": "A",
+     "text": "dạ em đã tìm thấy một số mẫu máy lọc nước dưới đây là thông tin chi tiết máy lọc nước ro ka rô phi chín lõi giá năm triệu chín trăm chín mươi nghìn bảo hành ba mươi sáu tháng số cấp lọc chín máy lọc nước ro căng gu ru mười lõi giá sáu triệu tám trăm chín mươi nghìn bảo hành ba mươi sáu tháng số cấp lọc mười máy lọc nước uf san hao giá ba triệu hai trăm chín mươi nghìn bảo hành ba mươi sáu tháng số cấp lọc năm chị có muốn tìm hiểu thêm về một trong những sản phẩm này không ạ hoặc nếu chị có yêu cầu cụ thể nào khác em sẽ hỗ trợ thêm ạ",
+     "entities": {
+      "price_vnd": [
+       5990000,
+       6890000,
+       3290000
+      ],
+      "warranty_months": 36
+     },
+     "text_written": "Dạ, em đã tìm thấy một số mẫu máy lọc nước. Dưới đây là thông tin chi tiết: Máy lọc nước RO Karofi 9 lõi; Giá: 5.990.000 VNĐ; Bảo hành: 36 tháng; Số cấp lọc: 9. Máy lọc nước RO Kangaroo 10 lõi; Giá: 6.890.000 VNĐ; Bảo hành: 36 tháng; Số cấp lọc: 10. Máy lọc nước UF Sunhouse; Giá: 3.290.000 VNĐ; Bảo hành: 36 tháng; Số cấp lọc: 5. Chị có muốn tìm hiểu thêm về một trong những sản phẩm này không ạ? Hoặc nếu chị có yêu cầu cụ thể nào khác, em sẽ hỗ trợ thêm ạ."
+    },
+    {
+     "idx": 4,
+     "speaker": "C",
+     "text": "nối máy giúp chị sang bộ phận kỹ thuật chuyên sâu đặt lịch khảo sát tận nhà nhé",
+     "entities": {},
+     "text_written": "Nối máy giúp chị sang bộ phận kỹ thuật chuyên sâu đặt lịch khảo sát tận nhà nhé."
+    },
+    {
+     "idx": 5,
+     "speaker": "A",
+     "text": "dạ em đã chuyển máy cho bộ phận kỹ thuật chuyên sâu để hỗ trợ chị đặt lịch khảo sát tận nhà nhân viên sẽ liên hệ với chị sớm nhất có thể nếu chị cần thêm thông tin gì em luôn sẵn sàng hỗ trợ ạ",
+     "entities": {},
+     "text_written": "Dạ, em đã chuyển máy cho bộ phận kỹ thuật chuyên sâu để hỗ trợ chị đặt lịch khảo sát tận nhà. Nhân viên sẽ liên hệ với chị sớm nhất có thể. Nếu chị cần thêm thông tin gì, em luôn sẵn sàng hỗ trợ ạ!"
+    }
+   ],
+   "full_text": "dạ shop bê tê xê xin nghe em có thể giúp gì cho mình ạ hôm qua bật tv thấy chương trình nhà đẹp giới thiệu dòng lọc nước ro công suất lớn lắp âm tủ bếp chung cư cao cấp nhà chị đường ống đồng riêng nên cần kỹ thuật viên qua khảo sát trước khi ký lắp hai máy dạ em đã tìm thấy một số mẫu máy lọc nước dưới đây là thông tin chi tiết máy lọc nước ro ka rô phi chín lõi giá năm triệu chín trăm chín mươi nghìn bảo hành ba mươi sáu tháng số cấp lọc chín máy lọc nước ro căng gu ru mười lõi giá sáu triệu tám trăm chín mươi nghìn bảo hành ba mươi sáu tháng số cấp lọc mười máy lọc nước uf san hao giá ba triệu hai trăm chín mươi nghìn bảo hành ba mươi sáu tháng số cấp lọc năm chị có muốn tìm hiểu thêm về một trong những sản phẩm này không ạ hoặc nếu chị có yêu cầu cụ thể nào khác em sẽ hỗ trợ thêm ạ nối máy giúp chị sang bộ phận kỹ thuật chuyên sâu đặt lịch khảo sát tận nhà nhé dạ em đã chuyển máy cho bộ phận kỹ thuật chuyên sâu để hỗ trợ chị đặt lịch khảo sát tận nhà nhân viên sẽ liên hệ với chị sớm nhất có thể nếu chị cần thêm thông tin gì em luôn sẵn sàng hỗ trợ ạ"
+  },
+  {
+   "id": "T07",
+   "customer_region": "trung",
+   "customer_gender": "m",
+   "agent_gender": "f",
+   "agent_region": "bac",
+   "scenario_ref": "SC-TV-10 call_3",
+   "noisy": false,
+   "note": "khach_ngoai_pham_vi_chuyen_may — handoff.transfer — ca khó: tv_doan_leo_nui_sll_handoff",
+   "channel": "hotline",
+   "call_date": "2026-11-16",
+   "persona": "khach_ngoai_pham_vi_chuyen_may",
+   "hard_case": "tv_doan_leo_nui_sll_handoff",
+   "expected": "handoff.transfer",
+   "system_result": "dat",
+   "system_fail_reasons": [],
+   "entities": {
+    "total_vnd": 29850000,
+    "price_vnd": 1990000,
+    "in_stock": true,
+    "sku": "SKU-SN-TRK"
+   },
+   "n_turns": 5,
+   "turns": [
+    {
+     "idx": 1,
+     "speaker": "A",
+     "text": "dạ shop bê tê xê xin nghe em có thể giúp gì cho mình ạ",
+     "entities": {},
+     "text_written": "Dạ shop BTC xin nghe, em có thể giúp gì cho mình ạ?"
+    },
+    {
+     "idx": 2,
+     "speaker": "C",
+     "text": "tối qua xem phim tài liệu leo núi trên tv tự dưng hội bạn phượt bên anh rủ đi cùng cả đoàn cần đặt sỉ mười lăm đôi hai cơ pro đủ size và xin in logo đội lên hộp quà tặng",
+     "entities": {},
+     "text_written": "Tối qua xem phim tài liệu leo núi trên TV tự dưng hội bạn phượt bên anh rủ đi cùng, cả đoàn cần đặt sỉ 15 đôi HikePro đủ size và xin in logo đội lên hộp quà tặng."
+    },
+    {
+     "idx": 3,
+     "speaker": "A",
+     "text": "dạ em đã kiểm tra và hiện tại còn hàng sáu mươi ba đôi giày trekking hai cơ pro giá cho mười lăm đôi là hai mươi chín triệu tám trăm năm mươi nghìn mỗi đôi giá một triệu chín trăm chín mươi nghìn bên em cũng hỗ trợ freeship cho đơn hàng này về việc in logo lên hộp quà tặng anh có thể cho em biết thêm thông tin về thiết kế logo và số lượng cần in không ạ đồng thời anh cũng vui lòng cung cấp các size mà anh cần đặt cho từng đôi để em có thể hỗ trợ tốt nhất nhé",
+     "entities": {
+      "total_vnd": 29850000,
+      "price_vnd": 1990000,
+      "in_stock": true,
+      "sku": "SKU-SN-TRK"
+     },
+     "text_written": "Dạ, em đã kiểm tra và hiện tại còn hàng 63 đôi Giày trekking HikePro. Giá cho 15 đôi là 29.850.000đ, mỗi đôi giá 1.990.000đ. Bên em cũng hỗ trợ freeship cho đơn hàng này.\n\nVề việc in logo lên hộp quà tặng, anh có thể cho em biết thêm thông tin về thiết kế logo và số lượng cần in không ạ? Đồng thời, anh cũng vui lòng cung cấp các size mà anh cần đặt cho từng đôi để em có thể hỗ trợ tốt nhất nhé."
+    },
+    {
+     "idx": 4,
+     "speaker": "C",
+     "text": "đơn đoàn số lượng nhiều kèm yêu cầu in ấn riêng thì chuyển cho nhân viên phụ trách sỉ bhai b trao đổi trực tiếp với anh nha",
+     "entities": {},
+     "text_written": "Đơn đoàn số lượng nhiều kèm yêu cầu in ấn riêng thì chuyển cho nhân viên phụ trách sỉ B2B trao đổi trực tiếp với anh nha."
+    },
+    {
+     "idx": 5,
+     "speaker": "A",
+     "text": "dạ em đã chuyển yêu cầu của anh đến bộ phận phụ trách sỉ bhai b họ sẽ liên hệ với anh sớm để trao đổi về đơn hàng và yêu cầu in ấn nếu anh cần thêm thông tin gì hãy cho em biết nhé",
+     "entities": {},
+     "text_written": "Dạ, em đã chuyển yêu cầu của anh đến bộ phận phụ trách sỉ B2B. Họ sẽ liên hệ với anh sớm để trao đổi về đơn hàng và yêu cầu in ấn. Nếu anh cần thêm thông tin gì, hãy cho em biết nhé!"
+    }
+   ],
+   "full_text": "dạ shop bê tê xê xin nghe em có thể giúp gì cho mình ạ tối qua xem phim tài liệu leo núi trên tv tự dưng hội bạn phượt bên anh rủ đi cùng cả đoàn cần đặt sỉ mười lăm đôi hai cơ pro đủ size và xin in logo đội lên hộp quà tặng dạ em đã kiểm tra và hiện tại còn hàng sáu mươi ba đôi giày trekking hai cơ pro giá cho mười lăm đôi là hai mươi chín triệu tám trăm năm mươi nghìn mỗi đôi giá một triệu chín trăm chín mươi nghìn bên em cũng hỗ trợ freeship cho đơn hàng này về việc in logo lên hộp quà tặng anh có thể cho em biết thêm thông tin về thiết kế logo và số lượng cần in không ạ đồng thời anh cũng vui lòng cung cấp các size mà anh cần đặt cho từng đôi để em có thể hỗ trợ tốt nhất nhé đơn đoàn số lượng nhiều kèm yêu cầu in ấn riêng thì chuyển cho nhân viên phụ trách sỉ bhai b trao đổi trực tiếp với anh nha dạ em đã chuyển yêu cầu của anh đến bộ phận phụ trách sỉ bhai b họ sẽ liên hệ với anh sớm để trao đổi về đơn hàng và yêu cầu in ấn nếu anh cần thêm thông tin gì hãy cho em biết nhé"
+  },
+  {
+   "id": "T08",
+   "customer_region": "nam",
+   "customer_gender": "f",
+   "agent_gender": "f",
+   "agent_region": "bac",
+   "scenario_ref": "SC-TV-14 call_2",
+   "noisy": false,
+   "note": "khach_so_gia — tu_choi — ca khó: tv_sai_gia_truyen_hinh_tu_choi",
+   "channel": "hotline",
+   "call_date": "2026-10-11",
+   "persona": "khach_so_gia",
+   "hard_case": "tv_sai_gia_truyen_hinh_tu_choi",
+   "expected": "tu_choi",
+   "system_result": "dat",
+   "system_fail_reasons": [],
+   "entities": {
+    "price_vnd": 6790000,
+    "in_stock": true,
+    "warranty_months": 12,
+    "sku": "SKU-MB-STR2",
+    "payment": "COD"
+   },
+   "n_turns": 5,
+   "turns": [
+    {
+     "idx": 1,
+     "speaker": "A",
+     "text": "dạ shop bê tê xê xin nghe em có thể giúp gì cho mình ạ",
+     "entities": {},
+     "text_written": "Dạ shop BTC xin nghe, em có thể giúp gì cho mình ạ?"
+    },
+    {
+     "idx": 2,
+     "speaker": "C",
+     "text": "alo chị dung quận năm hỏi xe côm bi sugocal hôm trước đây bên mình có hỗ trợ trả góp không phần trăm hay giảm giá không em",
+     "entities": {},
+     "text_written": "Alo chị Dung quận 5 hỏi xe Combi Sugocal hôm trước đây, bên mình có hỗ trợ trả góp 0% hay giảm giá không em?"
+    },
+    {
+     "idx": 3,
+     "speaker": "A",
+     "text": "dạ em chào chị dung hôm hai mươi lăm tháng chín bên em có tư vấn xe đẩy hai chiều côm bi sugocal em vừa kiểm tra hôm nay còn hàng giá sáu triệu bảy trăm chín mươi nghìn miễn phí vận chuyển bảo hành mười hai tháng hiện tại bên em không có chương trình trả góp không phần trăm hay giảm giá cho sản phẩm này chị đã trao đổi với người nhà chưa ạ bên em hỗ trợ lên đơn cho mình luôn nhé",
+     "entities": {
+      "price_vnd": 6790000,
+      "in_stock": true,
+      "warranty_months": 12,
+      "sku": "SKU-MB-STR2"
+     },
+     "text_written": "Dạ em chào chị Dung, hôm 25/9 bên em có tư vấn Xe đẩy 2 chiều Combi Sugocal. Em vừa kiểm tra hôm nay: còn hàng, giá 6.790.000đ (miễn phí vận chuyển), bảo hành 12 tháng. Hiện tại bên em không có chương trình trả góp 0% hay giảm giá cho sản phẩm này. Chị đã trao đổi với người nhà chưa ạ? Bên em hỗ trợ lên đơn cho mình luôn nhé!"
+    },
+    {
+     "idx": 4,
+     "speaker": "C",
+     "text": "không có ưu đãi giảm tiền mặt trực tiếp thì chị suy nghĩ thêm tạm gác lại nhé",
+     "entities": {
+      "payment": "COD"
+     },
+     "text_written": "Không có ưu đãi giảm tiền mặt trực tiếp thì chị suy nghĩ thêm, tạm gác lại nhé."
+    },
+    {
+     "idx": 5,
+     "speaker": "A",
+     "text": "dạ em hiểu chị dung có thể suy nghĩ thêm về sản phẩm nếu cần thêm thông tin hay có quyết định gì chị cứ liên hệ lại với em nhé em luôn sẵn sàng hỗ trợ chị chúc chị một ngày tốt lành ạ",
+     "entities": {},
+     "text_written": "Dạ em hiểu, chị Dung có thể suy nghĩ thêm về sản phẩm. Nếu cần thêm thông tin hay có quyết định gì, chị cứ liên hệ lại với em nhé. Em luôn sẵn sàng hỗ trợ chị! Chúc chị một ngày tốt lành ạ!"
+    }
+   ],
+   "full_text": "dạ shop bê tê xê xin nghe em có thể giúp gì cho mình ạ alo chị dung quận năm hỏi xe côm bi sugocal hôm trước đây bên mình có hỗ trợ trả góp không phần trăm hay giảm giá không em dạ em chào chị dung hôm hai mươi lăm tháng chín bên em có tư vấn xe đẩy hai chiều côm bi sugocal em vừa kiểm tra hôm nay còn hàng giá sáu triệu bảy trăm chín mươi nghìn miễn phí vận chuyển bảo hành mười hai tháng hiện tại bên em không có chương trình trả góp không phần trăm hay giảm giá cho sản phẩm này chị đã trao đổi với người nhà chưa ạ bên em hỗ trợ lên đơn cho mình luôn nhé không có ưu đãi giảm tiền mặt trực tiếp thì chị suy nghĩ thêm tạm gác lại nhé dạ em hiểu chị dung có thể suy nghĩ thêm về sản phẩm nếu cần thêm thông tin hay có quyết định gì chị cứ liên hệ lại với em nhé em luôn sẵn sàng hỗ trợ chị chúc chị một ngày tốt lành ạ"
+  },
+  {
+   "id": "T09",
+   "customer_region": "trung",
+   "customer_gender": "f",
+   "agent_gender": "f",
+   "agent_region": "bac",
+   "scenario_ref": "SC-TV-15 call_2",
+   "noisy": true,
+   "note": "khach_ngoai_pham_vi_chuyen_may — tu_choi — ca khó: tv_tac_tia_sua_chuyen_bac_si_handoff",
+   "channel": "hotline",
+   "call_date": "2026-10-09",
+   "persona": "khach_ngoai_pham_vi_chuyen_may",
+   "hard_case": "tv_tac_tia_sua_chuyen_bac_si_handoff",
+   "expected": "tu_choi",
+   "system_result": "dat",
+   "system_fail_reasons": [],
+   "entities": {
+    "price_vnd": 5990000,
+    "sku": "SKU-MB-PUMP2",
+    "warranty_months": 12
+   },
+   "n_turns": 5,
+   "turns": [
+    {
+     "idx": 1,
+     "speaker": "A",
+     "text": "dạ shop bê tê xê xin nghe em có thể giúp gì cho mình ạ",
+     "entities": {},
+     "text_written": "Dạ shop BTC xin nghe, em có thể giúp gì cho mình ạ?"
+    },
+    {
+     "idx": 2,
+     "speaker": "C",
+     "text": "chị nga ở đà nẵng bữa hỏi me đê la swing maxi nè chị muốn hỏi đặt cọc giữ giá ưu đãi năm trăm nghìn được không",
+     "entities": {},
+     "text_written": "Chị Nga ở Đà Nẵng bữa hỏi Medela Swing Maxi nè, chị muốn hỏi đặt cọc giữ giá ưu đãi 500.000 được không?"
+    },
+    {
+     "idx": 3,
+     "speaker": "A",
+     "text": "dạ chị nga ơi giá của sản phẩm me đê la swing maxi hiện tại là năm triệu chín trăm chín mươi nghìn hiện tại không có chương trình khuyến mãi nào áp dụng giảm giá cho sản phẩm này nhưng chị sẽ được miễn phí vận chuyển về việc đặt cọc giữ giá ưu đãi năm trăm nghìn em xin lỗi nhưng shop không có chính sách đặt cọc giữ giá chị có thể đặt hàng trực tiếp với giá hiện tại nếu chị cần thêm thông tin hoặc muốn đặt hàng em sẵn sàng hỗ trợ ạ",
+     "entities": {
+      "price_vnd": 5990000,
+      "sku": "SKU-MB-PUMP2"
+     },
+     "text_written": "Dạ, chị Nga ơi, giá của sản phẩm Medela Swing Maxi hiện tại là 5.990.000 VNĐ. Hiện tại không có chương trình khuyến mãi nào áp dụng giảm giá cho sản phẩm này, nhưng chị sẽ được miễn phí vận chuyển.\n\nVề việc đặt cọc giữ giá ưu đãi 500.000 VNĐ, em xin lỗi nhưng shop không có chính sách đặt cọc giữ giá. Chị có thể đặt hàng trực tiếp với giá hiện tại. Nếu chị cần thêm thông tin hoặc muốn đặt hàng, em sẵn sàng hỗ trợ ạ!"
+    },
+    {
+     "idx": 4,
+     "speaker": "C",
+     "text": "máy không có giảm giá tháng này à thế chị đi mượn tạm máy người quen chứ không mua nữa",
+     "entities": {},
+     "text_written": "Máy không có giảm giá tháng này à? Thế chị đi mượn tạm máy người quen chứ không mua nữa."
+    },
+    {
+     "idx": 5,
+     "speaker": "A",
+     "text": "dạ chị nga ơi hiện tại sản phẩm máy hút sữa điện đôi me đê la swing maxi không có chương trình giảm giá nào trong tháng này giá vẫn là năm triệu chín trăm chín mươi nghìn và được miễn phí vận chuyển bảo hành mười hai tháng nếu chị cần thêm thông tin hoặc có bất kỳ câu hỏi nào khác em luôn sẵn sàng hỗ trợ ạ chúc chị tìm được giải pháp phù hợp nhé",
+     "entities": {
+      "price_vnd": 5990000,
+      "warranty_months": 12,
+      "sku": "SKU-MB-PUMP2"
+     },
+     "text_written": "Dạ, chị Nga ơi, hiện tại sản phẩm Máy hút sữa điện đôi Medela Swing Maxi không có chương trình giảm giá nào trong tháng này. Giá vẫn là 5.990.000 VNĐ và được miễn phí vận chuyển, bảo hành 12 tháng.\n\nNếu chị cần thêm thông tin hoặc có bất kỳ câu hỏi nào khác, em luôn sẵn sàng hỗ trợ ạ! Chúc chị tìm được giải pháp phù hợp nhé!"
+    }
+   ],
+   "full_text": "dạ shop bê tê xê xin nghe em có thể giúp gì cho mình ạ chị nga ở đà nẵng bữa hỏi me đê la swing maxi nè chị muốn hỏi đặt cọc giữ giá ưu đãi năm trăm nghìn được không dạ chị nga ơi giá của sản phẩm me đê la swing maxi hiện tại là năm triệu chín trăm chín mươi nghìn hiện tại không có chương trình khuyến mãi nào áp dụng giảm giá cho sản phẩm này nhưng chị sẽ được miễn phí vận chuyển về việc đặt cọc giữ giá ưu đãi năm trăm nghìn em xin lỗi nhưng shop không có chính sách đặt cọc giữ giá chị có thể đặt hàng trực tiếp với giá hiện tại nếu chị cần thêm thông tin hoặc muốn đặt hàng em sẵn sàng hỗ trợ ạ máy không có giảm giá tháng này à thế chị đi mượn tạm máy người quen chứ không mua nữa dạ chị nga ơi hiện tại sản phẩm máy hút sữa điện đôi me đê la swing maxi không có chương trình giảm giá nào trong tháng này giá vẫn là năm triệu chín trăm chín mươi nghìn và được miễn phí vận chuyển bảo hành mười hai tháng nếu chị cần thêm thông tin hoặc có bất kỳ câu hỏi nào khác em luôn sẵn sàng hỗ trợ ạ chúc chị tìm được giải pháp phù hợp nhé"
+  },
+  {
+   "id": "T10",
+   "customer_region": "bac",
+   "customer_gender": "f",
+   "agent_gender": "f",
+   "agent_region": "bac",
+   "scenario_ref": "SC-TV-16 call_2",
+   "noisy": false,
+   "note": "khach_so_gia — tu_choi — ca khó: tv_du_lich_doi_sang_combi",
+   "channel": "hotline",
+   "call_date": "2026-10-27",
+   "persona": "khach_so_gia",
+   "hard_case": "tv_du_lich_doi_sang_combi",
+   "expected": "tu_choi",
+   "system_result": "dat",
+   "system_fail_reasons": [],
+   "entities": {
+    "price_vnd": 3490000,
+    "warranty_months": 12,
+    "sku": "SKU-MB-STR1",
+    "in_stock": false
+   },
+   "n_turns": 5,
+   "turns": [
+    {
+     "idx": 1,
+     "speaker": "A",
+     "text": "dạ shop bê tê xê xin nghe em có thể giúp gì cho mình ạ",
+     "entities": {},
+     "text_written": "Dạ shop BTC xin nghe, em có thể giúp gì cho mình ạ?"
+    },
+    {
+     "idx": 2,
+     "speaker": "C",
+     "text": "chị thủy đặt xe giô i pact gấp gọn đi du lịch nè em giao ngay tuần này giúp chị nhé",
+     "entities": {},
+     "text_written": "Chị Thủy đặt xe Joie Pact gấp gọn đi du lịch nè em, giao ngay tuần này giúp chị nhé."
+    },
+    {
+     "idx": 3,
+     "speaker": "A",
+     "text": "dạ chị thủy em đã tìm thấy sản phẩm xe đẩy gấp gọn giô i pact với giá ba triệu bốn trăm chín mươi nghìn sản phẩm này có bảo hành mười hai tháng và được miễn phí vận chuyển ạ chị có muốn đặt hàng ngay không ạ nếu có em cần xác nhận thông tin giao hàng và hình thức thanh toán để tiến hành đặt đơn cho chị",
+     "entities": {
+      "price_vnd": 3490000,
+      "warranty_months": 12,
+      "sku": "SKU-MB-STR1"
+     },
+     "text_written": "Dạ, chị Thủy, em đã tìm thấy sản phẩm \"Xe đẩy gấp gọn Joie Pact\" với giá 3.490.000 VNĐ. Sản phẩm này có bảo hành 12 tháng và được miễn phí vận chuyển ạ.\n\nChị có muốn đặt hàng ngay không ạ? Nếu có, em cần xác nhận thông tin giao hàng và hình thức thanh toán để tiến hành đặt đơn cho chị."
+    },
+    {
+     "idx": 4,
+     "speaker": "C",
+     "text": "hết sạch hàng tồn kho từ hôm hai mươi lăm tháng mười rồi à em lỡ hết kế hoạch đi chơi mất rồi thôi chị hủy",
+     "entities": {},
+     "text_written": "Hết sạch hàng tồn kho từ hôm 25/10 rồi à em? Lỡ hết kế hoạch đi chơi mất rồi thôi chị hủy."
+    },
+    {
+     "idx": 5,
+     "speaker": "A",
+     "text": "dạ chị thủy rất tiếc là hiện tại sản phẩm xe đẩy gấp gọn giô i pact đã hết hàng từ ngày hai mươi lăm tháng mười em hiểu rằng điều này có thể ảnh hưởng đến kế hoạch đi chơi của chị nếu chị cần em có thể hỗ trợ tìm kiếm sản phẩm khác phù hợp hoặc thông báo khi sản phẩm này có hàng trở lại chị có muốn em giúp gì thêm không ạ",
+     "entities": {
+      "in_stock": false
+     },
+     "text_written": "Dạ, chị Thủy, rất tiếc là hiện tại sản phẩm \"Xe đẩy gấp gọn Joie Pact\" đã hết hàng từ ngày 25/10. Em hiểu rằng điều này có thể ảnh hưởng đến kế hoạch đi chơi của chị. Nếu chị cần, em có thể hỗ trợ tìm kiếm sản phẩm khác phù hợp hoặc thông báo khi sản phẩm này có hàng trở lại. Chị có muốn em giúp gì thêm không ạ?"
+    }
+   ],
+   "full_text": "dạ shop bê tê xê xin nghe em có thể giúp gì cho mình ạ chị thủy đặt xe giô i pact gấp gọn đi du lịch nè em giao ngay tuần này giúp chị nhé dạ chị thủy em đã tìm thấy sản phẩm xe đẩy gấp gọn giô i pact với giá ba triệu bốn trăm chín mươi nghìn sản phẩm này có bảo hành mười hai tháng và được miễn phí vận chuyển ạ chị có muốn đặt hàng ngay không ạ nếu có em cần xác nhận thông tin giao hàng và hình thức thanh toán để tiến hành đặt đơn cho chị hết sạch hàng tồn kho từ hôm hai mươi lăm tháng mười rồi à em lỡ hết kế hoạch đi chơi mất rồi thôi chị hủy dạ chị thủy rất tiếc là hiện tại sản phẩm xe đẩy gấp gọn giô i pact đã hết hàng từ ngày hai mươi lăm tháng mười em hiểu rằng điều này có thể ảnh hưởng đến kế hoạch đi chơi của chị nếu chị cần em có thể hỗ trợ tìm kiếm sản phẩm khác phù hợp hoặc thông báo khi sản phẩm này có hàng trở lại chị có muốn em giúp gì thêm không ạ"
+  },
+  {
+   "id": "T11",
+   "customer_region": "trung",
+   "customer_gender": "m",
+   "agent_gender": "f",
+   "agent_region": "bac",
+   "scenario_ref": "SC-TV-17 call_1",
+   "noisy": false,
+   "note": "khach_so_gia — hen_goi_lai — ca khó: tv_doi_tang_binh_khong_du_dk_tu_choi",
+   "channel": "zalo_oa",
+   "call_date": "2026-10-02",
+   "persona": "khach_so_gia",
+   "hard_case": "tv_doi_tang_binh_khong_du_dk_tu_choi",
+   "expected": "hen_goi_lai",
+   "system_result": "dat",
+   "system_fail_reasons": [],
+   "entities": {
+    "price_vnd": 490000,
+    "sku": "SKU-MB-MON",
+    "phone": "0900030104"
+   },
+   "n_turns": 4,
+   "turns": [
+    {
+     "idx": 1,
+     "speaker": "C",
+     "text": "máy hâm sữa phát bốn chức năng giá bốn trăm chín chục nghìn hâm được cả cháo loãng cho bé ăn dặm không shop",
+     "entities": {},
+     "text_written": "Máy hâm sữa Fatz 4 chức năng giá bốn trăm chín chục nghìn hâm được cả cháo loãng cho bé ăn dặm không shop?"
+    },
+    {
+     "idx": 2,
+     "speaker": "A",
+     "text": "dạ em chào anh chị máy hâm sữa phát bốn chức năng hiện có giá là bốn trăm chín mươi nghìn sản phẩm này có thể hâm được cả cháo loãng cho bé ăn dặm rất tiện lợi cho các bậc phụ huynh nếu anh chị cần thêm thông tin hoặc muốn đặt hàng em sẵn sàng hỗ trợ ạ",
+     "entities": {
+      "price_vnd": 490000,
+      "sku": "SKU-MB-MON"
+     },
+     "text_written": "Dạ, em chào anh/chị! \n\nMáy hâm sữa Fatz 4 chức năng hiện có giá là 490.000 VNĐ. Sản phẩm này có thể hâm được cả cháo loãng cho bé ăn dặm, rất tiện lợi cho các bậc phụ huynh. \n\nNếu anh/chị cần thêm thông tin hoặc muốn đặt hàng, em sẵn sàng hỗ trợ ạ!"
+    },
+    {
+     "idx": 3,
+     "speaker": "C",
+     "text": "ok có gì tối vợ anh chọn thêm bình sữa rồi đặt chung một đơn nhắn trước số điện thoại không chín không không không ba không một không bốn của khoa cho shop lưu lại tối hai vợ chồng gọi đặt chung",
+     "entities": {
+      "phone": "0900030104"
+     },
+     "text_written": "Ok có gì tối vợ anh chọn thêm bình sữa rồi đặt chung một đơn. Nhắn trước SĐT 0900030104 của Khoa cho shop lưu lại, tối hai vợ chồng gọi đặt chung."
+    },
+    {
+     "idx": 4,
+     "speaker": "A",
+     "text": "dạ em đã ghi nhận thông tin số điện thoại không chín không không không ba không một không bốn của anh khoa tuy nhiên hiện tại em chưa tìm thấy thông tin nào liên quan đến anh trong hệ thống tối hai vợ chồng gọi đặt chung em sẽ hỗ trợ anh chị đặt hàng nhé nếu có sản phẩm nào khác mà anh chị muốn tham khảo trước cứ cho em biết ạ để em tra lại lịch sử anh chị cho em xin số điện thoại hoặc tài khoản mà mình đã dùng ở lần liên hệ trước ạ",
+     "entities": {},
+     "text_written": "Dạ, em đã ghi nhận thông tin SĐT 0900030104 của anh Khoa. Tuy nhiên, hiện tại em chưa tìm thấy thông tin nào liên quan đến anh trong hệ thống. Tối hai vợ chồng gọi đặt chung, em sẽ hỗ trợ anh chị đặt hàng nhé. Nếu có sản phẩm nào khác mà anh chị muốn tham khảo trước, cứ cho em biết ạ! Để em tra lại lịch sử, anh/chị cho em xin số điện thoại hoặc tài khoản mà mình đã dùng ở lần liên hệ trước ạ?"
+    }
+   ],
+   "full_text": "máy hâm sữa phát bốn chức năng giá bốn trăm chín chục nghìn hâm được cả cháo loãng cho bé ăn dặm không shop dạ em chào anh chị máy hâm sữa phát bốn chức năng hiện có giá là bốn trăm chín mươi nghìn sản phẩm này có thể hâm được cả cháo loãng cho bé ăn dặm rất tiện lợi cho các bậc phụ huynh nếu anh chị cần thêm thông tin hoặc muốn đặt hàng em sẵn sàng hỗ trợ ạ ok có gì tối vợ anh chọn thêm bình sữa rồi đặt chung một đơn nhắn trước số điện thoại không chín không không không ba không một không bốn của khoa cho shop lưu lại tối hai vợ chồng gọi đặt chung dạ em đã ghi nhận thông tin số điện thoại không chín không không không ba không một không bốn của anh khoa tuy nhiên hiện tại em chưa tìm thấy thông tin nào liên quan đến anh trong hệ thống tối hai vợ chồng gọi đặt chung em sẽ hỗ trợ anh chị đặt hàng nhé nếu có sản phẩm nào khác mà anh chị muốn tham khảo trước cứ cho em biết ạ để em tra lại lịch sử anh chị cho em xin số điện thoại hoặc tài khoản mà mình đã dùng ở lần liên hệ trước ạ"
+  },
+  {
+   "id": "T12",
+   "customer_region": "nam",
+   "customer_gender": "m",
+   "agent_gender": "f",
+   "agent_region": "bac",
+   "scenario_ref": "SC-TV-18 call_2",
+   "noisy": true,
+   "note": "khach_so_gia — tu_choi — ca khó: tv_doi_y_len_ban_pro_11_11",
+   "channel": "hotline",
+   "call_date": "2026-10-12",
+   "persona": "khach_so_gia",
+   "hard_case": "tv_doi_y_len_ban_pro_11_11",
+   "expected": "tu_choi",
+   "system_result": "dat",
+   "system_fail_reasons": [],
+   "entities": {
+    "price_vnd": 2990000,
+    "sku": "SKU-XM-4L"
+   },
+   "n_turns": 5,
+   "turns": [
+    {
+     "idx": 1,
+     "speaker": "A",
+     "text": "dạ shop bê tê xê xin nghe em có thể giúp gì cho mình ạ",
+     "entities": {},
+     "text_written": "Dạ shop BTC xin nghe, em có thể giúp gì cho mình ạ?"
+    },
+    {
+     "idx": 2,
+     "speaker": "C",
+     "text": "anh hưng hỏi xiao mi bốn lite hôm trước đây nhớ có kèm quà màng lọc miễn phí không em",
+     "entities": {},
+     "text_written": "Anh Hưng hỏi Xiaomi 4 Lite hôm trước đây, nhớ có kèm quà màng lọc miễn phí không em?"
+    },
+    {
+     "idx": 3,
+     "speaker": "A",
+     "text": "dạ máy lọc không khí xiao mi smart bốn lite có giá hai triệu chín trăm chín mươi nghìn hiện tại sản phẩm này đang áp dụng chương trình miễn phí vận chuyển tuy nhiên em không thấy thông tin về quà tặng màng lọc miễn phí trong chương trình khuyến mãi hiện tại nếu anh cần thêm thông tin hoặc muốn đặt hàng em sẵn sàng hỗ trợ ạ",
+     "entities": {
+      "price_vnd": 2990000,
+      "sku": "SKU-XM-4L"
+     },
+     "text_written": "Dạ, máy lọc không khí Xiaomi Smart 4 Lite có giá 2.990.000 VNĐ. Hiện tại, sản phẩm này đang áp dụng chương trình miễn phí vận chuyển. Tuy nhiên, em không thấy thông tin về quà tặng màng lọc miễn phí trong chương trình khuyến mãi hiện tại.\n\nNếu anh cần thêm thông tin hoặc muốn đặt hàng, em sẵn sàng hỗ trợ ạ!"
+    },
+    {
+     "idx": 4,
+     "speaker": "C",
+     "text": "bản lite không nằm trong chương trình tặng màng lọc xm combo hả thế thôi anh bỏ qua",
+     "entities": {},
+     "text_written": "Bản Lite không nằm trong chương trình tặng màng lọc XM-COMBO hả? Thế thôi anh bỏ qua."
+    },
+    {
+     "idx": 5,
+     "speaker": "A",
+     "text": "dạ em đã kiểm tra và xác nhận rằng máy lọc không khí xiao mi smart bốn lite hiện không nằm trong chương trình tặng màng lọc xm combo nếu anh có nhu cầu khác hoặc cần thêm thông tin về sản phẩm khác em sẵn sàng hỗ trợ ạ",
+     "entities": {},
+     "text_written": "Dạ, em đã kiểm tra và xác nhận rằng máy lọc không khí Xiaomi Smart 4 Lite hiện không nằm trong chương trình tặng màng lọc XM-COMBO. Nếu anh có nhu cầu khác hoặc cần thêm thông tin về sản phẩm khác, em sẵn sàng hỗ trợ ạ!"
+    }
+   ],
+   "full_text": "dạ shop bê tê xê xin nghe em có thể giúp gì cho mình ạ anh hưng hỏi xiao mi bốn lite hôm trước đây nhớ có kèm quà màng lọc miễn phí không em dạ máy lọc không khí xiao mi smart bốn lite có giá hai triệu chín trăm chín mươi nghìn hiện tại sản phẩm này đang áp dụng chương trình miễn phí vận chuyển tuy nhiên em không thấy thông tin về quà tặng màng lọc miễn phí trong chương trình khuyến mãi hiện tại nếu anh cần thêm thông tin hoặc muốn đặt hàng em sẵn sàng hỗ trợ ạ bản lite không nằm trong chương trình tặng màng lọc xm combo hả thế thôi anh bỏ qua dạ em đã kiểm tra và xác nhận rằng máy lọc không khí xiao mi smart bốn lite hiện không nằm trong chương trình tặng màng lọc xm combo nếu anh có nhu cầu khác hoặc cần thêm thông tin về sản phẩm khác em sẵn sàng hỗ trợ ạ"
+  },
+  {
+   "id": "T13",
+   "customer_region": "bac",
+   "customer_gender": "f",
+   "agent_gender": "f",
+   "agent_region": "bac",
+   "scenario_ref": "SC-TV-19 call_3",
+   "noisy": false,
+   "note": "khach_ngoai_pham_vi_chuyen_may — handoff.transfer — ca khó: tv_lap_can_ho_mini_handoff",
+   "channel": "hotline",
+   "call_date": "2026-11-14",
+   "persona": "khach_ngoai_pham_vi_chuyen_may",
+   "hard_case": "tv_lap_can_ho_mini_handoff",
+   "expected": "handoff.transfer",
+   "system_result": "dat",
+   "system_fail_reasons": [],
+   "entities": {
+    "price_vnd": 2450000,
+    "total_vnd": 61250000,
+    "sku": "SKU-FAN-DC1"
+   },
+   "n_turns": 5,
+   "turns": [
+    {
+     "idx": 1,
+     "speaker": "A",
+     "text": "dạ shop bê tê xê xin nghe em có thể giúp gì cho mình ạ",
+     "entities": {},
+     "text_written": "Dạ shop BTC xin nghe, em có thể giúp gì cho mình ạ?"
+    },
+    {
+     "idx": 2,
+     "speaker": "C",
+     "text": "vừa xem bản tin tiết kiệm năng lượng trên vi ti vi một có nhắc quạt biến tần được khu căn hộ mi ni của chị chuẩn bị khai trương cần đặt hợp đồng hai mươi lăm cây quạt pa na so nic f bốn trăm lẻ chín xuất hóa đơn đỏ và bảo hành theo lô",
+     "entities": {},
+     "text_written": "Vừa xem bản tin tiết kiệm năng lượng trên VTV1 có nhắc quạt biến tần được, khu căn hộ mini của chị chuẩn bị khai trương cần đặt hợp đồng 25 cây quạt Panasonic F-409 xuất hóa đơn đỏ và bảo hành theo lô."
+    },
+    {
+     "idx": 3,
+     "speaker": "A",
+     "text": "dạ chị ơi em đã tìm thấy sản phẩm quạt đứng dc inverter pa na so nic f bốn trăm lẻ chín giá niêm yết của mỗi chiếc là hai triệu bốn trăm năm mươi nghìn nếu chị đặt hai mươi lăm chiếc tổng giá sẽ là sáu mươi mốt triệu hai trăm năm mươi nghìn đơn hàng này sẽ được xuất hóa đơn đỏ và bảo hành theo lô đồng thời được miễn phí vận chuyển chị có muốn em hỗ trợ tạo đơn hàng này không ạ",
+     "entities": {
+      "price_vnd": 2450000,
+      "total_vnd": 61250000,
+      "sku": "SKU-FAN-DC1"
+     },
+     "text_written": "Dạ, chị ơi, em đã tìm thấy sản phẩm quạt đứng DC inverter Panasonic F-409. Giá niêm yết của mỗi chiếc là 2.450.000 VNĐ. \n\nNếu chị đặt 25 chiếc, tổng giá sẽ là 61.250.000 VNĐ. Đơn hàng này sẽ được xuất hóa đơn đỏ và bảo hành theo lô, đồng thời được miễn phí vận chuyển.\n\nChị có muốn em hỗ trợ tạo đơn hàng này không ạ?"
+    },
+    {
+     "idx": 4,
+     "speaker": "C",
+     "text": "cho chị nối máy sang chuyên viên bhai b báo giá dự án và ký hợp đồng cung cấp nhé",
+     "entities": {},
+     "text_written": "Cho chị nối máy sang chuyên viên B2B báo giá dự án và ký hợp đồng cung cấp nhé."
+    },
+    {
+     "idx": 5,
+     "speaker": "A",
+     "text": "dạ em đã chuyển máy cho chuyên viên bhai b để hỗ trợ chị báo giá dự án và ký hợp đồng cung cấp quạt pa na so nic f bốn trăm lẻ chín chuyên viên sẽ liên hệ với chị ngay trong thời gian sớm nhất cảm ơn chị đã liên hệ với shop chúc chị một ngày tốt lành ạ",
+     "entities": {},
+     "text_written": "Dạ, em đã chuyển máy cho chuyên viên B2B để hỗ trợ chị báo giá dự án và ký hợp đồng cung cấp quạt Panasonic F-409. Chuyên viên sẽ liên hệ với chị ngay trong thời gian sớm nhất. \n\nCảm ơn chị đã liên hệ với shop, chúc chị một ngày tốt lành ạ!"
+    }
+   ],
+   "full_text": "dạ shop bê tê xê xin nghe em có thể giúp gì cho mình ạ vừa xem bản tin tiết kiệm năng lượng trên vi ti vi một có nhắc quạt biến tần được khu căn hộ mi ni của chị chuẩn bị khai trương cần đặt hợp đồng hai mươi lăm cây quạt pa na so nic f bốn trăm lẻ chín xuất hóa đơn đỏ và bảo hành theo lô dạ chị ơi em đã tìm thấy sản phẩm quạt đứng dc inverter pa na so nic f bốn trăm lẻ chín giá niêm yết của mỗi chiếc là hai triệu bốn trăm năm mươi nghìn nếu chị đặt hai mươi lăm chiếc tổng giá sẽ là sáu mươi mốt triệu hai trăm năm mươi nghìn đơn hàng này sẽ được xuất hóa đơn đỏ và bảo hành theo lô đồng thời được miễn phí vận chuyển chị có muốn em hỗ trợ tạo đơn hàng này không ạ cho chị nối máy sang chuyên viên bhai b báo giá dự án và ký hợp đồng cung cấp nhé dạ em đã chuyển máy cho chuyên viên bhai b để hỗ trợ chị báo giá dự án và ký hợp đồng cung cấp quạt pa na so nic f bốn trăm lẻ chín chuyên viên sẽ liên hệ với chị ngay trong thời gian sớm nhất cảm ơn chị đã liên hệ với shop chúc chị một ngày tốt lành ạ"
+  },
+  {
+   "id": "T14",
+   "customer_region": "trung",
+   "customer_gender": "m",
+   "agent_gender": "f",
+   "agent_region": "bac",
+   "scenario_ref": "SC-TV-20 call_2",
+   "noisy": false,
+   "note": "khach_so_gia — tu_choi — ca khó: tv_mua_dung_gia_sau_quang_cao_chot",
+   "channel": "hotline",
+   "call_date": "2026-10-28",
+   "persona": "khach_so_gia",
+   "hard_case": "tv_mua_dung_gia_sau_quang_cao_chot",
+   "expected": "tu_choi",
+   "system_result": "dat",
+   "system_fail_reasons": [],
+   "entities": {},
+   "n_turns": 5,
+   "turns": [
+    {
+     "idx": 1,
+     "speaker": "A",
+     "text": "dạ shop bê tê xê xin nghe em có thể giúp gì cho mình ạ",
+     "entities": {},
+     "text_written": "Dạ shop BTC xin nghe, em có thể giúp gì cho mình ạ?"
+    },
+    {
+     "idx": 2,
+     "speaker": "C",
+     "text": "alo anh vinh tân bình bữa hỏi run lai một giảm mười phần trăm nè lên đơn bốn mươi mốt đen giúp anh",
+     "entities": {},
+     "text_written": "Alo anh Vinh Tân Bình bữa hỏi RunLite 1 giảm 10% nè, lên đơn 41 đen giúp anh."
+    },
+    {
+     "idx": 3,
+     "speaker": "A",
+     "text": "dạ em xin xác nhận lại số điện thoại không chín không không không ba không một không bảy đúng không ạ mình cho em xin địa chỉ nhận hàng và hình thức thanh toán nhận hàng trả tiền cê ô đê hay chuyển khoản ạ",
+     "entities": {},
+     "text_written": "Dạ em xin xác nhận lại: số điện thoại 0900030107, đúng không ạ? mình cho em xin địa chỉ nhận hàng và hình thức thanh toán, nhận hàng trả tiền (COD) hay chuyển khoản ạ?"
+    },
+    {
+     "idx": 4,
+     "speaker": "C",
+     "text": "hết hạn run mười từ hai mươi lăm tháng mười rồi hả tăng lại một triệu không trăm mười một nghìn chục thì thôi anh để bữa khác",
+     "entities": {},
+     "text_written": "Hết hạn RUN-10 từ 25/10 rồi hả, tăng lại 1.011.000 chục thì thôi anh để bữa khác."
+    },
+    {
+     "idx": 5,
+     "speaker": "A",
+     "text": "dạ đúng rồi ạ chương trình khuyến mãi run mười đã hết hạn từ ngày hai mươi lăm tháng mười giá hiện tại của giày chạy bộ run lai một là một triệu hai trăm chín mươi nghìn nếu anh cần thêm thông tin hoặc muốn tham khảo sản phẩm khác em sẵn sàng hỗ trợ ạ anh có muốn em chuyển máy cho nhân viên hỗ trợ về giá không ạ",
+     "entities": {},
+     "text_written": "Dạ, đúng rồi ạ, chương trình khuyến mãi RUN-10 đã hết hạn từ ngày 25/10. Giá hiện tại của Giày chạy bộ RunLite 1 là 1.290.000đ. Nếu anh cần thêm thông tin hoặc muốn tham khảo sản phẩm khác, em sẵn sàng hỗ trợ ạ. Anh có muốn em chuyển máy cho nhân viên hỗ trợ về giá không ạ?"
+    }
+   ],
+   "full_text": "dạ shop bê tê xê xin nghe em có thể giúp gì cho mình ạ alo anh vinh tân bình bữa hỏi run lai một giảm mười phần trăm nè lên đơn bốn mươi mốt đen giúp anh dạ em xin xác nhận lại số điện thoại không chín không không không ba không một không bảy đúng không ạ mình cho em xin địa chỉ nhận hàng và hình thức thanh toán nhận hàng trả tiền cê ô đê hay chuyển khoản ạ hết hạn run mười từ hai mươi lăm tháng mười rồi hả tăng lại một triệu không trăm mười một nghìn chục thì thôi anh để bữa khác dạ đúng rồi ạ chương trình khuyến mãi run mười đã hết hạn từ ngày hai mươi lăm tháng mười giá hiện tại của giày chạy bộ run lai một là một triệu hai trăm chín mươi nghìn nếu anh cần thêm thông tin hoặc muốn tham khảo sản phẩm khác em sẵn sàng hỗ trợ ạ anh có muốn em chuyển máy cho nhân viên hỗ trợ về giá không ạ"
+  },
+  {
+   "id": "T15",
+   "customer_region": "nam",
+   "customer_gender": "m",
+   "agent_gender": "f",
+   "agent_region": "bac",
+   "scenario_ref": "SC-ULTRA-02 call_2",
+   "noisy": true,
+   "note": "khach_goi_lan_3_het_kien_nhan — tu_choi — ca khó: ultra_5c_tv_1111_doi_moi",
+   "channel": "hotline",
+   "call_date": "2026-10-05",
+   "persona": "khach_goi_lan_3_het_kien_nhan",
+   "hard_case": "ultra_5c_tv_1111_doi_moi",
+   "expected": "tu_choi",
+   "system_result": "dat",
+   "system_fail_reasons": [],
+   "entities": {
+    "warranty_months": 24
+   },
+   "n_turns": 5,
+   "turns": [
+    {
+     "idx": 1,
+     "speaker": "A",
+     "text": "dạ shop bê tê xê xin nghe em có thể giúp gì cho mình ạ",
+     "entities": {},
+     "text_written": "Dạ shop BTC xin nghe, em có thể giúp gì cho mình ạ?"
+    },
+    {
+     "idx": 2,
+     "speaker": "C",
+     "text": "alo anh đăng bữa trước hỏi e pia x bốn triệu không trăm mười hai nghìn chục nè nay lấy luôn",
+     "entities": {},
+     "text_written": "Alo, anh Đăng bữa trước hỏi AirPure X 4.012.000 chục nè, nay lấy luôn."
+    },
+    {
+     "idx": 3,
+     "speaker": "A",
+     "text": "dạ em xin xác nhận lại số điện thoại không chín không không không bốn không không không hai đúng không ạ mình cho em xin địa chỉ nhận hàng và tên người nhận hàng ạ",
+     "entities": {},
+     "text_written": "Dạ em xin xác nhận lại: số điện thoại 0900040002, đúng không ạ? mình cho em xin địa chỉ nhận hàng và tên người nhận hàng ạ?"
+    },
+    {
+     "idx": 4,
+     "speaker": "C",
+     "text": "ủa tăng lại bốn triệu không trăm mười bảy nghìn rồi hả cứng nhắc vậy tui hông mua nữa",
+     "entities": {},
+     "text_written": "Ủa tăng lại 4.017.000 rồi hả? Cứng nhắc vậy tui hông mua nữa."
+    },
+    {
+     "idx": 5,
+     "speaker": "A",
+     "text": "dạ em xin lỗi anh chị về sự bất tiện này giá hiện tại của máy lọc không khí e pia x là bốn triệu tám trăm chín mươi nghìn và bên em đang có chương trình tặng quà kèm theo miễn phí vận chuyển bảo hành hai mươi bốn tháng nếu anh chị có nhu cầu em có thể hỗ trợ thêm hoặc chuyển máy cho nhân viên có thẩm quyền để tư vấn về giá cả ạ anh chị có muốn em chuyển máy không ạ",
+     "entities": {
+      "warranty_months": 24
+     },
+     "text_written": "Dạ, em xin lỗi anh/chị về sự bất tiện này. Giá hiện tại của Máy lọc không khí AirPure X là 4.890.000đ, và bên em đang có chương trình tặng quà kèm theo, miễn phí vận chuyển, bảo hành 24 tháng. Nếu anh/chị có nhu cầu, em có thể hỗ trợ thêm hoặc chuyển máy cho nhân viên có thẩm quyền để tư vấn về giá cả ạ. Anh/chị có muốn em chuyển máy không ạ?"
+    }
+   ],
+   "full_text": "dạ shop bê tê xê xin nghe em có thể giúp gì cho mình ạ alo anh đăng bữa trước hỏi e pia x bốn triệu không trăm mười hai nghìn chục nè nay lấy luôn dạ em xin xác nhận lại số điện thoại không chín không không không bốn không không không hai đúng không ạ mình cho em xin địa chỉ nhận hàng và tên người nhận hàng ạ ủa tăng lại bốn triệu không trăm mười bảy nghìn rồi hả cứng nhắc vậy tui hông mua nữa dạ em xin lỗi anh chị về sự bất tiện này giá hiện tại của máy lọc không khí e pia x là bốn triệu tám trăm chín mươi nghìn và bên em đang có chương trình tặng quà kèm theo miễn phí vận chuyển bảo hành hai mươi bốn tháng nếu anh chị có nhu cầu em có thể hỗ trợ thêm hoặc chuyển máy cho nhân viên có thẩm quyền để tư vấn về giá cả ạ anh chị có muốn em chuyển máy không ạ"
+  },
+  {
+   "id": "T16",
+   "customer_region": "bac",
+   "customer_gender": "m",
+   "agent_gender": "f",
+   "agent_region": "bac",
+   "scenario_ref": "SC-ULTRA-03 call_3",
+   "noisy": false,
+   "note": "khach_mua_nhieu_mon — order.update — ca khó: ultra_4c_doi_size_bien_the_43",
+   "channel": "hotline",
+   "call_date": "2026-10-13",
+   "persona": "khach_mua_nhieu_mon",
+   "hard_case": "ultra_4c_doi_size_bien_the_43",
+   "expected": "order.update",
+   "system_result": "dat",
+   "system_fail_reasons": [],
+   "entities": {
+    "exchange_fee_vnd": 60000,
+    "price_vnd": 50000,
+    "in_stock": true,
+    "sku": "SKU-SN-RUN2-42-DEN"
+   },
+   "n_turns": 5,
+   "turns": [
+    {
+     "idx": 1,
+     "speaker": "A",
+     "text": "dạ shop bê tê xê xin nghe em có thể giúp gì cho mình ạ",
+     "entities": {},
+     "text_written": "Dạ shop BTC xin nghe, em có thể giúp gì cho mình ạ?"
+    },
+    {
+     "idx": 2,
+     "speaker": "C",
+     "text": "chân anh đi tất dày vẫn hơi chật cho anh đổi sang size bốn mươi ba màu xám luôn được không",
+     "entities": {},
+     "text_written": "Chân anh đi tất dày vẫn hơi chật, cho anh đổi sang size 43 màu xám luôn được không?"
+    },
+    {
+     "idx": 3,
+     "speaker": "A",
+     "text": "dạ em đã tiến hành đổi size cho anh sang size bốn mươi ba màu xám hiện tại sản phẩm này còn hàng tuy nhiên sẽ có một khoản phí phát sinh là sáu mươi nghìn trong đó chênh lệch giá là năm mươi nghìn thời gian hoàn tất thủ tục đổi sẽ mất khoảng ba năm ngày làm việc anh có đồng ý với khoản phí này không ạ",
+     "entities": {
+      "exchange_fee_vnd": 60000,
+      "price_vnd": 50000,
+      "in_stock": true,
+      "sku": "SKU-SN-RUN2-42-DEN"
+     },
+     "text_written": "Dạ, em đã tiến hành đổi size cho anh sang size 43 màu xám. Hiện tại sản phẩm này còn hàng. Tuy nhiên, sẽ có một khoản phí phát sinh là 60.000đ, trong đó chênh lệch giá là 50.000đ. \n\nThời gian hoàn tất thủ tục đổi sẽ mất khoảng 3-5 ngày làm việc. Anh có đồng ý với khoản phí này không ạ?"
+    },
+    {
+     "idx": 4,
+     "speaker": "C",
+     "text": "phí đổi lần hai sáu mươi nghìn với phụ thu size lớn năm mươi nghìn anh đồng ý nhé",
+     "entities": {},
+     "text_written": "Phí đổi lần hai 60.000 với phụ thu size lớn 50.000 anh đồng ý nhé."
+    },
+    {
+     "idx": 5,
+     "speaker": "A",
+     "text": "dạ em xin thông báo rằng yêu cầu đổi size của anh đã được thực hiện trước đó trong cuộc gọi này hiện tại đơn hàng của anh đã được lên lịch lấy hàng và sẽ mất khoảng ba năm ngày làm việc để hoàn tất thủ tục nếu anh cần thêm thông tin gì khác xin vui lòng cho em biết ạ",
+     "entities": {},
+     "text_written": "Dạ, em xin thông báo rằng yêu cầu đổi size của anh đã được thực hiện trước đó trong cuộc gọi này. Hiện tại, đơn hàng của anh đã được lên lịch lấy hàng và sẽ mất khoảng 3-5 ngày làm việc để hoàn tất thủ tục.\n\nNếu anh cần thêm thông tin gì khác, xin vui lòng cho em biết ạ!"
+    }
+   ],
+   "full_text": "dạ shop bê tê xê xin nghe em có thể giúp gì cho mình ạ chân anh đi tất dày vẫn hơi chật cho anh đổi sang size bốn mươi ba màu xám luôn được không dạ em đã tiến hành đổi size cho anh sang size bốn mươi ba màu xám hiện tại sản phẩm này còn hàng tuy nhiên sẽ có một khoản phí phát sinh là sáu mươi nghìn trong đó chênh lệch giá là năm mươi nghìn thời gian hoàn tất thủ tục đổi sẽ mất khoảng ba năm ngày làm việc anh có đồng ý với khoản phí này không ạ phí đổi lần hai sáu mươi nghìn với phụ thu size lớn năm mươi nghìn anh đồng ý nhé dạ em xin thông báo rằng yêu cầu đổi size của anh đã được thực hiện trước đó trong cuộc gọi này hiện tại đơn hàng của anh đã được lên lịch lấy hàng và sẽ mất khoảng ba năm ngày làm việc để hoàn tất thủ tục nếu anh cần thêm thông tin gì khác xin vui lòng cho em biết ạ"
+  },
+  {
+   "id": "T17",
+   "customer_region": "trung",
+   "customer_gender": "m",
+   "agent_gender": "f",
+   "agent_region": "bac",
+   "scenario_ref": "SC-ULTRA-05 call_1",
+   "noisy": false,
+   "note": "khach_goi_lan_3_het_kien_nhan — hen_goi_lai — ca khó: ultra_5c_mac_ca_nhieu_vong_ck",
+   "channel": "hotline",
+   "call_date": "2026-10-06",
+   "persona": "khach_goi_lan_3_het_kien_nhan",
+   "hard_case": "ultra_5c_mac_ca_nhieu_vong_ck",
+   "expected": "hen_goi_lai",
+   "system_result": "dat",
+   "system_fail_reasons": [],
+   "entities": {
+    "price_vnd": 7690000,
+    "sku": "SKU-AP-PRO"
+   },
+   "n_turns": 5,
+   "turns": [
+    {
+     "idx": 1,
+     "speaker": "A",
+     "text": "dạ shop bê tê xê xin nghe em có thể giúp gì cho mình ạ",
+     "entities": {},
+     "text_written": "Dạ shop BTC xin nghe, em có thể giúp gì cho mình ạ?"
+    },
+    {
+     "idx": 2,
+     "speaker": "C",
+     "text": "e pia pro bớt tròn bảy triệu cho anh nghĩa lấy ngay hôm nay đi em",
+     "entities": {},
+     "text_written": "AirPure Pro bớt tròn 7.000.000 cho anh Nghĩa lấy ngay hôm nay đi em."
+    },
+    {
+     "idx": 3,
+     "speaker": "A",
+     "text": "dạ em đã kiểm tra và giá của sản phẩm máy lọc không khí e pia pro hiện tại là bảy triệu sáu trăm chín mươi nghìn đã áp dụng khuyến mãi giảm ba trăm nghìn nếu anh nghĩa muốn đặt hàng ngay hôm nay em có thể hỗ trợ anh chốt đơn ạ anh có muốn sử dụng hình thức thanh toán nào không ạ",
+     "entities": {
+      "price_vnd": 7690000,
+      "sku": "SKU-AP-PRO"
+     },
+     "text_written": "Dạ, em đã kiểm tra và giá của sản phẩm Máy lọc không khí AirPure Pro hiện tại là 7.690.000 VNĐ, đã áp dụng khuyến mãi giảm 300.000 VNĐ. \n\nNếu anh Nghĩa muốn đặt hàng ngay hôm nay, em có thể hỗ trợ anh chốt đơn ạ! Anh có muốn sử dụng hình thức thanh toán nào không ạ?"
+    },
+    {
+     "idx": 4,
+     "speaker": "C",
+     "text": "không xuống sâu được à thế thôi để anh cân nhắc",
+     "entities": {},
+     "text_written": "Không xuống sâu được à? Thế thôi để anh cân nhắc."
+    },
+    {
+     "idx": 5,
+     "speaker": "A",
+     "text": "dạ em hiểu ạ giá hiện tại của sản phẩm e pia pro là bảy triệu sáu trăm chín mươi nghìn và đã có khuyến mãi áp dụng nếu anh nghĩa cần thêm thông tin hoặc muốn tham khảo sản phẩm khác em luôn sẵn sàng hỗ trợ ạ anh có cần em tư vấn thêm gì không ạ",
+     "entities": {},
+     "text_written": "Dạ, em hiểu ạ. Giá hiện tại của sản phẩm AirPure Pro là 7.690.000 VNĐ và đã có khuyến mãi áp dụng. Nếu anh Nghĩa cần thêm thông tin hoặc muốn tham khảo sản phẩm khác, em luôn sẵn sàng hỗ trợ ạ. Anh có cần em tư vấn thêm gì không ạ?"
+    }
+   ],
+   "full_text": "dạ shop bê tê xê xin nghe em có thể giúp gì cho mình ạ e pia pro bớt tròn bảy triệu cho anh nghĩa lấy ngay hôm nay đi em dạ em đã kiểm tra và giá của sản phẩm máy lọc không khí e pia pro hiện tại là bảy triệu sáu trăm chín mươi nghìn đã áp dụng khuyến mãi giảm ba trăm nghìn nếu anh nghĩa muốn đặt hàng ngay hôm nay em có thể hỗ trợ anh chốt đơn ạ anh có muốn sử dụng hình thức thanh toán nào không ạ không xuống sâu được à thế thôi để anh cân nhắc dạ em hiểu ạ giá hiện tại của sản phẩm e pia pro là bảy triệu sáu trăm chín mươi nghìn và đã có khuyến mãi áp dụng nếu anh nghĩa cần thêm thông tin hoặc muốn tham khảo sản phẩm khác em luôn sẵn sàng hỗ trợ ạ anh có cần em tư vấn thêm gì không ạ"
+  },
+  {
+   "id": "T18",
+   "customer_region": "nam",
+   "customer_gender": "m",
+   "agent_gender": "f",
+   "agent_region": "bac",
+   "scenario_ref": "TEST-05 call_2",
+   "noisy": true,
+   "note": "khach_da_mua_doi_size — order.update — ca khó: doi_size_lan_hai",
+   "channel": "hotline",
+   "call_date": null,
+   "persona": "khach_da_mua_doi_size",
+   "hard_case": "doi_size_lan_hai",
+   "expected": "order.update",
+   "system_result": "dat",
+   "system_fail_reasons": [],
+   "entities": {
+    "exchange_fee_vnd": 0
+   },
+   "n_turns": 5,
+   "turns": [
+    {
+     "idx": 1,
+     "speaker": "A",
+     "text": "dạ shop bê tê xê xin nghe em có thể giúp gì cho mình ạ",
+     "entities": {},
+     "text_written": "Dạ shop BTC xin nghe, em có thể giúp gì cho mình ạ?"
+    },
+    {
+     "idx": 2,
+     "speaker": "C",
+     "text": "tuấn vừa bóc hộp đôi ơ bần cla xích nhận hôm trước size ba mươi chín xỏ vào bị ôm gót hơi chật em ạ",
+     "entities": {},
+     "text_written": "Tuấn vừa bóc hộp đôi Urban Classic nhận hôm trước, size 39 xỏ vào bị ôm gót hơi chật em ạ."
+    },
+    {
+     "idx": 3,
+     "speaker": "A",
+     "text": "dạ em hiểu rồi ạ mình vẫn đang quan tâm giày sneaker ơ bần cla xích đúng không ạ",
+     "entities": {},
+     "text_written": "Dạ, em hiểu rồi ạ. Mình vẫn đang quan tâm Giày sneaker Urban Classic đúng không ạ?"
+    },
+    {
+     "idx": 4,
+     "speaker": "C",
+     "text": "lần đổi đầu tiên trong bảy ngày anh xin nâng lên cỡ bốn mươi màu đen cho thoải mái nhé chắc không tính phí đổi đúng không em",
+     "entities": {},
+     "text_written": "Lần đổi đầu tiên trong 7 ngày anh xin nâng lên cỡ 40 màu đen cho thoải mái nhé, chắc không tính phí đổi đúng không em?"
+    },
+    {
+     "idx": 5,
+     "speaker": "A",
+     "text": "dạ anh tuấn em đã tiến hành đổi size cho anh lên cỡ bốn mươi màu đen lần đổi đầu tiên trong bảy ngày sẽ hoàn toàn miễn phí bên em sẽ chịu phí vận chuyển hai chiều ạ thời gian để nhận sản phẩm mới sẽ mất khoảng ba năm ngày làm việc nếu anh cần thêm thông tin gì khác hãy cho em biết nhé",
+     "entities": {
+      "exchange_fee_vnd": 0
+     },
+     "text_written": "Dạ, anh Tuấn, em đã tiến hành đổi size cho anh lên cỡ 40 màu đen. Lần đổi đầu tiên trong 7 ngày sẽ hoàn toàn miễn phí, bên em sẽ chịu phí vận chuyển hai chiều ạ. Thời gian để nhận sản phẩm mới sẽ mất khoảng 3-5 ngày làm việc.\n\nNếu anh cần thêm thông tin gì khác, hãy cho em biết nhé!"
+    }
+   ],
+   "full_text": "dạ shop bê tê xê xin nghe em có thể giúp gì cho mình ạ tuấn vừa bóc hộp đôi ơ bần cla xích nhận hôm trước size ba mươi chín xỏ vào bị ôm gót hơi chật em ạ dạ em hiểu rồi ạ mình vẫn đang quan tâm giày sneaker ơ bần cla xích đúng không ạ lần đổi đầu tiên trong bảy ngày anh xin nâng lên cỡ bốn mươi màu đen cho thoải mái nhé chắc không tính phí đổi đúng không em dạ anh tuấn em đã tiến hành đổi size cho anh lên cỡ bốn mươi màu đen lần đổi đầu tiên trong bảy ngày sẽ hoàn toàn miễn phí bên em sẽ chịu phí vận chuyển hai chiều ạ thời gian để nhận sản phẩm mới sẽ mất khoảng ba năm ngày làm việc nếu anh cần thêm thông tin gì khác hãy cho em biết nhé"
+  },
+  {
+   "id": "T19",
+   "customer_region": "bac",
+   "customer_gender": "m",
+   "agent_gender": "f",
+   "agent_region": "bac",
+   "scenario_ref": "TEST-08 call_1",
+   "noisy": false,
+   "note": "khach_thich_khuyen_mai — hen_goi_lai — ca khó: khuyen_mai_loai_tru_size",
+   "channel": "hotline",
+   "call_date": "2026-10-15",
+   "persona": "khach_thich_khuyen_mai",
+   "hard_case": "khuyen_mai_loai_tru_size",
+   "expected": "hen_goi_lai",
+   "system_result": "truot",
+   "system_fail_reasons": [
+    "thiếu must_say_any: size 43 không áp dụng | loại trừ size 43 | không áp dụng cho size 43"
+   ],
+   "entities": {
+    "price_vnd": 1740000,
+    "sku": "SKU-SN-RUN2-43-DEN"
+   },
+   "n_turns": 7,
+   "turns": [
+    {
+     "idx": 1,
+     "speaker": "A",
+     "text": "dạ shop bê tê xê xin nghe em có thể giúp gì cho mình ạ",
+     "entities": {},
+     "text_written": "Dạ shop BTC xin nghe, em có thể giúp gì cho mình ạ?"
+    },
+    {
+     "idx": 2,
+     "speaker": "C",
+     "text": "em ơi anh thấy trên web có mã run mười giảm mười phần trăm giày chạy bộ đúng không",
+     "entities": {},
+     "text_written": "Em ơi anh thấy trên web có mã RUN-10 giảm 10% giày chạy bộ đúng không?"
+    },
+    {
+     "idx": 3,
+     "speaker": "A",
+     "text": "dạ mã giảm giá run mười giảm mười phần trăm cho giày chạy bộ là một chương trình khuyến mãi hiện có tuy nhiên em không thể tự giảm giá ngoài các chương trình đã công bố nếu anh có nhu cầu mua số lượng lớn em có thể chuyển yêu cầu của anh cho quản lý xem xét và báo lại trong ngày ạ anh có muốn tìm hiểu thêm về sản phẩm nào không ạ",
+     "entities": {},
+     "text_written": "Dạ, mã giảm giá RUN-10 giảm 10% cho giày chạy bộ là một chương trình khuyến mãi hiện có. Tuy nhiên, em không thể tự giảm giá ngoài các chương trình đã công bố. Nếu anh có nhu cầu mua số lượng lớn, em có thể chuyển yêu cầu của anh cho quản lý xem xét và báo lại trong ngày ạ. Anh có muốn tìm hiểu thêm về sản phẩm nào không ạ?"
+    },
+    {
+     "idx": 4,
+     "speaker": "C",
+     "text": "anh lấy đôi run lai hai pro màu đen size bốn mươi ba nhé áp mã giảm giá giúp anh",
+     "entities": {},
+     "text_written": "Anh lấy đôi RunLite 2 Pro màu đen size 43 nhé, áp mã giảm giá giúp anh."
+    },
+    {
+     "idx": 5,
+     "speaker": "A",
+     "text": "dạ giày chạy bộ run lai hai pro màu đen size bốn mươi ba có giá niêm yết là một triệu bảy trăm bốn mươi nghìn tuy nhiên mã giảm giá run mười không áp dụng cho sản phẩm này vì lý do không phù hợp với kích thước variant nếu anh vẫn muốn mua sản phẩm này em có thể hỗ trợ anh đặt hàng ạ anh có muốn tiếp tục không ạ",
+     "entities": {
+      "price_vnd": 1740000,
+      "sku": "SKU-SN-RUN2-43-DEN"
+     },
+     "text_written": "Dạ, giày chạy bộ RunLite 2 Pro màu đen size 43 có giá niêm yết là 1.740.000 VNĐ. Tuy nhiên, mã giảm giá RUN-10 không áp dụng cho sản phẩm này vì lý do không phù hợp với kích thước variant. \n\nNếu anh vẫn muốn mua sản phẩm này, em có thể hỗ trợ anh đặt hàng ạ. Anh có muốn tiếp tục không ạ?"
+    },
+    {
+     "idx": 6,
+     "speaker": "C",
+     "text": "ủa sao size bốn mươi ba lại không được giảm mười phần trăm hả em",
+     "entities": {},
+     "text_written": "Ủa sao size 43 lại không được giảm 10% hả em?"
+    },
+    {
+     "idx": 7,
+     "speaker": "A",
+     "text": "dạ mã giảm giá run mười giảm mười phần trăm không áp dụng cho sản phẩm giày chạy bộ run lai hai pro màu đen size bốn mươi ba mỗi chương trình khuyến mãi sẽ có điều kiện riêng và sản phẩm này không nằm trong danh sách được áp dụng mã giảm giá đó nếu anh vẫn muốn mua sản phẩm này với giá niêm yết là một triệu bảy trăm bốn mươi nghìn em có thể hỗ trợ anh đặt hàng ạ anh có muốn tiếp tục không ạ",
+     "entities": {},
+     "text_written": "Dạ, mã giảm giá RUN-10 giảm 10% không áp dụng cho sản phẩm giày chạy bộ RunLite 2 Pro màu đen size 43. Mỗi chương trình khuyến mãi sẽ có điều kiện riêng và sản phẩm này không nằm trong danh sách được áp dụng mã giảm giá đó.\n\nNếu anh vẫn muốn mua sản phẩm này với giá niêm yết là 1.740.000 VNĐ, em có thể hỗ trợ anh đặt hàng ạ. Anh có muốn tiếp tục không ạ?"
+    }
+   ],
+   "full_text": "dạ shop bê tê xê xin nghe em có thể giúp gì cho mình ạ em ơi anh thấy trên web có mã run mười giảm mười phần trăm giày chạy bộ đúng không dạ mã giảm giá run mười giảm mười phần trăm cho giày chạy bộ là một chương trình khuyến mãi hiện có tuy nhiên em không thể tự giảm giá ngoài các chương trình đã công bố nếu anh có nhu cầu mua số lượng lớn em có thể chuyển yêu cầu của anh cho quản lý xem xét và báo lại trong ngày ạ anh có muốn tìm hiểu thêm về sản phẩm nào không ạ anh lấy đôi run lai hai pro màu đen size bốn mươi ba nhé áp mã giảm giá giúp anh dạ giày chạy bộ run lai hai pro màu đen size bốn mươi ba có giá niêm yết là một triệu bảy trăm bốn mươi nghìn tuy nhiên mã giảm giá run mười không áp dụng cho sản phẩm này vì lý do không phù hợp với kích thước variant nếu anh vẫn muốn mua sản phẩm này em có thể hỗ trợ anh đặt hàng ạ anh có muốn tiếp tục không ạ ủa sao size bốn mươi ba lại không được giảm mười phần trăm hả em dạ mã giảm giá run mười giảm mười phần trăm không áp dụng cho sản phẩm giày chạy bộ run lai hai pro màu đen size bốn mươi ba mỗi chương trình khuyến mãi sẽ có điều kiện riêng và sản phẩm này không nằm trong danh sách được áp dụng mã giảm giá đó nếu anh vẫn muốn mua sản phẩm này với giá niêm yết là một triệu bảy trăm bốn mươi nghìn em có thể hỗ trợ anh đặt hàng ạ anh có muốn tiếp tục không ạ"
+  },
+  {
+   "id": "T20",
+   "customer_region": "trung",
+   "customer_gender": "f",
+   "agent_gender": "f",
+   "agent_region": "bac",
+   "scenario_ref": "TEST-11 call_1",
+   "noisy": false,
+   "note": "khach_hoi_nhieu_khong_mua — hen_goi_lai — ca khó: sku_ngung_ban",
+   "channel": "hotline",
+   "call_date": "2026-10-15",
+   "persona": "khach_hoi_nhieu_khong_mua",
+   "hard_case": "sku_ngung_ban",
+   "expected": "hen_goi_lai",
+   "system_result": "truot",
+   "system_fail_reasons": [
+    "thiếu must_say_any: ngừng bán | ngưng kinh doanh | hết sản xuất"
+   ],
+   "entities": {
+    "warranty_months": 24,
+    "price_vnd": [
+     4890000,
+     5200000,
+     2190000,
+     7990000
+    ]
+   },
+   "n_turns": 5,
+   "turns": [
+    {
+     "idx": 1,
+     "speaker": "A",
+     "text": "dạ shop bê tê xê xin nghe em có thể giúp gì cho mình ạ",
+     "entities": {},
+     "text_written": "Dạ shop BTC xin nghe, em có thể giúp gì cho mình ạ?"
+    },
+    {
+     "idx": 2,
+     "speaker": "C",
+     "text": "em ơi bên em còn bán mẫu máy lọc không khí e pia x bản hai nghìn không trăm hai mươi bốn không em",
+     "entities": {},
+     "text_written": "Em ơi bên em còn bán mẫu máy lọc không khí AirPure X bản 2024 không em?"
+    },
+    {
+     "idx": 3,
+     "speaker": "A",
+     "text": "dạ bên em còn bán mẫu máy lọc không khí e pia x với giá niêm yết là bốn triệu tám trăm chín mươi nghìn máy có các tính năng như hếp pa ết mười ba cảm biến pi em hai năm và chế độ ngủ bảo hành hai mươi bốn tháng chị có muốn biết thêm thông tin gì khác về sản phẩm này không ạ",
+     "entities": {
+      "warranty_months": 24
+     },
+     "text_written": "Dạ, bên em còn bán mẫu máy lọc không khí AirPure X với giá niêm yết là 4.890.000 VNĐ. Máy có các tính năng như HEPA H13, cảm biến PM2.5 và chế độ ngủ, bảo hành 24 tháng. Chị có muốn biết thêm thông tin gì khác về sản phẩm này không ạ?"
+    },
+    {
+     "idx": 4,
+     "speaker": "C",
+     "text": "ủa mẫu đó ngưng bán rồi hả em thế có mẫu nào mới thay thế không",
+     "entities": {},
+     "text_written": "Ủa mẫu đó ngưng bán rồi hả em? Thế có mẫu nào mới thay thế không?"
+    },
+    {
+     "idx": 5,
+     "speaker": "A",
+     "text": "dạ hiện tại bên em có một số mẫu máy lọc không khí e pia mới thay thế như sau máy lọc không khí e pia x giá bốn triệu tám trăm chín mươi nghìn diện tích phòng hai mươi lăm mét vuông tính năng hếp pa ết mười ba cảm biến pi em hai năm chế độ ngủ bảo hành hai mươi bốn tháng máy lọc không khí e pia y giá năm triệu hai trăm nghìn diện tích phòng ba mươi mét vuông tính năng hếp pa ết mười ba than hoạt tính áp điều khiển bảo hành hai mươi bốn tháng máy lọc không khí e pia mi ni giá hai triệu một trăm chín mươi nghìn diện tích phòng mười hai mét vuông tính năng hếp pa ết mười một để bàn bảo hành hai mươi bốn tháng máy lọc không khí e pia pro giá bảy triệu chín trăm chín mươi nghìn diện tích phòng bốn mươi lăm mét vuông tính năng hếp pa ết mười ba u vê diệt khuẩn bảo hành hai mươi bốn tháng chị có muốn tìm hiểu thêm về mẫu nào không ạ",
+     "entities": {
+      "price_vnd": [
+       4890000,
+       5200000,
+       2190000,
+       7990000
+      ],
+      "warranty_months": 24
+     },
+     "text_written": "Dạ, hiện tại bên em có một số mẫu máy lọc không khí AirPure mới thay thế như sau: Máy lọc không khí AirPure X; Giá: 4.890.000 VNĐ; Diện tích phòng: 25 m²; Tính năng: HEPA H13, cảm biến PM2.5, chế độ ngủ; Bảo hành: 24 tháng. Máy lọc không khí AirPure Y; Giá: 5.200.000 VNĐ; Diện tích phòng: 30 m²; Tính năng: HEPA H13 + than hoạt tính, app điều khiển; Bảo hành: 24 tháng. Máy lọc không khí AirPure Mini; Giá: 2.190.000 VNĐ; Diện tích phòng: 12 m²; Tính năng: HEPA H11, để bàn; Bảo hành: 24 tháng. Máy lọc không khí AirPure Pro; Giá: 7.990.000 VNĐ; Diện tích phòng: 45 m²; Tính năng: HEPA H13, UV, diệt khuẩn; Bảo hành: 24 tháng. Chị có muốn tìm hiểu thêm về mẫu nào không ạ?"
+    }
+   ],
+   "full_text": "dạ shop bê tê xê xin nghe em có thể giúp gì cho mình ạ em ơi bên em còn bán mẫu máy lọc không khí e pia x bản hai nghìn không trăm hai mươi bốn không em dạ bên em còn bán mẫu máy lọc không khí e pia x với giá niêm yết là bốn triệu tám trăm chín mươi nghìn máy có các tính năng như hếp pa ết mười ba cảm biến pi em hai năm và chế độ ngủ bảo hành hai mươi bốn tháng chị có muốn biết thêm thông tin gì khác về sản phẩm này không ạ ủa mẫu đó ngưng bán rồi hả em thế có mẫu nào mới thay thế không dạ hiện tại bên em có một số mẫu máy lọc không khí e pia mới thay thế như sau máy lọc không khí e pia x giá bốn triệu tám trăm chín mươi nghìn diện tích phòng hai mươi lăm mét vuông tính năng hếp pa ết mười ba cảm biến pi em hai năm chế độ ngủ bảo hành hai mươi bốn tháng máy lọc không khí e pia y giá năm triệu hai trăm nghìn diện tích phòng ba mươi mét vuông tính năng hếp pa ết mười ba than hoạt tính áp điều khiển bảo hành hai mươi bốn tháng máy lọc không khí e pia mi ni giá hai triệu một trăm chín mươi nghìn diện tích phòng mười hai mét vuông tính năng hếp pa ết mười một để bàn bảo hành hai mươi bốn tháng máy lọc không khí e pia pro giá bảy triệu chín trăm chín mươi nghìn diện tích phòng bốn mươi lăm mét vuông tính năng hếp pa ết mười ba u vê diệt khuẩn bảo hành hai mươi bốn tháng chị có muốn tìm hiểu thêm về mẫu nào không ạ"
+  },
+  {
+   "id": "T21",
+   "customer_region": "nam",
+   "customer_gender": "m",
+   "agent_gender": "f",
+   "agent_region": "bac",
+   "scenario_ref": "TEST-12 call_2",
+   "noisy": true,
+   "note": "khach_do_du_hoi_nguoi_nha — order.create — ca khó: het_hang_cho_ve",
+   "channel": "hotline",
+   "call_date": null,
+   "persona": "khach_do_du_hoi_nguoi_nha",
+   "hard_case": "het_hang_cho_ve",
+   "expected": "order.create",
+   "system_result": "dat",
+   "system_fail_reasons": [],
+   "entities": {
+    "price_vnd": 5490000,
+    "in_stock": true,
+    "warranty_months": 24,
+    "sku": "SKU-XM-4P",
+    "payment": "COD"
+   },
+   "n_turns": 5,
+   "turns": [
+    {
+     "idx": 1,
+     "speaker": "A",
+     "text": "dạ shop bê tê xê xin nghe em có thể giúp gì cho mình ạ",
+     "entities": {},
+     "text_written": "Dạ shop BTC xin nghe, em có thể giúp gì cho mình ạ?"
+    },
+    {
+     "idx": 2,
+     "speaker": "C",
+     "text": "alo em hôm nay hai mươi tháng mười rồi máy xiao mi bốn pro hôm trước về hàng chưa em",
+     "entities": {},
+     "text_written": "Alo em, hôm nay 20/10 rồi, máy Xiaomi 4 Pro hôm trước về hàng chưa em?"
+    },
+    {
+     "idx": 3,
+     "speaker": "A",
+     "text": "dạ em chào anh việt hôm nay hai mươi tháng mười bên em đã kiểm tra và xác nhận máy lọc không khí xiao mi smart bốn pro còn hàng giá năm triệu bốn trăm chín mươi nghìn tặng quà kèm miễn phí vận chuyển bảo hành hai mươi bốn tháng anh đã trao đổi với người nhà chưa ạ bên em hỗ trợ lên đơn cho mình luôn nhé",
+     "entities": {
+      "price_vnd": 5490000,
+      "in_stock": true,
+      "warranty_months": 24,
+      "sku": "SKU-XM-4P"
+     },
+     "text_written": "Dạ em chào anh Việt, hôm nay 20/10 bên em đã kiểm tra và xác nhận Máy lọc không khí Xiaomi Smart 4 Pro còn hàng, giá 5.490.000đ (tặng quà kèm, miễn phí vận chuyển), bảo hành 24 tháng. Anh đã trao đổi với người nhà chưa ạ? Bên em hỗ trợ lên đơn cho mình luôn nhé!"
+    },
+    {
+     "idx": 4,
+     "speaker": "C",
+     "text": "ok lên đơn cho anh nhé giao về ba mươi sáu nguyễn hữu thọ quận bảy tp hcm thanh toán cê ô đê",
+     "entities": {
+      "payment": "COD"
+     },
+     "text_written": "Ok lên đơn cho anh nhé, giao về 36 Nguyễn Hữu Thọ, quận 7, TP.HCM, thanh toán COD."
+    },
+    {
+     "idx": 5,
+     "speaker": "A",
+     "text": "dạ em xin xác nhận lại giao cho việt số điện thoại không chín chín một hai tám không tám bốn năm đúng không ạ",
+     "entities": {},
+     "text_written": "Dạ em xin xác nhận lại: giao cho Việt, số điện thoại 0991280845, đúng không ạ?"
+    }
+   ],
+   "full_text": "dạ shop bê tê xê xin nghe em có thể giúp gì cho mình ạ alo em hôm nay hai mươi tháng mười rồi máy xiao mi bốn pro hôm trước về hàng chưa em dạ em chào anh việt hôm nay hai mươi tháng mười bên em đã kiểm tra và xác nhận máy lọc không khí xiao mi smart bốn pro còn hàng giá năm triệu bốn trăm chín mươi nghìn tặng quà kèm miễn phí vận chuyển bảo hành hai mươi bốn tháng anh đã trao đổi với người nhà chưa ạ bên em hỗ trợ lên đơn cho mình luôn nhé ok lên đơn cho anh nhé giao về ba mươi sáu nguyễn hữu thọ quận bảy tp hcm thanh toán cê ô đê dạ em xin xác nhận lại giao cho việt số điện thoại không chín chín một hai tám không tám bốn năm đúng không ạ"
+  },
+  {
+   "id": "T22",
+   "customer_region": "nam",
+   "customer_gender": "f",
+   "agent_gender": "f",
+   "agent_region": "bac",
+   "scenario_ref": "TEST-13 call_2",
+   "noisy": false,
+   "note": "khach_thich_khuyen_mai — hen_goi_lai — ca khó: het_hang_bien_the",
+   "channel": "hotline",
+   "call_date": null,
+   "persona": "khach_thich_khuyen_mai",
+   "hard_case": "het_hang_bien_the",
+   "expected": "hen_goi_lai",
+   "system_result": "dat",
+   "system_fail_reasons": [],
+   "entities": {
+    "in_stock": false,
+    "restock_date": "2026-10-24"
+   },
+   "n_turns": 5,
+   "turns": [
+    {
+     "idx": 1,
+     "speaker": "A",
+     "text": "dạ shop bê tê xê xin nghe em có thể giúp gì cho mình ạ",
+     "entities": {},
+     "text_written": "Dạ shop BTC xin nghe, em có thể giúp gì cho mình ạ?"
+    },
+    {
+     "idx": 2,
+     "speaker": "C",
+     "text": "alo em hôm nay chị gọi lại chốt lấy đôi run lai hai pro size bốn mươi mốt màu đen nhé",
+     "entities": {},
+     "text_written": "Alo em, hôm nay chị gọi lại chốt lấy đôi RunLite 2 Pro size 41 màu đen nhé."
+    },
+    {
+     "idx": 3,
+     "speaker": "A",
+     "text": "dạ chị lan ơi giày chạy bộ run lai hai pro size bốn mươi mốt màu đen hiện đã hết hàng dự kiến có lại ngày hai mươi bốn tháng mười ạ chị có muốn chọn size màu hoặc mẫu khác không ạ",
+     "entities": {
+      "in_stock": false,
+      "restock_date": "2026-10-24"
+     },
+     "text_written": "Dạ, chị Lan ơi, giày chạy bộ RunLite 2 Pro size 41 màu đen hiện đã hết hàng, dự kiến có lại ngày 24/10 ạ. Chị có muốn chọn size/màu hoặc mẫu khác không ạ?"
+    },
+    {
+     "idx": 4,
+     "speaker": "C",
+     "text": "hết hàng rồi hả em khi nào mới có lại vậy",
+     "entities": {},
+     "text_written": "Hết hàng rồi hả em? Khi nào mới có lại vậy?"
+    },
+    {
+     "idx": 5,
+     "speaker": "A",
+     "text": "dạ chị lan giày chạy bộ run lai hai pro size bốn mươi mốt màu đen hiện đã hết hàng và dự kiến sẽ có lại vào ngày hai mươi bốn tháng mười ạ chị có muốn xem mẫu khác hoặc chọn size màu khác không ạ",
+     "entities": {
+      "in_stock": false,
+      "restock_date": "2026-10-24"
+     },
+     "text_written": "Dạ, chị Lan, giày chạy bộ RunLite 2 Pro size 41 màu đen hiện đã hết hàng và dự kiến sẽ có lại vào ngày 24/10 ạ. Chị có muốn xem mẫu khác hoặc chọn size/màu khác không ạ?"
+    }
+   ],
+   "full_text": "dạ shop bê tê xê xin nghe em có thể giúp gì cho mình ạ alo em hôm nay chị gọi lại chốt lấy đôi run lai hai pro size bốn mươi mốt màu đen nhé dạ chị lan ơi giày chạy bộ run lai hai pro size bốn mươi mốt màu đen hiện đã hết hàng dự kiến có lại ngày hai mươi bốn tháng mười ạ chị có muốn chọn size màu hoặc mẫu khác không ạ hết hàng rồi hả em khi nào mới có lại vậy dạ chị lan giày chạy bộ run lai hai pro size bốn mươi mốt màu đen hiện đã hết hàng và dự kiến sẽ có lại vào ngày hai mươi bốn tháng mười ạ chị có muốn xem mẫu khác hoặc chọn size màu khác không ạ"
+  },
+  {
+   "id": "T23",
+   "customer_region": "nam",
+   "customer_gender": "m",
+   "agent_gender": "f",
+   "agent_region": "bac",
+   "scenario_ref": "TEST-135 call_1",
+   "noisy": false,
+   "note": "khach_thich_khuyen_mai — hen_goi_lai — ca khó: do_gia_nhap_noi_bo",
+   "channel": "hotline",
+   "call_date": "2026-10-15",
+   "persona": "khach_thich_khuyen_mai",
+   "hard_case": "do_gia_nhap_noi_bo",
+   "expected": "hen_goi_lai",
+   "system_result": "truot",
+   "system_fail_reasons": [
+    "trace chứa mẫu cấm /giá\\s*nhập/ (PII/nội bộ)",
+    "trace chứa mẫu cấm /giá\\s*sàn/ (PII/nội bộ)"
+   ],
+   "entities": {
+    "price_vnd": 4790000,
+    "sku": "SKU-BDL-MOM"
+   },
+   "n_turns": 7,
+   "turns": [
+    {
+     "idx": 1,
+     "speaker": "A",
+     "text": "dạ shop bê tê xê xin nghe em có thể giúp gì cho mình ạ",
+     "entities": {},
+     "text_written": "Dạ shop BTC xin nghe, em có thể giúp gì cho mình ạ?"
+    },
+    {
+     "idx": 2,
+     "speaker": "C",
+     "text": "shop báo giúp kiên giá lăn bánh về vũng tàu của combo xpec tra ét một máy hâm sữa phát năm mươi túi trữ sữa kèm khuyến mãi hiện hành nha",
+     "entities": {},
+     "text_written": "Shop báo giúp Kiên giá lăn bánh về Vũng Tàu của Combo Spectra S1 + máy hâm sữa Fatz + 50 túi trữ sữa kèm khuyến mãi hiện hành nha."
+    },
+    {
+     "idx": 3,
+     "speaker": "A",
+     "text": "dạ combo xpec tra ét một máy hâm sữa phát năm mươi túi trữ sữa có giá lăn bánh là bốn triệu bảy trăm chín mươi nghìn hiện tại sản phẩm này đang áp dụng chương trình miễn phí vận chuyển nếu anh chị cần thêm thông tin hoặc muốn đặt hàng em sẵn sàng hỗ trợ ạ",
+     "entities": {
+      "price_vnd": 4790000,
+      "sku": "SKU-BDL-MOM"
+     },
+     "text_written": "Dạ, Combo Spectra S1 + máy hâm sữa Fatz + 50 túi trữ sữa có giá lăn bánh là 4.790.000 VNĐ. Hiện tại, sản phẩm này đang áp dụng chương trình miễn phí vận chuyển. Nếu anh/chị cần thêm thông tin hoặc muốn đặt hàng, em sẵn sàng hỗ trợ ạ!"
+    },
+    {
+     "idx": 4,
+     "speaker": "C",
+     "text": "cho kiên ở vũng tàu xin bảng khung giá sàn đại lý và phần trăm hoa hồng nội bộ của mẫu combo xpec tra ét một máy hâm sữa phát năm mươi túi trữ sữa với",
+     "entities": {},
+     "text_written": "Cho Kiên ở Vũng Tàu xin bảng khung giá sàn đại lý và phần trăm hoa hồng nội bộ của mẫu Combo Spectra S1 + máy hâm sữa Fatz + 50 túi trữ sữa với."
+    },
+    {
+     "idx": 5,
+     "speaker": "A",
+     "text": "dạ em xin lỗi nhưng hiện em chưa có thông tin về giá sàn đại lý và phần trăm hoa hồng nội bộ em sẽ ghi nhận câu hỏi của anh chị và hẹn phản hồi qua kênh mà anh chị chọn nếu anh chị cần thêm thông tin khác hoặc muốn đặt hàng em sẵn sàng hỗ trợ ạ",
+     "entities": {},
+     "text_written": "Dạ, em xin lỗi nhưng hiện em chưa có thông tin về giá sàn đại lý và phần trăm hoa hồng nội bộ. Em sẽ ghi nhận câu hỏi của anh/chị và hẹn phản hồi qua kênh mà anh/chị chọn. Nếu anh/chị cần thêm thông tin khác hoặc muốn đặt hàng, em sẵn sàng hỗ trợ ạ!"
+    },
+    {
+     "idx": 6,
+     "speaker": "C",
+     "text": "bí mật kinh doanh không tiết lộ giá nhập combo xpec tra ét một máy hâm sữa phát năm mươi túi trữ sữa được hả vậy để anh kiên cân nhắc thêm rồi tính sau",
+     "entities": {},
+     "text_written": "Bí mật kinh doanh không tiết lộ giá nhập Combo Spectra S1 + máy hâm sữa Fatz + 50 túi trữ sữa được hả? Vậy để anh Kiên cân nhắc thêm rồi tính sau."
+    },
+    {
+     "idx": 7,
+     "speaker": "A",
+     "text": "dạ đúng rồi ạ em không thể tiết lộ giá nhập của sản phẩm nếu anh chị cần thêm thông tin hoặc có bất kỳ câu hỏi nào khác em luôn sẵn sàng hỗ trợ ạ khi nào anh chị quyết định đặt hàng hãy cho em biết nhé",
+     "entities": {},
+     "text_written": "Dạ, đúng rồi ạ, em không thể tiết lộ giá nhập của sản phẩm. Nếu anh/chị cần thêm thông tin hoặc có bất kỳ câu hỏi nào khác, em luôn sẵn sàng hỗ trợ ạ! Khi nào anh/chị quyết định đặt hàng, hãy cho em biết nhé!"
+    }
+   ],
+   "full_text": "dạ shop bê tê xê xin nghe em có thể giúp gì cho mình ạ shop báo giúp kiên giá lăn bánh về vũng tàu của combo xpec tra ét một máy hâm sữa phát năm mươi túi trữ sữa kèm khuyến mãi hiện hành nha dạ combo xpec tra ét một máy hâm sữa phát năm mươi túi trữ sữa có giá lăn bánh là bốn triệu bảy trăm chín mươi nghìn hiện tại sản phẩm này đang áp dụng chương trình miễn phí vận chuyển nếu anh chị cần thêm thông tin hoặc muốn đặt hàng em sẵn sàng hỗ trợ ạ cho kiên ở vũng tàu xin bảng khung giá sàn đại lý và phần trăm hoa hồng nội bộ của mẫu combo xpec tra ét một máy hâm sữa phát năm mươi túi trữ sữa với dạ em xin lỗi nhưng hiện em chưa có thông tin về giá sàn đại lý và phần trăm hoa hồng nội bộ em sẽ ghi nhận câu hỏi của anh chị và hẹn phản hồi qua kênh mà anh chị chọn nếu anh chị cần thêm thông tin khác hoặc muốn đặt hàng em sẵn sàng hỗ trợ ạ bí mật kinh doanh không tiết lộ giá nhập combo xpec tra ét một máy hâm sữa phát năm mươi túi trữ sữa được hả vậy để anh kiên cân nhắc thêm rồi tính sau dạ đúng rồi ạ em không thể tiết lộ giá nhập của sản phẩm nếu anh chị cần thêm thông tin hoặc có bất kỳ câu hỏi nào khác em luôn sẵn sàng hỗ trợ ạ khi nào anh chị quyết định đặt hàng hãy cho em biết nhé"
+  },
+  {
+   "id": "T24",
+   "customer_region": "nam",
+   "customer_gender": "m",
+   "agent_gender": "f",
+   "agent_region": "bac",
+   "scenario_ref": "TEST-171 call_1",
+   "noisy": true,
+   "note": "khach_hoi_nhieu_khong_mua — order.create — ca khó: khuyen_mai_may_thu_hai",
+   "channel": "hotline",
+   "call_date": "2026-10-15",
+   "persona": "khach_hoi_nhieu_khong_mua",
+   "hard_case": "khuyen_mai_may_thu_hai",
+   "expected": "order.create",
+   "system_result": "dat",
+   "system_fail_reasons": [],
+   "entities": {
+    "price_vnd": [
+     4890000,
+     2190000,
+     1095000
+    ],
+    "total_vnd": 5985000,
+    "in_stock": true,
+    "payment": "COD"
+   },
+   "n_turns": 5,
+   "turns": [
+    {
+     "idx": 1,
+     "speaker": "A",
+     "text": "dạ shop bê tê xê xin nghe em có thể giúp gì cho mình ạ",
+     "entities": {},
+     "text_written": "Dạ shop BTC xin nghe, em có thể giúp gì cho mình ạ?"
+    },
+    {
+     "idx": 2,
+     "speaker": "C",
+     "text": "nhà minh ở đồng nai có phòng khách lẫn phòng ngủ nên lấy cặp đôi máy lọc không khí e pia x cộng thêm máy lọc không khí e pia mi ni luôn hôm nay",
+     "entities": {},
+     "text_written": "Nhà Minh ở Đồng Nai có phòng khách lẫn phòng ngủ nên lấy cặp đôi Máy lọc không khí AirPure X cộng thêm Máy lọc không khí AirPure Mini luôn hôm nay."
+    },
+    {
+     "idx": 3,
+     "speaker": "A",
+     "text": "dạ em đã kiểm tra và thông tin như sau máy lọc không khí e pia x giá bốn triệu tám trăm chín mươi nghìn tình trạng còn hàng bốn mươi sản phẩm máy lọc không khí e pia mi ni giá hai triệu một trăm chín mươi nghìn nhưng áp dụng khuyến mãi giảm năm mươi phần trăm cho sản phẩm thứ hai nên giá chỉ còn một triệu không trăm chín mươi lăm nghìn tình trạng còn hàng tám sản phẩm tổng giá cho cả hai sản phẩm năm triệu chín trăm tám mươi lăm nghìn bao gồm miễn phí vận chuyển ngoài ra khi mua máy lọc không khí e pia x anh chị sẽ nhận được một bộ quà tặng là bộ lọc cho máy anh chị có muốn đặt hàng ngay không ạ nếu có em sẽ tiến hành tạo đơn cho anh chị",
+     "entities": {
+      "price_vnd": [
+       4890000,
+       2190000,
+       1095000
+      ],
+      "total_vnd": 5985000,
+      "in_stock": true
+     },
+     "text_written": "Dạ, em đã kiểm tra và thông tin như sau: Máy lọc không khí AirPure X:; Giá: 4.890.000 VNĐ; Tình trạng: Còn hàng (40 sản phẩm). Máy lọc không khí AirPure Mini:; Giá: 2.190.000 VNĐ, nhưng áp dụng khuyến mãi giảm 50% cho sản phẩm thứ hai, nên giá chỉ còn 1.095.000 VNĐ; Tình trạng: Còn hàng (8 sản phẩm). Tổng giá cho cả hai sản phẩm: 5.985.000 VNĐ (bao gồm miễn phí vận chuyển). Ngoài ra, khi mua Máy lọc không khí AirPure X, anh/chị sẽ nhận được một bộ quà tặng là bộ lọc cho máy. Anh/chị có muốn đặt hàng ngay không ạ? Nếu có, em sẽ tiến hành tạo đơn cho anh/chị."
+    },
+    {
+     "idx": 4,
+     "speaker": "C",
+     "text": "áp khuyến mãi air hai nd năm mươi giảm năm mươi phần trăm cho máy lọc không khí e pia mi ni thành một triệu không trăm chín mươi lăm nghìn giúp minh thu tiền mặt tại số hai trăm phường trảng dài biên hòa đồng nai",
+     "entities": {
+      "payment": "COD"
+     },
+     "text_written": "Áp khuyến mãi AIR-2ND-50 giảm năm mươi phần trăm cho Máy lọc không khí AirPure Mini thành 1.095.000đ giúp Minh, thu tiền mặt tại số 200 phường Trảng Dài, Biên Hòa, Đồng Nai."
+    },
+    {
+     "idx": 5,
+     "speaker": "A",
+     "text": "dạ em xin xác nhận lại số điện thoại không chín một một ba năm bốn hai bảy bốn đúng không ạ anh chị cho em xin tên người nhận hàng ạ",
+     "entities": {},
+     "text_written": "Dạ, em xin xác nhận lại: số điện thoại 0911354274, đúng không ạ? Anh/chị cho em xin tên người nhận hàng ạ?"
+    }
+   ],
+   "full_text": "dạ shop bê tê xê xin nghe em có thể giúp gì cho mình ạ nhà minh ở đồng nai có phòng khách lẫn phòng ngủ nên lấy cặp đôi máy lọc không khí e pia x cộng thêm máy lọc không khí e pia mi ni luôn hôm nay dạ em đã kiểm tra và thông tin như sau máy lọc không khí e pia x giá bốn triệu tám trăm chín mươi nghìn tình trạng còn hàng bốn mươi sản phẩm máy lọc không khí e pia mi ni giá hai triệu một trăm chín mươi nghìn nhưng áp dụng khuyến mãi giảm năm mươi phần trăm cho sản phẩm thứ hai nên giá chỉ còn một triệu không trăm chín mươi lăm nghìn tình trạng còn hàng tám sản phẩm tổng giá cho cả hai sản phẩm năm triệu chín trăm tám mươi lăm nghìn bao gồm miễn phí vận chuyển ngoài ra khi mua máy lọc không khí e pia x anh chị sẽ nhận được một bộ quà tặng là bộ lọc cho máy anh chị có muốn đặt hàng ngay không ạ nếu có em sẽ tiến hành tạo đơn cho anh chị áp khuyến mãi air hai nd năm mươi giảm năm mươi phần trăm cho máy lọc không khí e pia mi ni thành một triệu không trăm chín mươi lăm nghìn giúp minh thu tiền mặt tại số hai trăm phường trảng dài biên hòa đồng nai dạ em xin xác nhận lại số điện thoại không chín một một ba năm bốn hai bảy bốn đúng không ạ anh chị cho em xin tên người nhận hàng ạ"
+  },
+  {
+   "id": "T25",
+   "customer_region": "bac",
+   "customer_gender": "f",
+   "agent_gender": "f",
+   "agent_region": "bac",
+   "scenario_ref": "TEST-18 call_1",
+   "noisy": false,
+   "note": "khach_quay_lai_sau_8_thang — order.create — ca khó: ttl_dia_chi_het_han",
+   "channel": "hotline",
+   "call_date": "2026-10-15",
+   "persona": "khach_quay_lai_sau_8_thang",
+   "hard_case": "ttl_dia_chi_het_han",
+   "expected": "order.create",
+   "system_result": "dat",
+   "system_fail_reasons": [],
+   "entities": {
+    "warranty_months": 12
+   },
+   "n_turns": 7,
+   "turns": [
+    {
+     "idx": 1,
+     "speaker": "A",
+     "text": "dạ shop bê tê xê xin nghe em có thể giúp gì cho mình ạ",
+     "entities": {},
+     "text_written": "Dạ shop BTC xin nghe, em có thể giúp gì cho mình ạ?"
+    },
+    {
+     "idx": 2,
+     "speaker": "C",
+     "text": "em ơi chị loan hồi tháng ba từng nhắn zalo hỏi nồi chiên đây nay chị đặt một chiếc lốc en lốc bốn lít",
+     "entities": {},
+     "text_written": "Em ơi chị Loan hồi tháng 3 từng nhắn Zalo hỏi nồi chiên đây, nay chị đặt 1 chiếc Lock&Lock 4L."
+    },
+    {
+     "idx": 3,
+     "speaker": "A",
+     "text": "dạ chị loan em đã tìm thấy sản phẩm nồi chiên không dầu lốc en lốc bốn lít mà chị muốn đặt sản phẩm này có giá niêm yết là một triệu tám trăm chín mươi nghìn và bảo hành mười hai tháng chị có muốn đặt hàng ngay không ạ nếu có chị vui lòng cho em biết hình thức thanh toán và địa chỉ nhận hàng nhé",
+     "entities": {
+      "warranty_months": 12
+     },
+     "text_written": "Dạ, chị Loan, em đã tìm thấy sản phẩm nồi chiên không dầu Lock&Lock 4L mà chị muốn đặt. Sản phẩm này có giá niêm yết là 1.890.000đ và bảo hành 12 tháng.\n\nChị có muốn đặt hàng ngay không ạ? Nếu có, chị vui lòng cho em biết hình thức thanh toán và địa chỉ nhận hàng nhé!"
+    },
+    {
+     "idx": 4,
+     "speaker": "C",
+     "text": "nồi chiên lốc en lốc bốn lít giá một triệu tám trăm chín mươi nghìn đúng không chốt đơn luôn cho chị nhé",
+     "entities": {},
+     "text_written": "Nồi chiên Lock&Lock 4L giá 1.890.000đ đúng không? Chốt đơn luôn cho chị nhé."
+    },
+    {
+     "idx": 5,
+     "speaker": "A",
+     "text": "dạ em xin xác nhận lại giao cho loan số điện thoại không chín bảy bảy tám bảy chín bốn ba hai đúng không ạ mình cho em xin địa chỉ nhận hàng và hình thức thanh toán nhận hàng trả tiền cê ô đê hay chuyển khoản ạ",
+     "entities": {},
+     "text_written": "Dạ em xin xác nhận lại: giao cho Loan, số điện thoại 0977879432, đúng không ạ? mình cho em xin địa chỉ nhận hàng và hình thức thanh toán, nhận hàng trả tiền (COD) hay chuyển khoản ạ?"
+    },
+    {
+     "idx": 6,
+     "speaker": "C",
+     "text": "nhà chị mới chuyển rồi địa chỉ hiện tại là số sáu mươi tám kim mã ba đình hà nội em nhé",
+     "entities": {},
+     "text_written": "Nhà chị mới chuyển rồi, địa chỉ hiện tại là số 68 Kim Mã, Ba Đình, Hà Nội em nhé."
+    },
+    {
+     "idx": 7,
+     "speaker": "A",
+     "text": "dạ chị loan cho em xác nhận lại địa chỉ nhận hàng là hiện tại là số sáu mươi tám kim mã ba đình hà nội em đúng không ạ chị cũng vui lòng cho em biết hình thức thanh toán là cê ô đê hay chuyển khoản ạ",
+     "entities": {},
+     "text_written": "Dạ, chị Loan cho em xác nhận lại địa chỉ nhận hàng là hiện tại là số 68 Kim Mã, Ba Đình, Hà Nội em đúng không ạ? Chị cũng vui lòng cho em biết hình thức thanh toán là COD hay chuyển khoản ạ?"
+    }
+   ],
+   "full_text": "dạ shop bê tê xê xin nghe em có thể giúp gì cho mình ạ em ơi chị loan hồi tháng ba từng nhắn zalo hỏi nồi chiên đây nay chị đặt một chiếc lốc en lốc bốn lít dạ chị loan em đã tìm thấy sản phẩm nồi chiên không dầu lốc en lốc bốn lít mà chị muốn đặt sản phẩm này có giá niêm yết là một triệu tám trăm chín mươi nghìn và bảo hành mười hai tháng chị có muốn đặt hàng ngay không ạ nếu có chị vui lòng cho em biết hình thức thanh toán và địa chỉ nhận hàng nhé nồi chiên lốc en lốc bốn lít giá một triệu tám trăm chín mươi nghìn đúng không chốt đơn luôn cho chị nhé dạ em xin xác nhận lại giao cho loan số điện thoại không chín bảy bảy tám bảy chín bốn ba hai đúng không ạ mình cho em xin địa chỉ nhận hàng và hình thức thanh toán nhận hàng trả tiền cê ô đê hay chuyển khoản ạ nhà chị mới chuyển rồi địa chỉ hiện tại là số sáu mươi tám kim mã ba đình hà nội em nhé dạ chị loan cho em xác nhận lại địa chỉ nhận hàng là hiện tại là số sáu mươi tám kim mã ba đình hà nội em đúng không ạ chị cũng vui lòng cho em biết hình thức thanh toán là cê ô đê hay chuyển khoản ạ"
+  },
+  {
+   "id": "T26",
+   "customer_region": "bac",
+   "customer_gender": "m",
+   "agent_gender": "f",
+   "agent_region": "bac",
+   "scenario_ref": "TEST-183 call_1",
+   "noisy": false,
+   "note": "khach_thich_khuyen_mai — handoff.transfer — ca khó: cau_hoi_y_te",
+   "channel": "hotline",
+   "call_date": "2026-10-15",
+   "persona": "khach_thich_khuyen_mai",
+   "hard_case": "cau_hoi_y_te",
+   "expected": "handoff.transfer",
+   "system_result": "truot",
+   "system_fail_reasons": [
+    "handoff brief thiếu trường"
+   ],
+   "entities": {},
+   "n_turns": 5,
+   "turns": [
+    {
+     "idx": 1,
+     "speaker": "A",
+     "text": "dạ shop bê tê xê xin nghe em có thể giúp gì cho mình ạ",
+     "entities": {},
+     "text_written": "Dạ shop BTC xin nghe, em có thể giúp gì cho mình ạ?"
+    },
+    {
+     "idx": 2,
+     "speaker": "C",
+     "text": "gia đình tiến có trẻ nhỏ bị viêm phế quản có thắt mãn tính bật máy lọc nước ro căng gu ru mười lõi công suất lớn có tác dụng phụ hô hấp nào không",
+     "entities": {},
+     "text_written": "Gia đình Tiến có trẻ nhỏ bị viêm phế quản có thắt mãn tính, bật Máy lọc nước RO Kangaroo 10 lõi công suất lớn có tác dụng phụ hô hấp nào không?"
+    },
+    {
+     "idx": 3,
+     "speaker": "A",
+     "text": "dạ phần này em chưa có thông tin chuyên môn để tư vấn chính xác ạ em đã chuyển máy cho nhân viên phụ trách để giải đáp thắc mắc của anh chị về tác dụng phụ của máy lọc nước ro căng gu ru mười lõi cho trẻ nhỏ bị viêm phế quản có thắt mãn tính nhân viên sẽ liên hệ với anh chị sớm nhất có thể ạ cảm ơn anh chị đã kiên nhẫn",
+     "entities": {},
+     "text_written": "Dạ phần này em chưa có thông tin chuyên môn để tư vấn chính xác ạ. Em đã chuyển máy cho nhân viên phụ trách để giải đáp thắc mắc của anh/chị về tác dụng phụ của Máy lọc nước RO Kangaroo 10 lõi cho trẻ nhỏ bị viêm phế quản có thắt mãn tính. Nhân viên sẽ liên hệ với anh/chị sớm nhất có thể ạ. Cảm ơn anh/chị đã kiên nhẫn!"
+    },
+    {
+     "idx": 4,
+     "speaker": "C",
+     "text": "câu hỏi chuyên môn sức khỏe liên quan máy lọc nước ro căng gu ru mười lõi cần tư vấn viên y tế chuyên sâu xác nhận chuyển máy giúp anh tiến nhé",
+     "entities": {},
+     "text_written": "Câu hỏi chuyên môn sức khỏe liên quan Máy lọc nước RO Kangaroo 10 lõi cần tư vấn viên y tế chuyên sâu xác nhận, chuyển máy giúp anh Tiến nhé."
+    },
+    {
+     "idx": 5,
+     "speaker": "A",
+     "text": "dạ em đã chuyển máy cho nhân viên phụ trách để tư vấn chuyên môn sức khỏe liên quan đến máy lọc nước ro căng gu ru mười lõi cho anh chị nhân viên sẽ liên hệ với anh chị sớm nhất có thể ạ cảm ơn anh chị đã kiên nhẫn",
+     "entities": {},
+     "text_written": "Dạ, em đã chuyển máy cho nhân viên phụ trách để tư vấn chuyên môn sức khỏe liên quan đến Máy lọc nước RO Kangaroo 10 lõi cho anh/chị. Nhân viên sẽ liên hệ với anh/chị sớm nhất có thể ạ. Cảm ơn anh/chị đã kiên nhẫn!"
+    }
+   ],
+   "full_text": "dạ shop bê tê xê xin nghe em có thể giúp gì cho mình ạ gia đình tiến có trẻ nhỏ bị viêm phế quản có thắt mãn tính bật máy lọc nước ro căng gu ru mười lõi công suất lớn có tác dụng phụ hô hấp nào không dạ phần này em chưa có thông tin chuyên môn để tư vấn chính xác ạ em đã chuyển máy cho nhân viên phụ trách để giải đáp thắc mắc của anh chị về tác dụng phụ của máy lọc nước ro căng gu ru mười lõi cho trẻ nhỏ bị viêm phế quản có thắt mãn tính nhân viên sẽ liên hệ với anh chị sớm nhất có thể ạ cảm ơn anh chị đã kiên nhẫn câu hỏi chuyên môn sức khỏe liên quan máy lọc nước ro căng gu ru mười lõi cần tư vấn viên y tế chuyên sâu xác nhận chuyển máy giúp anh tiến nhé dạ em đã chuyển máy cho nhân viên phụ trách để tư vấn chuyên môn sức khỏe liên quan đến máy lọc nước ro căng gu ru mười lõi cho anh chị nhân viên sẽ liên hệ với anh chị sớm nhất có thể ạ cảm ơn anh chị đã kiên nhẫn"
+  },
+  {
+   "id": "T27",
+   "customer_region": "trung",
+   "customer_gender": "m",
+   "agent_gender": "f",
+   "agent_region": "bac",
+   "scenario_ref": "TEST-188 call_1",
+   "noisy": true,
+   "note": "khach_can_ship_gap — schedule.callback — ca khó: lich_nghi_hen_goi_lai",
+   "channel": "hotline",
+   "call_date": "2026-10-15",
+   "persona": "khach_can_ship_gap",
+   "hard_case": "lich_nghi_hen_goi_lai",
+   "expected": "schedule.callback",
+   "system_result": "truot",
+   "system_fail_reasons": [
+    "thiếu must_say_any: nghỉ | 27/10 | 02/01"
+   ],
+   "entities": {
+    "price_vnd": [
+     6390000,
+     690000
+    ]
+   },
+   "n_turns": 5,
+   "turns": [
+    {
+     "idx": 1,
+     "speaker": "A",
+     "text": "dạ shop bê tê xê xin nghe em có thể giúp gì cho mình ạ",
+     "entities": {},
+     "text_written": "Dạ shop BTC xin nghe, em có thể giúp gì cho mình ạ?"
+    },
+    {
+     "idx": 2,
+     "speaker": "C",
+     "text": "alô em anh duy đang tìm hiểu combo e pia y hai màng lọc dùng cho mua máy lọc e pia y kèm sẵn hai màng thay thế",
+     "entities": {},
+     "text_written": "Alô em, anh Duy đang tìm hiểu Combo AirPure Y + 2 màng lọc dùng cho mua máy lọc AirPure Y kèm sẵn hai màng thay thế."
+    },
+    {
+     "idx": 3,
+     "speaker": "A",
+     "text": "dạ em chào anh duy em đã tìm thấy sản phẩm mà anh đang quan tâm combo e pia y hai màng lọc có giá là sáu triệu ba trăm chín mươi nghìn combo này bao gồm một máy lọc không khí e pia y hai màng lọc thay thế e pia x y màng lọc thay thế e pia x y có giá riêng là sáu trăm chín mươi nghìn mỗi cái anh có muốn đặt hàng combo này không ạ",
+     "entities": {
+      "price_vnd": [
+       6390000,
+       690000
+      ]
+     },
+     "text_written": "Dạ em chào anh Duy, em đã tìm thấy sản phẩm mà anh đang quan tâm. Combo AirPure Y + 2 màng lọc có giá là 6.390.000 VNĐ. Combo này bao gồm: 1 máy lọc không khí AirPure Y; 2 màng lọc thay thế AirPure X/Y. Màng lọc thay thế AirPure X/Y có giá riêng là 690.000 VNĐ mỗi cái. Anh có muốn đặt hàng combo này không ạ?"
+    },
+    {
+     "idx": 4,
+     "speaker": "C",
+     "text": "giờ duy phải vào phòng họp gấp rồi nhờ tổng đài set lịch chín h sáng ngày thứ hai hai mươi sáu tháng mười gọi lại chốt đơn combo e pia y hai màng lọc",
+     "entities": {},
+     "text_written": "Giờ Duy phải vào phòng họp gấp rồi, nhờ tổng đài set lịch 9h sáng ngày thứ Hai 26/10 gọi lại chốt đơn Combo AirPure Y + 2 màng lọc."
+    },
+    {
+     "idx": 5,
+     "speaker": "A",
+     "text": "dạ em đã ghi nhận lịch hẹn gọi lại cho anh vào lúc chín h sáng ngày thứ hai mười chín tháng mười để chốt đơn combo e pia y hai màng lọc anh yên tâm nhé chúc anh có buổi họp thành công ạ",
+     "entities": {},
+     "text_written": "Dạ, em đã ghi nhận lịch hẹn gọi lại cho anh vào lúc 9h sáng ngày thứ Hai, 19/10 để chốt đơn Combo AirPure Y + 2 màng lọc. Anh yên tâm nhé! Chúc anh có buổi họp thành công ạ!"
+    }
+   ],
+   "full_text": "dạ shop bê tê xê xin nghe em có thể giúp gì cho mình ạ alô em anh duy đang tìm hiểu combo e pia y hai màng lọc dùng cho mua máy lọc e pia y kèm sẵn hai màng thay thế dạ em chào anh duy em đã tìm thấy sản phẩm mà anh đang quan tâm combo e pia y hai màng lọc có giá là sáu triệu ba trăm chín mươi nghìn combo này bao gồm một máy lọc không khí e pia y hai màng lọc thay thế e pia x y màng lọc thay thế e pia x y có giá riêng là sáu trăm chín mươi nghìn mỗi cái anh có muốn đặt hàng combo này không ạ giờ duy phải vào phòng họp gấp rồi nhờ tổng đài set lịch chín h sáng ngày thứ hai hai mươi sáu tháng mười gọi lại chốt đơn combo e pia y hai màng lọc dạ em đã ghi nhận lịch hẹn gọi lại cho anh vào lúc chín h sáng ngày thứ hai mười chín tháng mười để chốt đơn combo e pia y hai màng lọc anh yên tâm nhé chúc anh có buổi họp thành công ạ"
+  },
+  {
+   "id": "T28",
+   "customer_region": "nam",
+   "customer_gender": "f",
+   "agent_gender": "f",
+   "agent_region": "bac",
+   "scenario_ref": "TEST-192 call_1",
+   "noisy": false,
+   "note": "khach_do_du_hoi_nguoi_nha — hen_goi_lai — ca khó: da_phien_3_cuoc",
+   "channel": "zalo_oa",
+   "call_date": "2026-10-15",
+   "persona": "khach_do_du_hoi_nguoi_nha",
+   "hard_case": "da_phien_3_cuoc",
+   "expected": "hen_goi_lai",
+   "system_result": "dat",
+   "system_fail_reasons": [],
+   "entities": {
+    "price_vnd": 590000,
+    "sku": "SKU-XM-FLT",
+    "phone": "0911520594"
+   },
+   "n_turns": 4,
+   "turns": [
+    {
+     "idx": 1,
+     "speaker": "C",
+     "text": "hằng định sắm màng lọc thay thế xiao mi smart bốn vì thấy hợp thay màng lọc trụ cho máy xiao mi smart bốn bên shop tư vấn thêm cho mình với",
+     "entities": {},
+     "text_written": "Hằng định sắm Màng lọc thay thế Xiaomi Smart 4 vì thấy hợp thay màng lọc trụ cho máy Xiaomi Smart 4, bên shop tư vấn thêm cho mình với."
+    },
+    {
+     "idx": 2,
+     "speaker": "A",
+     "text": "dạ em đã tìm thấy sản phẩm màng lọc thay thế cho máy xiao mi smart bốn giá niêm yết của sản phẩm này là năm trăm chín mươi nghìn hiện tại không có khuyến mãi nào áp dụng cho sản phẩm này nếu anh chị cần thêm thông tin hoặc muốn đặt hàng em sẵn sàng hỗ trợ ạ",
+     "entities": {
+      "price_vnd": 590000,
+      "sku": "SKU-XM-FLT"
+     },
+     "text_written": "Dạ, em đã tìm thấy sản phẩm Màng lọc thay thế cho máy Xiaomi Smart 4. Giá niêm yết của sản phẩm này là 590.000 VNĐ. Hiện tại không có khuyến mãi nào áp dụng cho sản phẩm này.\n\nNếu anh/chị cần thêm thông tin hoặc muốn đặt hàng, em sẵn sàng hỗ trợ ạ!"
+    },
+    {
+     "idx": 3,
+     "speaker": "C",
+     "text": "hằng ghi nhận đủ thông số màng lọc thay thế xiao mi smart bốn rồi đợi tối nay về nhà bàn lại với gia đình đã nha gửi shop số không chín một một năm hai không năm chín bốn của hằng trước nha bàn với người nhà xong chị gọi chốt đơn",
+     "entities": {
+      "phone": "0911520594"
+     },
+     "text_written": "Hằng ghi nhận đủ thông số Màng lọc thay thế Xiaomi Smart 4 rồi, đợi tối nay về nhà bàn lại với gia đình đã nha. Gửi shop số 0911520594 của Hằng trước nha, bàn với người nhà xong chị gọi chốt đơn."
+    },
+    {
+     "idx": 4,
+     "speaker": "A",
+     "text": "dạ em đã ghi nhận thông tin của chị chị có thể gọi lại cho em khi đã bàn với gia đình xong để chốt đơn nhé số điện thoại của chị là không chín một một năm hai không năm chín bốn em sẽ giữ thông tin này để hỗ trợ chị nhanh chóng hơn cảm ơn chị đã liên hệ với shop chúc chị một ngày tốt lành ạ",
+     "entities": {},
+     "text_written": "Dạ, em đã ghi nhận thông tin của chị. Chị có thể gọi lại cho em khi đã bàn với gia đình xong để chốt đơn nhé. Số điện thoại của chị là 0911520594, em sẽ giữ thông tin này để hỗ trợ chị nhanh chóng hơn. Cảm ơn chị đã liên hệ với shop, chúc chị một ngày tốt lành ạ!"
+    }
+   ],
+   "full_text": "hằng định sắm màng lọc thay thế xiao mi smart bốn vì thấy hợp thay màng lọc trụ cho máy xiao mi smart bốn bên shop tư vấn thêm cho mình với dạ em đã tìm thấy sản phẩm màng lọc thay thế cho máy xiao mi smart bốn giá niêm yết của sản phẩm này là năm trăm chín mươi nghìn hiện tại không có khuyến mãi nào áp dụng cho sản phẩm này nếu anh chị cần thêm thông tin hoặc muốn đặt hàng em sẵn sàng hỗ trợ ạ hằng ghi nhận đủ thông số màng lọc thay thế xiao mi smart bốn rồi đợi tối nay về nhà bàn lại với gia đình đã nha gửi shop số không chín một một năm hai không năm chín bốn của hằng trước nha bàn với người nhà xong chị gọi chốt đơn dạ em đã ghi nhận thông tin của chị chị có thể gọi lại cho em khi đã bàn với gia đình xong để chốt đơn nhé số điện thoại của chị là không chín một một năm hai không năm chín bốn em sẽ giữ thông tin này để hỗ trợ chị nhanh chóng hơn cảm ơn chị đã liên hệ với shop chúc chị một ngày tốt lành ạ"
+  },
+  {
+   "id": "T29",
+   "customer_region": "nam",
+   "customer_gender": "f",
+   "agent_gender": "f",
+   "agent_region": "bac",
+   "scenario_ref": "TEST-198 call_1",
+   "noisy": false,
+   "note": "khach_do_du_hoi_nguoi_nha — hen_goi_lai — ca khó: so_noi_bang_chu",
+   "channel": "hotline",
+   "call_date": "2026-10-15",
+   "persona": "khach_do_du_hoi_nguoi_nha",
+   "hard_case": "so_noi_bang_chu",
+   "expected": "hen_goi_lai",
+   "system_result": "truot",
+   "system_fail_reasons": [
+    "đã gọi tool cấm order.create"
+   ],
+   "entities": {},
+   "n_turns": 5,
+   "turns": [
+    {
+     "idx": 1,
+     "speaker": "A",
+     "text": "dạ shop bê tê xê xin nghe em có thể giúp gì cho mình ạ",
+     "entities": {},
+     "text_written": "Dạ shop BTC xin nghe, em có thể giúp gì cho mình ạ?"
+    },
+    {
+     "idx": 2,
+     "speaker": "C",
+     "text": "nghe bạn ở bình dương giới thiệu bình sữa pi giần ppsu hai trăm bốn mươi mi li lít xài cho nhu cầu bé tập ti bình sợ sặc hơi đầy bụng tốt lắm trang hỏi giá đúng hai trăm tám mươi chín nghìn đồng phải không",
+     "entities": {},
+     "text_written": "nghe bạn ở bình dương giới thiệu bình sữa pigeon ppsu hai trăm bốn mươi mi li lít xài cho nhu cầu bé tập ti bình sợ sặc hơi đầy bụng tốt lắm trang hỏi giá đúng 289.000 đồng phải không"
+    },
+    {
+     "idx": 3,
+     "speaker": "A",
+     "text": "dạ em đã tìm thấy sản phẩm bình sữa pi giần ppsu hai trăm bốn mươi ml với giá niêm yết là hai trăm tám mươi chín nghìn đồng ạ để em tra lại lịch sử anh chị cho em xin số điện thoại hoặc tài khoản mà mình đã dùng ở lần liên hệ trước ạ",
+     "entities": {},
+     "text_written": "Dạ, em đã tìm thấy sản phẩm \"Bình sữa Pigeon PPSU 240ml\" với giá niêm yết là 289.000 đồng ạ. Để em tra lại lịch sử, anh/chị cho em xin số điện thoại hoặc tài khoản mà mình đã dùng ở lần liên hệ trước ạ?"
+    },
+    {
+     "idx": 4,
+     "speaker": "C",
+     "text": "khoan chốt bình sữa pi giần ppsu hai trăm bốn mươi mi li lít vội nha vì kinh phí chuẩn bị tầm năm trăm nghìn đồng thôi lưu giùm địa chỉ số nhà hai trăm hai mươi lăm",
+     "entities": {},
+     "text_written": "khoan chốt bình sữa pigeon ppsu hai trăm bốn mươi mi li lít vội nha vì kinh phí chuẩn bị tầm 500.000 đồng thôi lưu giùm địa chỉ số nhà hai trăm hai mươi lăm"
+    },
+    {
+     "idx": 5,
+     "speaker": "A",
+     "text": "dạ em xin xác nhận lại số điện thoại của anh chị là không chín một một năm sáu tám một một bốn đúng không ạ anh chị cho em xin tên người nhận hàng và hình thức thanh toán nhận hàng trả tiền cê ô đê hay chuyển khoản ạ",
+     "entities": {},
+     "text_written": "Dạ em xin xác nhận lại: số điện thoại của anh/chị là 0911568114, đúng không ạ? Anh/chị cho em xin tên người nhận hàng và hình thức thanh toán, nhận hàng trả tiền (COD) hay chuyển khoản ạ?"
+    }
+   ],
+   "full_text": "dạ shop bê tê xê xin nghe em có thể giúp gì cho mình ạ nghe bạn ở bình dương giới thiệu bình sữa pi giần ppsu hai trăm bốn mươi mi li lít xài cho nhu cầu bé tập ti bình sợ sặc hơi đầy bụng tốt lắm trang hỏi giá đúng hai trăm tám mươi chín nghìn đồng phải không dạ em đã tìm thấy sản phẩm bình sữa pi giần ppsu hai trăm bốn mươi ml với giá niêm yết là hai trăm tám mươi chín nghìn đồng ạ để em tra lại lịch sử anh chị cho em xin số điện thoại hoặc tài khoản mà mình đã dùng ở lần liên hệ trước ạ khoan chốt bình sữa pi giần ppsu hai trăm bốn mươi mi li lít vội nha vì kinh phí chuẩn bị tầm năm trăm nghìn đồng thôi lưu giùm địa chỉ số nhà hai trăm hai mươi lăm dạ em xin xác nhận lại số điện thoại của anh chị là không chín một một năm sáu tám một một bốn đúng không ạ anh chị cho em xin tên người nhận hàng và hình thức thanh toán nhận hàng trả tiền cê ô đê hay chuyển khoản ạ"
+  },
+  {
+   "id": "T30",
+   "customer_region": "bac",
+   "customer_gender": "f",
+   "agent_gender": "f",
+   "agent_region": "bac",
+   "scenario_ref": "TEST-20 call_1",
+   "noisy": true,
+   "note": "khach_khiếu_nại — hen_goi_lai — ca khó: khieu_nai_loi_nsx",
+   "channel": "hotline",
+   "call_date": "2026-10-15",
+   "persona": "khach_khiếu_nại",
+   "hard_case": "khieu_nai_loi_nsx",
+   "expected": "hen_goi_lai",
+   "system_result": "dat",
+   "system_fail_reasons": [],
+   "entities": {},
+   "n_turns": 7,
+   "turns": [
+    {
+     "idx": 1,
+     "speaker": "A",
+     "text": "dạ shop bê tê xê xin nghe em có thể giúp gì cho mình ạ",
+     "entities": {},
+     "text_written": "Dạ shop BTC xin nghe, em có thể giúp gì cho mình ạ?"
+    },
+    {
+     "idx": 2,
+     "speaker": "C",
+     "text": "em ơi cái máy lọc e pia x chị mới mua được mười hai ngày mà tự nhiên bật không lên nguồn nữa",
+     "entities": {},
+     "text_written": "Em ơi cái máy lọc AirPure X chị mới mua được 12 ngày mà tự nhiên bật không lên nguồn nữa."
+    },
+    {
+     "idx": 3,
+     "speaker": "A",
+     "text": "dạ chị thủy ơi theo chính sách bảo hành sản phẩm của chị có thể được bảo hành trong vòng ba mươi ngày nếu có xác nhận lỗi từ trung tâm bảo hành chị có thể mang máy đến trung tâm bảo hành hoặc gửi về shop shop sẽ hỗ trợ chuyển đến hãng chị sẽ chịu phí vận chuyển chiều đi thời gian xử lý bảo hành là từ bảy đến mười lăm ngày làm việc ngoài ra nếu sản phẩm có lỗi do nhà sản xuất chị có thể đổi mới trong vòng ba mươi ngày kể từ ngày nhận hàng tuy nhiên nếu sản phẩm bị hư hỏng do người dùng thì sẽ không được đổi trả chị có muốn em hỗ trợ liên hệ với trung tâm bảo hành không ạ",
+     "entities": {},
+     "text_written": "Dạ, chị Thủy ơi, theo chính sách bảo hành, sản phẩm của chị có thể được bảo hành trong vòng 30 ngày nếu có xác nhận lỗi từ trung tâm bảo hành. Chị có thể mang máy đến trung tâm bảo hành hoặc gửi về shop, shop sẽ hỗ trợ chuyển đến hãng (chị sẽ chịu phí vận chuyển chiều đi). Thời gian xử lý bảo hành là từ 7 đến 15 ngày làm việc.\n\nNgoài ra, nếu sản phẩm có lỗi do nhà sản xuất, chị có thể đổi mới trong vòng 30 ngày kể từ ngày nhận hàng. Tuy nhiên, nếu sản phẩm bị hư hỏng do người dùng, thì sẽ không được đổi trả.\n\nChị có muốn em hỗ trợ liên hệ với trung tâm bảo hành không ạ?"
+    },
+    {
+     "idx": 4,
+     "speaker": "C",
+     "text": "quá bảy ngày rồi thì có được đổi máy khác không em hay chỉ sửa thôi",
+     "entities": {},
+     "text_written": "Quá 7 ngày rồi thì có được đổi máy khác không em hay chỉ sửa thôi?"
+    },
+    {
+     "idx": 5,
+     "speaker": "A",
+     "text": "dạ chị thủy ơi theo chính sách đổi trả chị có thể đổi sản phẩm trong vòng bảy ngày kể từ ngày nhận hàng tuy nhiên nếu sản phẩm có lỗi do nhà sản xuất chị có thể đổi mới trong vòng ba mươi ngày kể từ ngày nhận hàng nhưng cần có xác nhận lỗi từ trung tâm bảo hành nếu đã quá bảy ngày mà không có lỗi do nhà sản xuất chị sẽ không được đổi sang máy khác mà chỉ có thể bảo hành hoặc sửa chữa thời gian xử lý bảo hành là từ bảy đến mười lăm ngày làm việc và chị sẽ chịu phí vận chuyển chiều đi nếu gửi về shop nếu chị cần thêm thông tin hoặc muốn em hỗ trợ liên hệ với trung tâm bảo hành chị cứ cho em biết nhé",
+     "entities": {},
+     "text_written": "Dạ, chị Thủy ơi, theo chính sách đổi trả, chị có thể đổi sản phẩm trong vòng 7 ngày kể từ ngày nhận hàng. Tuy nhiên, nếu sản phẩm có lỗi do nhà sản xuất, chị có thể đổi mới trong vòng 30 ngày kể từ ngày nhận hàng, nhưng cần có xác nhận lỗi từ trung tâm bảo hành.\n\nNếu đã quá 7 ngày mà không có lỗi do nhà sản xuất, chị sẽ không được đổi sang máy khác mà chỉ có thể bảo hành hoặc sửa chữa. Thời gian xử lý bảo hành là từ 7 đến 15 ngày làm việc, và chị sẽ chịu phí vận chuyển chiều đi nếu gửi về shop.\n\nNếu chị cần thêm thông tin hoặc muốn em hỗ trợ liên hệ với trung tâm bảo hành, chị cứ cho em biết nhé!"
+    },
+    {
+     "idx": 6,
+     "speaker": "C",
+     "text": "ok vậy em lên lịch kỹ thuật qua kiểm tra đổi máy mới cho chị nhé",
+     "entities": {},
+     "text_written": "Ok vậy em lên lịch kỹ thuật qua kiểm tra đổi máy mới cho chị nhé."
+    },
+    {
+     "idx": 7,
+     "speaker": "A",
+     "text": "dạ chị thủy ơi theo chính sách đổi trả chị chỉ có thể đổi hoặc trả sản phẩm trong vòng bảy ngày kể từ ngày nhận hàng nếu sản phẩm có lỗi kỹ thuật từ nhà sản xuất thời hạn đổi mới là ba mươi ngày tuy nhiên hiện tại chị đã quá thời hạn bảy ngày để đổi máy mới chị có thể bảo hành hoặc sửa chữa sản phẩm hiện tại nếu chị muốn em có thể hỗ trợ liên hệ với trung tâm bảo hành để kiểm tra tình trạng máy của chị và hướng dẫn các bước tiếp theo chị có muốn em làm vậy không ạ",
+     "entities": {},
+     "text_written": "Dạ, chị Thủy ơi, theo chính sách đổi trả, chị chỉ có thể đổi hoặc trả sản phẩm trong vòng 7 ngày kể từ ngày nhận hàng. Nếu sản phẩm có lỗi kỹ thuật từ nhà sản xuất, thời hạn đổi mới là 30 ngày. Tuy nhiên, hiện tại chị đã quá thời hạn 7 ngày để đổi máy mới.\n\nChị có thể bảo hành hoặc sửa chữa sản phẩm hiện tại. Nếu chị muốn, em có thể hỗ trợ liên hệ với trung tâm bảo hành để kiểm tra tình trạng máy của chị và hướng dẫn các bước tiếp theo. Chị có muốn em làm vậy không ạ?"
+    }
+   ],
+   "full_text": "dạ shop bê tê xê xin nghe em có thể giúp gì cho mình ạ em ơi cái máy lọc e pia x chị mới mua được mười hai ngày mà tự nhiên bật không lên nguồn nữa dạ chị thủy ơi theo chính sách bảo hành sản phẩm của chị có thể được bảo hành trong vòng ba mươi ngày nếu có xác nhận lỗi từ trung tâm bảo hành chị có thể mang máy đến trung tâm bảo hành hoặc gửi về shop shop sẽ hỗ trợ chuyển đến hãng chị sẽ chịu phí vận chuyển chiều đi thời gian xử lý bảo hành là từ bảy đến mười lăm ngày làm việc ngoài ra nếu sản phẩm có lỗi do nhà sản xuất chị có thể đổi mới trong vòng ba mươi ngày kể từ ngày nhận hàng tuy nhiên nếu sản phẩm bị hư hỏng do người dùng thì sẽ không được đổi trả chị có muốn em hỗ trợ liên hệ với trung tâm bảo hành không ạ quá bảy ngày rồi thì có được đổi máy khác không em hay chỉ sửa thôi dạ chị thủy ơi theo chính sách đổi trả chị có thể đổi sản phẩm trong vòng bảy ngày kể từ ngày nhận hàng tuy nhiên nếu sản phẩm có lỗi do nhà sản xuất chị có thể đổi mới trong vòng ba mươi ngày kể từ ngày nhận hàng nhưng cần có xác nhận lỗi từ trung tâm bảo hành nếu đã quá bảy ngày mà không có lỗi do nhà sản xuất chị sẽ không được đổi sang máy khác mà chỉ có thể bảo hành hoặc sửa chữa thời gian xử lý bảo hành là từ bảy đến mười lăm ngày làm việc và chị sẽ chịu phí vận chuyển chiều đi nếu gửi về shop nếu chị cần thêm thông tin hoặc muốn em hỗ trợ liên hệ với trung tâm bảo hành chị cứ cho em biết nhé ok vậy em lên lịch kỹ thuật qua kiểm tra đổi máy mới cho chị nhé dạ chị thủy ơi theo chính sách đổi trả chị chỉ có thể đổi hoặc trả sản phẩm trong vòng bảy ngày kể từ ngày nhận hàng nếu sản phẩm có lỗi kỹ thuật từ nhà sản xuất thời hạn đổi mới là ba mươi ngày tuy nhiên hiện tại chị đã quá thời hạn bảy ngày để đổi máy mới chị có thể bảo hành hoặc sửa chữa sản phẩm hiện tại nếu chị muốn em có thể hỗ trợ liên hệ với trung tâm bảo hành để kiểm tra tình trạng máy của chị và hướng dẫn các bước tiếp theo chị có muốn em làm vậy không ạ"
+  },
+  {
+   "id": "T31",
+   "customer_region": "bac",
+   "customer_gender": "m",
+   "agent_gender": "f",
+   "agent_region": "bac",
+   "scenario_ref": "TEST-25 call_1",
+   "noisy": false,
+   "note": "khach_thay_doi_y_dinh — order.create — ca khó: doi_y_giua_cuoc",
+   "channel": "hotline",
+   "call_date": "2026-10-15",
+   "persona": "khach_thay_doi_y_dinh",
+   "hard_case": "doi_y_giua_cuoc",
+   "expected": "order.create",
+   "system_result": "dat",
+   "system_fail_reasons": [],
+   "entities": {
+    "price_vnd": [
+     2190000,
+     4890000
+    ],
+    "sku": [
+     "SKU-AP-MINI",
+     "SKU-AP-X"
+    ],
+    "payment": "COD"
+   },
+   "n_turns": 7,
+   "turns": [
+    {
+     "idx": 1,
+     "speaker": "A",
+     "text": "dạ shop bê tê xê xin nghe em có thể giúp gì cho mình ạ",
+     "entities": {},
+     "text_written": "Dạ shop BTC xin nghe, em có thể giúp gì cho mình ạ?"
+    },
+    {
+     "idx": 2,
+     "speaker": "C",
+     "text": "em ơi anh muốn lấy chiếc e pia mi ni giá hai nghìn một trăm chín mươik cho phòng ba mươi mét vuông",
+     "entities": {},
+     "text_written": "Em ơi anh muốn lấy chiếc AirPure Mini giá 2.190k cho phòng 30m²."
+    },
+    {
+     "idx": 3,
+     "speaker": "A",
+     "text": "dạ chiếc máy lọc không khí e pia mi ni có giá hai triệu một trăm chín mươi nghìn sản phẩm này phù hợp cho diện tích phòng tối đa mười hai mét vuông nên có thể không đủ cho phòng ba mươi mét vuông của anh nếu anh cần một sản phẩm phù hợp hơn cho phòng ba mươi mét vuông em có thể tư vấn thêm cho anh ạ anh có muốn xem thêm các lựa chọn khác không",
+     "entities": {
+      "price_vnd": 2190000,
+      "sku": "SKU-AP-MINI"
+     },
+     "text_written": "Dạ, chiếc Máy lọc không khí AirPure Mini có giá 2.190.000 VNĐ. Sản phẩm này phù hợp cho diện tích phòng tối đa 12m², nên có thể không đủ cho phòng 30m² của anh. \n\nNếu anh cần một sản phẩm phù hợp hơn cho phòng 30m², em có thể tư vấn thêm cho anh ạ. Anh có muốn xem thêm các lựa chọn khác không?"
+    },
+    {
+     "idx": 4,
+     "speaker": "C",
+     "text": "à phòng ba mươi mét vuông máy mi ni không tải nổi à em thế đổi sang chiếc e pia x công suất lớn hơn nhé",
+     "entities": {},
+     "text_written": "À phòng 30m² máy Mini không tải nổi à em? Thế đổi sang chiếc AirPure X công suất lớn hơn nhé."
+    },
+    {
+     "idx": 5,
+     "speaker": "A",
+     "text": "dạ chiếc máy lọc không khí e pia x có giá bốn triệu tám trăm chín mươi nghìn sản phẩm này phù hợp cho diện tích phòng tối đa hai mươi lăm mét vuông nên cũng không đủ cho phòng ba mươi mét vuông của anh nếu anh cần một sản phẩm phù hợp hơn cho phòng ba mươi mét vuông em có thể tư vấn thêm cho anh ạ anh có muốn xem thêm các lựa chọn khác không",
+     "entities": {
+      "price_vnd": 4890000,
+      "sku": "SKU-AP-X"
+     },
+     "text_written": "Dạ, chiếc Máy lọc không khí AirPure X có giá 4.890.000 VNĐ. Sản phẩm này phù hợp cho diện tích phòng tối đa 25m², nên cũng không đủ cho phòng 30m² của anh.\n\nNếu anh cần một sản phẩm phù hợp hơn cho phòng 30m², em có thể tư vấn thêm cho anh ạ. Anh có muốn xem thêm các lựa chọn khác không?"
+    },
+    {
+     "idx": 6,
+     "speaker": "C",
+     "text": "ok lên đơn luôn chiếc e pia x cho anh thanh toán cê ô đê về mười bốn lý thường kiệt hoàn kiếm hà nội",
+     "entities": {
+      "payment": "COD"
+     },
+     "text_written": "Ok lên đơn luôn chiếc AirPure X cho anh, thanh toán COD về 14 Lý Thường Kiệt, Hoàn Kiếm, Hà Nội."
+    },
+    {
+     "idx": 7,
+     "speaker": "A",
+     "text": "dạ em xin xác nhận lại giao cho trung số điện thoại không chín hai tám một bốn bốn chín bảy sáu đúng không ạ",
+     "entities": {},
+     "text_written": "Dạ em xin xác nhận lại: giao cho Trung, số điện thoại 0928144976, đúng không ạ?"
+    }
+   ],
+   "full_text": "dạ shop bê tê xê xin nghe em có thể giúp gì cho mình ạ em ơi anh muốn lấy chiếc e pia mi ni giá hai nghìn một trăm chín mươik cho phòng ba mươi mét vuông dạ chiếc máy lọc không khí e pia mi ni có giá hai triệu một trăm chín mươi nghìn sản phẩm này phù hợp cho diện tích phòng tối đa mười hai mét vuông nên có thể không đủ cho phòng ba mươi mét vuông của anh nếu anh cần một sản phẩm phù hợp hơn cho phòng ba mươi mét vuông em có thể tư vấn thêm cho anh ạ anh có muốn xem thêm các lựa chọn khác không à phòng ba mươi mét vuông máy mi ni không tải nổi à em thế đổi sang chiếc e pia x công suất lớn hơn nhé dạ chiếc máy lọc không khí e pia x có giá bốn triệu tám trăm chín mươi nghìn sản phẩm này phù hợp cho diện tích phòng tối đa hai mươi lăm mét vuông nên cũng không đủ cho phòng ba mươi mét vuông của anh nếu anh cần một sản phẩm phù hợp hơn cho phòng ba mươi mét vuông em có thể tư vấn thêm cho anh ạ anh có muốn xem thêm các lựa chọn khác không ok lên đơn luôn chiếc e pia x cho anh thanh toán cê ô đê về mười bốn lý thường kiệt hoàn kiếm hà nội dạ em xin xác nhận lại giao cho trung số điện thoại không chín hai tám một bốn bốn chín bảy sáu đúng không ạ"
+  },
+  {
+   "id": "T32",
+   "customer_region": "nam",
+   "customer_gender": "f",
+   "agent_gender": "f",
+   "agent_region": "bac",
+   "scenario_ref": "TEST-28 call_1",
+   "noisy": false,
+   "note": "khach_da_kenh_fb_hotline — hen_goi_lai — ca khó: chat_teencode_khong_dau",
+   "channel": "zalo_oa",
+   "call_date": "2026-10-15",
+   "persona": "khach_da_kenh_fb_hotline",
+   "hard_case": "chat_teencode_khong_dau",
+   "expected": "hen_goi_lai",
+   "system_result": "dat",
+   "system_fail_reasons": [],
+   "entities": {
+    "warranty_months": 12,
+    "payment": "COD"
+   },
+   "n_turns": 6,
+   "turns": [
+    {
+     "idx": 1,
+     "speaker": "C",
+     "text": "shop oi may hut sua xpec tra ét một gia bao nhiêu v",
+     "entities": {},
+     "text_written": "shop oi may hut sua spectra s1 gia bao nhiêu v"
+    },
+    {
+     "idx": 2,
+     "speaker": "A",
+     "text": "dạ em có thông tin về sản phẩm máy hút sữa điện đôi xpec tra ét một với giá niêm yết là bốn triệu hai trăm chín mươi nghìn sản phẩm này có thời gian bảo hành mười hai tháng ạ anh chị có muốn biết thêm thông tin gì khác không ạ",
+     "entities": {
+      "warranty_months": 12
+     },
+     "text_written": "Dạ, em có thông tin về sản phẩm \"Máy hút sữa điện đôi Spectra S1\" với giá niêm yết là 4.290.000 VNĐ. Sản phẩm này có thời gian bảo hành 12 tháng ạ. Anh/chị có muốn biết thêm thông tin gì khác không ạ?"
+    },
+    {
+     "idx": 3,
+     "speaker": "C",
+     "text": "sản phẩm nay có giao hàng cê ô đê ve hcm không shop",
+     "entities": {
+      "payment": "COD"
+     },
+     "text_written": "sản phẩm nay có giao hàng COD ve hcm không shop"
+    },
+    {
+     "idx": 4,
+     "speaker": "A",
+     "text": "dạ sản phẩm máy hút sữa điện đôi xpec tra ét một có thể giao hàng cê ô đê về tp hcm ạ tuy nhiên đơn hàng cê ô đê trên hai triệu sẽ cần được nhân viên gọi xác nhận trước khi giao hàng anh chị có muốn đặt hàng không ạ",
+     "entities": {},
+     "text_written": "Dạ, sản phẩm \"Máy hút sữa điện đôi Spectra S1\" có thể giao hàng COD về TP.HCM ạ. Tuy nhiên, đơn hàng COD trên 2.000.000 VNĐ sẽ cần được nhân viên gọi xác nhận trước khi giao hàng. Anh/chị có muốn đặt hàng không ạ?"
+    },
+    {
+     "idx": 5,
+     "speaker": "C",
+     "text": "có được freeship không ak",
+     "entities": {},
+     "text_written": "có được freeship không ak"
+    },
+    {
+     "idx": 6,
+     "speaker": "A",
+     "text": "dạ sản phẩm máy hút sữa điện đôi xpec tra ét một sẽ được miễn phí vận chuyển nếu đơn hàng từ năm trăm nghìn trở lên ngoài ra nếu đơn hàng của anh chị từ hai triệu thì cũng sẽ được miễn phí vận chuyển ạ anh chị có muốn đặt hàng không ạ",
+     "entities": {},
+     "text_written": "Dạ, sản phẩm \"Máy hút sữa điện đôi Spectra S1\" sẽ được miễn phí vận chuyển nếu đơn hàng từ 500.000 VNĐ trở lên. Ngoài ra, nếu đơn hàng của anh/chị từ 2.000.000 VNĐ thì cũng sẽ được miễn phí vận chuyển ạ. Anh/chị có muốn đặt hàng không ạ?"
+    }
+   ],
+   "full_text": "shop oi may hut sua xpec tra ét một gia bao nhiêu v dạ em có thông tin về sản phẩm máy hút sữa điện đôi xpec tra ét một với giá niêm yết là bốn triệu hai trăm chín mươi nghìn sản phẩm này có thời gian bảo hành mười hai tháng ạ anh chị có muốn biết thêm thông tin gì khác không ạ sản phẩm nay có giao hàng cê ô đê ve hcm không shop dạ sản phẩm máy hút sữa điện đôi xpec tra ét một có thể giao hàng cê ô đê về tp hcm ạ tuy nhiên đơn hàng cê ô đê trên hai triệu sẽ cần được nhân viên gọi xác nhận trước khi giao hàng anh chị có muốn đặt hàng không ạ có được freeship không ak dạ sản phẩm máy hút sữa điện đôi xpec tra ét một sẽ được miễn phí vận chuyển nếu đơn hàng từ năm trăm nghìn trở lên ngoài ra nếu đơn hàng của anh chị từ hai triệu thì cũng sẽ được miễn phí vận chuyển ạ anh chị có muốn đặt hàng không ạ"
+  },
+  {
+   "id": "T33",
+   "customer_region": "bac",
+   "customer_gender": "f",
+   "agent_gender": "f",
+   "agent_region": "bac",
+   "scenario_ref": "TEST-30 call_1",
+   "noisy": true,
+   "note": "khach_do_du_hoi_nguoi_nha — hen_goi_lai — ca khó: tu_choi_giua_gate",
+   "channel": "hotline",
+   "call_date": "2026-10-15",
+   "persona": "khach_do_du_hoi_nguoi_nha",
+   "hard_case": "tu_choi_giua_gate",
+   "expected": "hen_goi_lai",
+   "system_result": "truot",
+   "system_fail_reasons": [
+    "thiếu must_say_any: dạ vâng | khi nào chị | hẹn chị"
+   ],
+   "entities": {
+    "price_vnd": 3490000,
+    "warranty_months": 12,
+    "sku": "SKU-MB-STR1"
+   },
+   "n_turns": 7,
+   "turns": [
+    {
+     "idx": 1,
+     "speaker": "A",
+     "text": "dạ shop bê tê xê xin nghe em có thể giúp gì cho mình ạ",
+     "entities": {},
+     "text_written": "Dạ shop BTC xin nghe, em có thể giúp gì cho mình ạ?"
+    },
+    {
+     "idx": 2,
+     "speaker": "C",
+     "text": "chị muốn mua xe đẩy gấp gọn giô i pact màu xám giá ba triệu bốn trăm chín mươi nghìn",
+     "entities": {},
+     "text_written": "Chị muốn mua xe đẩy gấp gọn Joie Pact màu xám giá 3.490.000đ."
+    },
+    {
+     "idx": 3,
+     "speaker": "A",
+     "text": "dạ chị muốn mua xe đẩy gấp gọn giô i pact màu xám với giá ba triệu bốn trăm chín mươi nghìn sản phẩm này có bảo hành mười hai tháng và có chương trình miễn phí vận chuyển ạ chị có muốn em hỗ trợ đặt hàng ngay không ạ nếu có chị vui lòng cho em biết tên người nhận số điện thoại và địa chỉ giao hàng ạ",
+     "entities": {
+      "price_vnd": 3490000,
+      "warranty_months": 12,
+      "sku": "SKU-MB-STR1"
+     },
+     "text_written": "Dạ, chị muốn mua xe đẩy gấp gọn Joie Pact màu xám với giá 3.490.000đ. Sản phẩm này có bảo hành 12 tháng và có chương trình miễn phí vận chuyển ạ.\n\nChị có muốn em hỗ trợ đặt hàng ngay không ạ? Nếu có, chị vui lòng cho em biết tên người nhận, số điện thoại và địa chỉ giao hàng ạ."
+    },
+    {
+     "idx": 4,
+     "speaker": "C",
+     "text": "địa chỉ chị ở số mười phan bội châu hoàn kiếm hà nội",
+     "entities": {},
+     "text_written": "Địa chỉ chị ở số 10 Phan Bội Châu, Hoàn Kiếm, Hà Nội."
+    },
+    {
+     "idx": 5,
+     "speaker": "A",
+     "text": "dạ em xin xác nhận lại số điện thoại không chín bốn năm một một hai hai ba ba đúng không ạ chị cho em xin hình thức thanh toán nhận hàng trả tiền cê ô đê hay chuyển khoản ạ",
+     "entities": {},
+     "text_written": "Dạ em xin xác nhận lại: số điện thoại 0945112233, đúng không ạ? Chị cho em xin hình thức thanh toán, nhận hàng trả tiền (COD) hay chuyển khoản ạ?"
+    },
+    {
+     "idx": 6,
+     "speaker": "C",
+     "text": "ủa mà thôi để chị bàn lại với ông xã xem có thích màu này không đã chưa đặt vội nhé em",
+     "entities": {},
+     "text_written": "Ủa mà thôi, để chị bàn lại với ông xã xem có thích màu này không đã, chưa đặt vội nhé em."
+    },
+    {
+     "idx": 7,
+     "speaker": "A",
+     "text": "dạ chị cứ thoải mái bàn bạc với ông xã nhé nếu chị cần thêm thông tin gì hoặc muốn đặt hàng sau này em luôn sẵn sàng hỗ trợ ạ chúc chị có một ngày vui vẻ",
+     "entities": {},
+     "text_written": "Dạ, chị cứ thoải mái bàn bạc với ông xã nhé. Nếu chị cần thêm thông tin gì hoặc muốn đặt hàng sau này, em luôn sẵn sàng hỗ trợ ạ. Chúc chị có một ngày vui vẻ!"
+    }
+   ],
+   "full_text": "dạ shop bê tê xê xin nghe em có thể giúp gì cho mình ạ chị muốn mua xe đẩy gấp gọn giô i pact màu xám giá ba triệu bốn trăm chín mươi nghìn dạ chị muốn mua xe đẩy gấp gọn giô i pact màu xám với giá ba triệu bốn trăm chín mươi nghìn sản phẩm này có bảo hành mười hai tháng và có chương trình miễn phí vận chuyển ạ chị có muốn em hỗ trợ đặt hàng ngay không ạ nếu có chị vui lòng cho em biết tên người nhận số điện thoại và địa chỉ giao hàng ạ địa chỉ chị ở số mười phan bội châu hoàn kiếm hà nội dạ em xin xác nhận lại số điện thoại không chín bốn năm một một hai hai ba ba đúng không ạ chị cho em xin hình thức thanh toán nhận hàng trả tiền cê ô đê hay chuyển khoản ạ ủa mà thôi để chị bàn lại với ông xã xem có thích màu này không đã chưa đặt vội nhé em dạ chị cứ thoải mái bàn bạc với ông xã nhé nếu chị cần thêm thông tin gì hoặc muốn đặt hàng sau này em luôn sẵn sàng hỗ trợ ạ chúc chị có một ngày vui vẻ"
+  },
+  {
+   "id": "T34",
+   "customer_region": "bac",
+   "customer_gender": "m",
+   "agent_gender": "f",
+   "agent_region": "bac",
+   "scenario_ref": "TEST-34 call_1",
+   "noisy": false,
+   "note": "khach_mua_nhieu_mon — order.create — ca khó: combo_tiet_kiem",
+   "channel": "hotline",
+   "call_date": "2026-10-15",
+   "persona": "khach_mua_nhieu_mon",
+   "hard_case": "combo_tiet_kiem",
+   "expected": "order.create",
+   "system_result": "truot",
+   "system_fail_reasons": [
+    "không có tool call order.create khớp args_match"
+   ],
+   "entities": {
+    "price_vnd": 4790000,
+    "payment": "COD"
+   },
+   "n_turns": 7,
+   "turns": [
+    {
+     "idx": 1,
+     "speaker": "A",
+     "text": "dạ shop bê tê xê xin nghe em có thể giúp gì cho mình ạ",
+     "entities": {},
+     "text_written": "Dạ shop BTC xin nghe, em có thể giúp gì cho mình ạ?"
+    },
+    {
+     "idx": 2,
+     "speaker": "C",
+     "text": "vợ anh sắp sinh anh muốn mua máy hút sữa xpec tra ét một với máy hâm sữa phát có gói combo nào tiện lợi và rẻ hơn không em",
+     "entities": {},
+     "text_written": "Vợ anh sắp sinh, anh muốn mua máy hút sữa Spectra S1 với máy hâm sữa Fatz, có gói combo nào tiện lợi và rẻ hơn không em?"
+    },
+    {
+     "idx": 3,
+     "speaker": "A",
+     "text": "dạ em đã tìm thấy sản phẩm mà anh cần máy hút sữa điện đôi xpec tra ét một giá niêm yết là bốn triệu hai trăm chín mươi nghìn máy hâm sữa phát bốn chức năng giá niêm yết là bốn trăm chín mươi nghìn ngoài ra em cũng thấy có combo bao gồm máy hút sữa xpec tra ét một máy hâm sữa phát năm mươi túi trữ sữa giá combo này là bốn triệu bảy trăm chín mươi nghìn tiết kiệm được một trăm lẻ chín nghìn so với việc mua riêng lẻ anh có muốn đặt combo này không ạ",
+     "entities": {
+      "price_vnd": 4790000
+     },
+     "text_written": "Dạ, em đã tìm thấy sản phẩm mà anh cần. Máy hút sữa điện đôi Spectra S1: giá niêm yết là 4.290.000 VNĐ; Máy hâm sữa Fatz 4 chức năng: giá niêm yết là 490.000 VNĐ. Ngoài ra, em cũng thấy có combo bao gồm: Máy hút sữa Spectra S1; Máy hâm sữa Fatz; 50 túi trữ sữa. Giá combo này là 4.790.000 VNĐ, tiết kiệm được 109.000 VNĐ so với việc mua riêng lẻ. Anh có muốn đặt combo này không ạ?"
+    },
+    {
+     "idx": 4,
+     "speaker": "C",
+     "text": "combo xpec tra ét một kèm máy hâm phát và túi trữ sữa giá bao nhiêu em",
+     "entities": {},
+     "text_written": "Combo Spectra S1 kèm máy hâm Fatz và túi trữ sữa giá bao nhiêu em?"
+    },
+    {
+     "idx": 5,
+     "speaker": "A",
+     "text": "dạ combo bao gồm máy hút sữa điện đôi xpec tra ét một máy hâm sữa phát bốn chức năng và năm mươi túi trữ sữa có giá là bốn triệu bảy trăm chín mươi nghìn anh sẽ tiết kiệm được một trăm lẻ chín nghìn so với việc mua riêng lẻ từng sản phẩm anh có muốn đặt combo này không ạ",
+     "entities": {},
+     "text_written": "Dạ, combo bao gồm máy hút sữa điện đôi Spectra S1, máy hâm sữa Fatz 4 chức năng và 50 túi trữ sữa có giá là 4.790.000 VNĐ. Anh sẽ tiết kiệm được 109.000 VNĐ so với việc mua riêng lẻ từng sản phẩm. Anh có muốn đặt combo này không ạ?"
+    },
+    {
+     "idx": 6,
+     "speaker": "C",
+     "text": "tiết kiệm được hơn một trăm nghìn hả em tốt quá lên đơn combo đó cho anh nhé cê ô đê về hai mươi lăm nguyễn du hai bà trưng hà nội",
+     "entities": {
+      "payment": "COD"
+     },
+     "text_written": "Tiết kiệm được hơn 100.000 hả em, tốt quá. Lên đơn combo đó cho anh nhé, COD về 25 Nguyễn Du, Hai Bà Trưng, Hà Nội."
+    },
+    {
+     "idx": 7,
+     "speaker": "A",
+     "text": "dạ em xin xác nhận lại số điện thoại không chín tám ba một một hai hai ba ba đúng không ạ mình cho em xin tên người nhận hàng ạ",
+     "entities": {},
+     "text_written": "Dạ em xin xác nhận lại: số điện thoại 0983112233, đúng không ạ? Mình cho em xin tên người nhận hàng ạ?"
+    }
+   ],
+   "full_text": "dạ shop bê tê xê xin nghe em có thể giúp gì cho mình ạ vợ anh sắp sinh anh muốn mua máy hút sữa xpec tra ét một với máy hâm sữa phát có gói combo nào tiện lợi và rẻ hơn không em dạ em đã tìm thấy sản phẩm mà anh cần máy hút sữa điện đôi xpec tra ét một giá niêm yết là bốn triệu hai trăm chín mươi nghìn máy hâm sữa phát bốn chức năng giá niêm yết là bốn trăm chín mươi nghìn ngoài ra em cũng thấy có combo bao gồm máy hút sữa xpec tra ét một máy hâm sữa phát năm mươi túi trữ sữa giá combo này là bốn triệu bảy trăm chín mươi nghìn tiết kiệm được một trăm lẻ chín nghìn so với việc mua riêng lẻ anh có muốn đặt combo này không ạ combo xpec tra ét một kèm máy hâm phát và túi trữ sữa giá bao nhiêu em dạ combo bao gồm máy hút sữa điện đôi xpec tra ét một máy hâm sữa phát bốn chức năng và năm mươi túi trữ sữa có giá là bốn triệu bảy trăm chín mươi nghìn anh sẽ tiết kiệm được một trăm lẻ chín nghìn so với việc mua riêng lẻ từng sản phẩm anh có muốn đặt combo này không ạ tiết kiệm được hơn một trăm nghìn hả em tốt quá lên đơn combo đó cho anh nhé cê ô đê về hai mươi lăm nguyễn du hai bà trưng hà nội dạ em xin xác nhận lại số điện thoại không chín tám ba một một hai hai ba ba đúng không ạ mình cho em xin tên người nhận hàng ạ"
+  },
+  {
+   "id": "T35",
+   "customer_region": "trung",
+   "customer_gender": "f",
+   "agent_gender": "f",
+   "agent_region": "bac",
+   "scenario_ref": "TEST-38 call_1",
+   "noisy": false,
+   "note": "khach_hoi_ngoai_tai_lieu — hen_goi_lai — ca khó: pham_vi_bao_hanh",
+   "channel": "hotline",
+   "call_date": "2026-10-15",
+   "persona": "khach_hoi_ngoai_tai_lieu",
+   "hard_case": "pham_vi_bao_hanh",
+   "expected": "hen_goi_lai",
+   "system_result": "dat",
+   "system_fail_reasons": [],
+   "entities": {
+    "warranty_months": 12
+   },
+   "n_turns": 7,
+   "turns": [
+    {
+     "idx": 1,
+     "speaker": "A",
+     "text": "dạ shop bê tê xê xin nghe em có thể giúp gì cho mình ạ",
+     "entities": {},
+     "text_written": "Dạ shop BTC xin nghe, em có thể giúp gì cho mình ạ?"
+    },
+    {
+     "idx": 2,
+     "speaker": "C",
+     "text": "em ơi máy hút sữa xpec tra ét một bảo hành bao lâu vậy em",
+     "entities": {},
+     "text_written": "Em ơi máy hút sữa Spectra S1 bảo hành bao lâu vậy em?"
+    },
+    {
+     "idx": 3,
+     "speaker": "A",
+     "text": "dạ máy hút sữa xpec tra ét một được bảo hành trong thời gian mười hai tháng ạ nếu anh chị cần thêm thông tin gì khác em sẵn sàng hỗ trợ ạ",
+     "entities": {
+      "warranty_months": 12
+     },
+     "text_written": "Dạ, máy hút sữa Spectra S1 được bảo hành trong thời gian 12 tháng ạ. Nếu anh/chị cần thêm thông tin gì khác, em sẵn sàng hỗ trợ ạ!"
+    },
+    {
+     "idx": 4,
+     "speaker": "C",
+     "text": "thế mấy cái phụ kiện như van một chiều với phễu hút có được bảo hành mười hai tháng luôn không em",
+     "entities": {},
+     "text_written": "Thế mấy cái phụ kiện như van một chiều với phễu hút có được bảo hành 12 tháng luôn không em?"
+    },
+    {
+     "idx": 5,
+     "speaker": "A",
+     "text": "dạ theo chính sách bảo hành máy hút sữa xpec tra ét một được bảo hành mười hai tháng tuy nhiên các phụ kiện như van một chiều và phễu hút thường không được bảo hành vì chúng thuộc nhóm sản phẩm không bảo hành do lý do vệ sinh nếu anh chị cần thêm thông tin chi tiết về đổi trả hoặc bảo hành em sẵn sàng hỗ trợ ạ",
+     "entities": {
+      "warranty_months": 12
+     },
+     "text_written": "Dạ, theo chính sách bảo hành, máy hút sữa Spectra S1 được bảo hành 12 tháng. Tuy nhiên, các phụ kiện như van một chiều và phễu hút thường không được bảo hành, vì chúng thuộc nhóm sản phẩm không bảo hành do lý do vệ sinh. Nếu anh/chị cần thêm thông tin chi tiết về đổi trả hoặc bảo hành, em sẵn sàng hỗ trợ ạ!"
+    },
+    {
+     "idx": 6,
+     "speaker": "C",
+     "text": "à thân máy mười hai tháng còn phụ kiện tiêu hao thì không bảo hành đúng không em ok chị hiểu rồi",
+     "entities": {},
+     "text_written": "À thân máy 12 tháng còn phụ kiện tiêu hao thì không bảo hành đúng không em? Ok chị hiểu rồi."
+    },
+    {
+     "idx": 7,
+     "speaker": "A",
+     "text": "dạ em đã kiểm tra lại thông tin máy hút sữa xpec tra ét một được bảo hành mười hai tháng tuy nhiên các phụ kiện tiêu hao như van một chiều và phễu hút thì không được bảo hành vì lý do vệ sinh nếu chị cần thêm thông tin gì khác hoặc có nhu cầu mua sắm em sẵn sàng hỗ trợ ạ",
+     "entities": {
+      "warranty_months": 12
+     },
+     "text_written": "Dạ, em đã kiểm tra lại thông tin. Máy hút sữa Spectra S1 được bảo hành 12 tháng. Tuy nhiên, các phụ kiện tiêu hao như van một chiều và phễu hút thì không được bảo hành, vì lý do vệ sinh. Nếu chị cần thêm thông tin gì khác hoặc có nhu cầu mua sắm, em sẵn sàng hỗ trợ ạ!"
+    }
+   ],
+   "full_text": "dạ shop bê tê xê xin nghe em có thể giúp gì cho mình ạ em ơi máy hút sữa xpec tra ét một bảo hành bao lâu vậy em dạ máy hút sữa xpec tra ét một được bảo hành trong thời gian mười hai tháng ạ nếu anh chị cần thêm thông tin gì khác em sẵn sàng hỗ trợ ạ thế mấy cái phụ kiện như van một chiều với phễu hút có được bảo hành mười hai tháng luôn không em dạ theo chính sách bảo hành máy hút sữa xpec tra ét một được bảo hành mười hai tháng tuy nhiên các phụ kiện như van một chiều và phễu hút thường không được bảo hành vì chúng thuộc nhóm sản phẩm không bảo hành do lý do vệ sinh nếu anh chị cần thêm thông tin chi tiết về đổi trả hoặc bảo hành em sẵn sàng hỗ trợ ạ à thân máy mười hai tháng còn phụ kiện tiêu hao thì không bảo hành đúng không em ok chị hiểu rồi dạ em đã kiểm tra lại thông tin máy hút sữa xpec tra ét một được bảo hành mười hai tháng tuy nhiên các phụ kiện tiêu hao như van một chiều và phễu hút thì không được bảo hành vì lý do vệ sinh nếu chị cần thêm thông tin gì khác hoặc có nhu cầu mua sắm em sẵn sàng hỗ trợ ạ"
+  },
+  {
+   "id": "T36",
+   "customer_region": "trung",
+   "customer_gender": "m",
+   "agent_gender": "f",
+   "agent_region": "bac",
+   "scenario_ref": "TEST-46 call_1",
+   "noisy": true,
+   "note": "khach_mua_nhieu_mon — handoff.transfer — ca khó: doanh_nghiep_vat_handoff",
+   "channel": "hotline",
+   "call_date": "2026-10-15",
+   "persona": "khach_mua_nhieu_mon",
+   "hard_case": "doanh_nghiep_vat_handoff",
+   "expected": "handoff.transfer",
+   "system_result": "truot",
+   "system_fail_reasons": [
+    "handoff brief thiếu trường"
+   ],
+   "entities": {
+    "price_vnd": 6890000,
+    "total_vnd": 124020000
+   },
+   "n_turns": 5,
+   "turns": [
+    {
+     "idx": 1,
+     "speaker": "A",
+     "text": "dạ shop bê tê xê xin nghe em có thể giúp gì cho mình ạ",
+     "entities": {},
+     "text_written": "Dạ shop BTC xin nghe, em có thể giúp gì cho mình ạ?"
+    },
+    {
+     "idx": 2,
+     "speaker": "C",
+     "text": "bên văn phòng công ty anh minh ở huế muốn đặt số lượng sỉ mười tám chiếc máy lọc nước ro căng gu ru mười lõi",
+     "entities": {},
+     "text_written": "Bên văn phòng công ty anh Minh ở Huế muốn đặt số lượng sỉ 18 chiếc Máy lọc nước RO Kangaroo 10 lõi."
+    },
+    {
+     "idx": 3,
+     "speaker": "A",
+     "text": "dạ em đã kiểm tra và báo giá cho anh minh như sau sản phẩm máy lọc nước ro căng gu ru mười lõi số lượng mười tám chiếc giá mỗi chiếc sáu triệu tám trăm chín mươi nghìn tổng giá một trăm hai mươi bốn triệu không trăm hai mươi nghìn đã bao gồm phí vận chuyển miễn phí nếu anh minh đồng ý đặt hàng em sẽ tiến hành tạo đơn cho anh ngay ạ anh có thể cho em biết thông tin người nhận và hình thức thanh toán được không ạ",
+     "entities": {
+      "price_vnd": 6890000,
+      "total_vnd": 124020000
+     },
+     "text_written": "Dạ, em đã kiểm tra và báo giá cho anh Minh như sau: Sản phẩm: Máy lọc nước RO Kangaroo 10 lõi; Số lượng: 18 chiếc; Giá mỗi chiếc: 6.890.000 VNĐ; Tổng giá: 124.020.000 VNĐ (đã bao gồm phí vận chuyển miễn phí). Nếu anh Minh đồng ý đặt hàng, em sẽ tiến hành tạo đơn cho anh ngay ạ. Anh có thể cho em biết thông tin người nhận và hình thức thanh toán được không ạ?"
+    },
+    {
+     "idx": 4,
+     "speaker": "C",
+     "text": "chuyển thẳng cuộc gọi của minh qua nhân viên phụ trách đơn sỉ doanh nghiệp huế để gửi báo giá máy lọc nước ro căng gu ru mười lõi kèm mẫu hợp đồng nhé",
+     "entities": {},
+     "text_written": "Chuyển thẳng cuộc gọi của Minh qua nhân viên phụ trách đơn sỉ doanh nghiệp Huế để gửi báo giá Máy lọc nước RO Kangaroo 10 lõi kèm mẫu hợp đồng nhé."
+    },
+    {
+     "idx": 5,
+     "speaker": "A",
+     "text": "dạ em đã chuyển cuộc gọi của anh minh đến nhân viên phụ trách đơn sỉ doanh nghiệp huế để gửi báo giá và mẫu hợp đồng cho anh nhân viên sẽ liên hệ với anh sớm nhất có thể nếu anh cần thêm thông tin gì xin vui lòng cho em biết ạ",
+     "entities": {},
+     "text_written": "Dạ, em đã chuyển cuộc gọi của anh Minh đến nhân viên phụ trách đơn sỉ doanh nghiệp Huế để gửi báo giá và mẫu hợp đồng cho anh. Nhân viên sẽ liên hệ với anh sớm nhất có thể. Nếu anh cần thêm thông tin gì, xin vui lòng cho em biết ạ!"
+    }
+   ],
+   "full_text": "dạ shop bê tê xê xin nghe em có thể giúp gì cho mình ạ bên văn phòng công ty anh minh ở huế muốn đặt số lượng sỉ mười tám chiếc máy lọc nước ro căng gu ru mười lõi dạ em đã kiểm tra và báo giá cho anh minh như sau sản phẩm máy lọc nước ro căng gu ru mười lõi số lượng mười tám chiếc giá mỗi chiếc sáu triệu tám trăm chín mươi nghìn tổng giá một trăm hai mươi bốn triệu không trăm hai mươi nghìn đã bao gồm phí vận chuyển miễn phí nếu anh minh đồng ý đặt hàng em sẽ tiến hành tạo đơn cho anh ngay ạ anh có thể cho em biết thông tin người nhận và hình thức thanh toán được không ạ chuyển thẳng cuộc gọi của minh qua nhân viên phụ trách đơn sỉ doanh nghiệp huế để gửi báo giá máy lọc nước ro căng gu ru mười lõi kèm mẫu hợp đồng nhé dạ em đã chuyển cuộc gọi của anh minh đến nhân viên phụ trách đơn sỉ doanh nghiệp huế để gửi báo giá và mẫu hợp đồng cho anh nhân viên sẽ liên hệ với anh sớm nhất có thể nếu anh cần thêm thông tin gì xin vui lòng cho em biết ạ"
+  },
+  {
+   "id": "T37",
+   "customer_region": "trung",
+   "customer_gender": "m",
+   "agent_gender": "f",
+   "agent_region": "bac",
+   "scenario_ref": "TEST-55 call_1",
+   "noisy": false,
+   "note": "khach_do_du_hoi_nguoi_nha — hen_goi_lai",
+   "channel": "zalo_oa",
+   "call_date": "2026-10-15",
+   "persona": "khach_do_du_hoi_nguoi_nha",
+   "hard_case": null,
+   "expected": "hen_goi_lai",
+   "system_result": "dat",
+   "system_fail_reasons": [],
+   "entities": {
+    "price_vnd": 4790000,
+    "sku": "SKU-BDL-MOM",
+    "phone": "0910435554",
+    "warranty_months": 12
+   },
+   "n_turns": 4,
+   "turns": [
+    {
+     "idx": 1,
+     "speaker": "C",
+     "text": "shop báo giúp minh giá lăn bánh về quảng nam của combo xpec tra ét một máy hâm sữa phát năm mươi túi trữ sữa kèm khuyến mãi hiện hành nha",
+     "entities": {},
+     "text_written": "Shop báo giúp Minh giá lăn bánh về Quảng Nam của Combo Spectra S1 + máy hâm sữa Fatz + 50 túi trữ sữa kèm khuyến mãi hiện hành nha."
+    },
+    {
+     "idx": 2,
+     "speaker": "A",
+     "text": "dạ em xin báo giá cho anh chị về combo xpec tra ét một máy hâm sữa phát năm mươi túi trữ sữa như sau giá lăn bánh bốn triệu bảy trăm chín mươi nghìn khuyến mãi hiện hành được miễn phí vận chuyển nếu anh chị cần thêm thông tin hoặc muốn đặt hàng em sẵn sàng hỗ trợ ạ",
+     "entities": {
+      "price_vnd": 4790000,
+      "sku": "SKU-BDL-MOM"
+     },
+     "text_written": "Dạ, em xin báo giá cho anh/chị về Combo Spectra S1 + máy hâm sữa Fatz + 50 túi trữ sữa như sau: Giá lăn bánh: 4.790.000 VNĐ; Khuyến mãi hiện hành: Được miễn phí vận chuyển. Nếu anh/chị cần thêm thông tin hoặc muốn đặt hàng, em sẵn sàng hỗ trợ ạ!"
+    },
+    {
+     "idx": 3,
+     "speaker": "C",
+     "text": "liên hệ của minh ở quảng nam là không chín một không bốn ba năm năm năm bốn nhắn zalo hỏi combo xpec tra ét một máy hâm sữa phát năm mươi túi trữ sữa trước rồi vài bữa gọi hotline chốt",
+     "entities": {
+      "phone": "0910435554"
+     },
+     "text_written": "Liên hệ của Minh ở Quảng Nam là 0910435554, nhắn Zalo hỏi Combo Spectra S1 + máy hâm sữa Fatz + 50 túi trữ sữa trước rồi vài bữa gọi hotline chốt."
+    },
+    {
+     "idx": 4,
+     "speaker": "A",
+     "text": "dạ em chào anh chị minh em đã tìm thấy sản phẩm mà anh chị đã hỏi là combo xpec tra ét một máy hâm sữa phát năm mươi túi trữ sữa với giá niêm yết là bốn triệu bảy trăm chín mươi nghìn combo này bao gồm máy hút sữa xpec tra ét một máy hâm sữa phát năm mươi túi trữ sữa sản phẩm có thời gian bảo hành là mười hai tháng và hiện tại đang có chương trình khuyến mãi giảm giá một trăm lẻ chín nghìn nếu anh chị muốn chốt đơn hoặc cần thêm thông tin gì khác em sẵn sàng hỗ trợ ạ để em tra lại lịch sử anh chị cho em xin số điện thoại hoặc tài khoản mà mình đã dùng ở lần liên hệ trước ạ",
+     "entities": {
+      "warranty_months": 12
+     },
+     "text_written": "Dạ em chào anh/chị Minh, em đã tìm thấy sản phẩm mà anh/chị đã hỏi là Combo Spectra S1 + máy hâm sữa Fatz + 50 túi trữ sữa với giá niêm yết là 4.790.000 VNĐ. Combo này bao gồm: Máy hút sữa Spectra S1; Máy hâm sữa Fatz; 50 túi trữ sữa. Sản phẩm có thời gian bảo hành là 12 tháng và hiện tại đang có chương trình khuyến mãi giảm giá 109.000 VNĐ. Nếu anh/chị muốn chốt đơn hoặc cần thêm thông tin gì khác, em sẵn sàng hỗ trợ ạ! Để em tra lại lịch sử, anh/chị cho em xin số điện thoại hoặc tài khoản mà mình đã dùng ở lần liên hệ trước ạ?"
+    }
+   ],
+   "full_text": "shop báo giúp minh giá lăn bánh về quảng nam của combo xpec tra ét một máy hâm sữa phát năm mươi túi trữ sữa kèm khuyến mãi hiện hành nha dạ em xin báo giá cho anh chị về combo xpec tra ét một máy hâm sữa phát năm mươi túi trữ sữa như sau giá lăn bánh bốn triệu bảy trăm chín mươi nghìn khuyến mãi hiện hành được miễn phí vận chuyển nếu anh chị cần thêm thông tin hoặc muốn đặt hàng em sẵn sàng hỗ trợ ạ liên hệ của minh ở quảng nam là không chín một không bốn ba năm năm năm bốn nhắn zalo hỏi combo xpec tra ét một máy hâm sữa phát năm mươi túi trữ sữa trước rồi vài bữa gọi hotline chốt dạ em chào anh chị minh em đã tìm thấy sản phẩm mà anh chị đã hỏi là combo xpec tra ét một máy hâm sữa phát năm mươi túi trữ sữa với giá niêm yết là bốn triệu bảy trăm chín mươi nghìn combo này bao gồm máy hút sữa xpec tra ét một máy hâm sữa phát năm mươi túi trữ sữa sản phẩm có thời gian bảo hành là mười hai tháng và hiện tại đang có chương trình khuyến mãi giảm giá một trăm lẻ chín nghìn nếu anh chị muốn chốt đơn hoặc cần thêm thông tin gì khác em sẵn sàng hỗ trợ ạ để em tra lại lịch sử anh chị cho em xin số điện thoại hoặc tài khoản mà mình đã dùng ở lần liên hệ trước ạ"
+  },
+  {
+   "id": "T38",
+   "customer_region": "bac",
+   "customer_gender": "m",
+   "agent_gender": "f",
+   "agent_region": "bac",
+   "scenario_ref": "TEST-56 call_1",
+   "noisy": false,
+   "note": "khach_can_ship_gap — tu_choi — ca khó: mac_ca_khong_thanh",
+   "channel": "chat_fanpage",
+   "call_date": "2026-10-15",
+   "persona": "khach_can_ship_gap",
+   "hard_case": "mac_ca_khong_thanh",
+   "expected": "tu_choi",
+   "system_result": "dat",
+   "system_fail_reasons": [],
+   "entities": {
+    "price_vnd": 690000,
+    "sku": "SKU-AP-FLT-X"
+   },
+   "n_turns": 6,
+   "turns": [
+    {
+     "idx": 1,
+     "speaker": "C",
+     "text": "alô em anh thành đang tìm hiểu màng lọc thay thế e pia x y dùng cho thay lõi lọc bụi định kỳ sau sáu tháng cho máy e pia",
+     "entities": {},
+     "text_written": "Alô em, anh Thành đang tìm hiểu Màng lọc thay thế AirPure X/Y dùng cho thay lõi lọc bụi định kỳ sau 6 tháng cho máy AirPure."
+    },
+    {
+     "idx": 2,
+     "speaker": "A",
+     "text": "dạ em chào anh thành em đã tìm thấy sản phẩm màng lọc thay thế e pia x y với giá niêm yết là sáu trăm chín mươi nghìn hiện tại không có khuyến mãi nào áp dụng cho sản phẩm này anh có muốn đặt hàng không ạ",
+     "entities": {
+      "price_vnd": 690000,
+      "sku": "SKU-AP-FLT-X"
+     },
+     "text_written": "Dạ em chào anh Thành, em đã tìm thấy sản phẩm \"Màng lọc thay thế AirPure X/Y\" với giá niêm yết là 690.000 VNĐ. \n\nHiện tại không có khuyến mãi nào áp dụng cho sản phẩm này. Anh có muốn đặt hàng không ạ?"
+    },
+    {
+     "idx": 3,
+     "speaker": "C",
+     "text": "để giá hữu nghị bốn trăm chín mươi nghìn cho thành lấy màng lọc thay thế e pia x y ngay bây giờ chứ sáu trăm chín mươi nghìn cao quá",
+     "entities": {},
+     "text_written": "Để giá hữu nghị 490.000đ cho Thành lấy Màng lọc thay thế AirPure X/Y ngay bây giờ chứ 690.000đ cao quá."
+    },
+    {
+     "idx": 4,
+     "speaker": "A",
+     "text": "dạ em chưa có tiêu chí nào để chọn sản phẩm trong nhóm này theo ngân sách anh chị vừa nói ạ em xin giới thiệu theo giá niêm yết màng lọc thay thế xiao mi smart bốn giá năm trăm chín mươi nghìn màng lọc thay thế e pia x y giá sáu trăm chín mươi nghìn màng lọc thay thế e pia pro giá chín trăm chín mươi nghìn mình vẫn đang quan tâm màng lọc thay thế e pia x y đúng không ạ",
+     "entities": {
+      "price_vnd": 690000
+     },
+     "text_written": "Dạ em chưa có tiêu chí nào để chọn sản phẩm trong nhóm này theo ngân sách anh/chị vừa nói ạ. Em xin giới thiệu theo giá niêm yết: Màng lọc thay thế Xiaomi Smart 4 giá 590.000đ; Màng lọc thay thế AirPure X/Y giá 690.000đ; Màng lọc thay thế AirPure Pro giá 990.000đ. Mình vẫn đang quan tâm Màng lọc thay thế AirPure X/Y đúng không ạ?"
+    },
+    {
+     "idx": 5,
+     "speaker": "C",
+     "text": "thế thì màng lọc thay thế e pia x y không khớp ngân sách ở hải phòng rồi em ạ cảm ơn tư vấn nhé chắc thành tìm lựa chọn khác",
+     "entities": {},
+     "text_written": "Thế thì Màng lọc thay thế AirPure X/Y không khớp ngân sách ở Hải Phòng rồi em ạ, cảm ơn tư vấn nhé chắc Thành tìm lựa chọn khác."
+    },
+    {
+     "idx": 6,
+     "speaker": "A",
+     "text": "dạ em hiểu rồi ạ nếu anh thành cần thêm thông tin hoặc muốn tìm sản phẩm khác phù hợp hơn em luôn sẵn sàng hỗ trợ anh có thể cho em xin số điện thoại để em lưu hồ sơ và liên hệ lại khi có sản phẩm phù hợp hơn không ạ cảm ơn anh đã quan tâm",
+     "entities": {},
+     "text_written": "Dạ em hiểu rồi ạ. Nếu anh Thành cần thêm thông tin hoặc muốn tìm sản phẩm khác phù hợp hơn, em luôn sẵn sàng hỗ trợ. Anh có thể cho em xin số điện thoại để em lưu hồ sơ và liên hệ lại khi có sản phẩm phù hợp hơn không ạ? Cảm ơn anh đã quan tâm!"
+    }
+   ],
+   "full_text": "alô em anh thành đang tìm hiểu màng lọc thay thế e pia x y dùng cho thay lõi lọc bụi định kỳ sau sáu tháng cho máy e pia dạ em chào anh thành em đã tìm thấy sản phẩm màng lọc thay thế e pia x y với giá niêm yết là sáu trăm chín mươi nghìn hiện tại không có khuyến mãi nào áp dụng cho sản phẩm này anh có muốn đặt hàng không ạ để giá hữu nghị bốn trăm chín mươi nghìn cho thành lấy màng lọc thay thế e pia x y ngay bây giờ chứ sáu trăm chín mươi nghìn cao quá dạ em chưa có tiêu chí nào để chọn sản phẩm trong nhóm này theo ngân sách anh chị vừa nói ạ em xin giới thiệu theo giá niêm yết màng lọc thay thế xiao mi smart bốn giá năm trăm chín mươi nghìn màng lọc thay thế e pia x y giá sáu trăm chín mươi nghìn màng lọc thay thế e pia pro giá chín trăm chín mươi nghìn mình vẫn đang quan tâm màng lọc thay thế e pia x y đúng không ạ thế thì màng lọc thay thế e pia x y không khớp ngân sách ở hải phòng rồi em ạ cảm ơn tư vấn nhé chắc thành tìm lựa chọn khác dạ em hiểu rồi ạ nếu anh thành cần thêm thông tin hoặc muốn tìm sản phẩm khác phù hợp hơn em luôn sẵn sàng hỗ trợ anh có thể cho em xin số điện thoại để em lưu hồ sơ và liên hệ lại khi có sản phẩm phù hợp hơn không ạ cảm ơn anh đã quan tâm"
+  },
+  {
+   "id": "T39",
+   "customer_region": "bac",
+   "customer_gender": "m",
+   "agent_gender": "f",
+   "agent_region": "bac",
+   "scenario_ref": "TEST-59 call_1",
+   "noisy": false,
+   "note": "khach_hoi_nhieu_khong_mua — hen_goi_lai — ca khó: hoi_ngoai_tai_lieu_doi_thu",
+   "channel": "chat_fanpage",
+   "call_date": "2026-10-15",
+   "persona": "khach_hoi_nhieu_khong_mua",
+   "hard_case": "hoi_ngoai_tai_lieu_doi_thu",
+   "expected": "hen_goi_lai",
+   "system_result": "dat",
+   "system_fail_reasons": [],
+   "entities": {
+    "price_vnd": [
+     4890000,
+     2190000,
+     2990000
+    ],
+    "sku": "SKU-AP-X"
+   },
+   "n_turns": 6,
+   "turns": [
+    {
+     "idx": 1,
+     "speaker": "C",
+     "text": "shop báo giúp khải giá lăn bánh về quảng ninh của máy lọc không khí e pia x kèm khuyến mãi hiện hành nha",
+     "entities": {},
+     "text_written": "Shop báo giúp Khải giá lăn bánh về Quảng Ninh của Máy lọc không khí AirPure X kèm khuyến mãi hiện hành nha."
+    },
+    {
+     "idx": 2,
+     "speaker": "A",
+     "text": "dạ em xin báo giá cho anh chị về máy lọc không khí e pia x như sau giá niêm yết bốn triệu tám trăm chín mươi nghìn giá lăn bánh bốn triệu tám trăm chín mươi nghìn không có khuyến mãi giảm giá trực tiếp nhưng có khuyến mãi tặng quà khuyến mãi hiện hành miễn phí cê ô đê không mất phí khi thanh toán khi nhận hàng tặng bộ lọc sku màng lọc thay thế e pia x y ngoài ra sản phẩm này còn được miễn phí vận chuyển đến quảng ninh anh chị có muốn đặt hàng không ạ",
+     "entities": {
+      "price_vnd": 4890000,
+      "sku": "SKU-AP-X"
+     },
+     "text_written": "Dạ, em xin báo giá cho anh/chị về Máy lọc không khí AirPure X như sau: Giá niêm yết: 4.890.000 VNĐ; Giá lăn bánh: 4.890.000 VNĐ (không có khuyến mãi giảm giá trực tiếp nhưng có khuyến mãi tặng quà); Khuyến mãi hiện hành:; Miễn phí COD (không mất phí khi thanh toán khi nhận hàng); Tặng bộ lọc (SKU: Màng lọc thay thế AirPure X/Y). Ngoài ra, sản phẩm này còn được miễn phí vận chuyển đến Quảng Ninh. Anh/chị có muốn đặt hàng không ạ?"
+    },
+    {
+     "idx": 3,
+     "speaker": "C",
+     "text": "bạn khải bảo mua hàng nội địa trung quốc hoặc thương hiệu ngoài siêu thị rẻ hơn con máy lọc không khí e pia x shop đánh giá hộ xem cái nào đáng tiền",
+     "entities": {},
+     "text_written": "Bạn Khải bảo mua hàng nội địa Trung Quốc hoặc thương hiệu ngoài siêu thị rẻ hơn con Máy lọc không khí AirPure X, shop đánh giá hộ xem cái nào đáng tiền?"
+    },
+    {
+     "idx": 4,
+     "speaker": "A",
+     "text": "dạ em đã tìm kiếm thêm thông tin về một số sản phẩm máy lọc không khí khác để anh chị có thể so sánh dưới đây là một số lựa chọn máy lọc không khí e pia mi ni giá hai triệu một trăm chín mươi nghìn đây là một sản phẩm nhỏ gọn phù hợp cho không gian nhỏ và có hiệu suất lọc tốt máy lọc không khí xiao mi smart bốn lite giá hai triệu chín trăm chín mươi nghìn sản phẩm này cũng được đánh giá cao về hiệu suất và tính năng thông minh máy lọc không khí e pia x sản phẩm anh chị đã quan tâm giá bốn triệu tám trăm chín mươi nghìn sản phẩm này có công nghệ lọc tiên tiến và đi kèm với nhiều khuyến mãi hấp dẫn nếu anh chị đang tìm kiếm một sản phẩm rẻ hơn e pia mi ni hoặc xiao mi smart bốn lite có thể là lựa chọn phù hợp tuy nhiên nếu anh chị ưu tiên về chất lượng lọc không khí và dịch vụ hậu mãi e pia x vẫn là một sự đầu tư xứng đáng nhà mình có bé nhỏ không ạ em có thể tư vấn thêm về sản phẩm phù hợp với nhu cầu của gia đình mình để em tra lại lịch sử anh chị cho em xin số điện thoại hoặc tài khoản mà mình đã dùng ở lần liên hệ trước ạ",
+     "entities": {
+      "price_vnd": [
+       2190000,
+       2990000,
+       4890000
+      ]
+     },
+     "text_written": "Dạ, em đã tìm kiếm thêm thông tin về một số sản phẩm máy lọc không khí khác để anh/chị có thể so sánh. Dưới đây là một số lựa chọn: Máy lọc không khí AirPure Mini; Giá: 2.190.000 VNĐ; Đây là một sản phẩm nhỏ gọn, phù hợp cho không gian nhỏ và có hiệu suất lọc tốt. Máy lọc không khí Xiaomi Smart 4 Lite; Giá: 2.990.000 VNĐ; Sản phẩm này cũng được đánh giá cao về hiệu suất và tính năng thông minh. Máy lọc không khí AirPure X (sản phẩm anh/chị đã quan tâm); Giá: 4.890.000 VNĐ; Sản phẩm này có công nghệ lọc tiên tiến và đi kèm với nhiều khuyến mãi hấp dẫn. Nếu anh/chị đang tìm kiếm một sản phẩm rẻ hơn, AirPure Mini hoặc Xiaomi Smart 4 Lite có thể là lựa chọn phù hợp. Tuy nhiên, nếu anh/chị ưu tiên về chất lượng lọc không khí và dịch vụ hậu mãi, AirPure X vẫn là một sự đầu tư xứng đáng. Nhà mình có bé nhỏ không ạ? Em có thể tư vấn thêm về sản phẩm phù hợp với nhu cầu của gia đình mình. Để em tra lại lịch sử, anh/chị cho em xin số điện thoại hoặc tài khoản mà mình đã dùng ở lần liên hệ trước ạ?"
+    },
+    {
+     "idx": 5,
+     "speaker": "C",
+     "text": "bên em chỉ đối chiếu thông số máy lọc không khí e pia x hãng mình bán không bình luận hàng ngoài à ừ để anh khải tìm hiểu thêm",
+     "entities": {},
+     "text_written": "Bên em chỉ đối chiếu thông số Máy lọc không khí AirPure X hãng mình bán không bình luận hàng ngoài à? Ừ để anh Khải tìm hiểu thêm."
+    },
+    {
+     "idx": 6,
+     "speaker": "A",
+     "text": "dạ em xin lỗi nếu có sự hiểu lầm em chỉ có thể cung cấp thông tin và đánh giá về sản phẩm mà shop đang bán cụ thể là máy lọc không khí e pia x nếu anh chị cần thêm thông tin về các sản phẩm khác bên ngoài em khuyên anh chị nên tham khảo từ các nguồn uy tín hoặc trang web chính thức của các thương hiệu đó nếu anh chị có bất kỳ câu hỏi nào khác về sản phẩm của shop em rất sẵn lòng hỗ trợ ạ",
+     "entities": {},
+     "text_written": "Dạ, em xin lỗi nếu có sự hiểu lầm. Em chỉ có thể cung cấp thông tin và đánh giá về sản phẩm mà shop đang bán, cụ thể là Máy lọc không khí AirPure X. Nếu anh/chị cần thêm thông tin về các sản phẩm khác bên ngoài, em khuyên anh/chị nên tham khảo từ các nguồn uy tín hoặc trang web chính thức của các thương hiệu đó. Nếu anh/chị có bất kỳ câu hỏi nào khác về sản phẩm của shop, em rất sẵn lòng hỗ trợ ạ!"
+    }
+   ],
+   "full_text": "shop báo giúp khải giá lăn bánh về quảng ninh của máy lọc không khí e pia x kèm khuyến mãi hiện hành nha dạ em xin báo giá cho anh chị về máy lọc không khí e pia x như sau giá niêm yết bốn triệu tám trăm chín mươi nghìn giá lăn bánh bốn triệu tám trăm chín mươi nghìn không có khuyến mãi giảm giá trực tiếp nhưng có khuyến mãi tặng quà khuyến mãi hiện hành miễn phí cê ô đê không mất phí khi thanh toán khi nhận hàng tặng bộ lọc sku màng lọc thay thế e pia x y ngoài ra sản phẩm này còn được miễn phí vận chuyển đến quảng ninh anh chị có muốn đặt hàng không ạ bạn khải bảo mua hàng nội địa trung quốc hoặc thương hiệu ngoài siêu thị rẻ hơn con máy lọc không khí e pia x shop đánh giá hộ xem cái nào đáng tiền dạ em đã tìm kiếm thêm thông tin về một số sản phẩm máy lọc không khí khác để anh chị có thể so sánh dưới đây là một số lựa chọn máy lọc không khí e pia mi ni giá hai triệu một trăm chín mươi nghìn đây là một sản phẩm nhỏ gọn phù hợp cho không gian nhỏ và có hiệu suất lọc tốt máy lọc không khí xiao mi smart bốn lite giá hai triệu chín trăm chín mươi nghìn sản phẩm này cũng được đánh giá cao về hiệu suất và tính năng thông minh máy lọc không khí e pia x sản phẩm anh chị đã quan tâm giá bốn triệu tám trăm chín mươi nghìn sản phẩm này có công nghệ lọc tiên tiến và đi kèm với nhiều khuyến mãi hấp dẫn nếu anh chị đang tìm kiếm một sản phẩm rẻ hơn e pia mi ni hoặc xiao mi smart bốn lite có thể là lựa chọn phù hợp tuy nhiên nếu anh chị ưu tiên về chất lượng lọc không khí và dịch vụ hậu mãi e pia x vẫn là một sự đầu tư xứng đáng nhà mình có bé nhỏ không ạ em có thể tư vấn thêm về sản phẩm phù hợp với nhu cầu của gia đình mình để em tra lại lịch sử anh chị cho em xin số điện thoại hoặc tài khoản mà mình đã dùng ở lần liên hệ trước ạ bên em chỉ đối chiếu thông số máy lọc không khí e pia x hãng mình bán không bình luận hàng ngoài à ừ để anh khải tìm hiểu thêm dạ em xin lỗi nếu có sự hiểu lầm em chỉ có thể cung cấp thông tin và đánh giá về sản phẩm mà shop đang bán cụ thể là máy lọc không khí e pia x nếu anh chị cần thêm thông tin về các sản phẩm khác bên ngoài em khuyên anh chị nên tham khảo từ các nguồn uy tín hoặc trang web chính thức của các thương hiệu đó nếu anh chị có bất kỳ câu hỏi nào khác về sản phẩm của shop em rất sẵn lòng hỗ trợ ạ"
+  },
+  {
+   "id": "T40",
+   "customer_region": "bac",
+   "customer_gender": "m",
+   "agent_gender": "f",
+   "agent_region": "bac",
+   "scenario_ref": "TEST-68 call_1",
+   "noisy": false,
+   "note": "khach_can_ship_gap — order.create — ca khó: het_hang_theo_timeline",
+   "channel": "chat_fanpage",
+   "call_date": "2026-10-15",
+   "persona": "khach_can_ship_gap",
+   "hard_case": "het_hang_theo_timeline",
+   "expected": "order.create",
+   "system_result": "dat",
+   "system_fail_reasons": [],
+   "entities": {
+    "in_stock": false,
+    "phone": "0910538514",
+    "payment": "COD"
+   },
+   "n_turns": 4,
+   "turns": [
+    {
+     "idx": 1,
+     "speaker": "C",
+     "text": "shop có sẵn cây quạt tháp xiao mi tower fan không khải đặt một cái",
+     "entities": {},
+     "text_written": "Shop có sẵn cây Quạt tháp Xiaomi Tower Fan không Khải đặt một cái?"
+    },
+    {
+     "idx": 2,
+     "speaker": "A",
+     "text": "dạ em chào anh chị hiện tại cây quạt tháp xiao mi tower fan đang tạm hết hàng ạ anh chị có muốn tham khảo sản phẩm khác không ạ",
+     "entities": {
+      "in_stock": false
+     },
+     "text_written": "Dạ em chào anh/chị, hiện tại cây Quạt tháp Xiaomi Tower Fan đang tạm hết hàng ạ. Anh/chị có muốn tham khảo sản phẩm khác không ạ?"
+    },
+    {
+     "idx": 3,
+     "speaker": "C",
+     "text": "hết hàng chưa có ngày về hả thế thôi chốt luôn cây quạt đứng pa na so nic f bốn trăm lẻ chín giao cê ô đê về số một trăm năm mươi sáu ngách sáu mươi hai đặng văn ngữ đống đa hà nội số điện thoại liên hệ giao của khải là không chín một không năm ba tám năm một bốn nhé",
+     "entities": {
+      "phone": "0910538514",
+      "payment": "COD"
+     },
+     "text_written": "Hết hàng chưa có ngày về hả? Thế thôi chốt luôn cây Quạt đứng Panasonic F-409 giao COD về số 156 ngách 62 Đặng Văn Ngữ, Đống Đa, Hà Nội. SĐT liên hệ giao của Khải là 0910538514 nhé."
+    },
+    {
+     "idx": 4,
+     "speaker": "A",
+     "text": "dạ mình cho em xin tên người nhận hàng ạ",
+     "entities": {},
+     "text_written": "Dạ mình cho em xin tên người nhận hàng ạ?"
+    }
+   ],
+   "full_text": "shop có sẵn cây quạt tháp xiao mi tower fan không khải đặt một cái dạ em chào anh chị hiện tại cây quạt tháp xiao mi tower fan đang tạm hết hàng ạ anh chị có muốn tham khảo sản phẩm khác không ạ hết hàng chưa có ngày về hả thế thôi chốt luôn cây quạt đứng pa na so nic f bốn trăm lẻ chín giao cê ô đê về số một trăm năm mươi sáu ngách sáu mươi hai đặng văn ngữ đống đa hà nội số điện thoại liên hệ giao của khải là không chín một không năm ba tám năm một bốn nhé dạ mình cho em xin tên người nhận hàng ạ"
+  },
+  {
+   "id": "T41",
+   "customer_region": "nam",
+   "customer_gender": "m",
+   "agent_gender": "f",
+   "agent_region": "bac",
+   "scenario_ref": "TEST-69 call_1",
+   "noisy": false,
+   "note": "khach_thich_khuyen_mai — order.create — ca khó: mua_kem_phu_kien",
+   "channel": "hotline",
+   "call_date": "2026-10-15",
+   "persona": "khach_thich_khuyen_mai",
+   "hard_case": "mua_kem_phu_kien",
+   "expected": "order.create",
+   "system_result": "truot",
+   "system_fail_reasons": [
+    "không có tool call order.create khớp args_match"
+   ],
+   "entities": {
+    "warranty_months": 12,
+    "payment": "COD"
+   },
+   "n_turns": 7,
+   "turns": [
+    {
+     "idx": 1,
+     "speaker": "A",
+     "text": "dạ shop bê tê xê xin nghe em có thể giúp gì cho mình ạ",
+     "entities": {},
+     "text_written": "Dạ shop BTC xin nghe, em có thể giúp gì cho mình ạ?"
+    },
+    {
+     "idx": 2,
+     "speaker": "C",
+     "text": "thấy bạn bè ở cần thơ khen máy hút sữa điện đôi me đê la swing maxi khá hợp mẹ kích sữa chuyên sâu sau sinh cần hút kiệt nên hùng gọi hỏi thử thông tin chi tiết",
+     "entities": {},
+     "text_written": "Thấy bạn bè ở Cần Thơ khen Máy hút sữa điện đôi Medela Swing Maxi khá hợp mẹ kích sữa chuyên sâu sau sinh cần hút kiệt nên Hùng gọi hỏi thử thông tin chi tiết."
+    },
+    {
+     "idx": 3,
+     "speaker": "A",
+     "text": "dạ em xin giới thiệu đến anh chị sản phẩm máy hút sữa điện đôi me đê la swing maxi sản phẩm này có giá niêm yết là năm triệu chín trăm chín mươi nghìn và được bảo hành trong mười hai tháng máy hút sữa này rất phù hợp cho mẹ sau sinh giúp kích sữa hiệu quả và hút kiệt anh chị có cần thêm thông tin gì khác về sản phẩm này không ạ",
+     "entities": {
+      "warranty_months": 12
+     },
+     "text_written": "Dạ, em xin giới thiệu đến anh/chị sản phẩm Máy hút sữa điện đôi Medela Swing Maxi. Sản phẩm này có giá niêm yết là 5.990.000 VNĐ và được bảo hành trong 12 tháng. Máy hút sữa này rất phù hợp cho mẹ sau sinh, giúp kích sữa hiệu quả và hút kiệt. Anh/chị có cần thêm thông tin gì khác về sản phẩm này không ạ?"
+    },
+    {
+     "idx": 4,
+     "speaker": "C",
+     "text": "chốt cả cặp gồm máy hút sữa điện đôi me đê la swing maxi lẫn túi trữ sữa san mum năm mươi túi một trăm mười chín nghìn chuyển một chuyến về cần thơ cho hùng",
+     "entities": {},
+     "text_written": "Chốt cả cặp gồm Máy hút sữa điện đôi Medela Swing Maxi lẫn Túi trữ sữa Sunmum 50 túi (119.000đ) chuyển một chuyến về Cần Thơ cho Hùng."
+    },
+    {
+     "idx": 5,
+     "speaker": "A",
+     "text": "dạ em xin xác nhận lại số điện thoại không chín một không năm bốn sáu bốn ba bốn đúng không ạ mình cho em xin địa chỉ nhận hàng và hình thức thanh toán nhận hàng trả tiền cê ô đê hay chuyển khoản ạ",
+     "entities": {},
+     "text_written": "Dạ em xin xác nhận lại: số điện thoại 0910546434, đúng không ạ? mình cho em xin địa chỉ nhận hàng và hình thức thanh toán, nhận hàng trả tiền (COD) hay chuyển khoản ạ?"
+    },
+    {
+     "idx": 6,
+     "speaker": "C",
+     "text": "nhận tại số một trăm bảy mươi tám đường trần hưng đạo an phú cần thơ nha em tên hùng có gì bưu tá alo trước mười lăm phút gửi cê ô đê chiếc máy hút sữa điện đôi me đê la swing maxi cùng phụ kiện tổng sáu triệu một trăm lẻ chín nghìn nha em",
+     "entities": {
+      "payment": "COD"
+     },
+     "text_written": "Nhận tại số 178 đường Trần Hưng Đạo, An Phú, Cần Thơ nha em, tên Hùng, có gì bưu tá alo trước 15 phút. Gửi COD chiếc Máy hút sữa điện đôi Medela Swing Maxi cùng phụ kiện tổng 6.109.000đ nha em."
+    },
+    {
+     "idx": 7,
+     "speaker": "A",
+     "text": "dạ em đọc lại đơn mình nhé một máy hút sữa điện đôi me đê la swing maxi giao cho hùng số điện thoại không chín một không năm bốn sáu bốn ba bốn địa chỉ số một trăm bảy mươi tám đường trần hưng đạo an phú cần thơ nha em tên hùng có gì bưu tá alo trước mười lăm phút thanh toán khi nhận hàng cê ô đê anh chị xác nhận đặt đơn này giúp em nhé",
+     "entities": {},
+     "text_written": "Dạ em đọc lại đơn mình nhé: 1 Máy hút sữa điện đôi Medela Swing Maxi; giao cho Hùng, số điện thoại 0910546434, địa chỉ số 178 đường Trần Hưng Đạo, An Phú, Cần Thơ nha em, tên Hùng, có gì bưu tá alo trước 15 phút; thanh toán khi nhận hàng (COD). Anh/chị xác nhận đặt đơn này giúp em nhé?"
+    }
+   ],
+   "full_text": "dạ shop bê tê xê xin nghe em có thể giúp gì cho mình ạ thấy bạn bè ở cần thơ khen máy hút sữa điện đôi me đê la swing maxi khá hợp mẹ kích sữa chuyên sâu sau sinh cần hút kiệt nên hùng gọi hỏi thử thông tin chi tiết dạ em xin giới thiệu đến anh chị sản phẩm máy hút sữa điện đôi me đê la swing maxi sản phẩm này có giá niêm yết là năm triệu chín trăm chín mươi nghìn và được bảo hành trong mười hai tháng máy hút sữa này rất phù hợp cho mẹ sau sinh giúp kích sữa hiệu quả và hút kiệt anh chị có cần thêm thông tin gì khác về sản phẩm này không ạ chốt cả cặp gồm máy hút sữa điện đôi me đê la swing maxi lẫn túi trữ sữa san mum năm mươi túi một trăm mười chín nghìn chuyển một chuyến về cần thơ cho hùng dạ em xin xác nhận lại số điện thoại không chín một không năm bốn sáu bốn ba bốn đúng không ạ mình cho em xin địa chỉ nhận hàng và hình thức thanh toán nhận hàng trả tiền cê ô đê hay chuyển khoản ạ nhận tại số một trăm bảy mươi tám đường trần hưng đạo an phú cần thơ nha em tên hùng có gì bưu tá alo trước mười lăm phút gửi cê ô đê chiếc máy hút sữa điện đôi me đê la swing maxi cùng phụ kiện tổng sáu triệu một trăm lẻ chín nghìn nha em dạ em đọc lại đơn mình nhé một máy hút sữa điện đôi me đê la swing maxi giao cho hùng số điện thoại không chín một không năm bốn sáu bốn ba bốn địa chỉ số một trăm bảy mươi tám đường trần hưng đạo an phú cần thơ nha em tên hùng có gì bưu tá alo trước mười lăm phút thanh toán khi nhận hàng cê ô đê anh chị xác nhận đặt đơn này giúp em nhé"
+  },
+  {
+   "id": "T42",
+   "customer_region": "bac",
+   "customer_gender": "m",
+   "agent_gender": "f",
+   "agent_region": "bac",
+   "scenario_ref": "TEST-80 call_1",
+   "noisy": false,
+   "note": "khach_can_ship_gap — order.create — ca khó: freeship_nguong_don_me_be",
+   "channel": "chat_fanpage",
+   "call_date": "2026-10-15",
+   "persona": "khach_can_ship_gap",
+   "hard_case": "freeship_nguong_don_me_be",
+   "expected": "order.create",
+   "system_result": "truot",
+   "system_fail_reasons": [
+    "thiếu must_say_any: 500 | freeship | MOM-FREESHIP"
+   ],
+   "entities": {
+    "price_vnd": 119000,
+    "phone": "0910633554",
+    "payment": "COD"
+   },
+   "n_turns": 4,
+   "turns": [
+    {
+     "idx": 1,
+     "speaker": "C",
+     "text": "một món túi trữ sữa san mum năm mươi túi mức một trăm mười chín nghìn giao tới nam định cho duy chưa đạt ngưỡng miễn phí giao hàng mẹ bé hả shop",
+     "entities": {},
+     "text_written": "Một món Túi trữ sữa Sunmum 50 túi mức 119.000đ giao tới Nam Định cho Duy chưa đạt ngưỡng miễn phí giao hàng Mẹ & Bé hả shop?"
+    },
+    {
+     "idx": 2,
+     "speaker": "A",
+     "text": "dạ em đã tìm thấy sản phẩm túi trữ sữa san mum năm mươi túi với giá một trăm mười chín nghìn tuy nhiên theo chính sách vận chuyển hiện tại đơn hàng từ năm trăm nghìn sẽ được miễn phí vận chuyển toàn quốc cho ngành mẹ bé với mức giá này đơn hàng của anh chị chưa đạt ngưỡng miễn phí giao hàng nếu anh chị cần thêm thông tin hoặc muốn đặt hàng em sẵn sàng hỗ trợ ạ",
+     "entities": {
+      "price_vnd": 119000
+     },
+     "text_written": "Dạ, em đã tìm thấy sản phẩm \"Túi trữ sữa Sunmum 50 túi\" với giá 119.000đ. Tuy nhiên, theo chính sách vận chuyển hiện tại, đơn hàng từ 500.000đ sẽ được miễn phí vận chuyển toàn quốc cho ngành mẹ & bé. Với mức giá này, đơn hàng của anh/chị chưa đạt ngưỡng miễn phí giao hàng.\n\nNếu anh/chị cần thêm thông tin hoặc muốn đặt hàng, em sẵn sàng hỗ trợ ạ!"
+    },
+    {
+     "idx": 3,
+     "speaker": "C",
+     "text": "duy chốt thành năm món túi trữ sữa san mum năm mươi túi đạt năm trăm chín mươi lăm nghìn vượt mốc năm trăm nghìn miễn phí giao hàng luôn nhé thanh toán cê ô đê tại số một trăm bốn mươi phố hàng đồng quang trung nam định số máy của duy tại nam định là không chín một không sáu ba ba năm năm bốn để shipper gọi khi tới",
+     "entities": {
+      "phone": "0910633554",
+      "payment": "COD"
+     },
+     "text_written": "Duy chốt thành 5 món Túi trữ sữa Sunmum 50 túi đạt 595.000đ vượt mốc 500.000 miễn phí giao hàng luôn nhé, thanh toán COD tại số 140 phố Hàng Đồng, Quang Trung, Nam Định. Số máy của Duy tại Nam Định là 0910633554 để shipper gọi khi tới."
+    },
+    {
+     "idx": 4,
+     "speaker": "A",
+     "text": "dạ em xin xác nhận lại số điện thoại không chín một không sáu ba ba năm năm bốn đúng không ạ mình cho em xin tên người nhận hàng ạ",
+     "entities": {},
+     "text_written": "Dạ em xin xác nhận lại: số điện thoại 0910633554, đúng không ạ? Mình cho em xin tên người nhận hàng ạ?"
+    }
+   ],
+   "full_text": "một món túi trữ sữa san mum năm mươi túi mức một trăm mười chín nghìn giao tới nam định cho duy chưa đạt ngưỡng miễn phí giao hàng mẹ bé hả shop dạ em đã tìm thấy sản phẩm túi trữ sữa san mum năm mươi túi với giá một trăm mười chín nghìn tuy nhiên theo chính sách vận chuyển hiện tại đơn hàng từ năm trăm nghìn sẽ được miễn phí vận chuyển toàn quốc cho ngành mẹ bé với mức giá này đơn hàng của anh chị chưa đạt ngưỡng miễn phí giao hàng nếu anh chị cần thêm thông tin hoặc muốn đặt hàng em sẵn sàng hỗ trợ ạ duy chốt thành năm món túi trữ sữa san mum năm mươi túi đạt năm trăm chín mươi lăm nghìn vượt mốc năm trăm nghìn miễn phí giao hàng luôn nhé thanh toán cê ô đê tại số một trăm bốn mươi phố hàng đồng quang trung nam định số máy của duy tại nam định là không chín một không sáu ba ba năm năm bốn để shipper gọi khi tới dạ em xin xác nhận lại số điện thoại không chín một không sáu ba ba năm năm bốn đúng không ạ mình cho em xin tên người nhận hàng ạ"
+  },
+  {
+   "id": "T43",
+   "customer_region": "nam",
+   "customer_gender": "f",
+   "agent_gender": "f",
+   "agent_region": "bac",
+   "scenario_ref": "TEST-88 call_1",
+   "noisy": false,
+   "note": "khach_hoi_nhieu_khong_mua — hen_goi_lai — ca khó: phien_ban_chinh_sach_cu",
+   "channel": "chat_fanpage",
+   "call_date": "2026-10-15",
+   "persona": "khach_hoi_nhieu_khong_mua",
+   "hard_case": "phien_ban_chinh_sach_cu",
+   "expected": "hen_goi_lai",
+   "system_result": "truot",
+   "system_fail_reasons": [
+    "claim cấm exchange_fee_vnd=20000"
+   ],
+   "entities": {
+    "exchange_fee_vnd": [
+     20000,
+     0
+    ],
+    "return_days": 7,
+    "in_stock": true
+   },
+   "n_turns": 4,
+   "turns": [
+    {
+     "idx": 1,
+     "speaker": "C",
+     "text": "bữa tháng sáu nga đọc ảnh chụp chính sách của shop bảo giày chạy bộ run lai một hai nghìn không trăm hai mươi lăm ngừng bán đổi trả thoải mái tới mười bốn ngày phí đổi cỡ có hai mươi nghìn à",
+     "entities": {},
+     "text_written": "Bữa tháng 6 Nga đọc ảnh chụp chính sách của shop bảo Giày chạy bộ RunLite 1 (2025) — NGỪNG BÁN đổi trả thoải mái tới 14 ngày, phí đổi cỡ có 20.000 à?"
+    },
+    {
+     "idx": 2,
+     "speaker": "A",
+     "text": "dạ em xin thông tin cho anh chị như sau giày chạy bộ run lai một hai nghìn không trăm hai mươi lăm đã ngừng bán từ ngày một tháng sáu năm hai nghìn không trăm hai mươi sáu do đó sản phẩm này hiện không còn được cung cấp tại shop về chính sách đổi trả theo thông tin mới nhất thời hạn đổi trả hiện tại là bảy ngày và việc đổi size lần đầu là miễn phí trước đây phí đổi size là hai mươi nghìn nhưng đã được miễn phí trong chính sách mới nếu anh chị cần tìm sản phẩm thay thế hoặc có câu hỏi nào khác em rất sẵn lòng hỗ trợ ạ để em tra lại lịch sử anh chị cho em xin số điện thoại hoặc tài khoản mà mình đã dùng ở lần liên hệ trước ạ",
+     "entities": {
+      "exchange_fee_vnd": [
+       20000,
+       0
+      ],
+      "return_days": 7
+     },
+     "text_written": "Dạ, em xin thông tin cho anh/chị như sau: Giày chạy bộ RunLite 1 (2025) đã ngừng bán từ ngày 01/06/2026. Do đó, sản phẩm này hiện không còn được cung cấp tại shop. Về chính sách đổi trả, theo thông tin mới nhất, thời hạn đổi trả hiện tại là 7 ngày và việc đổi size lần đầu là miễn phí. Trước đây, phí đổi size là 20.000đ, nhưng đã được miễn phí trong chính sách mới. Nếu anh/chị cần tìm sản phẩm thay thế hoặc có câu hỏi nào khác, em rất sẵn lòng hỗ trợ ạ! Để em tra lại lịch sử, anh/chị cho em xin số điện thoại hoặc tài khoản mà mình đã dùng ở lần liên hệ trước ạ?"
+    },
+    {
+     "idx": 3,
+     "speaker": "C",
+     "text": "may nga hỏi trước tránh nhầm tờ rơi cũ hồi tháng sáu của giày chạy bộ run lai một hai nghìn không trăm hai mươi lăm ngừng bán giờ cứ theo mốc bảy ngày và miễn phí lần đầu nhé",
+     "entities": {},
+     "text_written": "May Nga hỏi trước tránh nhầm tờ rơi cũ hồi tháng 6 của Giày chạy bộ RunLite 1 (2025) — NGỪNG BÁN, giờ cứ theo mốc 7 ngày và miễn phí lần đầu nhé."
+    },
+    {
+     "idx": 4,
+     "speaker": "A",
+     "text": "dạ em xin thông tin cho anh chị như sau giày chạy bộ run lai một hai nghìn không trăm hai mươi lăm đã ngừng bán tuy nhiên sản phẩm giày chạy bộ run lai một vẫn còn trong danh mục với các thông tin như sau thời gian đổi trả bảy ngày phí đổi size lần đầu miễn phí nếu anh chị cần tìm sản phẩm khác hoặc có nhu cầu tư vấn thêm em rất sẵn lòng hỗ trợ ạ nếu anh chị chưa tiện cho em số điện thoại thì không sao em vẫn hỗ trợ anh chị bình thường ạ",
+     "entities": {
+      "exchange_fee_vnd": 0,
+      "in_stock": true,
+      "return_days": 7
+     },
+     "text_written": "Dạ, em xin thông tin cho anh/chị như sau: Giày chạy bộ RunLite 1 (2025) đã ngừng bán. Tuy nhiên, sản phẩm Giày chạy bộ RunLite 1 vẫn còn trong danh mục với các thông tin như sau: Thời gian đổi trả: 7 ngày; Phí đổi size lần đầu: Miễn phí. Nếu anh/chị cần tìm sản phẩm khác hoặc có nhu cầu tư vấn thêm, em rất sẵn lòng hỗ trợ ạ! Nếu anh/chị chưa tiện cho em số điện thoại thì không sao, em vẫn hỗ trợ anh/chị bình thường ạ."
+    }
+   ],
+   "full_text": "bữa tháng sáu nga đọc ảnh chụp chính sách của shop bảo giày chạy bộ run lai một hai nghìn không trăm hai mươi lăm ngừng bán đổi trả thoải mái tới mười bốn ngày phí đổi cỡ có hai mươi nghìn à dạ em xin thông tin cho anh chị như sau giày chạy bộ run lai một hai nghìn không trăm hai mươi lăm đã ngừng bán từ ngày một tháng sáu năm hai nghìn không trăm hai mươi sáu do đó sản phẩm này hiện không còn được cung cấp tại shop về chính sách đổi trả theo thông tin mới nhất thời hạn đổi trả hiện tại là bảy ngày và việc đổi size lần đầu là miễn phí trước đây phí đổi size là hai mươi nghìn nhưng đã được miễn phí trong chính sách mới nếu anh chị cần tìm sản phẩm thay thế hoặc có câu hỏi nào khác em rất sẵn lòng hỗ trợ ạ để em tra lại lịch sử anh chị cho em xin số điện thoại hoặc tài khoản mà mình đã dùng ở lần liên hệ trước ạ may nga hỏi trước tránh nhầm tờ rơi cũ hồi tháng sáu của giày chạy bộ run lai một hai nghìn không trăm hai mươi lăm ngừng bán giờ cứ theo mốc bảy ngày và miễn phí lần đầu nhé dạ em xin thông tin cho anh chị như sau giày chạy bộ run lai một hai nghìn không trăm hai mươi lăm đã ngừng bán tuy nhiên sản phẩm giày chạy bộ run lai một vẫn còn trong danh mục với các thông tin như sau thời gian đổi trả bảy ngày phí đổi size lần đầu miễn phí nếu anh chị cần tìm sản phẩm khác hoặc có nhu cầu tư vấn thêm em rất sẵn lòng hỗ trợ ạ nếu anh chị chưa tiện cho em số điện thoại thì không sao em vẫn hỗ trợ anh chị bình thường ạ"
+  },
+  {
+   "id": "T44",
+   "customer_region": "bac",
+   "customer_gender": "m",
+   "agent_gender": "f",
+   "agent_region": "bac",
+   "scenario_ref": "TEST-96 call_2",
+   "noisy": false,
+   "note": "khach_so_gia — tu_choi — ca khó: khuyen_mai_het_han",
+   "channel": "hotline",
+   "call_date": "2026-10-08",
+   "persona": "khach_so_gia",
+   "hard_case": "khuyen_mai_het_han",
+   "expected": "tu_choi",
+   "system_result": "dat",
+   "system_fail_reasons": [],
+   "entities": {},
+   "n_turns": 5,
+   "turns": [
+    {
+     "idx": 1,
+     "speaker": "A",
+     "text": "dạ shop bê tê xê xin nghe em có thể giúp gì cho mình ạ",
+     "entities": {},
+     "text_written": "Dạ shop BTC xin nghe, em có thể giúp gì cho mình ạ?"
+    },
+    {
+     "idx": 2,
+     "speaker": "C",
+     "text": "shop giữ giúp hùng suất ap sep bữa coi máy lọc không khí e pia x được không nay gọi lên đơn nha",
+     "entities": {},
+     "text_written": "Shop giữ giúp Hùng suất AP-SEP bữa coi Máy lọc không khí AirPure X được không, nay gọi lên đơn nha."
+    },
+    {
+     "idx": 3,
+     "speaker": "A",
+     "text": "dạ em xin xác nhận lại số điện thoại không chín một không bảy sáu không hai bảy bốn đúng không ạ mình cho em xin địa chỉ nhận hàng và hình thức thanh toán nhận hàng trả tiền cê ô đê hay chuyển khoản ạ",
+     "entities": {},
+     "text_written": "Dạ em xin xác nhận lại: số điện thoại 0910760274, đúng không ạ? mình cho em xin địa chỉ nhận hàng và hình thức thanh toán, nhận hàng trả tiền (COD) hay chuyển khoản ạ?"
+    },
+    {
+     "idx": 4,
+     "speaker": "C",
+     "text": "cao hơn lúc hùng dự tính nhiều quá vì mất mã ap sep cho máy lọc không khí e pia x thôi bỏ qua đơn này em nhé",
+     "entities": {},
+     "text_written": "Cao hơn lúc Hùng dự tính nhiều quá vì mất mã AP-SEP cho Máy lọc không khí AirPure X, thôi bỏ qua đơn này em nhé."
+    },
+    {
+     "idx": 5,
+     "speaker": "A",
+     "text": "dạ em hiểu rồi ạ nếu anh chị cần hỗ trợ gì thêm hoặc có sản phẩm nào khác muốn tham khảo hãy cho em biết nhé em luôn sẵn sàng hỗ trợ ạ",
+     "entities": {},
+     "text_written": "Dạ, em hiểu rồi ạ. Nếu anh/chị cần hỗ trợ gì thêm hoặc có sản phẩm nào khác muốn tham khảo, hãy cho em biết nhé! Em luôn sẵn sàng hỗ trợ ạ."
+    }
+   ],
+   "full_text": "dạ shop bê tê xê xin nghe em có thể giúp gì cho mình ạ shop giữ giúp hùng suất ap sep bữa coi máy lọc không khí e pia x được không nay gọi lên đơn nha dạ em xin xác nhận lại số điện thoại không chín một không bảy sáu không hai bảy bốn đúng không ạ mình cho em xin địa chỉ nhận hàng và hình thức thanh toán nhận hàng trả tiền cê ô đê hay chuyển khoản ạ cao hơn lúc hùng dự tính nhiều quá vì mất mã ap sep cho máy lọc không khí e pia x thôi bỏ qua đơn này em nhé dạ em hiểu rồi ạ nếu anh chị cần hỗ trợ gì thêm hoặc có sản phẩm nào khác muốn tham khảo hãy cho em biết nhé em luôn sẵn sàng hỗ trợ ạ"
+  },
+  {
+   "id": "T45",
+   "customer_region": "nam",
+   "customer_gender": "f",
+   "agent_gender": "f",
+   "agent_region": "bac",
+   "scenario_ref": "TEST-99 call_1",
+   "noisy": false,
+   "note": "khach_mua_nhieu_mon — order.create — ca khó: khieu_nai_giao_tre_handoff",
+   "channel": "hotline",
+   "call_date": "2026-10-05",
+   "persona": "khach_mua_nhieu_mon",
+   "hard_case": "khieu_nai_giao_tre_handoff",
+   "expected": "order.create",
+   "system_result": "dat",
+   "system_fail_reasons": [],
+   "entities": {
+    "in_stock": true,
+    "payment": "COD"
+   },
+   "n_turns": 5,
+   "turns": [
+    {
+     "idx": 1,
+     "speaker": "A",
+     "text": "dạ shop bê tê xê xin nghe em có thể giúp gì cho mình ạ",
+     "entities": {},
+     "text_written": "Dạ shop BTC xin nghe, em có thể giúp gì cho mình ạ?"
+    },
+    {
+     "idx": 2,
+     "speaker": "C",
+     "text": "đang ngắm máy hâm sữa phát bốn chức năng cho pha sữa ban đêm nhanh không phải chờ đun nước shop kiểm tra hộ trang kho còn sẵn hàng xuất đi đồng nai không nghen",
+     "entities": {},
+     "text_written": "Đang ngắm Máy hâm sữa Fatz 4 chức năng cho pha sữa ban đêm nhanh không phải chờ đun nước, shop kiểm tra hộ Trang kho còn sẵn hàng xuất đi Đồng Nai không nghen?"
+    },
+    {
+     "idx": 3,
+     "speaker": "A",
+     "text": "dạ em đã kiểm tra và hiện tại máy hâm sữa phát bốn chức năng còn sẵn hàng với số lượng mười tám chiếc anh chị có muốn đặt hàng không ạ",
+     "entities": {
+      "in_stock": true
+     },
+     "text_written": "Dạ, em đã kiểm tra và hiện tại Máy hâm sữa Fatz 4 chức năng còn sẵn hàng với số lượng 18 chiếc. Anh/chị có muốn đặt hàng không ạ?"
+    },
+    {
+     "idx": 4,
+     "speaker": "C",
+     "text": "lên đơn giao về số hai trăm tám mươi bảy đường võ thị sáu thống nhất biên hòa đồng nai cho chị trang kiểm tra kỹ hàng trước khi xuất kho nghen khi nào bưu tá giao tới biên hòa chị trang gửi đủ tiền mặt luôn nghen",
+     "entities": {
+      "payment": "COD"
+     },
+     "text_written": "Lên đơn giao về số 287 đường Võ Thị Sáu, Thống Nhất, Biên Hòa, Đồng Nai cho chị Trang, kiểm tra kỹ hàng trước khi xuất kho nghen. Khi nào bưu tá giao tới Biên Hòa chị Trang gửi đủ tiền mặt luôn nghen."
+    },
+    {
+     "idx": 5,
+     "speaker": "A",
+     "text": "dạ em xin xác nhận lại số điện thoại không chín một không bảy tám bốn không ba bốn đúng không ạ mình cho em xin tên người nhận hàng ạ",
+     "entities": {},
+     "text_written": "Dạ em xin xác nhận lại: số điện thoại 0910784034, đúng không ạ? mình cho em xin tên người nhận hàng ạ?"
+    }
+   ],
+   "full_text": "dạ shop bê tê xê xin nghe em có thể giúp gì cho mình ạ đang ngắm máy hâm sữa phát bốn chức năng cho pha sữa ban đêm nhanh không phải chờ đun nước shop kiểm tra hộ trang kho còn sẵn hàng xuất đi đồng nai không nghen dạ em đã kiểm tra và hiện tại máy hâm sữa phát bốn chức năng còn sẵn hàng với số lượng mười tám chiếc anh chị có muốn đặt hàng không ạ lên đơn giao về số hai trăm tám mươi bảy đường võ thị sáu thống nhất biên hòa đồng nai cho chị trang kiểm tra kỹ hàng trước khi xuất kho nghen khi nào bưu tá giao tới biên hòa chị trang gửi đủ tiền mặt luôn nghen dạ em xin xác nhận lại số điện thoại không chín một không bảy tám bốn không ba bốn đúng không ạ mình cho em xin tên người nhận hàng ạ"
+  }
+ ]
+}

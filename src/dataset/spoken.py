@@ -106,7 +106,8 @@ _PHONE = re.compile(r"(?<!\d)(0\d{9})(?!\d)")
 _DATE = re.compile(r"(?<!\d)(\d{1,2})/(\d{1,2})(?:/(\d{4}))?(?!\d)")
 _ISO = re.compile(r"(?<!\d)(\d{4})-(\d{2})-(\d{2})(?!\d)")
 _AREA = re.compile(r"(\d+(?:[.,]\d+)?)\s*(?:m²|m2|mét vuông)", re.I)
-_MONEY = re.compile(r"(?<![\d.,])(\d{1,3}(?:[.,]\d{3})+|\d{4,})\s*(?:đ|đồng|vnđ|vnd)?(?![\d])", re.I)
+# Đơn vị tiền phải đứng trọn từ: trước đây "\s*(?:đ|…)?" nuốt cả khoảng trắng và chữ "đ" của từ kế tiếp ("600.000 được" → "sáu trăm nghìnược", "600.000 luôn" → "…nghìnluôn").
+_MONEY = re.compile(r"(?<![\d.,])(\d{1,3}(?:[.,]\d{3})+|\d{4,})(?:\s*(đồng|vnđ|vnd|đ)(?![^\W\d_]))?(?![\d])", re.I)
 _K = re.compile(r"(?<![\d.,])(\d{1,4})\s*k\b", re.I)
 _TRIEU = re.compile(r"(?<![\d.,])(\d+)(?:[.,](\d+))?\s*(?:triệu|tr)\b(?:\s*(\d{1,3})\b(?!\s*(?:m|%|ngày|tháng|giờ|năm|cm|kg|lít|người|tuổi|lõi|phút)))?", re.I)
 _PERCENT = re.compile(r"(\d+(?:[.,]\d+)?)\s*%")
@@ -156,8 +157,9 @@ def spoken_form(text: str) -> str:
         return out
     t = _TRIEU.sub(trieu, t)
     t = _K.sub(lambda m: number_to_words(int(m.group(1)) * 1000), t)          # 249k = 249.000; 4590k = 4.590.000
-    t = _MONEY.sub(lambda m: _money_words(m.group(1)), t)
+    t = _MONEY.sub(lambda m: _money_words(m.group(1)) + (" đồng" if (m.group(2) or "").lower() == "đồng" else ""), t)
     t = _DECIMAL.sub(lambda m: number_to_words(int(m.group(1))) + " phẩy " + (digits_to_words(m.group(2)) if m.group(2).startswith("0") else number_to_words(int(m.group(2)))), t)
+    t = re.sub(r"(\d)(?=[^\W\d_])", r"\g<1> ", t)                 # "240ml" → "240 ml": số dính đơn vị không thành "…mươiml"
     t = _INT.sub(lambda m: number_to_words(int(m.group(0))), t)
     low = t.lower()
     for pat, rep in BRAND_READINGS:
