@@ -65,6 +65,25 @@ class ClosingTurnTest(unittest.TestCase):
         ids = [e.session_id for e in self.c["memory"].get_episodes(ident.customer_id)]
         self.assertEqual([i.split("#")[1] for i in ids], ["1", "2"])                 # hai cuộc, mỗi cuộc đếm một lần (episode giữa cuộc bị ẩn)
 
+    def test_speculative_quote_is_remembered_only_when_the_agent_used_it(self):
+        """Báo giá do code CHẠY TRƯỚC (đoán) không được thành "sản phẩm đã tư vấn" nếu agent không nói tới nó (từng ghi nhầm ghế ô tô cho khách hỏi máy lọc)."""
+        self._setup()
+        guess = {"name": "pricing.get_quote", "args": {"sku": "SKU-MB-CAR"}, "result": {"sku": "SKU-MB-CAR", "final_price_vnd": 4990000, "applied_promos": []}, "speculative": True}
+        mem = self.c["memory"]
+        self.orch._persist_tool_grounded_facts("C-SPEC", [guess], "Dạ nhà mình có bé nhỏ thì em gợi ý máy có khóa trẻ em ạ.")
+        self.assertNotIn("product_advised", mem.get_profile_facts("C-SPEC"))
+        self.orch._persist_tool_grounded_facts("C-SPEC", [guess], "Dạ ghế đó giá 4.990.000đ ạ.")
+        self.assertEqual(mem.get_profile_facts("C-SPEC").get("product_advised"), "SKU-MB-CAR")
+
+    def test_speculative_targets_need_the_real_product_name(self):
+        self._setup()
+        t = self.c["normalizer"].normalize("alo", self._channel(), "0911265844")
+        b = self.c["brief"].build(self.c["resolver"].resolve(t, memory=self.c["memory"]), ON)
+        from src.privacy.pii_vault import PiiVault
+        look = lambda text: {c["args"]["sku"] for c in self.orch._speculative_lookups(text, None, [], None, b, None, ON, PiiVault())}
+        self.assertEqual(look("Nhà chị có bé nhỏ, ngân sách tầm 5.000.000 thôi em."), set())          # "có bé" không phải tên sản phẩm
+        self.assertEqual(look("Em ơi Máy lọc không khí AirPure X bên em giá bao nhiêu?"), {"SKU-AP-X"})
+
     def test_no_draft_means_no_closing_turn(self):
         self._setup(order_gate=True)
         self._run([("pricing.get_quote", {"sku": AP_Y, "qty": 1})])

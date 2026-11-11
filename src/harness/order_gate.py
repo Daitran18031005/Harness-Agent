@@ -199,8 +199,7 @@ class OrderGate:
         else:
             consent, declined = is_explicit_consent(text or ""), is_decline(text or "")
             lenient_consent, affirmed = None, set()
-            if _PHONE_OK.search(fold(text or "")) and not any(re.search(rf"(?<!\w){h}(?!\w)", fold(text or "")) for h in ("khong", "sai", "khac", "nham", "chua")):
-                st.phone_ok = True
+            self.phone_ok_fallback(sid, text)
         open_draft = st.stage in ("collect", "readback", "consented") and (st.last_decision is not None) and not st.last_decision.get("allow", False)
         stale = open_draft and st.last_decision.get("turn") is not None and turn_no - st.last_decision["turn"] > DRAFT_TTL_TURNS    # đơn nháp không tiến triển → tự rút lui
         if open_draft and (declined or stale):
@@ -224,6 +223,11 @@ class OrderGate:
                 st.stage, st.snapshot = "collect", None          # không đồng ý rõ ràng → bản đọc lại hết hiệu lực
         elif st.stage == "consented":
             st.stage, st.snapshot = "collect", None              # đồng ý chỉ có giá trị cho lượt NGAY SAU lần đọc lại
+
+    def phone_ok_fallback(self, sid: str, text: str) -> None:
+        """Dự phòng khi KHÔNG có kết quả đọc hiểu bằng LLM: khách nói "đúng số này" (regex) → số đang gọi coi như đã xác nhận."""
+        if _PHONE_OK.search(fold(text or "")) and not any(re.search(rf"(?<!\w){h}(?!\w)", fold(text or "")) for h in ("khong", "sai", "khac", "nham", "chua")):
+            self.state(sid).phone_ok = True
 
     def events(self, sid: str) -> List[Dict[str, Any]]:
         return list(self.state(sid).events)

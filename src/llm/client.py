@@ -20,6 +20,10 @@ from .model_profiles import profile_for, forced_unsupported_params
 logger = logging.getLogger("harness.llm")
 
 
+# Lời AGENT hứa sẽ tra cứu mà chưa tra ("để em kiểm tra…", "em sẽ tìm…", "chờ em một chút"): dấu hiệu để nhắc model gọi tool. Soi lời của chính agent, không phải lời khách.
+_PROMISES_LOOKUP = re.compile(r"(?:để|xin phép|sẽ|đang|cho em|chờ em|đợi em)\s+(?:em\s+)?(?:kiểm tra|tra cứu|tra lại|tìm|xem lại|xem giúp|check)|chờ (?:em )?(?:một|1) (?:chút|lát)|vui lòng (?:chờ|đợi)", re.I)
+
+
 class LLMUnavailable(Exception):
     pass
 
@@ -419,7 +423,9 @@ class LLMClient:
                 usage_totals["reasoning_tokens"] += (getattr(details, "reasoning_tokens", 0) or 0) if details else 0
 
             if not tool_calls:
-                if not tool_calls_log and not nudged_once:
+                if not tool_calls_log and not nudged_once and _PROMISES_LOOKUP.search(text or ""):
+                    # (2026-11-11: chỉ nhắc khi câu trả lời CÓ lời hứa tra cứu. Trước đây nhắc ở MỌI lượt không gọi tool → mỗi câu trả lời thuần văn bản tốn
+                    # thêm nguyên một vòng LLM ≈ 1,2 s; trace không có lượt nào 1 vòng.)
                     # Bug thật đã gặp: model trả lời kiểu "để em kiểm tra..." nhưng KHÔNG kèm
                     # tool_call nào trong cùng completion -> nếu chấp nhận ngay làm câu trả lời
                     # cuối thì khách không bao giờ nhận được dữ liệu thật. Nhắc model tự kiểm tra

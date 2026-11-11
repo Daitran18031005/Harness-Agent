@@ -31,7 +31,7 @@ class GateOpenTest(GateBase):
         go = meta["gate_open"]
         self.assertTrue(go["opened"])
         self.assertEqual(go["object"]["checked"], {"SKU-SN-CAS-39-DEN": True})
-        self.assertEqual(main_calls, 0)                                        # code trả lời, LLM chính không chạy
+        self.assertLessEqual(main_calls, 1)                                    # code trả lời; LLM chính có thể đã chạy SONG SONG với bước đọc hiểu nhưng kết quả bị bỏ, không tool nào của nó chạy
         self.assertEqual(meta["order_gate"][-1]["action"], "ask_confirm")      # gate hỏi tên/địa chỉ/thanh toán, xác nhận SĐT
         self.assertIn("địa chỉ", txt)
         self.assertEqual([c for c in tc if c["name"] == "order.create"], [])    # tuyệt đối chưa tạo đơn
@@ -92,7 +92,7 @@ class LateReadTest(GateBase):
         self.assertEqual(self.llm.read_calls, 1)                                        # đọc muộn đúng 1 lần
         self.assertTrue(meta["reply_reading"]["late"])
         self.assertTrue(meta["gate_open"]["opened"])
-        self.assertEqual(self.llm.calls - before, 0)
+        self.assertLessEqual(self.llm.calls - before, 1)             # LLM chính chạy song song với bước đọc hiểu, kết quả bị bỏ khi code mở gate
 
     def test_no_variant_named_means_no_late_read(self):
         self.llm.reader = lambda t: COMMIT
@@ -124,7 +124,7 @@ class SimpleProductTest(GateBase):
         _, tc, meta = self.turn(NEW_PHONE, "ok lấy luôn", [])
         go = meta["gate_open"]
         self.assertEqual((meta["reply_reading"]["order_intent"], go["opened"], go["object"]["checked"]), ("commit", True, {"SKU-WF-RO10": True}))
-        self.assertEqual(self.llm.calls - before, 0)
+        self.assertLessEqual(self.llm.calls - before, 1)             # LLM chính chạy song song với bước đọc hiểu, kết quả bị bỏ khi code mở gate
         self.assertEqual([c for c in tc if c["name"] == "order.create"], [])
 
     def test_simple_product_not_committed_is_read_but_not_opened(self):
