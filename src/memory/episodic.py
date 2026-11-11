@@ -60,7 +60,10 @@ class EpisodicMemoryStore:
             self.backend.append_episode(customer_id, asdict(episode))
 
     def get_episodes(self, customer_id: str) -> List[EpisodeRecord]:
-        return list(self._of(customer_id))
+        """Episode giữa cuộc (mã phiên trần) bị ẩn khi cuộc đó đã có episode kết thúc ("<phiên>#<n>") — một cuộc gọi chỉ đếm một lần."""
+        eps = self._of(customer_id)
+        done = {e.session_id.split("#")[0] for e in eps if "#" in e.session_id}
+        return [e for e in eps if "#" in e.session_id or e.session_id not in done]
 
     def get_last_episode(self, customer_id: str) -> Optional[EpisodeRecord]:
         episodes = self.get_episodes(customer_id)

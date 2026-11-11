@@ -54,7 +54,7 @@ class SingleQuestionAndAddressingTest(GateBase):
         from src.harness.reply_reader import verify
         claim = verify({"claims_prior_contact": True, "prior_contact_quote": "hôm trước tôi có gọi"}, "hôm trước tôi có gọi")
         class B:
-            previous_calls_count, honorific, crm_known = 0, "anh/chị", False
+            previous_calls_count, honorific, crm_known, product_advised = 0, "anh/chị", False, None
         out = self.orch._ensure_prior_contact_question("s", "Dạ còn hàng 12 chiếc ạ. Anh có muốn biết thêm thông tin gì không ạ?", claim, B())
         self.assertEqual(out.count("?"), 1)
         self.assertIn("còn hàng 12 chiếc", out)

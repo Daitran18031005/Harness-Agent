@@ -176,6 +176,8 @@ class SQLiteStore:
         c.execute("CREATE UNIQUE INDEX IF NOT EXISTS uq_active_fact ON customer_profiles(customer_id, key) WHERE superseded=0")
         c.execute("CREATE UNIQUE INDEX IF NOT EXISTS uq_episode ON episodic_records(customer_id, session_id)")
         c.execute(f"PRAGMA user_version={SCHEMA_VERSION}")
+        # Episode kiểu cũ của cuộc đã kết thúc mang mã phiên trần; lúc mở DB không có cuộc nào đang diễn ra nên mọi episode `SESS-…` đều là cuộc đã xong → gắn "#1".
+        c.execute("UPDATE OR IGNORE episodic_records SET session_id = session_id || '#1' WHERE session_id LIKE 'SESS-%' AND session_id NOT LIKE '%#%'")
         # D10: working session (nguyên văn hội thoại của MỘT cuộc gọi) không dùng lại sau khi cuộc gọi kết thúc; phiên bị bỏ dở quá hạn thì xóa khi mở DB.
         c.execute("DELETE FROM working_sessions WHERE updated_at < ?", ((datetime.now() - timedelta(days=WORKING_RETENTION_DAYS)).isoformat(),))
         c.commit()

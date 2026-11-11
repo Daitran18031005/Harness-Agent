@@ -340,8 +340,11 @@ class CallFinalizer:
             bits.append(f"blocker: {facts['blocker']}")
         if created_order:
             bits.append(f"đơn {created_order.get('order_id')}")
+        # Mã phiên là (khách, ngày gọi) nên hai cuộc CÙNG NGÀY trùng mã: cuộc sau từng ghi đè episode của cuộc trước, và Call Brief coi cuộc trước là "cuộc hiện tại"
+        # (số cuộc trước = 0 → agent hỏi lại tài khoản dù đã có hồ sơ). Cuộc đã kết thúc (end/timeout) nhận mã riêng "<phiên>#<n>"; episode giữa cuộc (handoff) vẫn dùng mã phiên.
+        closed = sum(1 for e in others if e.session_id.startswith(session_id + "#"))
         episode = EpisodeRecord(
-            session_id=session_id, call_index=len(others) + 1, call_date=call_date, channel=channel or "hotline",
+            session_id=f"{session_id}#{closed + 1}" if trigger in ("end", "timeout") else session_id, call_index=len(others) + 1, call_date=call_date, channel=channel or "hotline",
             customer_goal=result.hard_slots.get("customer_goal") or goal_hint,
             product_advised=facts.get("product_advised"), price_quoted_vnd=facts.get("price_quoted_vnd"),
             promo_code=facts.get("promo_code"), promo_expiry=facts.get("promo_expiry"), blocker=facts.get("blocker"),

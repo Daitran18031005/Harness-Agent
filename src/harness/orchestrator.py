@@ -348,7 +348,7 @@ class HarnessOrchestrator:
             c.get("name") in ("order.create", "pricing.get_quote", "inventory.check") and self._VARIANT_RE.match(str((c.get("args") or {}).get("sku") or ""))
             for c in self._call_log.get(working_session_id, [])) or self._simple_product_in_play(working_session_id, brief) is not None
         # Khách MỚI (chưa có lịch sử) trong 2 lượt đầu: đọc xem khách có nói đã từng liên hệ không (lượt đó agent phải xin SĐT/tài khoản cũ).
-        new_customer_early = brief.previous_calls_count == 0 and not brief.crm_known and not self._prior_asked.get(working_session_id) and len(self._customer_texts.get(working_session_id, [])) < 2
+        new_customer_early = brief.previous_calls_count == 0 and not brief.crm_known and not brief.product_advised and not self._prior_asked.get(working_session_id) and len(self._customer_texts.get(working_session_id, [])) < 2
         buying = buying or new_customer_early
         reading = read_reply(self.llm_client, turn.llm_text, last_agent,
                              {"to_confirm": (gst.last_decision or {}).get("to_confirm"), "missing": (gst.last_decision or {}).get("missing"),
@@ -1623,8 +1623,8 @@ class HarnessOrchestrator:
     def _ensure_prior_contact_question(self, sid: str, text: str, reading: Any, brief: CallBrief) -> str:
         """C: khách (bộ đọc LLM, có trích dẫn) nói đã từng liên hệ mà hệ thống chưa có lịch sử → lời agent PHẢI có câu xin SĐT/tài khoản đã dùng lần trước (đúng một lần/cuộc);
         LLM đã tự hỏi thì giữ nguyên, chưa hỏi thì code nối câu."""
-        if self._prior_asked.get(sid) or reading is None or not reading.prior_contact or brief.previous_calls_count != 0 or brief.crm_known:
-            return text
+        if self._prior_asked.get(sid) or reading is None or not reading.prior_contact or brief.previous_calls_count != 0 or brief.crm_known or brief.product_advised:
+            return text                                    # đã có hồ sơ của chính liên hệ này (sản phẩm đã tư vấn) → trả lời từ bộ nhớ, không xin tài khoản
         self._prior_asked[sid] = True
         if any(q.get("slot") == "phone" for q in extract_questions(text)):
             return text
@@ -1802,7 +1802,10 @@ class HarnessOrchestrator:
             named = list(dict.fromkeys(
                 it["sku"] for tc in tool_calls if tc.get("name") == "product.shortlist" for it in ((tc.get("result") or {}).get("items") or [])
                 if it.get("sku") and str(it.get("name") or "").strip() and str(it["name"]).lower() in low))
-            if len(named) == 1:
+            known = self.memory.get_profile_facts(customer_id)
+            # Nhánh này không có giá: nếu đang nhớ GIÁ của một sản phẩm khác thì giữ nguyên cặp (sản phẩm, giá) cũ — trước đây ghi đè sản phẩm làm hồ sơ thành
+            # "RO Kangaroo 10 lõi giá 3.290.000đ" (giá của UF Sunhouse).
+            if len(named) == 1 and not (known.get("price_quoted_vnd") and known.get("product_advised") not in (None, named[0])):
                 self.memory.set_profile_fact(customer_id, "product_advised", named[0])
 
     @staticmethod

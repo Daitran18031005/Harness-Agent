@@ -50,6 +50,21 @@ class ClosingTurnTest(unittest.TestCase):
         self.assertEqual(f("2025-12-20T09:00"), "2026-12-20T09:00")
         self.assertEqual(f("2026-10-27T09:00:00"), "2026-10-27T09:00:00")     # tương lai: giữ nguyên
 
+    def test_second_call_on_the_same_day_sees_the_first_one(self):
+        """Hai cuộc cùng khách CÙNG NGÀY: cuộc đầu đã kết thúc phải được tính là cuộc trước (không bị coi là cuộc hiện tại, không bị cuộc sau ghi đè)."""
+        self._setup(order_gate=True)
+        self._run([("pricing.get_quote", {"sku": AP_Y, "qty": 1})])
+        t = self.c["normalizer"].normalize("alo", self._channel(), "0911265844")
+        ident = self.c["resolver"].resolve(t, memory=self.c["memory"])
+        self.orch.finalize_call(ident.customer_id, ON, "call_1", "hotline")
+        b = self.c["brief"].build(ident, ON)
+        self.assertEqual((b.previous_calls_count, b.product_advised), (1, AP_Y))
+        self._run([("pricing.get_quote", {"sku": AP_Y, "qty": 1})])                # cuộc thứ hai, cùng ngày
+        self.orch.finalize_call(ident.customer_id, ON, "call_2", "hotline", trigger="handoff", clear=False)
+        self.orch.finalize_call(ident.customer_id, ON, "call_2", "hotline")
+        ids = [e.session_id for e in self.c["memory"].get_episodes(ident.customer_id)]
+        self.assertEqual([i.split("#")[1] for i in ids], ["1", "2"])                 # hai cuộc, mỗi cuộc đếm một lần (episode giữa cuộc bị ẩn)
+
     def test_no_draft_means_no_closing_turn(self):
         self._setup(order_gate=True)
         self._run([("pricing.get_quote", {"sku": AP_Y, "qty": 1})])

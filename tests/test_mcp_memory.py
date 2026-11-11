@@ -406,7 +406,7 @@ class SingleWriterTest(unittest.TestCase):
         self.assertFalse(os.path.exists(wal) and os.path.getsize(wal) > 0)            # chỉ copy file .db vẫn đủ dữ liệu
         again = self.remote()
         self.assertEqual(again.get_profile_facts("C1"), {"product_advised": "SKU-AP-Y"})
-        self.assertEqual([e.session_id for e in again.get_episodes("C1")], ["SESS-C1-2026-10-15"])
+        self.assertEqual([e.session_id for e in again.get_episodes("C1")], ["SESS-C1-2026-10-15#1"])      # mở lại DB: episode kiểu cũ của cuộc đã xong được gắn "#1"
 
     def test_delete_customer_removes_every_table_and_runs_listeners(self):
         m = self.remote()
