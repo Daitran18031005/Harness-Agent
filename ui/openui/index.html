@@ -116,6 +116,13 @@ if (matchMedia("(prefers-color-scheme: dark)").matches) document.documentElement
 :root { --primary: 213 61% 43%; --primary-foreground: 0 0% 100%; --ring: 213 61% 43%; }
 .dark { --primary: 209 59% 59%; --primary-foreground: 220 33% 7%; --ring: 209 59% 59%; }
 [hidden] { display: none !important; }
+/* trình bày lời agent (thẻ sản phẩm, dòng nhãn: giá trị) — đi cùng hàm pretty() của JavaScript */
+.msg p { margin: 0 0 8px; } .msg p:last-of-type { margin-bottom: 0; } .msg b { font-weight: 600; }
+.msg .ask { font-weight: 600; margin-top: 8px; }
+.msg .item { background: hsl(var(--card)); border: 1px solid hsl(var(--border)); border-radius: 8px; padding: 8px 10px; margin: 6px 0; white-space: normal; }
+.msg .item-title { font-weight: 600; margin-bottom: 4px; }
+.msg .row { display: grid; grid-template-columns: 120px 1fr; gap: 8px; font-size: 14px; padding: 1px 0; }
+.msg .row .k { color: hsl(var(--muted-foreground)); } .msg .row > .v:only-child { grid-column: 1 / -1; }
 </style>
 <style type="text/tailwindcss">
   .pill {
@@ -316,8 +323,34 @@ async function api(path, opt) {
 }
 const post = (path, data) => api(path, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(data || {}) });
 
+// Lời agent là MỘT chuỗi liền (máy chủ bỏ markdown để đọc/nhắn được; danh sách nối bằng "; "). Chỉ để HIỂN THỊ, tách lại thành đoạn, thẻ sản phẩm (tên + các dòng "nhãn: giá trị")
+// và câu hỏi cuối; số tiền in đậm. Vẫn dựng bằng node văn bản, không chèn HTML.
+const MONEY = /(\d{1,3}(?:\.\d{3})+\s?(?:đ|VNĐ|VND)|\d{1,3}(?:\.\d{3})+đ)/;
+const rich = s => String(s).split(MONEY).map((x, i) => i % 2 ? el("b", {}, x) : x);
+function pretty(text) {
+  const out = [], plain = [];
+  const flush = () => { if (plain.length) out.push(el("p", {}, rich(plain.splice(0).join(" ")))); };
+  for (const s of String(text).split(/(?<=[.!?])\s+(?=[A-ZÀ-ỸĐ"“(])/)) {
+    const segs = s.split("; ");
+    if (segs.length < 3) { if (/\?\s*$/.test(s)) { flush(); out.push(el("p", { class: "ask" }, rich(s))); } else plain.push(s); continue; }
+    flush();
+    let head = segs.shift();
+    const cut = head.indexOf(": ");
+    if (cut > 24) { out.push(el("p", {}, rich(head.slice(0, cut + 1)))); head = head.slice(cut + 2); }      // "… như sau: <tên sản phẩm>"
+    const card = el("div", { class: "item" });
+    const row = seg => { const c = seg.indexOf(": ");
+      return c > 0 && c <= 24 ? el("div", { class: "row" }, el("span", { class: "k" }, seg.slice(0, c)), el("span", { class: "v" }, rich(seg.slice(c + 2).replace(/\.$/, ""))))
+                              : el("div", { class: "row" }, el("span", { class: "v" }, rich(seg.replace(/\.$/, "")))); };
+    if (head.indexOf(": ") > 0) card.append(row(head)); else card.append(el("div", { class: "item-title" }, head));
+    segs.forEach(seg => card.append(row(seg)));
+    out.push(card);
+  }
+  flush();
+  return out;
+}
+
 function say(kind, text, meta) {
-  const m = el("div", { class: "msg " + kind }, text);
+  const m = el("div", { class: "msg " + kind }, kind === "bot" ? pretty(text) : text);
   if (meta) m.append(el("div", { class: "meta" }, meta));
   $("msgs").append(m); $("msgs").scrollTop = $("msgs").scrollHeight; return m;
 }

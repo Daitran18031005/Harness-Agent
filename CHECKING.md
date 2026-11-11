@@ -2501,3 +2501,7 @@ Lý do trượt (full, theo cuộc gọi): 24 thiếu `must_say_any` · 21 khôn
 - **Thử trên trình duyệt** (máy chủ demo cổng 8011, 1280×800): hai cột, không cuộn trang; mẫu "Hoa quay lại" → Call Brief đúng (câu mở đầu tiếp nối, 1 cuộc trước, AirPure Y 5.200.000đ, rào cản hỏi chồng); 1 lượt chat thật trả lời đúng giá (35,7 VND). Chưa thử điện thoại, chưa thử tab đơn hàng/ASR trên bản mới.
 - **Sửa kèm:** `scripts/run_demo.py` dừng ngay khi console Windows là cp1252 (in tiếng Việt) → đặt stdout/stderr UTF-8.
 - Test `test_openui_page_loads_with_every_element_the_script_uses`; cả bộ **989 xanh** (`runs/_unittest_openui.txt`).
+
+### 13.8 Giao diện: lời agent dễ đọc hơn (2026-11-11)
+
+Phản hồi của chủ dự án: câu trả lời liệt kê 3 sản phẩm hiện thành một khối chữ liền. Nguyên nhân: máy chủ bỏ markdown và nối danh sách bằng "; " (`strip_markdown`, để đọc/nhắn và trích claim) nên chuỗi tới giao diện không còn xuống dòng. Sửa **chỉ ở phần hiển thị** (`pretty()` trong `ui/index.html`, dùng chung cho `ui/openui/` qua `build.py`): tách câu; câu có ≥ 3 đoạn "; " thành thẻ sản phẩm (tên + các dòng "nhãn: giá trị"); số tiền in đậm; câu hỏi cuối tách riêng, in đậm. Vẫn dựng bằng node văn bản (không `innerHTML`). Chuỗi `agent_text` trong trace và các chỉ số không đổi. Đã thử trên trang thật với đúng câu trong ảnh chụp: 3 thẻ, 9 dòng, 3 số tiền đậm. `tests.test_api` xanh.
