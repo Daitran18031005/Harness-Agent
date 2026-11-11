@@ -18,7 +18,8 @@ sys.path.insert(0, CODE_DIR)
 
 from monitoring.metrics import Registry, observe_turn  # noqa: E402
 
-DEFAULT_GLOBS = ("runs/gd2_run*/**/full*.jsonl", "runs/gd2_run*/**/baseline*.jsonl")
+DEFAULT_GLOBS = ("runs/gd2_run*/**/full*.jsonl", "runs/gd2_run*/**/baseline*.jsonl",
+                 "runs/m1_final2/full.jsonl", "runs/m1_final2/baseline.jsonl")      # lần đo nộp (277 kịch bản)
 _cache: Dict[str, Tuple[float, List[dict]]] = {}
 
 

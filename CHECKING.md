@@ -2505,3 +2505,7 @@ Lý do trượt (full, theo cuộc gọi): 24 thiếu `must_say_any` · 21 khôn
 ### 13.8 Giao diện: lời agent dễ đọc hơn (2026-11-11)
 
 Phản hồi của chủ dự án: câu trả lời liệt kê 3 sản phẩm hiện thành một khối chữ liền. Nguyên nhân: máy chủ bỏ markdown và nối danh sách bằng "; " (`strip_markdown`, để đọc/nhắn và trích claim) nên chuỗi tới giao diện không còn xuống dòng. Sửa **chỉ ở phần hiển thị** (`pretty()` trong `ui/index.html`, dùng chung cho `ui/openui/` qua `build.py`): tách câu; câu có ≥ 3 đoạn "; " thành thẻ sản phẩm (tên + các dòng "nhãn: giá trị"); số tiền in đậm; câu hỏi cuối tách riêng, in đậm. Vẫn dựng bằng node văn bản (không `innerHTML`). Chuỗi `agent_text` trong trace và các chỉ số không đổi. Đã thử trên trang thật với đúng câu trong ảnh chụp: 3 thẻ, 9 dòng, 3 số tiền đậm. `tests.test_api` xanh.
+
+### 13.9 Grafana "No data" (2026-11-11)
+
+Hai nguyên nhân, không phải lỗi dashboard: (1) máy chủ API vừa khởi động lại, chưa xử lý lượt nào → `/metrics` chỉ có `harness_llm_spent_vnd 0` (số đo nằm trong RAM của tiến trình); (2) `python -m monitoring.trace_exporter` (cổng 9108) không chạy → target `harness-traces` DOWN. Sửa kèm: mẫu mặc định của exporter thêm `runs/m1_final2/{full,baseline}.jsonl` (trước chỉ đọc `runs/gd2_run*`). Kiểm: chạy exporter `--host 0.0.0.0` → cả hai target UP, Prometheus có 1.084 lượt `full` và 1.091 lượt `baseline_no_memory` của `runs/m1_final2`.
