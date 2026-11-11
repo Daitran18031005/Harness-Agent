@@ -13,6 +13,8 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 CODE = os.path.abspath(os.path.join(HERE, ".."))
 sys.path.insert(0, CODE)
 os.chdir(CODE)
+for _s in (sys.stdout, sys.stderr):      # console Windows mặc định cp1252: in tiếng Việt làm script dừng trước khi máy chủ lên
+    _s.reconfigure(encoding="utf-8", errors="replace")
 
 
 def main(argv=None) -> int:

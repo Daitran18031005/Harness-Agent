@@ -1,0 +1,511 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Harness Agent — Call Center Telesale</title>
+<!-- Giao diện sinh bằng W&B OpenUI (github.com/wandb/openui, model gpt-4o) từ đề bài ui/OPENUI_PROMPT.md, rồi ghép với JavaScript gọi API của ui/index.html.
+     Cần mạng để tải Tailwind từ CDN; không có mạng thì dùng bản dựng tay ở /ui/. -->
+<script src="https://cdn.tailwindcss.com?plugins=forms"></script>
+<script>
+window.tailwind.config = {
+				darkMode: ['class'],
+				theme: {
+					extend: {
+						colors: {
+							border: 'hsl(var(--border))',
+							input: 'hsl(var(--input))',
+							ring: 'hsl(var(--ring))',
+							background: 'hsl(var(--background))',
+							foreground: 'hsl(var(--foreground))',
+							primary: {
+								DEFAULT: 'hsl(var(--primary))',
+								foreground: 'hsl(var(--primary-foreground))'
+							},
+							secondary: {
+								DEFAULT: 'hsl(var(--secondary))',
+								foreground: 'hsl(var(--secondary-foreground))'
+							},
+							destructive: {
+								DEFAULT: 'hsl(var(--destructive))',
+								foreground: 'hsl(var(--destructive-foreground))'
+							},
+							muted: {
+								DEFAULT: 'hsl(var(--muted))',
+								foreground: 'hsl(var(--muted-foreground))'
+							},
+							accent: {
+								DEFAULT: 'hsl(var(--accent))',
+								foreground: 'hsl(var(--accent-foreground))'
+							},
+							popover: {
+								DEFAULT: 'hsl(var(--popover))',
+								foreground: 'hsl(var(--popover-foreground))'
+							},
+							card: {
+								DEFAULT: 'hsl(var(--card))',
+								foreground: 'hsl(var(--card-foreground))'
+							}
+						},
+						keyframes: {
+							blurOut: {
+								'0%': { filter: 'blur(0px)', opacity: '1' },
+								'100%': { filter: 'blur(10px)', opacity: '0' }
+							},
+							blurIn: {
+								'0%': { filter: 'blur(10px)', opacity: '0' },
+								'100%': { filter: 'blur(0px)', opacity: '1' }
+							}
+						},
+						animation: {
+							blurOut: 'blurOut 0.5s ease-out',
+							blurIn: 'blurIn 0.5s ease-out'
+						}
+					}
+				}
+			}
+if (matchMedia("(prefers-color-scheme: dark)").matches) document.documentElement.classList.add("dark");
+</script>
+<style>
+:root {
+					--background: 0 0% 100%;
+					--foreground: 240 10% 3.9%;
+					--card: 0 0% 100%;
+					--card-foreground: 240 10% 3.9%;
+					--popover: 0 0% 100%;
+					--popover-foreground: 240 10% 3.9%;
+					--primary: 240 5.9% 10%;
+					--primary: 186 80% 41%;
+					--primary-foreground: 0 0% 98%;
+					--secondary: 240 4.8% 95.9%;
+					--secondary-foreground: 240 5.9% 10%;
+					--muted: 240 4.8% 95.9%;
+					--muted-foreground: 240 3.8% 46.1%;
+					--accent: 240 4.8% 95.9%;
+					--accent-foreground: 240 5.9% 10%;
+					--destructive: 0 84.2% 60.2%;
+					--destructive-foreground: 0 0% 98%;
+					--border: 240 5.9% 90%;
+					--input: 240 5.9% 90%;
+					--ring: 240 10% 3.9%;
+					--radius: 0.5rem;
+				}
+
+				.dark {
+					--background: 240 10% 3.9%;
+					--foreground: 0 0% 98%;
+					--card: 240 10% 3.9%;
+					--card-foreground: 0 0% 98%;
+					--popover: 240 10% 3.9%;
+					--popover-foreground: 0 0% 98%;
+					--primary: 0 0% 98%;
+					--primary-foreground: 240 5.9% 10%;
+					--secondary: 240 3.7% 15.9%;
+					--secondary-foreground: 0 0% 98%;
+					--muted: 240 3.7% 15.9%;
+					--muted-foreground: 240 5% 64.9%;
+					--accent: 240 3.7% 15.9%;
+					--accent-foreground: 0 0% 98%;
+					--destructive: 0 62.8% 30.6%;
+					--destructive-foreground: 0 0% 98%;
+					--border: 240 3.7% 15.9%;
+					--input: 240 3.7% 15.9%;
+					--ring: 240 4.9% 83.9%;
+				}
+/* màu nhấn xanh dương theo đề bài (mặc định của OpenUI là xám đen) */
+:root { --primary: 213 61% 43%; --primary-foreground: 0 0% 100%; --ring: 213 61% 43%; }
+.dark { --primary: 209 59% 59%; --primary-foreground: 220 33% 7%; --ring: 209 59% 59%; }
+[hidden] { display: none !important; }
+</style>
+<style type="text/tailwindcss">
+  .pill {
+    @apply border text-muted-foreground rounded-full px-2 py-0.5 text-xs;
+  }
+  .pill.ok {
+    @apply text-green-600 border-green-600;
+  }
+  .pill.err {
+    @apply text-destructive border-destructive;
+  }
+  .msg {
+    @apply max-w-[86%] rounded-lg whitespace-pre-wrap break-words px-3 py-2;
+  }
+  .msg.me {
+    @apply self-end bg-primary/20;
+  }
+  .msg.bot {
+    @apply self-start bg-muted;
+  }
+  .msg.sys {
+    @apply self-center text-sm text-muted-foreground;
+  }
+  .meta {
+    @apply text-xs text-muted-foreground;
+  }
+  .tabs {
+    @apply flex border-b overflow-x-auto;
+  }
+  .tabs button {
+    @apply text-muted-foreground border-b-2 border-transparent whitespace-nowrap;
+  }
+  .tabs button.on {
+    @apply text-primary border-primary font-semibold;
+  }
+  .pane {
+    @apply hidden flex-1 overflow-y-auto p-4;
+  }
+  .pane.on {
+    @apply block;
+  }
+  .empty {
+    @apply text-muted-foreground;
+  }
+  .open {
+    @apply bg-primary/20 rounded-lg p-4 mb-4;
+  }
+  .warn {
+    @apply bg-yellow-100 text-orange-800 dark:bg-orange-900 dark:text-yellow-400 rounded-lg p-4 mb-4;
+  }
+  .chips {
+    @apply flex flex-wrap gap-2;
+  }
+  .chip {
+    @apply rounded-full bg-muted px-2 py-0.5 text-xs;
+  }
+  .ep {
+    @apply border rounded-lg p-4 mb-4;
+  }
+  .old {
+    @apply text-muted-foreground line-through;
+  }
+  dl {
+    @apply grid grid-cols-[150px_1fr] gap-x-3 gap-y-1;
+  }
+  dt {
+    @apply text-sm text-muted-foreground;
+  }
+  dd {
+    @apply m-0 break-words;
+  }
+  table {
+    @apply w-full text-sm;
+  }
+  th, td {
+    @apply border-b px-2 py-1 text-left align-top;
+  }
+  th {
+    @apply text-muted-foreground font-medium;
+  }
+  h4 {
+    @apply mt-4 mb-1 font-semibold text-sm;
+  }
+  code {
+    @apply text-xs break-all;
+  }
+</style>
+</head>
+<body>
+<div class="h-screen flex flex-col bg-background text-foreground">
+  <!-- Header -->
+  <header class="flex items-center justify-between p-4 bg-primary text-primary-foreground">
+    <h1 class="text-xl font-bold">Harness Agent — Call Center Telesale</h1>
+    <div class="flex space-x-2">
+      <span id="health" class="pill bg-background">đang kiểm tra…</span>
+      <span id="sess" class="pill bg-background">chưa có cuộc gọi</span>
+      <span id="cost" class="pill bg-background" hidden></span>
+    </div>
+  </header>
+
+  <main class="flex-1 min-h-0 grid lg:grid-cols-2">
+  <!-- Left Column: Conversation Card -->
+  <div class="flex flex-col min-h-0 border-r border-border p-4 space-y-4">
+    <!-- Preset Buttons -->
+    <div class="flex flex-wrap gap-2 text-sm">
+      <button data-preset="new" class="bg-primary text-primary-foreground px-3 py-1 rounded hover:bg-primary/80">Khách mới (cuộc 1)</button>
+      <button data-preset="back" class="bg-primary text-primary-foreground px-3 py-1 rounded hover:bg-primary/80">Hoa quay lại — cuộc 2 (17/10)</button>
+      <button data-preset="fb" class="bg-primary text-primary-foreground px-3 py-1 rounded hover:bg-primary/80">Khách Fanpage → hotline</button>
+    </div>
+
+    <!-- Call Controls -->
+    <div class="flex flex-wrap items-center gap-2">
+      <label for="contact" class="text-muted-foreground">SĐT / ID liên hệ</label>
+      <input id="contact" type="text" placeholder="để trống = khách ẩn danh" class="border border-border rounded px-2 py-1 flex-grow" />
+      <label for="channel" class="text-muted-foreground">Kênh</label>
+      <select id="channel" class="border border-border rounded px-2 py-1">
+        <option>hotline</option>
+        <option>zalo</option>
+        <option>fanpage</option>
+        <option>web_chat</option>
+      </select>
+      <label for="date" class="text-muted-foreground">Ngày</label>
+      <input id="date" type="date" class="border border-border rounded px-2 py-1" />
+      <button id="start" class="bg-primary text-primary-foreground px-3 py-1 rounded hover:bg-primary/80">Bắt đầu cuộc gọi</button>
+      <button id="end" disabled class="border border-border text-muted-foreground px-3 py-1 rounded disabled:opacity-50 disabled:cursor-not-allowed">Kết thúc cuộc gọi</button>
+    </div>
+
+    <!-- Messages Area -->
+    <div id="msgs" class="msgs flex-1 overflow-y-auto border border-border rounded p-2 flex flex-col gap-2">
+      <div class="msg sys text-muted-foreground">Chọn mẫu hoặc nhập SĐT rồi bấm “Bắt đầu cuộc gọi”. Call Brief của khách hiện bên phải ngay khi mở cuộc gọi.</div>
+    </div>
+
+    <!-- Message Composer -->
+    <div class="flex items-center space-x-2">
+      <input id="audio" type="file" accept=".wav,.mp3" hidden />
+      <button id="mic" disabled title="Tải file ghi âm (.wav/.mp3)" class="text-muted-foreground disabled:opacity-50 disabled:cursor-not-allowed">🎙</button>
+      <textarea id="text" disabled placeholder="Lời khách… (Enter để gửi, Shift+Enter xuống dòng)" class="flex-grow border border-border rounded px-2 py-1 disabled:opacity-50 disabled:cursor-not-allowed"></textarea>
+      <button id="send" disabled class="bg-primary text-primary-foreground px-3 py-1 rounded hover:bg-primary/80 disabled:opacity-50 disabled:cursor-not-allowed">Gửi</button>
+    </div>
+  </div>
+
+  <!-- Right Column: Tabs and Content -->
+  <div class="flex flex-col min-h-0 p-4 space-y-4">
+    <!-- Tabs -->
+    <div id="tabs" class="tabs">
+      <button class="on px-3 py-2" data-tab="brief">Call Brief</button>
+      <button class="px-3 py-2" data-tab="timeline">Dòng thời gian bộ nhớ</button>
+      <button class="px-3 py-2" data-tab="tools">Nhật ký tool</button>
+      <button class="px-3 py-2" data-tab="orders">Đơn hàng</button>
+      <button class="px-3 py-2" data-tab="trace">Lượt vừa rồi</button>
+    </div>
+
+    <!-- Tab Content -->
+    <div class="flex-1 min-h-0 flex flex-col">
+      <div class="pane on" id="p-brief">
+        <div class="empty text-muted-foreground">Chưa có cuộc gọi.</div>
+      </div>
+      <div class="pane" id="p-timeline">
+        <div class="empty text-muted-foreground">Chưa có cuộc gọi.</div>
+      </div>
+      <div class="pane" id="p-tools">
+        <div class="empty text-muted-foreground">Chưa có cuộc gọi.</div>
+      </div>
+      <div class="pane" id="p-orders">
+        <div class="empty text-muted-foreground">Chưa có cuộc gọi.</div>
+      </div>
+      <div class="pane" id="p-trace">
+        <div class="empty text-muted-foreground">Chưa có cuộc gọi.</div>
+      </div>
+    </div>
+  </div>
+  </main>
+</div>
+<script>
+"use strict";
+const $ = id => document.getElementById(id);
+let sid = null, busy = false;
+
+// Dựng DOM bằng node văn bản (không chèn HTML thô từ máy chủ) để dữ liệu không thành mã.
+function el(tag, props = {}, ...kids) {
+  const n = document.createElement(tag);
+  for (const [k, v] of Object.entries(props)) { if (k === "class") n.className = v; else n[k] = v; }
+  for (const k of kids.flat()) if (k != null) n.append(k.nodeType ? k : document.createTextNode(String(k)));
+  return n;
+}
+const money = v => (typeof v === "number") ? v.toLocaleString("vi-VN") + " đ" : v;
+const show = v => v == null || v === "" ? "—" : (Array.isArray(v) ? v.join(", ") : (typeof v === "object" ? JSON.stringify(v) : v));
+const chips = a => el("div", { class: "chips" }, (a || []).map(x => el("span", { class: "chip" }, x)));
+
+async function api(path, opt) {
+  const r = await fetch(path, opt);
+  let body = null; try { body = await r.json(); } catch (e) {}
+  if (!r.ok) {
+    const d = body && (body.detail || body.message);
+    throw new Error(d ? (typeof d === "string" ? d : JSON.stringify(d)) : "HTTP " + r.status);
+  }
+  return body;
+}
+const post = (path, data) => api(path, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(data || {}) });
+
+function say(kind, text, meta) {
+  const m = el("div", { class: "msg " + kind }, text);
+  if (meta) m.append(el("div", { class: "meta" }, meta));
+  $("msgs").append(m); $("msgs").scrollTop = $("msgs").scrollHeight; return m;
+}
+function setBusy(b) {
+  busy = b;
+  const live = !!sid && !b;
+  $("send").disabled = $("text").disabled = $("mic").disabled = !live;
+  $("start").disabled = b; $("end").disabled = !sid || b;
+}
+
+function renderBrief(b) {
+  const p = $("p-brief"); p.replaceChildren();
+  if (!b) { p.append(el("div", { class: "empty" }, "Chưa có cuộc gọi.")); return; }
+  (b.stale_warnings || []).forEach(w => p.append(el("div", { class: "warn" }, "⚠ " + w)));
+  if (b.suggested_opening) p.append(el("div", { class: "open" }, el("b", {}, "Câu mở đầu gợi ý: "), b.suggested_opening));
+  const rows = [
+    ["Khách", [b.honorific, b.customer_name].filter(Boolean).join(" ") || "chưa biết tên"],
+    ["Số cuộc gọi trước", b.previous_calls_count], ["Cuộc gần nhất", b.last_call_date],
+    ["Sản phẩm đã tư vấn", b.product_advised], ["Giá đã báo", money(b.price_quoted_vnd)],
+    ["Khuyến mãi", [b.promo_code, b.promo_expiry && "hết hạn " + b.promo_expiry].filter(Boolean).join(" · ")],
+    ["Rào cản (blocker)", b.blocker], ["Kênh đã liên hệ", chips(b.channels_seen)],
+    ["Không được hỏi lại", chips(b.must_not_ask)], ["Phải mang sang", chips(b.must_carry_over)],
+  ];
+  const dl = el("dl");
+  rows.forEach(([k, v]) => dl.append(el("dt", {}, k), el("dd", {}, (v && v.nodeType) ? v : show(v))));
+  p.append(dl);
+  const pf = Object.entries(b.profile_facts || {});
+  if (pf.length) {
+    p.append(el("h4", {}, "Hồ sơ đang còn hiệu lực"));
+    p.append(el("table", {}, pf.map(([k, v]) => el("tr", {}, el("th", {}, k), el("td", {}, show(v))))));
+  }
+  const pre = b.precomputed;
+  if (pre) {
+    const pr = pre.price || {}, st = pre.stock || {};
+    p.append(el("h4", {}, `Số liệu code đã tra sẵn (${pre.checked_on})`));
+    const d2 = el("dl");
+    [["Sản phẩm", pre.name || pre.sku], ["Tồn kho", st.in_stock == null ? null : (st.in_stock ? "còn hàng" + (st.qty != null ? " (" + st.qty + ")" : "") : "hết hàng")],
+     ["Giá niêm yết", money(pr.list_price_vnd)], ["Giá cuối", money(pr.final_price_vnd)], ["Ưu đãi đang áp", chips(pr.promos)],
+     ["Miễn phí vận chuyển", pr.freeship == null ? null : (pr.freeship ? "có" : "không")], ["Bảo hành", pre.warranty_months && pre.warranty_months + " tháng"],
+     ["Thời gian tra", pre.latency_ms != null ? pre.latency_ms + " ms" : null]]
+      .forEach(([k, v]) => d2.append(el("dt", {}, k), el("dd", {}, (v && v.nodeType) ? v : show(v))));
+    p.append(d2);
+  }
+}
+
+function renderTimeline(t) {
+  const p = $("p-timeline"); p.replaceChildren();
+  if (!t) { p.append(el("div", { class: "empty" }, "Chưa có cuộc gọi.")); return; }
+  p.append(el("h4", {}, "Các cuộc gọi trước (episode)"));
+  if (!t.episodes.length) p.append(el("div", { class: "empty" }, "Khách chưa có cuộc gọi nào được lưu."));
+  t.episodes.forEach(e => p.append(el("div", { class: "ep" },
+    el("b", {}, `${e.call_date} · ${e.channel} · ${e.outcome}`),
+    el("div", {}, e.summary || e.customer_goal || ""),
+    el("div", { class: "meta" }, ["SP: " + show(e.product_advised), "giá: " + show(money(e.price_quoted_vnd)), "blocker: " + show(e.blocker)].join("  ·  ")))));
+  p.append(el("h4", {}, "Phiên bản sự thật hồ sơ (cũ → mới)"));
+  const keys = Object.keys(t.versions || {});
+  if (!keys.length) p.append(el("div", { class: "empty" }, "Chưa có sự thật nào được ghi."));
+  keys.forEach(k => {
+    const tb = el("table", {}, el("tr", {}, ["giá trị", "ngày", "cuộc/lượt", "nguồn", "trạng thái"].map(h => el("th", {}, h))));
+    t.versions[k].forEach(f => tb.append(el("tr", {},
+      el("td", { class: f.superseded ? "old" : "" }, show(f.value)), el("td", {}, show(f.observed_on)),
+      el("td", {}, `${show(f.source_call)}#${show(f.source_turn)}`), el("td", {}, show(f.source_channel)),
+      el("td", {}, f.superseded ? "đã bị thay" : "đang dùng"))));
+    p.append(el("h4", {}, k), tb);
+  });
+}
+
+function renderTools(entries) {
+  const p = $("p-tools"); p.replaceChildren();
+  if (!entries || !entries.length) { p.append(el("div", { class: "empty" }, "Chưa có tool nào chạy.")); return; }
+  const tb = el("table", {}, el("tr", {}, ["tool", "caller", "ms", "tham số → kết quả"].map(h => el("th", {}, h))));
+  entries.forEach(e => tb.append(el("tr", {}, el("td", {}, e.tool), el("td", {}, e.caller), el("td", {}, e.duration_ms),
+    el("td", {}, el("code", {}, JSON.stringify(e.args) + " → " + JSON.stringify(e.result))))));
+  p.append(tb);
+}
+function renderOrders(o) {
+  const p = $("p-orders"); p.replaceChildren();
+  if (!o || !o.orders.length) { p.append(el("div", { class: "empty" }, "Chưa có đơn hàng / lịch gọi lại trong phiên này.")); return; }
+  o.orders.forEach(e => p.append(el("div", { class: "ep" }, el("b", {}, e.tool),
+    el("div", {}, el("code", {}, JSON.stringify(e.args))), el("div", {}, el("code", {}, JSON.stringify(e.result))))));
+}
+function renderTrace(r) {
+  const p = $("p-trace"); p.replaceChildren();
+  if (!r) { p.append(el("div", { class: "empty" }, "Chưa có lượt nào.")); return; }
+  const t = r.trace, lat = t.latency || {};
+  const dl = el("dl");
+  [["Lượt", `${r.call_name} · lượt ${r.turn_num}`], ["TTFT", lat.ttft_ms != null ? lat.ttft_ms + " ms" : "—"],
+   ["Tổng thời gian", lat.total_ms != null ? lat.total_ms + " ms" : "—"], ["Số vòng gọi LLM", t.llm_cost && t.llm_cost.llm_calls],
+   ["Tool đã chạy", (t.tool_calls || []).map(c => c.tool + (c.error ? " (lỗi)" : "")).join(", ")],
+   ["Câu hỏi / claim", `${t.questions} / ${t.claims}`], ["Thông tin cũ đã dùng", chips(t.facts_used)],
+   ["Đã ghi bộ nhớ", chips((t.memory_writes || []).map(w => w.key))],
+   ["Chi phí LLM", t.llm_cost && t.llm_cost.vnd_cost != null ? t.llm_cost.vnd_cost + " VND" : "—"]]
+   .forEach(([k, v]) => dl.append(el("dt", {}, k), el("dd", {}, (v && v.nodeType) ? v : show(v))));
+  p.append(dl);
+}
+
+async function health() {
+  try {
+    const h = await api("/health");
+    const n = $("health"); n.textContent = h.llm ? "LLM: bật" : "LLM: tắt (nhánh rule-based)"; n.className = "pill " + (h.llm ? "ok" : "err");
+    const c = $("cost");
+    if (h.llm && h.spent_vnd != null) { c.hidden = false; c.textContent = "Chi phí LLM: " + h.spent_vnd + (h.cap_vnd ? " / " + h.cap_vnd : "") + " VND"; }
+  } catch (e) { $("health").textContent = "mất kết nối máy chủ"; $("health").className = "pill err"; }
+}
+
+async function refresh() {
+  health();
+  if (!sid) return;
+  const q = "?session_id=" + encodeURIComponent(sid);
+  const [b, t, l, o] = await Promise.allSettled([api("/call-brief" + q), api("/memory/timeline" + q), api("/tools/log" + q), api("/orders" + q)]);
+  if (b.status === "fulfilled") renderBrief(b.value.call_brief);
+  if (t.status === "fulfilled") renderTimeline(t.value);
+  if (l.status === "fulfilled") renderTools(l.value.entries);
+  if (o.status === "fulfilled") renderOrders(o.value);
+}
+
+async function start() {
+  setBusy(true);
+  try {
+    const s = await post("/sessions", { contact_id: $("contact").value.trim() || null, channel: $("channel").value, call_date: $("date").value || null });
+    sid = s.session_id;
+    $("sess").textContent = `${s.call_name} · ${s.call_date} · ${s.channel}`;
+    $("msgs").replaceChildren();
+    say("sys", `Đã mở ${s.call_name} (${s.call_date}, ${s.channel}). Cuộc cũ của liên hệ này (nếu còn mở) đã được chốt vào bộ nhớ.`);
+    renderTrace(null);
+    await refresh();
+  } catch (e) { say("sys", "Không mở được cuộc gọi: " + e.message); }
+  setBusy(false); $("text").focus();
+}
+
+async function send() {
+  const text = $("text").value.trim();
+  if (!text || !sid || busy) return;
+  $("text").value = ""; say("me", text); setBusy(true);
+  const wait = say("sys", "Agent đang trả lời…");
+  try {
+    const r = await post("/chat", { session_id: sid, message: text });
+    wait.remove();
+    const lat = r.trace.latency || {};
+    say("bot", r.answer, `${r.call_name} · lượt ${r.turn_num}` + (lat.ttft_ms != null ? ` · TTFT ${lat.ttft_ms} ms` : ""));
+    $("sess").textContent = `${r.call_name} · lượt ${r.turn_num}`;
+    renderTrace(r); await refresh();
+  } catch (e) { wait.remove(); say("sys", "Lỗi: " + e.message); }
+  setBusy(false); $("text").focus();
+}
+
+async function endCall() {
+  if (!sid) return; setBusy(true);
+  try {
+    const r = await post(`/sessions/${sid}/end`);
+    say("sys", r.finalized ? `Đã kết thúc và chốt bộ nhớ (${r.memory_writes.length} ghi).` : "Đã kết thúc: " + (r.reason || ""));
+    await refresh();
+  } catch (e) { say("sys", "Lỗi: " + e.message); }
+  sid = null; $("sess").textContent = "cuộc gọi đã kết thúc — bấm “Bắt đầu cuộc gọi” để mở cuộc mới";
+  setBusy(false);
+}
+
+async function uploadAudio(file) {
+  if (!file) return;
+  setBusy(true); const wait = say("sys", "Đang nhận dạng giọng nói…");
+  try {
+    const fd = new FormData(); fd.append("file", file);
+    const r = await api("/asr", { method: "POST", body: fd });
+    wait.remove(); say("sys", `ASR (${r.backend}) đã điền văn bản vào ô chat — kiểm tra rồi bấm Gửi.`);
+    $("text").value = r.text;
+  } catch (e) { wait.remove(); say("sys", "ASR lỗi: " + e.message); }
+  $("audio").value = ""; setBusy(false);
+}
+
+const PRESETS = {
+  new:  { contact: "0911222333", channel: "hotline", date: "2026-10-15" },
+  back: { contact: "0984726714", channel: "hotline", date: "2026-10-17" },   // C001 Hoa; cần scripts/run_demo.py để có lịch sử cuộc 1
+  fb:   { contact: "fb.ha.seed", channel: "fanpage", date: "2026-10-13" },
+};
+document.querySelectorAll("[data-preset]").forEach(b => b.onclick = () => {
+  const p = PRESETS[b.dataset.preset]; $("contact").value = p.contact; $("channel").value = p.channel; $("date").value = p.date;
+});
+$("tabs").onclick = e => {
+  const t = e.target.dataset && e.target.dataset.tab; if (!t) return;
+  document.querySelectorAll(".tabs button").forEach(b => b.classList.toggle("on", b.dataset.tab === t));
+  document.querySelectorAll(".pane").forEach(p => p.classList.toggle("on", p.id === "p-" + t));
+};
+$("start").onclick = start; $("end").onclick = endCall; $("send").onclick = send;
+$("mic").onclick = () => $("audio").click(); $("audio").onchange = e => uploadAudio(e.target.files[0]);
+$("text").onkeydown = e => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); send(); } };
+$("date").value = new Date().toISOString().slice(0, 10);
+
+health();
+</script>
+</body>
+</html>

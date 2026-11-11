@@ -44,3 +44,6 @@ runs/m1_final2/*
 !runs/m1_final/
 runs/m1_final/*
 !runs/m1_final/hr_price_check.json
+
+# Cấu hình công cụ cục bộ
+.claude/

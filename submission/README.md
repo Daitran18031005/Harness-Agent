@@ -35,7 +35,7 @@ ASR chạy local (không tốn API): tải model theo mục "ASR" của [README 
 python scripts/run_demo.py --reset      # seed khách demo Hoa (đã có cuộc 1 ngày 15/10) → http://127.0.0.1:8000/
 ```
 
-Mở `http://127.0.0.1:8000/`: khung hội thoại, **Call Brief** hiện ngay khi mở cuộc gọi, **dòng thời gian bộ nhớ**, nhật ký tool, đơn hàng,
+Mở `http://127.0.0.1:8000/` (bản dựng tay) hoặc `http://127.0.0.1:8000/ui/openui/` (bản sinh bằng W&B OpenUI, cần mạng để tải Tailwind): khung hội thoại, **Call Brief** hiện ngay khi mở cuộc gọi, **dòng thời gian bộ nhớ**, nhật ký tool, đơn hàng,
 nhận dạng giọng nói từ file `.wav/.mp3`. Không có `OPENAI_API_KEY` → nhánh dự phòng rule-based (giao diện vẫn chạy, câu trả lời tối giản).
 Có khóa → agent LLM đầy đủ. Dùng DB riêng `data/demo.db`, không đụng DB thật.
 

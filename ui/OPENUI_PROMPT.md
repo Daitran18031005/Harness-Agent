@@ -41,3 +41,15 @@ Lỗi: 402 (chạm trần chi phí), 404 (không có phiên), 409 (phiên đã k
 1. Thay mọi dữ liệu mẫu/hard-code bằng `fetch` tới các endpoint trên; sau mỗi lượt `/chat` gọi lại 4 endpoint của các tab.
 2. Đặt file tại `ui/openui/index.html`; API đang phục vụ thư mục `ui/` ở `/ui/` nên mở `http://127.0.0.1:8000/ui/openui/`.
 3. Thêm vào `tests/test_api.py` hai test tương tự test của `/ui/` (trang `/ui/openui/` tải được, có các endpoint trên, và không chứa `innerHTML`), rồi chạy thử theo `submission/DEMO_SCRIPT.md`.
+
+## Đã sinh (2026-11-11)
+
+`ui/openui/index.html` — mở `http://127.0.0.1:8000/ui/openui/` (bản dựng tay vẫn ở `/ui/`).
+
+- **Công cụ:** W&B OpenUI 0.5.0 (github.com/wandb/openui), chạy tại chỗ (`python -m openui`, cổng 7878), model `gpt-4o` qua khóa OpenAI của dự án. Mã OpenUI và môi trường riêng nằm NGOÀI repo (`../NotRelated/openui_tool/`: `gen.py` gọi OpenUI, `build.py` ghép trang, `out/` giữ kết quả thô).
+- **Hai lần sinh** (máy chủ OpenUI giới hạn 4.096 token mỗi lần): (1) khung trang — toàn bộ markup + lớp Tailwind, đề bài yêu cầu giữ đúng các `id`/`data-*` mà JavaScript dùng; (2) khối `<style type="text/tailwindcss">` định nghĩa lớp thành phần (bong bóng, tab, chip, thẻ…) bằng `@apply`. Khoảng 1.900 token đầu ra.
+- **Lấy từ OpenUI không sửa:** cấu hình màu Tailwind và bảng biến màu sáng/tối (trang xem trước của OpenUI).
+- **Chỉnh tay sau khi sinh** (liệt kê trong `build.py`): đưa header ra ngoài lưới 2 cột; tab không tô nền; bong bóng có đệm; vùng tin nhắn xếp dọc; màu nhấn đổi sang xanh dương.
+- **JavaScript gọi API:** dùng lại nguyên khối của `ui/index.html` (dựng DOM bằng `textContent`, không `innerHTML`).
+- **Đã thử trên trình duyệt (1280×800):** hai cột, không cuộn cả trang; mở cuộc 2 của khách Hoa → Call Brief hiện đúng; một lượt chat thật trả lời đúng giá 5.200.000đ (35,7 VND).
+- **Hạn chế:** cần mạng để tải Tailwind từ CDN (`cdn.tailwindcss.com`); không có mạng thì dùng `/ui/`. Chưa thử trên điện thoại.

@@ -225,6 +225,18 @@ class UiTest(ApiCase):
     def test_page_never_writes_server_text_with_innerhtml(self):
         self.assertNotIn("innerHTML", self.client.get("/ui/").text)
 
+    def test_openui_page_loads_with_every_element_the_script_uses(self):
+        """Giao diện sinh bằng W&B OpenUI (`ui/openui/`): cùng JavaScript gọi API, nên mọi id script dùng phải có trong markup do OpenUI sinh."""
+        import re
+        page = self.client.get("/ui/openui/")
+        self.assertEqual(page.status_code, 200)
+        for needle in ("Harness Agent", "Call Brief", "Dòng thời gian bộ nhớ", "/call-brief", "/memory/timeline", "/asr", "/chat", "/sessions"):
+            self.assertIn(needle, page.text)
+        self.assertNotIn("innerHTML", page.text)
+        ids = set(re.findall(r'id="([\w-]+)"', page.text))
+        used = set(re.findall(r'\$\("([\w-]+)"\)', page.text))
+        self.assertTrue(used and used <= ids, used - ids)
+
 
 class ASRTest(ApiCase):
     def upload(self, name="a.wav", data=b"RIFFxxxx"):

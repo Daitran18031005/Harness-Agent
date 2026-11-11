@@ -2492,3 +2492,12 @@ Lý do trượt (full, theo cuộc gọi): 24 thiếu `must_say_any` · 21 khôn
   - **Chưa làm, ghi là hạn chế:** D3 (hồ sơ vẫn là một ô/khách cho `product_advised`, `order_id`… — khách quan tâm nhiều sản phẩm/nhiều đơn chỉ giữ cái gần nhất; cần bảng `product_interests`/`order_refs`, thay đổi lớn, chưa làm trước hạn nộp), D11 phần còn lại (chưa có khóa ngoại), D16 (tên khách và SĐT lưu rõ, chưa mã hóa at-rest; giảm thiểu: file DB nằm trong `.gitignore`, không vào gói nộp).
 - **Repo:** `Code/` ĐÃ là repo git (remote `origin` trên GitHub, 3 commit trên `main`) — ghi chú "không phải repo" ở § 13 là sai (lệnh kiểm chạy nhầm thư mục cha). Đã quét 303 tệp thay đổi bằng bộ dò bí mật của `package_submission.py` (0 nghi vấn) và commit vào nhánh mới `m1-nop-2026-11-11` (chưa push, chưa gộp vào `main`). `.gitignore` giữ thêm `runs/m1_final2/report.{md,json}` và `runs/m1_final/hr_price_check.json`.
 - **OpenUI: chưa làm.** github.com/wandb/openui hiện truy cập được; cần chủ dự án cho phép tải + cài mã nguồn ngoài và duyệt chi phí LLM cho việc sinh giao diện. Giao diện dựng tay `ui/index.html` vẫn chạy.
+
+### 13.7 Giao diện sinh bằng W&B OpenUI (2026-11-11)
+
+- **Công cụ:** OpenUI 0.5.0 tải từ github.com/wandb/openui (48 MB) vào `../NotRelated/openui_tool/` (ngoài repo), cài trong venv riêng (phải ghim `peewee<4`), chạy `python -m openui` tại chỗ với khóa OpenAI của dự án; tắt gửi dữ liệu W&B (`WANDB_MODE=disabled`, `WEAVE_DISABLED=true`).
+- **Sinh:** 2 lần gọi `gpt-4o` qua endpoint của OpenUI với đúng system prompt của nó (`gen.py shell`, `gen.py styles`; ≈ 1.900 token đầu ra, ước tính dưới 1.000 VND — OpenUI không báo chi phí nên không có số đo). `build.py` ghép: markup + lớp thành phần do OpenUI sinh, cấu hình màu của OpenUI, JavaScript gọi API của `ui/index.html`; 10 chỉnh tay về bố cục ghi trong `build.py` và `ui/OPENUI_PROMPT.md`.
+- **Kết quả:** `ui/openui/index.html`, phục vụ ở `/ui/openui/`; bản dựng tay giữ ở `/ui/` làm dự phòng (bản OpenUI cần mạng để tải Tailwind CDN).
+- **Thử trên trình duyệt** (máy chủ demo cổng 8011, 1280×800): hai cột, không cuộn trang; mẫu "Hoa quay lại" → Call Brief đúng (câu mở đầu tiếp nối, 1 cuộc trước, AirPure Y 5.200.000đ, rào cản hỏi chồng); 1 lượt chat thật trả lời đúng giá (35,7 VND). Chưa thử điện thoại, chưa thử tab đơn hàng/ASR trên bản mới.
+- **Sửa kèm:** `scripts/run_demo.py` dừng ngay khi console Windows là cp1252 (in tiếng Việt) → đặt stdout/stderr UTF-8.
+- Test `test_openui_page_loads_with_every_element_the_script_uses`; cả bộ **989 xanh** (`runs/_unittest_openui.txt`).
