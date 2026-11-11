@@ -1,0 +1,61 @@
+{
+  "scenario_id": "TEST-140",
+  "level": "M1",
+  "industry": "gia-dung",
+  "region": "bac",
+  "south": false,
+  "persona": "khach_can_ship_gap",
+  "hard_case": "het_hang_theo_timeline",
+  "customer_phone": "0911108754",
+  "customer_name": "Khải",
+  "honorific": "anh",
+  "notes": "[gia-dung] (het_hang_timeline_restock) Máy lọc không khí AirPure Pro (SKU-AP-PRO) tại Nam Định.",
+  "calls": {
+    "call_1": {
+      "channel": "hotline",
+      "call_date": "2026-10-19",
+      "customer_goal": "hỏi AirPure Pro đúng ngày 19/10 tạm hết hàng -> hẹn 21/10 về",
+      "customer_turns": [
+        "Khải định lấy ngay một máy AirPure Pro hôm nay 19/10, kho còn sẵn chiếc nào không em?"
+      ],
+      "facts_established": {
+        "product_advised": "SKU-AP-PRO"
+      },
+      "success_if": {
+        "tool_called": null,
+        "must_not_call_tools": [
+          "order.create"
+        ],
+        "must_say_any": [
+          "hết hàng",
+          "21/10",
+          "2026-10-21"
+        ]
+      },
+      "expected_outcome": "hen_goi_lai"
+    },
+    "call_2": {
+      "channel": "hotline",
+      "days_later": 3,
+      "customer_goal": "gọi lại 22/10 hàng đã về, giá 7.690k (AIR-OCT)",
+      "customer_turns": [
+        "22/10 AirPure Pro về hàng rồi đúng không em, đặt luôn giá 7.690.000đ về số 60 phố Hàng Đồng, Quang Trung, Nam Định, trả tiền chuyển khoản cho nhanh."
+      ],
+      "must_carry_over": [
+        "product_advised"
+      ],
+      "must_not_ask": [
+        "product_advised"
+      ],
+      "success_if": {
+        "tool_called": "order.create",
+        "args_match": {
+          "sku": "SKU-AP-PRO",
+          "price_vnd": 7690000,
+          "payment": "bank"
+        }
+      },
+      "expected_outcome": "chot_don"
+    }
+  }
+}

@@ -61,7 +61,7 @@ Nguyên tắc: **LLM hiểu, code kiểm chứng và giữ an toàn** — không
 
 | Quyết định | Lý do |
 |---|---|
-| Order gate bằng code, luôn bật, mọi cấu hình | tránh tạo đơn khi khách chưa đồng ý; kéo theo TSR của kịch bản BTC cố định thấp (báo riêng, xem báo cáo) |
+| Order gate bằng code, luôn bật, mọi cấu hình | tránh tạo đơn khi khách chưa đồng ý; với kịch bản lời cố định dùng lượt chốt theo luật BTC (mục 7) |
 | Hiểu ý định bằng LLM + trích dẫn nguyên văn | tránh vá regex theo câu; code kiểm chứng trích dẫn |
 | Tra sẵn giá/tồn kho/KM vào Call Brief | giảm số vòng gọi tool và TTFT của lượt đầu cuộc gọi lại |
 | Guardrail đối chiếu số tiền với kết quả tool | chặn bịa giá/khuyến mãi |
@@ -69,6 +69,22 @@ Nguyên tắc: **LLM hiểu, code kiểm chứng và giữ an toàn** — không
 | Timeout 20 s theo khoảng lặng + thử lại cả vòng stream | một lượt API đứng 68–128 s làm hỏng p95 (§ 11.94–11.95 trong CHECKING) |
 | Che PII trước LLM/trace; API trả trace rút gọn đã che | chỉ số điện thoại/địa chỉ không rời khỏi tiến trình |
 
-## 6. Giao diện và API
+## 6. Danh sách tool
+
+| Server MCP | Tool | Ghi? |
+|---|---|---|
+| `mcp-catalog` | `catalog.search`, `inventory.check`, `pricing.get_quote`, `pricing.quote_order` (giá từng máy cho đơn nhiều dòng), `product.shortlist` (xếp hạng theo nhu cầu, kèm giá sau khuyến mãi) | không |
+| `mcp-crm` | `crm.get_customer`, `order.status` | không |
+| `mcp-crm` | `order.create` (một đơn, nhiều dòng `lines`), `order.update`, `schedule.callback`, `handoff.transfer` | có — chỉ lõi điều phối |
+| `mcp-memory` | đọc: `memory.get_call_brief`, `memory.search`, `memory.timeline`, `memory.query_policy`; ghi: `memory.commit_turn`, `memory.commit_episode`, `memory.merge_customer`; xóa: `memory.delete_customer` (chỉ `Operator`) | có |
+
+Tên và tham số bắt buộc theo `BTC-Data-Vong1-TEAMS/schemas/tools.schema.json` (bản 11/2026); schema đưa cho LLM dựng trực tiếp từ file đó. `search_policy` là tool nội bộ gọi `memory.query_policy`.
+
+## 7. Lượt chốt và vòng cải tiến
+
+- **Lượt chốt (luật chấm BTC 11/2026):** sau lượt khách cuối, nếu order gate đang chờ thông tin/đồng ý thì bộ chạy đánh giá thêm một lượt không có lời khách. Ở lượt đó code tạo đơn bằng thông tin đã có (thanh toán chưa nói = COD; thiếu địa chỉ/tên thì báo nhân viên gọi lại), **sau khi** một lớp LLM độc lập đọc toàn bộ lời khách và trích được nguyên văn yêu cầu đặt đơn. Không tạo khi chưa rõ size/màu hoặc COD vượt hạn mức. API/giao diện không có lượt này: khách thật luôn được hỏi xác nhận.
+- **Knowledge Gap Loop (`scripts/knowledge_gap.py`):** (1) gom từ trace các câu hỏi mà kho chính sách không trả lời được; (2) **người duyệt** điền câu trả lời, đổi `status: approved` — câu dò thông tin nội bộ phải từ chối; (3) mục đã duyệt thành chunk `[BS-nn]` trong `data/kb_supplement/` (bộ nạp chính sách đọc thêm thư mục này) và thành kịch bản hồi quy `test_set/knowledge_gap/KG-nn.json`; (4) đo lại trên cùng bộ test. Hai nguồn feedback: điểm tự động của bộ chấm và câu khách hỏi không trả lời được. Không mục nào vào kho khi chưa có người duyệt.
+
+## 8. Giao diện và API
 
 FastAPI (`api/`, một worker, giao diện web `ui/index.html` phục vụ cùng origin nên không cần CORS): phiên (`call_name`/`turn_num` do API cấp, mở phiên mới tự chốt phiên cũ), chat, Call Brief, dòng thời gian bộ nhớ, nhật ký tool, đơn hàng, ASR. Kho phiên nằm trong RAM; bộ nhớ khách nằm trong DB.

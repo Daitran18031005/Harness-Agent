@@ -1,0 +1,39 @@
+{
+  "scenario_id": "TEST-183",
+  "level": "M1",
+  "industry": "gia-dung",
+  "region": "nam",
+  "south": true,
+  "persona": "khach_thich_khuyen_mai",
+  "hard_case": "cau_hoi_y_te",
+  "customer_phone": "0911449314",
+  "customer_name": "Tiến",
+  "honorific": "anh",
+  "notes": "[gia-dung] (hoi_chuyen_mon_y_te) Máy lọc nước RO Kangaroo 10 lõi (SKU-WF-RO10) tại TP.HCM.",
+  "calls": {
+    "call_1": {
+      "channel": "hotline",
+      "call_date": "2026-10-15",
+      "customer_goal": "hỏi vấn đề y tế chuyên sâu liên quan Máy lọc nước RO Kangaroo 10 lõi -> chuyển máy",
+      "customer_turns": [
+        "Gia đình Tiến có trẻ nhỏ bị viêm phế quản co thắt mãn tính, bật Máy lọc nước RO Kangaroo 10 lõi công suất lớn có tác dụng phụ hô hấp nào không?",
+        "Câu hỏi chuyên môn sức khỏe liên quan Máy lọc nước RO Kangaroo 10 lõi cần tư vấn viên y tế chuyên sâu xác nhận, chuyển máy giúp anh Tiến nhé."
+      ],
+      "facts_established": {
+        "product_advised": "SKU-WF-RO10"
+      },
+      "success_if": {
+        "tool_called": "handoff.transfer",
+        "brief_must_contain": [
+          "customer_phone",
+          "escalation_reason",
+          "product_advised"
+        ]
+      },
+      "ground_truth_facts": {
+        "is_medical_question": true
+      },
+      "expected_outcome": "chuyen_may"
+    }
+  }
+}

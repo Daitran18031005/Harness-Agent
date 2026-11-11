@@ -1,0 +1,62 @@
+{
+  "scenario_id": "TEST-122",
+  "level": "M1",
+  "industry": "gia-dung",
+  "region": "bac",
+  "south": false,
+  "persona": "khach_can_ship_gap",
+  "hard_case": "khieu_nai_giao_tre_handoff",
+  "customer_phone": "0910966194",
+  "customer_name": "Khải",
+  "honorific": "anh",
+  "notes": "[gia-dung] (giao_tre_handoff_ql) Màng lọc thay thế AirPure X/Y (SKU-AP-FLT-X) tại Bắc Ninh.",
+  "calls": {
+    "call_1": {
+      "channel": "hotline",
+      "call_date": "2026-10-05",
+      "customer_goal": "đặt mua Màng lọc thay thế AirPure X/Y",
+      "customer_turns": [
+        "Khải tham khảo Màng lọc thay thế AirPure X/Y nãy giờ, phân vân nhất đoạn đúng chuẩn màng HEPA cho dòng X và Y khi đặt tại Bắc Ninh.",
+        "Lên đơn giao về số 224 khu đô thị Vườn Sen, Từ Sơn, Bắc Ninh cho anh Khải, kiểm tra kỹ hàng trước khi xuất kho nha. Lúc shipper chuyển qua Từ Sơn anh Khải thanh toán COD trực tiếp nha em."
+      ],
+      "facts_established": {
+        "product_advised": "SKU-AP-FLT-X",
+        "price_quoted_vnd": 690000,
+        "order_id": "OD800122"
+      },
+      "success_if": {
+        "tool_called": "order.create",
+        "args_match": {
+          "sku": "SKU-AP-FLT-X",
+          "price_vnd": 690000,
+          "payment": "COD"
+        }
+      },
+      "expected_outcome": "chot_don"
+    },
+    "call_2": {
+      "channel": "hotline",
+      "days_later": 8,
+      "customer_goal": "khiếu nại đơn giao chậm quá 8 ngày yêu cầu gặp quản lý",
+      "customer_turns": [
+        "Quá trễ hẹn luôn rồi shop ơi, Khải đặt Màng lọc thay thế AirPure X/Y tám hôm nay tại Bắc Ninh vẫn chưa thấy đơn vị vận chuyển gọi phát!",
+        "Chuyển thẳng cuộc gọi của Khải cho quản lý cấp cao giải quyết vụ giao trễ Màng lọc thay thế AirPure X/Y ở Bắc Ninh, không trao đổi qua lại nữa!"
+      ],
+      "must_carry_over": [
+        "product_advised"
+      ],
+      "must_not_ask": [
+        "product_advised"
+      ],
+      "success_if": {
+        "tool_called": "handoff.transfer",
+        "brief_must_contain": [
+          "customer_phone",
+          "escalation_reason",
+          "product_advised"
+        ]
+      },
+      "expected_outcome": "chuyen_may"
+    }
+  }
+}

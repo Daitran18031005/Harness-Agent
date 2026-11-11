@@ -1,0 +1,91 @@
+{
+  "scenario_id": "TEST-137",
+  "level": "M1",
+  "industry": "thoi-trang",
+  "region": "bac",
+  "south": false,
+  "persona": "khach_so_gia",
+  "hard_case": "doi_size_lan_hai",
+  "customer_phone": "0911084994",
+  "customer_name": "Hà",
+  "honorific": "chị",
+  "notes": "[thoi-trang] (doi_size_lan_hai_60k) Áo khoác gió Windbreak (SKU-JK-WND-S-BE) tại Nam Định.",
+  "calls": {
+    "call_1": {
+      "channel": "hotline",
+      "call_date": "2026-10-27",
+      "customer_goal": "mua Áo khoác gió Windbreak biến thể S be",
+      "customer_turns": [
+        "Hà chốt mua Áo khoác gió Windbreak bản S be, đóng gói ship COD về số 283 đường Giải Phóng, Cửa Bắc, Nam Định giùm em."
+      ],
+      "facts_established": {
+        "order_id": "OD900137",
+        "product_advised": "SKU-JK-WND",
+        "variant_sku": "SKU-JK-WND-S-BE",
+        "size": "S",
+        "color": "be",
+        "price_quoted_vnd": 690000
+      },
+      "success_if": {
+        "tool_called": "order.create",
+        "args_match": {
+          "sku": "SKU-JK-WND-S-BE",
+          "price_vnd": 690000,
+          "payment": "COD"
+        }
+      },
+      "expected_outcome": "chot_don"
+    },
+    "call_2": {
+      "channel": "hotline",
+      "days_later": 2,
+      "customer_goal": "đổi lần 1 sang M miễn phí",
+      "customer_turns": [
+        "Thử chiếc Áo khoác gió Windbreak size S hơi chật vai lắm, em cho Hà đổi lên bản M màu den giúp."
+      ],
+      "must_carry_over": [
+        "order_id"
+      ],
+      "must_not_ask": [
+        "product_advised"
+      ],
+      "success_if": {
+        "tool_called": "order.update",
+        "args_match": {
+          "action": "exchange_size",
+          "new_variant_sku": "SKU-JK-WND-M-DEN"
+        }
+      },
+      "expected_outcome": "chot_don"
+    },
+    "call_3": {
+      "channel": "hotline",
+      "days_later": 2,
+      "customer_goal": "đổi lần 2 trên cùng đơn phải chịu phí ship 60k (DT-03)",
+      "customer_turns": [
+        "Ngại quá Hà thử Áo khoác gió Windbreak cỡ M vẫn ôm người nên xin đổi lần 2 lên cỡ L màu navy, chấp nhận phí hai chiều 60k nha."
+      ],
+      "must_carry_over": [
+        "order_id"
+      ],
+      "must_not_ask": [
+        "product_advised"
+      ],
+      "success_if": {
+        "tool_called": "order.update",
+        "args_match": {
+          "action": "exchange_size",
+          "new_variant_sku": "SKU-JK-WND-L-NAVY"
+        },
+        "must_say_any": [
+          "60.000",
+          "60k"
+        ]
+      },
+      "ground_truth_facts": {
+        "exchange_fee_vnd": 60000
+      },
+      "expected_outcome": "chot_don"
+    }
+  }
+}

@@ -1,0 +1,68 @@
+{
+  "scenario_id": "TEST-208",
+  "level": "M1",
+  "industry": "thoi-trang",
+  "region": "trung",
+  "south": false,
+  "persona": "khach_mua_nhieu_mon",
+  "hard_case": "qua_han_doi_tra_7_ngay",
+  "customer_phone": "0911647314",
+  "customer_name": "Minh",
+  "honorific": "anh",
+  "notes": "[thoi-trang] (qua_han_doi_tra_7d) Giày trekking HikePro (SKU-SN-TRK-41-XAM) tại Đà Nẵng.",
+  "calls": {
+    "call_1": {
+      "channel": "hotline",
+      "call_date": "2026-10-08",
+      "customer_goal": "mua Giày trekking HikePro biến thể 41 xam",
+      "customer_turns": [
+        "Shop ơi, Minh lấy 1 chiếc Giày trekking HikePro size 41 màu xam gửi COD về số 156 đường Ông Ích Khiêm, Thanh Khê, Đà Nẵng."
+      ],
+      "facts_established": {
+        "order_id": "OD900208",
+        "product_advised": "SKU-SN-TRK",
+        "variant_sku": "SKU-SN-TRK-41-XAM",
+        "size": 41,
+        "color": "xam",
+        "price_quoted_vnd": 1990000
+      },
+      "success_if": {
+        "tool_called": "order.create",
+        "args_match": {
+          "sku": "SKU-SN-TRK-41-XAM",
+          "price_vnd": 1990000,
+          "payment": "COD"
+        }
+      },
+      "expected_outcome": "chot_don"
+    },
+    "call_2": {
+      "channel": "hotline",
+      "days_later": 12,
+      "customer_goal": "gọi đòi trả/đổi size khi đã quá 7 ngày (ngày thứ 12)",
+      "customer_turns": [
+        "Đơn Giày trekking HikePro của Minh mua hôm 8/10 giờ tròn 12 ngày quá mốc 7 ngày mất rồi, anh muốn gửi trả lấy tiền lại được chứ?"
+      ],
+      "must_carry_over": [
+        "order_id",
+        "product_advised"
+      ],
+      "must_not_ask": [
+        "product_advised"
+      ],
+      "success_if": {
+        "tool_called": null,
+        "must_say_any": [
+          "7 ngày",
+          "bảy ngày",
+          "quá hạn",
+          "DT-01"
+        ]
+      },
+      "ground_truth_facts": {
+        "within_return_window": false
+      },
+      "expected_outcome": "tu_choi"
+    }
+  }
+}

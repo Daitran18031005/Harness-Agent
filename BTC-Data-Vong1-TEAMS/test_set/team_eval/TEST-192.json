@@ -1,0 +1,81 @@
+{
+  "scenario_id": "TEST-192",
+  "level": "M1",
+  "industry": "gia-dung",
+  "region": "nam",
+  "south": true,
+  "persona": "khach_do_du_hoi_nguoi_nha",
+  "hard_case": "da_phien_3_cuoc",
+  "customer_phone": "0911520594",
+  "customer_name": "Hằng",
+  "honorific": "chị",
+  "notes": "[gia-dung] (da_phien_3_cuoc_doi_tt) Màng lọc thay thế Xiaomi Smart 4 (SKU-XM-FLT) tại Vũng Tàu.",
+  "calls": {
+    "call_1": {
+      "channel": "zalo_oa",
+      "call_date": "2026-10-15",
+      "customer_goal": "3 phiên: phiên 1 tư vấn Màng lọc thay thế Xiaomi Smart 4",
+      "customer_turns": [
+        "Hằng định sắm Màng lọc thay thế Xiaomi Smart 4 vì thấy hợp thay màng lọc trụ cho máy Xiaomi Smart 4, bên shop tư vấn thêm cho mình với.",
+        "Hằng ghi nhận đủ thông số Màng lọc thay thế Xiaomi Smart 4 rồi, đợi tối nay về nhà bàn lại với gia đình đã nha. Gửi shop số 0911520594 của Hằng trước nha, bàn với người nhà xong chị gọi chốt đơn."
+      ],
+      "facts_established": {
+        "product_advised": "SKU-XM-FLT",
+        "price_quoted_vnd": 590000,
+        "phone_provided": "0911520594"
+      },
+      "expected_outcome": "hen_goi_lai",
+      "channel_identity": "zalo.hang.test_192"
+    },
+    "call_2": {
+      "channel": "hotline",
+      "days_later": 2,
+      "customer_goal": "phiên 2 đặt đơn về địa chỉ ban đầu",
+      "customer_turns": [
+        "Alo tổng đài, Hằng gọi chốt chiếc Màng lọc thay thế Xiaomi Smart 4 mà hai hôm trước hỏi thông số đây.",
+        "Địa chỉ nhận là số 93 đường Thùy Vân, Thắng Tam, Vũng Tàu, nhờ shop ghi chú giao cho Hằng nghen. Thanh toán COD."
+      ],
+      "must_carry_over": [
+        "product_advised"
+      ],
+      "must_not_ask": [
+        "product_advised"
+      ],
+      "facts_established": {
+        "order_id": "OD700192",
+        "price_quoted_vnd": 590000
+      },
+      "success_if": {
+        "tool_called": "order.create",
+        "args_match": {
+          "sku": "SKU-XM-FLT",
+          "price_vnd": 590000,
+          "payment": "COD"
+        }
+      },
+      "expected_outcome": "chot_don"
+    },
+    "call_3": {
+      "channel": "hotline",
+      "days_later": 2,
+      "customer_goal": "phiên 3 kiểm tra trạng thái đơn hoặc đổi địa chỉ sang cơ quan",
+      "customer_turns": [
+        "Bưu tá chưa tới chỗ Hằng đúng không em? Chuyển giúp địa chỉ đơn Màng lọc thay thế Xiaomi Smart 4 qua số nhà mới bên quận trung tâm Vũng Tàu nhé."
+      ],
+      "must_carry_over": [
+        "order_id",
+        "product_advised"
+      ],
+      "must_not_ask": [
+        "product_advised"
+      ],
+      "success_if": {
+        "tool_called": "order.update",
+        "args_match": {
+          "action": "update_address"
+        }
+      },
+      "expected_outcome": "chot_don"
+    }
+  }
+}

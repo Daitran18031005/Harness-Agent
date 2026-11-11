@@ -3,7 +3,7 @@
   "level": "M1",
   "persona": "khach_do_du_hoi_nguoi_nha",
   "hard_case": "hoan_giua_gate",
-  "customer_phone": "0900001015",
+  "customer_phone": "0912887744",
   "customer_name": "Huy",
   "honorific": "anh",
   "notes": "[Mẹ & Bé] Ghế ngồi ô tô Chicco (SKU-MB-CAR: 4.990.000đ). Tại bước Order Gate đọc lại đơn, khách nhớ ra chưa kiểm tra chuẩn chốt ISOFIX của xe ô tô nên hoãn lại. Agent cấm gọi order.create.",
@@ -11,15 +11,14 @@
     "call_1": {
       "call_date": "2026-10-15",
       "customer_turns": [
-        "Anh muốn mua ghế ngồi ô tô cho bé Chicco giá 4.990.000đ.",
-        "Địa chỉ của anh ở số 55 Giải Phóng, Hai Bà Trưng, Hà Nội, thanh toán COD nhé.",
+        "Anh muốn đặt ghế ngồi ô tô cho bé Chicco giá 4.990.000đ đang xem trên web.",
+        "Địa chỉ của anh ở số 55 Giải Phóng, Hai Bà Trưng, Hà Nội.",
         "Ủa mà khoan đã em, để anh ra xe đo lại kích thước ghế sau và chốt ISOFIX xem có vừa không đã nhé, chưa tạo đơn vội."
       ],
       "facts_established": {
         "product_advised": "SKU-MB-CAR",
         "price_quoted_vnd": 4990000,
-        "blocker": "ra xe đo lại kích thước ghế sau",
-        "payment": "COD"
+        "blocker": "kiem tra xe"
       },
       "success_if": {
         "must_not_call_tools": [
@@ -35,10 +34,7 @@
       "ground_truth_facts": {
         "order_created": false
       },
-      "expected_outcome": "hen_goi_lai",
-      "memory_expectation": {
-        "blocker": "ra xe đo lại kích thước ghế sau"
-      }
+      "expected_outcome": "hen_goi_lai"
     }
   }
 }

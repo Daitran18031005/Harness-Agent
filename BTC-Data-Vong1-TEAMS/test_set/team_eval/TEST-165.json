@@ -1,0 +1,46 @@
+{
+  "scenario_id": "TEST-165",
+  "level": "M1",
+  "industry": "me-be",
+  "region": "nam",
+  "south": true,
+  "persona": "khach_thich_khuyen_mai",
+  "hard_case": "cod_vuot_han_muc",
+  "customer_phone": "0911306754",
+  "customer_name": "Tiến",
+  "honorific": "anh",
+  "notes": "[me-be] (cod_vuot_tran_ck) Ghế ngồi ô tô cho bé Chicco (SKU-MB-CAR) tại Vũng Tàu.",
+  "calls": {
+    "call_1": {
+      "channel": "hotline",
+      "call_date": "2026-10-15",
+      "customer_goal": "mua 3x Ghế ngồi ô tô cho bé Chicco vượt COD 10tr chuyển sang CK",
+      "customer_turns": [
+        "Đợt này Tiến cần sắm 3 cái Ghế ngồi ô tô cho bé Chicco cùng lúc mang về Vũng Tàu, xuất một vận đơn lớn cho tiện nha.",
+        "Tổng hóa đơn 3 chiếc Ghế ngồi ô tô cho bé Chicco lên tới 14.970.000đ vượt quá trần thu hộ 10 triệu nên hệ thống khóa COD của Tiến hả em?",
+        "Nhất trí chuyển khoản trước cho Ghế ngồi ô tô cho bé Chicco nhé em. Nhận tại số 50 đường Lê Hồng Phong, Phường 7, Vũng Tàu nha em, tên Tiến, có gì bưu tá alo trước 15 phút."
+      ],
+      "facts_established": {
+        "product_advised": "SKU-MB-CAR",
+        "quantity": 3,
+        "price_quoted_vnd": 4990000,
+        "payment": "bank"
+      },
+      "success_if": {
+        "tool_called": "order.create",
+        "args_match": {
+          "sku": "SKU-MB-CAR",
+          "qty": 3,
+          "price_vnd": 4990000,
+          "payment": "bank"
+        },
+        "total_match_vnd": 14970000
+      },
+      "ground_truth_facts": {
+        "cod_limit_vnd": 10000000,
+        "total_vnd": 14970000
+      },
+      "expected_outcome": "chot_don"
+    }
+  }
+}

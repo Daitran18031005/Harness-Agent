@@ -1,0 +1,70 @@
+{
+  "scenario_id": "TEST-04",
+  "level": "M1",
+  "persona": "khach_da_mua_doi_size",
+  "hard_case": "doi_size_phu_thu_bien_the",
+  "customer_phone": "0930976582",
+  "customer_name": "Cường",
+  "honorific": "anh",
+  "notes": "Đổi size RunLite 2 Pro từ 40 sang 43 (size 43 có phụ thu biến thể price_delta_vnd=50.000đ). DT-03 miễn phí dịch vụ đổi, nhưng phải thu chênh lệch giá biến thể extra_payment_vnd=50.000đ.",
+  "calls": {
+    "call_1": {
+      "call_date": "2026-10-08",
+      "customer_turns": [
+        "Em ơi giày chạy RunLite 2 Pro màu đen size 40 có hàng không?",
+        "Ok lên đơn cho anh size 40 màu đen nhé, giao về 28 Trần Hưng Đạo, Hoàn Kiếm, Hà Nội."
+      ],
+      "facts_established": {
+        "product_advised": "SKU-SN-RUN2",
+        "variant_sku": "SKU-SN-RUN2-40-DEN",
+        "size": 40,
+        "color": "den",
+        "price_quoted_vnd": 1690000,
+        "order_id": "OD682770",
+        "payment": "COD"
+      },
+      "expected_outcome": "chot_don",
+      "success_if": {
+        "tool_called": "order.create",
+        "args_match": {
+          "sku": "SKU-SN-RUN2-40-DEN",
+          "price_vnd": 1690000,
+          "payment": "COD"
+        }
+      }
+    },
+    "call_2": {
+      "days_later": 2,
+      "customer_turns": [
+        "Alo, anh Cường đây, đôi RunLite 2 Pro size 40 anh đi bị chật quá, muốn đổi sang size 43 cùng màu đen.",
+        "Size 43 có phụ thu gì thêm không em?",
+        "Được, thêm 50k không sao, em hỗ trợ đổi size 43 giúp anh nhé."
+      ],
+      "must_carry_over": [
+        "order_id",
+        "variant_sku",
+        "size",
+        "color"
+      ],
+      "must_not_ask": [
+        "product_advised",
+        "order_id",
+        "color"
+      ],
+      "success_if": {
+        "tool_called": "order.update",
+        "args_match": {
+          "order_id": "OD682770",
+          "new_variant_sku": "SKU-SN-RUN2-43-DEN",
+          "action": "exchange_size"
+        }
+      },
+      "ground_truth_facts": {
+        "variant_price_delta_vnd": 50000,
+        "service_fee_vnd": 0,
+        "extra_payment_vnd": 50000
+      },
+      "expected_outcome": "chot_don"
+    }
+  }
+}

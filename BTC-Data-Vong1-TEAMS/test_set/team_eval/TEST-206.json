@@ -1,0 +1,41 @@
+{
+  "scenario_id": "TEST-206",
+  "level": "M1",
+  "industry": "gia-dung",
+  "region": "bac",
+  "south": false,
+  "persona": "khach_can_ship_gap",
+  "hard_case": "mua_kem_phu_kien",
+  "customer_phone": "0911631474",
+  "customer_name": "Duy",
+  "honorific": "anh",
+  "notes": "[gia-dung] (mua_them_phu_kien_kem) Máy lọc không khí Xiaomi Smart 4 Lite (SKU-XM-4L) tại Hải Phòng.",
+  "calls": {
+    "call_1": {
+      "channel": "hotline",
+      "call_date": "2026-10-15",
+      "customer_goal": "mua Máy lọc không khí Xiaomi Smart 4 Lite kèm phụ kiện Màng lọc thay thế Xiaomi Smart 4 trong cùng đơn",
+      "customer_turns": [
+        "Duy tham khảo Máy lọc không khí Xiaomi Smart 4 Lite nãy giờ, phân vân nhất đoạn kết nối app Mi Home tiện theo dõi khi đặt tại Hải Phòng.",
+        "Thêm giùm Duy một Màng lọc thay thế Xiaomi Smart 4 (590.000đ) đi cùng hộp Máy lọc không khí Xiaomi Smart 4 Lite trong một đơn luôn nha em.",
+        "Xuất giúp Duy đủ bộ Máy lọc không khí Xiaomi Smart 4 Lite kèm Màng lọc thay thế Xiaomi Smart 4 tổng 3.580.000đ thanh toán lúc nhận. Lên đơn giao về số 112 khu dân cư Anh Dũng, Dương Kinh, Hải Phòng cho anh Duy, kiểm tra kỹ hàng trước khi xuất kho nha."
+      ],
+      "facts_established": {
+        "product_advised": "SKU-XM-4L",
+        "accessory_sku": "SKU-XM-FLT"
+      },
+      "success_if": {
+        "tool_called": "order.create",
+        "args_match": {
+          "sku": "SKU-XM-4L",
+          "price_vnd": 2990000,
+          "payment": "COD"
+        },
+        "also_ordered": [
+          "SKU-XM-FLT"
+        ]
+      },
+      "expected_outcome": "chot_don"
+    }
+  }
+}

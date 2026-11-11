@@ -1,0 +1,43 @@
+{
+  "scenario_id": "TEST-134",
+  "level": "M1",
+  "industry": "gia-dung",
+  "region": "bac",
+  "south": false,
+  "persona": "khach_can_ship_gap",
+  "hard_case": "so_noi_bang_chu",
+  "customer_phone": "0911061234",
+  "customer_name": "Duy",
+  "honorific": "anh",
+  "notes": "[gia-dung] (asr_so_noi_tieng_viet) Combo AirPure Y + 2 màng lọc (SKU-BDL-AIR) tại Quảng Ninh.",
+  "calls": {
+    "call_1": {
+      "channel": "hotline",
+      "call_date": "2026-10-15",
+      "input_mode": "asr_transcript",
+      "customer_goal": "chuẩn hóa ASR/ITN số nói bằng chữ cho Combo AirPure Y + 2 màng lọc",
+      "customer_turns": [
+        "Bên shop còn sẵn Combo AirPure Y + 2 màng lọc giá 6.390.000đ phục vụ nhu cầu mua máy lọc AirPure Y kèm sẵn hai màng thay thế ở khu vực Quảng Ninh giao cho Duy không bạn ơi?",
+        "Tạm ghi nhận địa chỉ số nhà 208 ở Quảng Ninh, hẹn tối mai Duy bàn gia đình rồi gọi lại sau."
+      ],
+      "customer_turns_asr": [
+        "bên shop còn sẵn combo airpure y hai màng lọc giá sáu triệu ba trăm chín mươi nghìn đồng phục vụ nhu cầu mua máy lọc airpure y kèm sẵn hai màng thay thế ở khu vực quảng ninh giao cho duy không bạn ơi",
+        "tạm ghi nhận địa chỉ số nhà hai trăm lẻ tám ở quảng ninh hẹn tối mai duy bàn gia đình rồi gọi lại sau"
+      ],
+      "facts_established": {
+        "product_advised": "SKU-BDL-AIR",
+        "price_quoted_vnd": 6390000
+      },
+      "success_if": {
+        "tool_called": null,
+        "must_not_call_tools": [
+          "order.create"
+        ]
+      },
+      "ground_truth_facts": {
+        "price_vnd": 6390000
+      },
+      "expected_outcome": "hen_goi_lai"
+    }
+  }
+}

@@ -1,0 +1,72 @@
+{
+  "scenario_id": "SC-TV-19",
+  "level": "M1",
+  "industry": "gia-dung",
+  "region": "trung",
+  "south": false,
+  "persona": "khach_ngoai_pham_vi_chuyen_may",
+  "hard_case": "tv_lap_can_ho_mini_handoff",
+  "customer_phone": "0900030106",
+  "customer_name": "Thúy",
+  "honorific": "chị",
+  "notes": "Kịch bản TV 3 cuộc gọi mở rộng: Hỏi Panasonic DC -> Lệch vùng freeship hủy -> Xem TV VTV1 quay lại đặt 25 cây B2B -> Chuyển máy.",
+  "calls": {
+    "call_1": {
+      "channel": "chat_fanpage",
+      "call_date": "2026-09-25",
+      "customer_goal": "tìm hiểu sản phẩm và ưu đãi rồi hẹn suy nghĩ (SKU-FAN-DC1)",
+      "customer_turns": [
+        "Quạt đứng Panasonic F-409 chạy biến tần DC có tiết kiệm điện thật không em, giá 2.450k hả?",
+        "Để chị tính số phòng trọ cao cấp đang xây xong rồi tháng sau đặt nhé. Thúy gửi kèm số 0900030106 để shop lưu thông tin nhé, tính đủ số lượng rồi chị gọi lại."
+      ],
+      "facts_established": {
+        "product_advised": "SKU-FAN-DC1",
+        "phone_provided": "0900030106"
+      },
+      "expected_outcome": "hen_goi_lai",
+      "channel_identity": "fb.thuy.sc_tv_19"
+    },
+    "call_2": {
+      "channel": "hotline",
+      "call_date": "2026-10-10",
+      "days_later": 15,
+      "customer_goal": "gọi lại sau vài ngày nhưng hết KM hoặc không khớp điều kiện nên từ chối mua",
+      "customer_turns": [
+        "Chị Thúy ở Đà Nẵng hỏi quạt Panasonic bữa trước nè, miền Trung mua số lượng nhiều có miễn ship như miền Nam không?",
+        "NAM-SHIP0 chỉ áp dụng khách khu vực miền Nam thôi à? Tiếc quá thế chị chưa đặt đâu."
+      ],
+      "must_carry_over": [
+        "product_advised"
+      ],
+      "must_not_ask": [
+        "product_advised"
+      ],
+      "expected_outcome": "tu_choi"
+    },
+    "call_3": {
+      "channel": "hotline",
+      "call_date": "2026-11-14",
+      "days_later": 35,
+      "customer_goal": "khoảng 1 tháng sau xem quảng cáo TV quay lại: chuyen_may",
+      "customer_turns": [
+        "Vừa xem bản tin tiết kiệm năng lượng trên VTV1 có nhắc quạt biến tần DC, khu căn hộ mini của chị chuẩn bị khai trương cần đặt hợp đồng 25 cây quạt Panasonic F-409 xuất hóa đơn đỏ và bảo hành theo lô.",
+        "Cho chị nối máy sang chuyên viên B2B báo giá dự án và ký hợp đồng cung cấp nhé."
+      ],
+      "must_carry_over": [
+        "product_advised"
+      ],
+      "must_not_ask": [
+        "product_advised"
+      ],
+      "success_if": {
+        "tool_called": "handoff.transfer",
+        "brief_must_contain": [
+          "customer_phone",
+          "escalation_reason",
+          "product_advised"
+        ]
+      },
+      "expected_outcome": "chuyen_may"
+    }
+  }
+}

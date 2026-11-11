@@ -1,0 +1,94 @@
+{
+  "scenario_id": "SC-ULTRA-11",
+  "level": "M1",
+  "industry": "me-be",
+  "region": "nam",
+  "south": true,
+  "persona": "khach_mua_nhieu_mon",
+  "hard_case": "ultra_4c_so_sanh_s1_medela_pin",
+  "customer_phone": "0900040011",
+  "customer_name": "Vân",
+  "honorific": "chị",
+  "notes": "Kịch bản siêu khó trên 3 cuộc gọi: 4 cuộc: So sánh Spectra S1 với Medela Swing Maxi -> Chốt Spectra S1 -> Thắc mắc thời lượng pin -> Hỏi sạc xả lithium.",
+  "calls": {
+    "call_1": {
+      "channel": "hotline",
+      "call_date": "2026-10-12",
+      "customer_goal": "phân vân Spectra S1 và Medela",
+      "customer_turns": [
+        "Spectra S1 bốn triệu hai chín với Medela Swing Maxi gần sáu triệu khác gì mà chênh tiền nhiều vậy em?"
+      ],
+      "expected_outcome": "hen_goi_lai",
+      "facts_established": {
+        "product_advised": "SKU-MB-PUMP1"
+      }
+    },
+    "call_2": {
+      "channel": "hotline",
+      "call_date": "2026-10-14",
+      "customer_goal": "chốt mua Spectra S1",
+      "customer_turns": [
+        "Thôi lấy máy Spectra S1 cho tiết kiệm, gửi về số 15 Ba Cu, Vũng Tàu, thu COD giúp chị nha."
+      ],
+      "expected_outcome": "chot_don",
+      "days_later": 2,
+      "must_carry_over": [
+        "product_advised"
+      ],
+      "must_not_ask": [
+        "product_advised"
+      ],
+      "success_if": {
+        "tool_called": "order.create",
+        "args_match": {
+          "sku": "SKU-MB-PUMP1",
+          "price_vnd": 4290000,
+          "payment": "COD"
+        }
+      }
+    },
+    "call_3": {
+      "channel": "hotline",
+      "call_date": "2026-10-20",
+      "customer_goal": "hỏi pin tụt nhanh khi bật lực mạnh",
+      "customer_turns": [
+        "Sao sạc đầy mà hút hai cữ mức mạnh nhất đã hết sạch pin rồi em, pin có bị lỗi gì hông?"
+      ],
+      "expected_outcome": "hen_goi_lai",
+      "days_later": 6,
+      "must_carry_over": [
+        "product_advised"
+      ],
+      "must_not_ask": [
+        "product_advised"
+      ],
+      "success_if": {
+        "tool_called": null
+      }
+    },
+    "call_4": {
+      "channel": "hotline",
+      "call_date": "2026-10-22",
+      "customer_goal": "hỏi mẹo giữ bền pin và bảo hành động cơ",
+      "customer_turns": [
+        "Hạ xuống nấc 6 thấy bền hơn hẳn rồi, sạc pin tầm nào rút ra cho đỡ chai mà động cơ bảo hành mấy tháng vậy em?"
+      ],
+      "expected_outcome": "hen_goi_lai",
+      "days_later": 2,
+      "must_carry_over": [
+        "product_advised"
+      ],
+      "must_not_ask": [
+        "product_advised"
+      ],
+      "success_if": {
+        "tool_called": null,
+        "must_say_any": [
+          "12 tháng",
+          "mười hai tháng",
+          "bảo hành"
+        ]
+      }
+    }
+  }
+}

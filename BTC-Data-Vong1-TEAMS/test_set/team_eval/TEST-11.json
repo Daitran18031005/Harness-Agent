@@ -1,0 +1,44 @@
+{
+  "scenario_id": "TEST-11",
+  "level": "M1",
+  "persona": "khach_hoi_nhieu_khong_mua",
+  "hard_case": "sku_ngung_ban",
+  "customer_phone": "0965237355",
+  "customer_name": "Xuân",
+  "honorific": "chị",
+  "notes": "Khách hỏi mua máy lọc không khí AirPure X bản 2024 (SKU-AP-X-2024 đã discontinued). Agent phải thông báo sản phẩm đã ngừng bán và gợi ý mẫu thay thế mới nhất SKU-AP-X. Cấm tạo đơn cho SKU đã ngừng bán.",
+  "calls": {
+    "call_1": {
+      "call_date": "2026-10-15",
+      "customer_turns": [
+        "Em ơi bên em còn bán mẫu máy lọc không khí AirPure X bản 2024 không em?",
+        "Ủa mẫu đó ngưng bán rồi hả em? Thế có mẫu nào mới thay thế không?"
+      ],
+      "facts_established": {
+        "product_asked": "SKU-AP-X-2024"
+      },
+      "success_if": {
+        "must_not_call_tools": [
+          "order.create"
+        ],
+        "must_say_any": [
+          "ngừng bán",
+          "ngưng kinh doanh",
+          "hết sản xuất"
+        ],
+        "forbidden_claims": [
+          {
+            "field": "in_stock",
+            "value": true
+          }
+        ]
+      },
+      "ground_truth_facts": {
+        "discontinued": true,
+        "successor_sku": "SKU-AP-X",
+        "successor_price_vnd": 4890000
+      },
+      "expected_outcome": "hen_goi_lai"
+    }
+  }
+}

@@ -1,0 +1,66 @@
+{
+  "scenario_id": "TEST-177",
+  "level": "M1",
+  "industry": "thoi-trang",
+  "region": "nam",
+  "south": true,
+  "persona": "khach_mua_nhieu_mon",
+  "hard_case": "doi_size_7_ngay",
+  "customer_phone": "0911401794",
+  "customer_name": "Ánh",
+  "honorific": "chị",
+  "notes": "[thoi-trang] (doi_size_mien_phi_7d) Áo khoác gió Windbreak (SKU-JK-WND-L-DEN) tại Vũng Tàu.",
+  "calls": {
+    "call_1": {
+      "channel": "hotline",
+      "call_date": "2026-10-08",
+      "customer_goal": "mua Áo khoác gió Windbreak biến thể L den",
+      "customer_turns": [
+        "Alô em, Ánh lấy 1 chiếc Áo khoác gió Windbreak size L màu den gửi COD về số 43 đường Thùy Vân, Thắng Tam, Vũng Tàu."
+      ],
+      "facts_established": {
+        "order_id": "OD900177",
+        "product_advised": "SKU-JK-WND",
+        "variant_sku": "SKU-JK-WND-L-DEN",
+        "size": "L",
+        "color": "den",
+        "price_quoted_vnd": 690000
+      },
+      "success_if": {
+        "tool_called": "order.create",
+        "args_match": {
+          "sku": "SKU-JK-WND-L-DEN",
+          "price_vnd": 690000,
+          "payment": "COD"
+        }
+      },
+      "expected_outcome": "chot_don"
+    },
+    "call_2": {
+      "channel": "hotline",
+      "days_later": 2,
+      "customer_goal": "đổi lần đầu sang size S màu den miễn phí trong 7 ngày",
+      "customer_turns": [
+        "Đồ Áo khoác gió Windbreak thử thấy hơi rộng chút, hỗ trợ Ánh đổi lần đầu miễn phí sang cỡ S den trong 7 ngày nha."
+      ],
+      "must_carry_over": [
+        "order_id",
+        "variant_sku"
+      ],
+      "must_not_ask": [
+        "product_advised"
+      ],
+      "success_if": {
+        "tool_called": "order.update",
+        "args_match": {
+          "action": "exchange_size",
+          "new_variant_sku": "SKU-JK-WND-S-DEN"
+        }
+      },
+      "ground_truth_facts": {
+        "exchange_fee_vnd": 0
+      },
+      "expected_outcome": "chot_don"
+    }
+  }
+}

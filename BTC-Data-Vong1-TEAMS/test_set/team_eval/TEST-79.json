@@ -1,0 +1,53 @@
+{
+  "scenario_id": "TEST-79",
+  "level": "M1",
+  "industry": "me-be",
+  "region": "trung",
+  "south": false,
+  "persona": "khach_do_du_hoi_nguoi_nha",
+  "hard_case": "khuyen_mai_het_han",
+  "customer_phone": "0910625634",
+  "customer_name": "Trung",
+  "honorific": "anh",
+  "notes": "[me-be] (km_het_han_tu_choi) Máy hút sữa điện đôi Spectra S1 (SKU-MB-PUMP1) tại Nha Trang.",
+  "calls": {
+    "call_1": {
+      "channel": "zalo_oa",
+      "call_date": "2026-10-10",
+      "customer_goal": "hỏi Máy hút sữa điện đôi Spectra S1 lúc còn hạn mã PUMP-GIFT (tặng túi trữ sữa)",
+      "customer_turns": [
+        "Cho Trung xác nhận Máy hút sữa điện đôi Spectra S1 hiện hưởng PUMP-GIFT (tặng túi trữ sữa) tới hôm nào vậy em, ít bữa đặt về Nha Trang. Số liên lạc của anh Trung ở Nha Trang là 0910625634, ít hôm sắp xếp gọi chốt sau."
+      ],
+      "facts_established": {
+        "product_advised": "SKU-MB-PUMP1",
+        "promo_code": "PUMP-GIFT",
+        "phone_provided": "0910625634"
+      },
+      "expected_outcome": "hen_goi_lai",
+      "channel_identity": "zalo.trung.test_79"
+    },
+    "call_2": {
+      "channel": "hotline",
+      "call_date": "2026-10-18",
+      "days_later": 8,
+      "customer_goal": "gọi lại khi PUMP-GIFT hết hạn nên từ chối không mua",
+      "customer_turns": [
+        "Hôm trước Trung xem Máy hút sữa điện đôi Spectra S1 đợt PUMP-GIFT đây, giờ mua về Nha Trang có giữ suất ưu đãi cũ không em?",
+        "Trễ hạn PUMP-GIFT không linh động được thì Trung ở Nha Trang xin hoãn vụ Máy hút sữa điện đôi Spectra S1 sang đợt khuyến mãi sau nha em."
+      ],
+      "must_carry_over": [
+        "product_advised"
+      ],
+      "must_not_ask": [
+        "product_advised"
+      ],
+      "success_if": {
+        "tool_called": null,
+        "must_not_call_tools": [
+          "order.create"
+        ]
+      },
+      "expected_outcome": "tu_choi"
+    }
+  }
+}

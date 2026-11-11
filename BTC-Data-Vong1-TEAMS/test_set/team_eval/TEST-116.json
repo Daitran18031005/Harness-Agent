@@ -1,0 +1,39 @@
+{
+  "scenario_id": "TEST-116",
+  "level": "M1",
+  "industry": "gia-dung",
+  "region": "bac",
+  "south": false,
+  "persona": "khach_can_ship_gap",
+  "hard_case": "cau_hoi_y_te",
+  "customer_phone": "0910918674",
+  "customer_name": "Duy",
+  "honorific": "anh",
+  "notes": "[gia-dung] (hoi_chuyen_mon_y_te) Máy lọc không khí Samsung AX40 (SKU-SS-AX40) tại Hải Phòng.",
+  "calls": {
+    "call_1": {
+      "channel": "hotline",
+      "call_date": "2026-10-15",
+      "customer_goal": "hỏi vấn đề y tế chuyên sâu liên quan Máy lọc không khí Samsung AX40 -> chuyển máy",
+      "customer_turns": [
+        "Mẹ bầu nhà Duy ở Hải Phòng hay dị ứng nặng theo chỉ định bệnh viện, xài Máy lọc không khí Samsung AX40 hằng ngày cần kiêng kỵ điều gì về sức khỏe?",
+        "Nội dung liên quan trực tiếp điều trị y khoa với Máy lọc không khí Samsung AX40 tại Hải Phòng, em chuyển cuộc gọi sang bộ phận tư vấn chuyên môn giùm Duy."
+      ],
+      "facts_established": {
+        "product_advised": "SKU-SS-AX40"
+      },
+      "success_if": {
+        "tool_called": "handoff.transfer",
+        "brief_must_contain": [
+          "customer_phone",
+          "escalation_reason",
+          "product_advised"
+        ]
+      },
+      "ground_truth_facts": {
+        "is_medical_question": true
+      },
+      "expected_outcome": "chuyen_may"
+    }
+  }
+}

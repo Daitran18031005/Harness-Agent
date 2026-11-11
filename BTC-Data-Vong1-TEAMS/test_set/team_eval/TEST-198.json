@@ -1,0 +1,43 @@
+{
+  "scenario_id": "TEST-198",
+  "level": "M1",
+  "industry": "me-be",
+  "region": "nam",
+  "south": true,
+  "persona": "khach_do_du_hoi_nguoi_nha",
+  "hard_case": "so_noi_bang_chu",
+  "customer_phone": "0911568114",
+  "customer_name": "Trang",
+  "honorific": "chị",
+  "notes": "[me-be] (asr_so_noi_tieng_viet) Bình sữa Pigeon PPSU 240ml (SKU-MB-BOT) tại Bình Dương.",
+  "calls": {
+    "call_1": {
+      "channel": "hotline",
+      "call_date": "2026-10-15",
+      "input_mode": "asr_transcript",
+      "customer_goal": "chuẩn hóa ASR/ITN số nói bằng chữ cho Bình sữa Pigeon PPSU 240ml",
+      "customer_turns": [
+        "Nghe bạn ở Bình Dương giới thiệu Bình sữa Pigeon PPSU 240ml xài cho nhu cầu bé tập ti bình sợ sặc hơi đầy bụng tốt lắm, Trang hỏi giá đúng 289.000đ phải không?",
+        "Khoan chốt Bình sữa Pigeon PPSU 240ml vội nha vì kinh phí chuẩn bị tầm 500.000đ thôi, lưu giùm địa chỉ số nhà 225."
+      ],
+      "customer_turns_asr": [
+        "nghe bạn ở bình dương giới thiệu bình sữa pigeon ppsu hai trăm bốn mươi mi li lít xài cho nhu cầu bé tập ti bình sợ sặc hơi đầy bụng tốt lắm trang hỏi giá đúng hai trăm tám mươi chín nghìn đồng phải không",
+        "khoan chốt bình sữa pigeon ppsu hai trăm bốn mươi mi li lít vội nha vì kinh phí chuẩn bị tầm năm trăm nghìn đồng thôi lưu giùm địa chỉ số nhà hai trăm hai mươi lăm"
+      ],
+      "facts_established": {
+        "product_advised": "SKU-MB-BOT",
+        "price_quoted_vnd": 289000
+      },
+      "success_if": {
+        "tool_called": null,
+        "must_not_call_tools": [
+          "order.create"
+        ]
+      },
+      "ground_truth_facts": {
+        "price_vnd": 289000
+      },
+      "expected_outcome": "hen_goi_lai"
+    }
+  }
+}

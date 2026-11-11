@@ -1,0 +1,58 @@
+{
+  "scenario_id": "TEST-160",
+  "level": "M1",
+  "industry": "gia-dung",
+  "region": "trung",
+  "south": false,
+  "persona": "khach_mua_nhieu_mon",
+  "hard_case": null,
+  "customer_phone": "0911267154",
+  "customer_name": "Trung",
+  "honorific": "anh",
+  "notes": "[gia-dung] (da_kenh_zalo_hotline) Bộ lõi lọc thay thế RO 1-2-3 (SKU-WF-CORE) tại Quảng Nam.",
+  "calls": {
+    "call_1": {
+      "channel": "zalo_oa",
+      "channel_identity": "zalo.trung.160",
+      "call_date": "2026-10-15",
+      "customer_goal": "nhắn Zalo hỏi Bộ lõi lọc thay thế RO 1-2-3 để lại SĐT 0911267154",
+      "customer_turns": [
+        "Shop ơi, anh Trung đang tìm hiểu Bộ lõi lọc thay thế RO 1-2-3 dùng cho bảo trì thay bộ 3 lõi lọc thô RO 1-2-3 định kỳ.",
+        "Số điện thoại của Trung là 0911267154, ít bữa rảnh gọi hotline lên đơn Bộ lõi lọc thay thế RO 1-2-3 về Quảng Nam cho tiện."
+      ],
+      "facts_established": {
+        "product_advised": "SKU-WF-CORE",
+        "price_quoted_vnd": 390000,
+        "phone_provided": "0911267154"
+      },
+      "expected_outcome": "hen_goi_lai"
+    },
+    "call_2": {
+      "channel": "hotline",
+      "days_later": 2,
+      "customer_goal": "gọi hotline nhắc lại đơn đang xem bên Zalo để chốt luôn",
+      "customer_turns": [
+        "Chào em, Trung vừa chat Zalo hai ngày trước về Bộ lõi lọc thay thế RO 1-2-3 đây, nay gọi qua tổng đài chốt nhanh món đó về Quảng Nam nhé.",
+        "Đóng gói gửi về số 220 đường Hùng Vương, An Mỹ, Tam Kỳ, Quảng Nam, cứ đọc tên Trung bảo vệ chung cư nhận giùm hoặc gọi trực tiếp. Thanh toán COD."
+      ],
+      "must_carry_over": [
+        "product_advised"
+      ],
+      "must_not_ask": [
+        "product_advised"
+      ],
+      "success_if": {
+        "tool_called": "order.create",
+        "args_match": {
+          "sku": "SKU-WF-CORE",
+          "price_vnd": 390000,
+          "payment": "COD"
+        }
+      },
+      "ground_truth_facts": {
+        "price_vnd": 390000
+      },
+      "expected_outcome": "chot_don"
+    }
+  }
+}

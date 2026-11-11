@@ -29,7 +29,7 @@
 <section class="slide on">
   <h1>Harness Agent Call Center<br>E-commerce (Telesale)</h1>
   <p>Agent nhớ khách qua nhiều cuộc gọi và kênh, không hỏi lại, không bịa giá, không tạo đơn khi khách chưa đồng ý</p>
-  <p class="sub">Sudo Code 2026 — Vòng 1 · số liệu: bước 15 giai đoạn 2 (21 kịch bản, 3 seed)</p>
+  <p class="sub">Sudo Code 2026 — Vòng 1 · số liệu: lần đo 11/11/2026 (277 kịch bản, 2 cấu hình, 1 seed)</p>
 </section>
 
 <section class="slide">
@@ -94,7 +94,7 @@
 <section class="slide">
   <h2>An toàn</h2>
   <ul>
-    <li><b>Order gate luôn bật:</b> không tạo đơn khi khách chưa xác nhận bản đọc lại</li>
+    <li><b>Order gate luôn bật:</b> không tạo đơn khi khách chưa xác nhận bản đọc lại; lượt chốt của bộ chấm cần thêm một lớp LLM độc lập trích được nguyên văn yêu cầu đặt đơn</li>
     <li><b>Guardrail:</b> số tiền/phí/tồn kho khớp tool; chặn "đã lên đơn" khi chưa có tool; chặn "em là nhân viên thật"</li>
     <li><b>PII:</b> SĐT/địa chỉ/CCCD thành token trước LLM và trace; API trả trace rút gọn</li>
     <li><b>Trần chi phí cứng</b> mọi lần chạy thật; <b>timeout 20 s + thử lại</b> khi API đứng</li>
@@ -105,73 +105,78 @@
 <section class="slide">
   <h2>Cách đo</h2>
   <ul>
-    <li><b>21 kịch bản:</b> 7 mẫu BTC + 14 kịch bản sinh (đa phiên, đa kênh, ca biên); <b>3 seed</b>; mỗi seed một mẫu</li>
-    <li>Chấm bằng <code>reference_eval.py</code> của BTC, 5 chỉ số: TSR · RQR · CCR · HR giá/KM · độ trễ</li>
-    <li>Baseline: cùng model và tool, bộ nhớ mới mỗi cuộc</li>
-    <li>Kịch bản BTC cố định không trả lời được order gate → báo riêng; số chính là <b>TSR tương tác</b> (khách mô phỏng trả lời gate)</li>
-    <li class="sub">Model agent gpt-4o-mini, temperature 0 · chưa có LLM-judge, chưa điền tay file chấm 20 lượt</li>
+    <li><b>277 kịch bản:</b> 7 mẫu BTC + 270 của nhóm — 455 cuộc gọi, 111 kịch bản đa phiên (47 có ≥ 3 cuộc), 35 đa kênh, 244 ca khó</li>
+    <li>Chấm bằng <code>reference_eval.py</code> của BTC (bản 08/11): RQR · CCR · TSR · HR giá/KM · độ trễ · guardrail</li>
+    <li>Baseline: cùng model và tool, bộ nhớ mới ở mỗi cuộc gọi</li>
+    <li>Lời khách cố định; theo luật BTC, sau lượt khách cuối agent có <b>một lượt chốt</b> để đọc lại đơn và tạo đơn. Không dùng khách mô phỏng</li>
+    <li class="sub">gpt-4o-mini, temperature 0, <b>1 seed</b> · 1.084 lượt mỗi cấu hình · chưa có LLM-judge, chưa chấm tay 20 lượt</li>
   </ul>
 </section>
 
 <section class="slide">
-  <h2>Kết quả (lần chạy 4)</h2>
+  <h2>Kết quả (277 kịch bản)</h2>
   <table>
     <tr><th>Chỉ số</th><th>Hệ thống</th><th>Baseline</th><th>Ngưỡng</th><th></th></tr>
-    <tr><td>TSR</td><td>71,4 ± 0,0 %</td><td>69,8 ± 2,7 %</td><td>≥ 70 %, hơn baseline</td><td class="ok">đạt (hơn ít)</td></tr>
-    <tr><td>RQR</td><td>2,1 ± 3,6 %</td><td>12,2 ± 3,4 %</td><td>giảm ≥ 40 %</td><td class="ok">giảm 76,5 %</td></tr>
-    <tr><td>CCR</td><td>52,4 %</td><td>3,6 %</td><td>—</td><td class="ok">hơn rõ</td></tr>
-    <tr><td>HR giá/KM</td><td>0,0 ± 0,0 %</td><td>29,3 ± 5,7 %</td><td>≤ 5 %</td><td class="ok">đạt (đáp án GEN-01 đã sửa)</td></tr>
-    <tr><td>TTFT p95 (seed sạch)</td><td>6,7 – 7,3 s</td><td>—</td><td>≤ 3 s</td><td class="no">chưa đạt</td></tr>
-    <tr><td>Guardrail vi phạm</td><td>0</td><td>—</td><td>0</td><td class="ok">đạt</td></tr>
+    <tr><td>Task Success Rate</td><td>76,5 % (212/277)</td><td>66,8 %</td><td>≥ 70 %</td><td class="ok">đạt</td></tr>
+    <tr><td>Context Carryover Rate</td><td>57,2 %</td><td>10,7 %</td><td>—</td><td class="ok">hơn rõ</td></tr>
+    <tr><td>Repeat-Question Rate</td><td>3,3 %</td><td>4,7 %</td><td>giảm ≥ 40 %</td><td class="no">giảm 30 %</td></tr>
+    <tr><td>Hallucination giá/KM</td><td>14,6 %</td><td>22,3 %</td><td>≤ 5 %</td><td class="no">chưa đạt theo script</td></tr>
+    <tr><td>Guardrail vi phạm</td><td>10</td><td>6</td><td>0</td><td class="no">kém baseline</td></tr>
+    <tr><td>TTFT p95 · Total p95</td><td>7,5 s · 8,9 s</td><td>7,8 s · 9,2 s</td><td>≤ 3 s · ≤ 8 s</td><td class="no">chưa đạt</td></tr>
+    <tr><td>Nạp Call Brief p95</td><td>47 ms</td><td>31 ms</td><td>≤ 5 s</td><td class="ok">đạt</td></tr>
   </table>
 </section>
 
 <section class="slide">
-  <h2>So với baseline — điều đáng tin và điều chưa chắc</h2>
-  <div class="cols">
-    <div class="box"><b>Khác biệt rõ</b><ul><li>CCR 52,4 % so với 3,6 %</li><li>HR giá/KM 0,0 % so với 29,3 %</li><li>RQR 2,1 % so với 12,2 %</li></ul></div>
-    <div class="box"><b>Khác biệt chưa chắc</b><ul><li>TSR hơn 1,5 điểm, nằm trong độ lệch chuẩn của baseline</li><li>RQR theo seed: giảm 100 / 29,5 / 100 %</li><li>mỗi seed một mẫu; không tách được đóng góp từng sửa</li></ul></div>
-  </div>
+  <h2>Bộ nhớ giúp ở đâu</h2>
+  <table>
+    <tr><th>Nhóm kịch bản</th><th>Số kịch bản</th><th>Hệ thống</th><th>Baseline</th></tr>
+    <tr><td>7 mẫu BTC</td><td>7</td><td>6/7</td><td>5/7</td></tr>
+    <tr><td>SC-GEN (sinh theo khung)</td><td>15</td><td>13/15</td><td>13/15</td></tr>
+    <tr><td>SC-TV</td><td>20</td><td>18/20</td><td>14/20</td></tr>
+    <tr><td>SC-ULTRA (4–5 cuộc mỗi khách)</td><td>15</td><td>10/15</td><td>6/15</td></tr>
+    <tr><td>TEST</td><td>220</td><td>165/220</td><td>147/220</td></tr>
+  </table>
+  <p>Chênh lệch lớn nhất ở khách gọi nhiều lần (67 % so với 40 %); kịch bản một cuộc gọi thì hai cấu hình gần nhau.</p>
 </section>
 
 <section class="slide">
   <h2>Trước và sau cải tiến</h2>
   <table>
-    <tr><th>Lần</th><th>TSR</th><th>TSR bộ sinh</th><th>RQR</th><th>HR giá/KM</th><th>Thay đổi chính</th></tr>
-    <tr><td>1</td><td>50,0</td><td>60–73</td><td>0,0</td><td>31,1</td><td>—</td></tr>
-    <tr><td>2</td><td>68,2</td><td>93</td><td>7,3</td><td>6,2</td><td>sửa order.create/giá/qty/SĐT, nhãn giá sản phẩm phụ</td></tr>
-    <tr><td>3</td><td>71,2</td><td>93–100</td><td>2,2</td><td>9,5*</td><td>câu chuyển máy bằng code; gate không lấn câu trả lời giá</td></tr>
-    <tr><td>4</td><td>72,7</td><td>100</td><td>2,1</td><td>0,0 (đáp án GEN-01 đã sửa; 6,0 trước đó)</td><td>nhánh dự phòng không chọn bừa sản phẩm</td></tr>
+    <tr><th>Lần đo (7 mẫu BTC)</th><th>Thay đổi</th><th>TSR</th><th>HR giá/KM</th><th>RQR</th></tr>
+    <tr><td>trước</td><td>hợp đồng tool BTC 11/2026</td><td>1/7</td><td>—</td><td>—</td></tr>
+    <tr><td>+ lượt chốt</td><td>đọc lại đơn và tạo đơn sau lượt khách cuối</td><td>7/7</td><td>11,1 %</td><td>8,0 %</td></tr>
+    <tr><td>+ sửa bộ trích claim</td><td>giá mẫu gợi ý thêm không còn bị ghi là giá chính</td><td>6/7</td><td>0,0 %</td><td>4,2 %</td></tr>
+    <tr><td>+ 3 sửa sau lần đo lớn</td><td>chốt độc lập ở lượt chốt · đổi size không mở đơn mới · lịch hẹn quá khứ</td><td>SAMPLE-03 đạt lại</td><td>0,0 %</td><td>0,0 %*</td></tr>
   </table>
-  <p class="sub">* seed 1 dính lỗi mạng giữa lượt. Sau lần 4 còn thêm timeout + thử lại và tính chi phí router — chưa đo lại bằng LLM thật.</p>
+  <p class="sub">* kiểm trên 3 kịch bản. <b>Knowledge Gap Loop:</b> vòng 0 gom 9 câu hỏi kho chính sách không trả lời được → chờ người duyệt → bổ sung kho + kịch bản hồi quy; chưa có số vòng 1.</p>
 </section>
 
 <section class="slide">
-  <h2>Ca làm sai (14 ca trong báo cáo)</h2>
+  <h2>Ca làm sai (12 ca trong báo cáo)</h2>
   <ul>
-    <li><b>Đáp án kịch bản sai (lỗi của nhóm, đã sửa):</b> SC-GEN-01 (1.690.000 → 1.521.000), SC-GEN-05 (50.000 → 40.000); SC-GEN-02 đã xóa khỏi bộ</li>
-    <li><b>Do order gate (6 mẫu BTC cố định):</b> không có lời khách trả lời gate → TSR 14,3 %</li>
-    <li><b>Đã sửa và đo lại:</b> giá sản phẩm phụ tính nhầm, thiếu <i>price_vnd</i>/qty, câu chuyển máy, gate lấn câu trả lời giá</li>
-    <li><b>Đã sửa, chưa đo:</b> nhánh dự phòng chọn bừa SKU, lượt API đứng 68–128 s</li>
-    <li><b>Còn mở:</b> CCR thiếu một nửa; <i>order.update</i> gọi trước khi khách đồng ý; hỏi lại "mã đơn hàng"</li>
+    <li><b>Nghiêm trọng, đã sửa:</b> khách nói "khoan chốt… vội" mà lượt chốt vẫn tạo đơn → thêm lớp LLM độc lập, phải trích được nguyên văn yêu cầu đặt đơn</li>
+    <li><b>Đã sửa:</b> đồng ý đổi size bị hiểu là mua mới · hẹn "01/01" bị điền năm đã qua nên không báo nghỉ lễ · phiếu chuyển máy thiếu tên sản phẩm · báo giá niêm yết của mẫu đang giảm</li>
+    <li><b>Chưa sửa:</b> agent lặp lại chữ "giá nhập" khi từ chối · 5 ca chuyển máy thừa · 21 cuộc không tạo đơn khớp đáp án (chưa phân loại hết)</li>
+    <li><b>Lệch do cách chấm:</b> 25/26 claim giá bị tính sai là giá <i>đúng</i> của sản phẩm khác đáp án (khách hỏi A rồi chuyển sang B) — tính theo giá mock: 0,6 %. Đã gửi câu hỏi cho BTC</li>
   </ul>
 </section>
 
 <section class="slide">
   <h2>Chi phí và tác động kinh doanh</h2>
   <div class="cols">
-    <div class="box"><div class="big">≈ 63 VND</div>mỗi cuộc gọi (cả hai cấu hình, mọi lệnh gọi LLM); lần chạy 4: 11.639 VND cho ≈ 186 cuộc<br><span class="sub">≈ 50 VND/cuộc riêng chat chính của hệ thống</span></div>
-    <div class="box"><b>Ước lượng (giả định, không phải số đo)</b><ul><li>5 câu hỏi/cuộc, 8 s/câu thừa → ≈ 4 s/cuộc gọi lại</li><li>ít sai giá/KM hơn ≈ 280/1.000 câu nói giá</li><li>lợi ích chính: khách không phải nhắc lại</li></ul></div>
+    <div class="box"><div class="big">≈ 70 VND</div>mỗi cuộc gọi, gồm mọi lệnh gọi LLM (đọc hiểu, chat chính, router chính sách, trích bộ nhớ)<br><span class="sub">lần đo 277 kịch bản × 2 cấu hình: 63.391 VND · ≈ 29 VND/lượt</span></div>
+    <div class="box"><b>Ước lượng (giả định, không phải số đo)</b><ul><li>khách không phải nhắc lại: CCR 10,7 → 57,2 %</li><li>khách gọi 4–5 lần: hoàn thành việc 40 → 67 %</li><li>câu hỏi thừa giảm ít (4,7 → 3,3 %)</li></ul></div>
   </div>
 </section>
 
 <section class="slide">
   <h2>Hạn chế và việc tiếp theo</h2>
   <ul>
-    <li><b>Dataset:</b> 30 cuộc / 21 kịch bản (ngưỡng ≥ 120); audio 4 file TTS (ngưỡng ≥ 40 cuộc / 1 giờ)</li>
-    <li><b>ASR:</b> Gipformer WER ≈ 8 % — chỉ trên 4 file TTS sạch giọng Bắc; cần ≥ 20 file nhiều giọng</li>
-    <li><b>Độ trễ:</b> TTFT ≤ 3 s chưa đạt; cần tối ưu token và số vòng LLM</li>
-    <li><b>Đánh giá:</b> chưa LLM-judge 12 tiêu chí, chưa chấm tay 20 lượt, chưa thí nghiệm cắt bỏ từng thành phần</li>
+    <li><b>Chưa đạt ngưỡng:</b> RQR giảm 30 % (cần 40 %) · HR giá theo script · TTFT/Total p95 · guardrail kém baseline</li>
+    <li><b>Phép đo:</b> 1 seed; 270/277 kịch bản do nhóm viết; 6 sửa sau lần đo mới kiểm trên 17 kịch bản</li>
+    <li><b>Audio / ASR:</b> 4 file TTS giọng Bắc (ngưỡng ≥ 40 cuộc / 1 giờ, WER trên ≥ 20 file)</li>
+    <li><b>Vòng cải tiến:</b> có cơ chế và 9 thiếu sót, chưa có số vòng 1</li>
     <li><b>Hệ thống:</b> order gate ở orchestrator (chưa ở mcp-crm); API một worker</li>
     <li class="sub">Mã nguồn, dataset, báo cáo: thư mục submission/ · chạy demo: python scripts/run_demo.py</li>
   </ul>

@@ -26,6 +26,12 @@
       "HarnessOrchestrator",
       "CallBriefBuilder"
     ],
+    "pricing.quote_order": [
+      "LLMOrchestrator",
+      "LLMOrchestrator-AutoRepair",
+      "HarnessOrchestrator",
+      "CallBriefBuilder"
+    ],
     "product.shortlist": [
       "LLMOrchestrator",
       "HarnessOrchestrator"

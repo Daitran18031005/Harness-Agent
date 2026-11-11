@@ -1,0 +1,41 @@
+{
+  "scenario_id": "TEST-81",
+  "level": "M1",
+  "industry": "gia-dung",
+  "region": "nam",
+  "south": true,
+  "persona": "khach_mua_nhieu_mon",
+  "hard_case": "pham_vi_bao_hanh",
+  "customer_phone": "0910641474",
+  "customer_name": "Trang",
+  "honorific": "chị",
+  "notes": "[gia-dung] (bao_hanh_phu_kien) Máy lọc nước UF Sunhouse (SKU-WF-UF) tại Cần Thơ.",
+  "calls": {
+    "call_1": {
+      "channel": "zalo_oa",
+      "call_date": "2026-10-15",
+      "customer_goal": "hỏi phạm vi bảo hành phụ kiện tiêu hao của Máy lọc nước UF Sunhouse",
+      "customer_turns": [
+        "Trang dùng Máy lọc nước UF Sunhouse ở Cần Thơ được vài tháng rồi, muốn hỏi van xả thải, ống nước cấp và gioăng cao su bị mòn theo thời gian có nằm trong danh mục bảo hành miễn phí không?",
+        "Ra là linh kiện cút nối nhanh, van điện từ và dây nguồn adapter của Máy lọc nước UF Sunhouse bị hao mòn tự nhiên phải tự mua mới chứ không nằm trong gói bảo hành miễn phí hả em, ok Trang hiểu rồi."
+      ],
+      "facts_established": {
+        "product_advised": "SKU-WF-UF"
+      },
+      "success_if": {
+        "tool_called": null,
+        "must_say_any": [
+          "tiêu hao",
+          "phụ kiện",
+          "không thuộc",
+          "BH-01"
+        ]
+      },
+      "ground_truth_facts": {
+        "consumables_covered": false
+      },
+      "expected_outcome": "hen_goi_lai",
+      "channel_identity": "zalo.trang.test_81"
+    }
+  }
+}

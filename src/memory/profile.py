@@ -63,19 +63,25 @@ class ProfileMemoryStore:
         self.backend = backend
         # Callback ghi nhật ký thay đổi (MemoryService gắn vào) — nguồn của trace.memory_writes.
         self.on_write: Optional[Callable[[Dict[str, Any]], None]] = None
-        if self.backend and self.backend.available:
-            for cid, keys in self.backend.load_all_profiles().items():
-                for key, versions in keys.items():
-                    self._store.setdefault(cid, {})[key] = [
+        self._loaded: set = set()             # khách đã đọc từ DB (D12: nạp THEO KHÁCH khi cần, không nạp cả DB lúc khởi tạo)
+
+    def _of(self, customer_id: str) -> Dict[str, List[ProfileFact]]:
+        """Các fact của MỘT khách; lần đầu chạm tới khách đó thì đọc từ DB."""
+        if customer_id not in self._loaded:
+            self._loaded.add(customer_id)
+            if self.backend and self.backend.available:
+                for key, versions in self.backend.load_all_profiles(customer_id).get(customer_id, {}).items():
+                    self._store.setdefault(customer_id, {})[key] = [
                         ProfileFact(
                             key=key, value=v["value"], confidence=v["confidence"], source_session=v["source_session"],
                             observed_at=v["observed_at"], ttl_days=v["ttl_days"], superseded=v["superseded"],
                             superseded_by=v["superseded_by"], source_call=v.get("source_call", ""),
                             source_turn=v.get("source_turn"), source_channel=v.get("source_channel", ""),
                             observed_on=v.get("observed_on")) for v in versions]
+        return self._store.setdefault(customer_id, {})
 
     def _current(self, customer_id: str, key: str) -> Optional[ProfileFact]:
-        for fact in reversed(self._store.get(customer_id, {}).get(key, [])):
+        for fact in reversed(self._of(customer_id).get(key, [])):
             if not fact.superseded:
                 return fact
         return None
@@ -83,7 +89,7 @@ class ProfileMemoryStore:
     def set_fact(self, customer_id: str, key: str, value: Any, source_session: str = "", ttl_days: Optional[int] = None,
                  confidence: float = 1.0, source_call: str = "", source_turn: Optional[int] = None,
                  source_channel: str = "", observed_on: Optional[str] = None) -> ProfileFact:
-        versions = self._store.setdefault(customer_id, {}).setdefault(key, [])
+        versions = self._of(customer_id).setdefault(key, [])
         current = self._current(customer_id, key)
         observed_on = observed_on or _today()
 
@@ -120,7 +126,7 @@ class ProfileMemoryStore:
     def get_active_facts(self, customer_id: str, on_date: Optional[str] = None) -> Dict[str, Any]:
         """Chỉ trả về fact còn hiệu lực: chưa bị superseded và (nếu có on_date) chưa hết TTL."""
         out: Dict[str, Any] = {}
-        for key in self._store.get(customer_id, {}):
+        for key in self._of(customer_id):
             fact = self._current(customer_id, key)
             if fact is not None and fact.is_valid_on(on_date):
                 out[key] = fact.value
@@ -128,11 +134,11 @@ class ProfileMemoryStore:
 
     def get_history(self, customer_id: str, key: str) -> List[ProfileFact]:
         """Mọi phiên bản của 1 fact theo thứ tự thời gian (kể cả đã bị thay thế)."""
-        return list(self._store.get(customer_id, {}).get(key, []))
+        return list(self._of(customer_id).get(key, []))
 
     def active_facts_full(self, customer_id: str, on_date: Optional[str] = None) -> List[ProfileFact]:
         """Các ProfileFact còn hiệu lực (đủ metadata: TTL, provenance) — dùng khi gộp hồ sơ giữa các mã khách."""
-        facts = [self._current(customer_id, k) for k in self._store.get(customer_id, {})]
+        facts = [self._current(customer_id, k) for k in self._of(customer_id)]
         return [f for f in facts if f is not None and f.is_valid_on(on_date)]
 
     def facts_by_channel(self, customer_id: str, on_date: Optional[str] = None) -> Dict[str, Dict[str, Any]]:

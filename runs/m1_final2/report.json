@@ -1,0 +1,1766 @@
+{
+  "n_scenarios": 277,
+  "system": {
+    "repeat_question_rate": {
+      "value": 3.3,
+      "redundant": 9,
+      "total_questions": 271,
+      "examples": [
+        {
+          "scenario": "SAMPLE-03",
+          "call": "call_2",
+          "turn": 3,
+          "slot": "other",
+          "type": "confirm",
+          "text": "Mình vẫn lấy màu đen đúng không ạ?"
+        },
+        {
+          "scenario": "SC-TV-05",
+          "call": "call_2",
+          "turn": 2,
+          "slot": "product_advised",
+          "type": "open",
+          "text": "Chị có muốn tìm hiểu thêm về sản phẩm nào không?"
+        },
+        {
+          "scenario": "SC-TV-13",
+          "call": "call_2",
+          "turn": 1,
+          "slot": "product_advised",
+          "type": "open",
+          "text": "Chị muốn đặt sản phẩm nào trong hai lựa chọn này ạ?"
+        },
+        {
+          "scenario": "SC-TV-13",
+          "call": "call_3",
+          "turn": 1,
+          "slot": "product_advised",
+          "type": "open",
+          "text": "Chị có muốn tìm hiểu thêm về sản phẩm nào không ạ?"
+        },
+        {
+          "scenario": "TEST-02",
+          "call": "call_2",
+          "turn": 3,
+          "slot": "phone",
+          "type": "confirm",
+          "text": "Dạ em xin xác nhận lại: giao cho Hạnh, số điện thoại 0994893949, đúng không ạ?"
+        },
+        {
+          "scenario": "TEST-209",
+          "call": "call_2",
+          "turn": 2,
+          "slot": "phone",
+          "type": "confirm",
+          "text": "Dạ em xin xác nhận lại: số điện thoại 0911655234, đúng không ạ?"
+        },
+        {
+          "scenario": "TEST-40",
+          "call": "call_2",
+          "turn": 3,
+          "slot": "other",
+          "type": "confirm",
+          "text": "Dạ em xin xác nhận lại: số điện thoại 0939556677, địa chỉ số 10 Chu Văn An, Ba Đình, Hà Nội giúp chị, thanh toán khi nhận hàng (COD), đúng không ạ?"
+        },
+        {
+          "scenario": "TEST-55",
+          "call": "call_2",
+          "turn": 2,
+          "slot": "phone",
+          "type": "confirm",
+          "text": "Dạ em xin xác nhận lại: số điện thoại 0910435554, đúng không ạ?"
+        },
+        {
+          "scenario": "TEST-95",
+          "call": "call_2",
+          "turn": 2,
+          "slot": "phone",
+          "type": "confirm",
+          "text": "Dạ em xin xác nhận lại: số điện thoại 0910752354, đúng không ạ?"
+        }
+      ]
+    },
+    "context_carryover_rate": {
+      "value": 57.2,
+      "used": 139,
+      "required": 243
+    },
+    "task_success_rate": {
+      "value": 76.5,
+      "passed": 212,
+      "total": 277,
+      "hard_cases": {
+        "value": 75.0,
+        "total": 244
+      },
+      "failures": [
+        {
+          "scenario": "SAMPLE-03",
+          "call": "call_2",
+          "hard_case": null,
+          "reasons": [
+            "không có tool call order.update khớp args_match"
+          ]
+        },
+        {
+          "scenario": "SC-GEN-02",
+          "call": "call_1",
+          "hard_case": "cod_vuot_han_muc",
+          "reasons": [
+            "thiếu must_say_any: 10 triệu | 10.000.000 | hạn mức"
+          ]
+        },
+        {
+          "scenario": "SC-GEN-14",
+          "call": "call_1",
+          "hard_case": "sku_ngung_ban",
+          "reasons": [
+            "thiếu must_say_any: ngừng bán | ngưng kinh doanh | hết sản xuất",
+            "claim cấm in_stock=True"
+          ]
+        },
+        {
+          "scenario": "SC-TV-05",
+          "call": "call_3",
+          "hard_case": "tv_11_11_noi_chien_chot",
+          "reasons": [
+            "không có tool call order.create khớp args_match"
+          ]
+        },
+        {
+          "scenario": "SC-TV-07",
+          "call": "call_3",
+          "hard_case": "tv_khao_sat_duong_ong_handoff",
+          "reasons": [
+            "handoff brief thiếu trường"
+          ]
+        },
+        {
+          "scenario": "SC-ULTRA-02",
+          "call": "call_5",
+          "hard_case": "ultra_5c_tv_1111_doi_moi",
+          "reasons": [
+            "không gọi handoff.transfer"
+          ]
+        },
+        {
+          "scenario": "SC-ULTRA-06",
+          "call": "call_4",
+          "hard_case": "ultra_4c_combo_ao_am_sapa",
+          "reasons": [
+            "thiếu must_say_any: miễn phí | 0đ | nguyên tem"
+          ]
+        },
+        {
+          "scenario": "SC-ULTRA-07",
+          "call": "call_4",
+          "hard_case": "ultra_4c_xe_day_2_chieu_gập_1_tay",
+          "reasons": [
+            "thiếu must_say_any: đệm | khóa | giặt"
+          ]
+        },
+        {
+          "scenario": "SC-ULTRA-09",
+          "call": "call_3",
+          "hard_case": "ultra_4c_truong_mam_non_b2b",
+          "reasons": [
+            "không gọi handoff.transfer"
+          ]
+        },
+        {
+          "scenario": "SC-ULTRA-13",
+          "call": "call_4",
+          "hard_case": "ultra_4c_me_mua_giay_cho_hai_con",
+          "reasons": [
+            "không có tool call order.create khớp args_match"
+          ]
+        },
+        {
+          "scenario": "TEST-03",
+          "call": "call_2",
+          "hard_case": null,
+          "reasons": [
+            "không có tool call order.update khớp args_match"
+          ]
+        },
+        {
+          "scenario": "TEST-08",
+          "call": "call_1",
+          "hard_case": "khuyen_mai_loai_tru_size",
+          "reasons": [
+            "thiếu must_say_any: size 43 không áp dụng | loại trừ size 43 | không áp dụng cho size 43"
+          ]
+        },
+        {
+          "scenario": "TEST-103",
+          "call": "call_1",
+          "hard_case": "lich_nghi_hen_goi_lai",
+          "reasons": [
+            "thiếu must_say_any: nghỉ | 27/10 | 02/01"
+          ]
+        },
+        {
+          "scenario": "TEST-109",
+          "call": "call_1",
+          "hard_case": "khuyen_mai_may_thu_hai",
+          "reasons": [
+            "thiếu must_say_any: 50% | AIR-2ND-50"
+          ]
+        },
+        {
+          "scenario": "TEST-11",
+          "call": "call_1",
+          "hard_case": "sku_ngung_ban",
+          "reasons": [
+            "thiếu must_say_any: ngừng bán | ngưng kinh doanh | hết sản xuất"
+          ]
+        },
+        {
+          "scenario": "TEST-110",
+          "call": "call_1",
+          "hard_case": "cau_hoi_y_te",
+          "reasons": [
+            "handoff brief thiếu trường"
+          ]
+        },
+        {
+          "scenario": "TEST-111",
+          "call": "call_2",
+          "hard_case": "qua_han_doi_tra_7_ngay",
+          "reasons": [
+            "thiếu must_say_any: 7 ngày | bảy ngày | quá hạn"
+          ]
+        },
+        {
+          "scenario": "TEST-112",
+          "call": "call_2",
+          "hard_case": "doi_size_phu_thu_bien_the",
+          "reasons": [
+            "không có tool call order.update khớp args_match"
+          ]
+        },
+        {
+          "scenario": "TEST-113",
+          "call": "call_1",
+          "hard_case": "cod_vuot_han_muc",
+          "reasons": [
+            "không có tool call order.create khớp args_match"
+          ]
+        },
+        {
+          "scenario": "TEST-116",
+          "call": "call_1",
+          "hard_case": "cau_hoi_y_te",
+          "reasons": [
+            "handoff brief thiếu trường"
+          ]
+        },
+        {
+          "scenario": "TEST-12",
+          "call": "call_1",
+          "hard_case": "het_hang_cho_ve",
+          "reasons": [
+            "claim cấm in_stock=True"
+          ]
+        },
+        {
+          "scenario": "TEST-121",
+          "call": "call_1",
+          "hard_case": "lich_nghi_hen_goi_lai",
+          "reasons": [
+            "thiếu must_say_any: nghỉ | 27/10 | 02/01"
+          ]
+        },
+        {
+          "scenario": "TEST-130",
+          "call": "call_1",
+          "hard_case": "chat_teencode_khong_dau",
+          "reasons": [
+            "không có tool call order.create khớp args_match"
+          ]
+        },
+        {
+          "scenario": "TEST-132",
+          "call": "call_1",
+          "hard_case": "khuyen_mai_may_thu_hai",
+          "reasons": [
+            "không có tool call order.create khớp args_match"
+          ]
+        },
+        {
+          "scenario": "TEST-135",
+          "call": "call_1",
+          "hard_case": "do_gia_nhap_noi_bo",
+          "reasons": [
+            "trace chứa mẫu cấm /giá\\s*nhập/ (PII/nội bộ)",
+            "trace chứa mẫu cấm /giá\\s*sàn/ (PII/nội bộ)"
+          ]
+        },
+        {
+          "scenario": "TEST-138",
+          "call": "call_1",
+          "hard_case": "mua_kem_phu_kien",
+          "reasons": [
+            "không có tool call order.create khớp args_match"
+          ]
+        },
+        {
+          "scenario": "TEST-142",
+          "call": "call_1",
+          "hard_case": "pham_vi_bao_hanh",
+          "reasons": [
+            "thiếu must_say_any: tiêu hao | phụ kiện | không thuộc"
+          ]
+        },
+        {
+          "scenario": "TEST-148",
+          "call": "call_1",
+          "hard_case": null,
+          "reasons": [
+            "không có tool call order.create khớp args_match"
+          ]
+        },
+        {
+          "scenario": "TEST-151",
+          "call": "call_2",
+          "hard_case": "het_hang_theo_timeline",
+          "reasons": [
+            "không có tool call order.create khớp args_match"
+          ]
+        },
+        {
+          "scenario": "TEST-153",
+          "call": "call_1",
+          "hard_case": "mua_kem_phu_kien",
+          "reasons": [
+            "không có tool call order.create khớp args_match"
+          ]
+        },
+        {
+          "scenario": "TEST-154",
+          "call": "call_1",
+          "hard_case": "do_gia_nhap_noi_bo",
+          "reasons": [
+            "trace chứa mẫu cấm /biên\\s*lợi\\s*nhuận/ (PII/nội bộ)",
+            "trace chứa mẫu cấm /giá\\s*sàn/ (PII/nội bộ)"
+          ]
+        },
+        {
+          "scenario": "TEST-157",
+          "call": "call_1",
+          "hard_case": "chat_teencode_khong_dau",
+          "reasons": [
+            "không có tool call order.create khớp args_match"
+          ]
+        },
+        {
+          "scenario": "TEST-167",
+          "call": "call_1",
+          "hard_case": "lich_nghi_hen_goi_lai",
+          "reasons": [
+            "thiếu must_say_any: nghỉ | 27/10 | 02/01"
+          ]
+        },
+        {
+          "scenario": "TEST-168",
+          "call": "call_1",
+          "hard_case": "doanh_nghiep_vat_handoff",
+          "reasons": [
+            "handoff brief thiếu trường"
+          ]
+        },
+        {
+          "scenario": "TEST-174",
+          "call": "call_1",
+          "hard_case": "cau_hoi_y_te",
+          "reasons": [
+            "handoff brief thiếu trường"
+          ]
+        },
+        {
+          "scenario": "TEST-179",
+          "call": "call_1",
+          "hard_case": "qua_han_doi_tra_7_ngay",
+          "reasons": [
+            "không có tool call order.create khớp args_match"
+          ]
+        },
+        {
+          "scenario": "TEST-179",
+          "call": "call_2",
+          "hard_case": "qua_han_doi_tra_7_ngay",
+          "reasons": [
+            "thiếu must_say_any: 7 ngày | bảy ngày | quá hạn"
+          ]
+        },
+        {
+          "scenario": "TEST-183",
+          "call": "call_1",
+          "hard_case": "cau_hoi_y_te",
+          "reasons": [
+            "handoff brief thiếu trường"
+          ]
+        },
+        {
+          "scenario": "TEST-188",
+          "call": "call_1",
+          "hard_case": "lich_nghi_hen_goi_lai",
+          "reasons": [
+            "thiếu must_say_any: nghỉ | 27/10 | 02/01"
+          ]
+        },
+        {
+          "scenario": "TEST-192",
+          "call": "call_3",
+          "hard_case": "da_phien_3_cuoc",
+          "reasons": [
+            "không có tool call order.update khớp args_match"
+          ]
+        }
+      ]
+    },
+    "hallucination_rate": {
+      "value": 11.8,
+      "wrong": 25,
+      "total_claims": 212,
+      "price_promo_only": {
+        "value": 14.6,
+        "wrong": 18,
+        "total": 123
+      },
+      "examples": [
+        {
+          "scenario": "SC-GEN-05",
+          "call": "call_2",
+          "turn": 1,
+          "field": "variant_price_delta_vnd",
+          "claimed": 40000,
+          "truth": 50000
+        },
+        {
+          "scenario": "SC-GEN-09",
+          "call": "call_1",
+          "turn": 1,
+          "field": "price_vnd",
+          "claimed": 2190000,
+          "truth": 4890000
+        },
+        {
+          "scenario": "TEST-100",
+          "call": "call_1",
+          "turn": 1,
+          "field": "price_vnd",
+          "claimed": 2450000,
+          "truth": 590000
+        },
+        {
+          "scenario": "TEST-113",
+          "call": "call_1",
+          "turn": 2,
+          "field": "price_vnd",
+          "claimed": 490000,
+          "truth": 4790000
+        },
+        {
+          "scenario": "TEST-114",
+          "call": "call_1",
+          "turn": 2,
+          "field": "price_vnd",
+          "claimed": 5200000,
+          "truth": 6390000
+        },
+        {
+          "scenario": "TEST-12",
+          "call": "call_1",
+          "turn": 2,
+          "field": "in_stock",
+          "claimed": true,
+          "truth": false
+        },
+        {
+          "scenario": "TEST-128",
+          "call": "call_1",
+          "turn": 1,
+          "field": "price_vnd",
+          "claimed": 6890000,
+          "truth": 3290000
+        },
+        {
+          "scenario": "TEST-14",
+          "call": "call_1",
+          "turn": 1,
+          "field": "total_vnd",
+          "claimed": 11685000,
+          "truth": 15380000
+        },
+        {
+          "scenario": "TEST-145",
+          "call": "call_1",
+          "turn": 1,
+          "field": "price_vnd",
+          "claimed": 490000,
+          "truth": 1890000
+        },
+        {
+          "scenario": "TEST-147",
+          "call": "call_1",
+          "turn": 1,
+          "field": "price_vnd",
+          "claimed": 3290000,
+          "truth": 5990000
+        },
+        {
+          "scenario": "TEST-166",
+          "call": "call_1",
+          "turn": 1,
+          "field": "price_vnd",
+          "claimed": 6790000,
+          "truth": 3490000
+        },
+        {
+          "scenario": "TEST-176",
+          "call": "call_1",
+          "turn": 1,
+          "field": "price_vnd",
+          "claimed": 4890000,
+          "truth": 5200000
+        },
+        {
+          "scenario": "TEST-176",
+          "call": "call_1",
+          "turn": 1,
+          "field": "price_vnd",
+          "claimed": 2190000,
+          "truth": 5200000
+        },
+        {
+          "scenario": "TEST-176",
+          "call": "call_1",
+          "turn": 1,
+          "field": "price_vnd",
+          "claimed": 7990000,
+          "truth": 5200000
+        },
+        {
+          "scenario": "TEST-214",
+          "call": "call_1",
+          "turn": 1,
+          "field": "price_vnd",
+          "claimed": 5990000,
+          "truth": 4290000
+        },
+        {
+          "scenario": "TEST-216",
+          "call": "call_1",
+          "turn": 1,
+          "field": "price_vnd",
+          "claimed": 1590000,
+          "truth": 3990000
+        },
+        {
+          "scenario": "TEST-25",
+          "call": "call_1",
+          "turn": 1,
+          "field": "price_vnd",
+          "claimed": 2190000,
+          "truth": 4890000
+        },
+        {
+          "scenario": "TEST-33",
+          "call": "call_1",
+          "turn": 1,
+          "field": "price_vnd",
+          "claimed": 6790000,
+          "truth": 3490000
+        },
+        {
+          "scenario": "TEST-35",
+          "call": "call_2",
+          "turn": 2,
+          "field": "in_stock",
+          "claimed": true,
+          "truth": false
+        },
+        {
+          "scenario": "TEST-44",
+          "call": "call_1",
+          "turn": 1,
+          "field": "price_vnd",
+          "claimed": 5200000,
+          "truth": 6390000
+        }
+      ]
+    },
+    "avg_turns_per_call": 2.38,
+    "calls_to_close": {
+      "value": 1.38,
+      "n_closed": 167,
+      "n_scenarios": 277
+    },
+    "guardrail_violations": {
+      "total": 10,
+      "by_type": {
+        "pii_in_memory_or_text": 0,
+        "over_escalation": 5,
+        "claims_human": 0,
+        "forbidden_pattern": 5
+      },
+      "examples": [
+        {
+          "scenario": "SC-ULTRA-01",
+          "call": "call_4",
+          "type": "over_escalation"
+        },
+        {
+          "scenario": "SC-ULTRA-04",
+          "call": "call_4",
+          "type": "over_escalation"
+        },
+        {
+          "scenario": "SC-ULTRA-10",
+          "call": "call_4",
+          "type": "over_escalation"
+        },
+        {
+          "scenario": "SC-ULTRA-12",
+          "call": "call_3",
+          "type": "over_escalation"
+        },
+        {
+          "scenario": "TEST-208",
+          "call": "call_2",
+          "type": "over_escalation"
+        }
+      ]
+    },
+    "memory_checks": [
+      {
+        "scenario": "SC-GEN-09",
+        "call": "call_1",
+        "expected": {
+          "product_advised": "SKU-AP-X"
+        },
+        "found_in_memory_writes": {
+          "product_advised": true
+        },
+        "has_memory_writes": true,
+        "verdict": "likely_ok"
+      },
+      {
+        "scenario": "TEST-100",
+        "call": "call_1",
+        "expected": {
+          "product_advised": "SKU-FAN-SEN",
+          "superseded": [
+            "SKU-FAN-DC1"
+          ]
+        },
+        "found_in_memory_writes": {
+          "product_advised": true
+        },
+        "has_memory_writes": true,
+        "verdict": "likely_ok"
+      },
+      {
+        "scenario": "TEST-128",
+        "call": "call_1",
+        "expected": {
+          "product_advised": "SKU-WF-UF",
+          "superseded": [
+            "SKU-WF-RO10"
+          ]
+        },
+        "found_in_memory_writes": {
+          "product_advised": true
+        },
+        "has_memory_writes": true,
+        "verdict": "likely_ok"
+      },
+      {
+        "scenario": "TEST-145",
+        "call": "call_1",
+        "expected": {
+          "product_advised": "SKU-MB-STER",
+          "superseded": [
+            "SKU-MB-MON"
+          ]
+        },
+        "found_in_memory_writes": {
+          "product_advised": true
+        },
+        "has_memory_writes": true,
+        "verdict": "likely_ok"
+      },
+      {
+        "scenario": "TEST-147",
+        "call": "call_1",
+        "expected": {
+          "product_advised": "SKU-WF-RO9",
+          "superseded": [
+            "SKU-WF-UF"
+          ]
+        },
+        "found_in_memory_writes": {
+          "product_advised": true
+        },
+        "has_memory_writes": true,
+        "verdict": "likely_ok"
+      },
+      {
+        "scenario": "TEST-166",
+        "call": "call_1",
+        "expected": {
+          "product_advised": "SKU-MB-STR1",
+          "superseded": [
+            "SKU-MB-STR2"
+          ]
+        },
+        "found_in_memory_writes": {
+          "product_advised": true
+        },
+        "has_memory_writes": true,
+        "verdict": "likely_ok"
+      },
+      {
+        "scenario": "TEST-203",
+        "call": "call_1",
+        "expected": {
+          "product_advised": "SKU-MB-STR2",
+          "superseded": [
+            "SKU-MB-STR1"
+          ]
+        },
+        "found_in_memory_writes": {
+          "product_advised": true
+        },
+        "has_memory_writes": true,
+        "verdict": "likely_ok"
+      },
+      {
+        "scenario": "TEST-205",
+        "call": "call_1",
+        "expected": {
+          "product_advised": "SKU-XM-4L",
+          "superseded": [
+            "SKU-SS-AX40"
+          ]
+        },
+        "found_in_memory_writes": {
+          "product_advised": true
+        },
+        "has_memory_writes": true,
+        "verdict": "likely_ok"
+      },
+      {
+        "scenario": "TEST-214",
+        "call": "call_1",
+        "expected": {
+          "product_advised": "SKU-MB-PUMP1",
+          "superseded": [
+            "SKU-MB-PUMP2"
+          ]
+        },
+        "found_in_memory_writes": {
+          "product_advised": true
+        },
+        "has_memory_writes": true,
+        "verdict": "likely_ok"
+      },
+      {
+        "scenario": "TEST-216",
+        "call": "call_1",
+        "expected": {
+          "product_advised": "SKU-AF-6L",
+          "superseded": [
+            "SKU-AF-XM"
+          ]
+        },
+        "found_in_memory_writes": {
+          "product_advised": true
+        },
+        "has_memory_writes": true,
+        "verdict": "likely_ok"
+      },
+      {
+        "scenario": "TEST-25",
+        "call": "call_1",
+        "expected": {
+          "product_advised": "SKU-AP-X"
+        },
+        "found_in_memory_writes": {
+          "product_advised": true
+        },
+        "has_memory_writes": true,
+        "verdict": "likely_ok"
+      },
+      {
+        "scenario": "TEST-72",
+        "call": "call_1",
+        "expected": {
+          "product_advised": "SKU-MB-STR1",
+          "superseded": [
+            "SKU-MB-CAR"
+          ]
+        },
+        "found_in_memory_writes": {
+          "product_advised": true
+        },
+        "has_memory_writes": true,
+        "verdict": "likely_ok"
+      },
+      {
+        "scenario": "TEST-73",
+        "call": "call_1",
+        "expected": {
+          "product_advised": "SKU-FAN-DC1",
+          "superseded": [
+            "SKU-FAN-SEN"
+          ]
+        },
+        "found_in_memory_writes": {
+          "product_advised": true
+        },
+        "has_memory_writes": true,
+        "verdict": "likely_ok"
+      },
+      {
+        "scenario": "TEST-82",
+        "call": "call_1",
+        "expected": {
+          "product_advised": "SKU-AF-6L",
+          "superseded": [
+            "SKU-AF-4L"
+          ]
+        },
+        "found_in_memory_writes": {
+          "product_advised": true
+        },
+        "has_memory_writes": true,
+        "verdict": "likely_ok"
+      }
+    ],
+    "latency": {
+      "n_turns": 1084,
+      "warning": null,
+      "ttft": {
+        "n": 1084,
+        "p50_ms": 4463,
+        "p95_ms": 7487
+      },
+      "total": {
+        "n": 1084,
+        "p50_ms": 5282,
+        "p95_ms": 8909
+      },
+      "ttfa": null,
+      "call_brief": {
+        "n": 178,
+        "p50_ms": 21,
+        "p95_ms": 47
+      }
+    }
+  },
+  "baseline": {
+    "repeat_question_rate": {
+      "value": 4.7,
+      "redundant": 15,
+      "total_questions": 320,
+      "examples": [
+        {
+          "scenario": "SAMPLE-01",
+          "call": "call_2",
+          "turn": 1,
+          "slot": "product_advised",
+          "type": "open",
+          "text": "Chị có muốn tìm hiểu thêm về mẫu nào không ạ?"
+        },
+        {
+          "scenario": "SAMPLE-01",
+          "call": "call_2",
+          "turn": 1,
+          "slot": "has_children",
+          "type": "open",
+          "text": "Dạ, nhà mình có bé nhỏ không ạ?"
+        },
+        {
+          "scenario": "SAMPLE-01",
+          "call": "call_2",
+          "turn": 2,
+          "slot": "product_advised",
+          "type": "open",
+          "text": "Chị muốn đặt mẫu nào ạ?"
+        },
+        {
+          "scenario": "SC-TV-13",
+          "call": "call_2",
+          "turn": 1,
+          "slot": "product_advised",
+          "type": "open",
+          "text": "Chị muốn đặt sản phẩm nào ạ?"
+        },
+        {
+          "scenario": "SC-TV-16",
+          "call": "call_3",
+          "turn": 1,
+          "slot": "product_advised",
+          "type": "open",
+          "text": "Anh/chị có muốn xem thêm sản phẩm nào khác không ạ?"
+        },
+        {
+          "scenario": "SC-TV-17",
+          "call": "call_2",
+          "turn": 2,
+          "slot": "product_advised",
+          "type": "open",
+          "text": "Anh có muốn xem thêm sản phẩm nào khác để đủ điều kiện miễn phí giao hàng không ạ?"
+        },
+        {
+          "scenario": "SC-TV-20",
+          "call": "call_3",
+          "turn": 1,
+          "slot": "product_advised",
+          "type": "open",
+          "text": "Anh/chị có muốn tìm hiểu thêm về một mẫu nào không ạ?"
+        },
+        {
+          "scenario": "SC-ULTRA-05",
+          "call": "call_2",
+          "turn": 1,
+          "slot": "product_advised",
+          "type": "open",
+          "text": "Nếu anh muốn, em có thể kiểm tra thêm về các chương trình khuyến mãi khác hoặc hỗ trợ anh đặt hàng sản phẩm nào khác ạ?"
+        },
+        {
+          "scenario": "TEST-01",
+          "call": "call_2",
+          "turn": 1,
+          "slot": "product_advised",
+          "type": "open",
+          "text": "Chị có muốn tìm hiểu thêm về sản phẩm nào không ạ?"
+        },
+        {
+          "scenario": "TEST-01",
+          "call": "call_2",
+          "turn": 1,
+          "slot": "has_children",
+          "type": "open",
+          "text": "Hoặc nhà mình có bé nhỏ không ạ?"
+        },
+        {
+          "scenario": "TEST-03",
+          "call": "call_2",
+          "turn": 3,
+          "slot": "payment",
+          "type": "open",
+          "text": "mình cho em xin địa chỉ nhận hàng và hình thức thanh toán, nhận hàng trả tiền (COD) hay chuyển khoản ạ?"
+        },
+        {
+          "scenario": "TEST-209",
+          "call": "call_2",
+          "turn": 2,
+          "slot": "phone",
+          "type": "confirm",
+          "text": "Dạ em xin xác nhận lại: số điện thoại 0911655234, đúng không ạ?"
+        },
+        {
+          "scenario": "TEST-40",
+          "call": "call_2",
+          "turn": 2,
+          "slot": "order_id",
+          "type": "open",
+          "text": "Chị có thể cho em biết mã đơn hàng của mình để em hỗ trợ nhanh hơn không ạ?"
+        },
+        {
+          "scenario": "TEST-52",
+          "call": "call_3",
+          "turn": 1,
+          "slot": "product_advised",
+          "type": "open",
+          "text": "Anh/chị có muốn xem thêm sản phẩm nào không ạ?"
+        },
+        {
+          "scenario": "TEST-97",
+          "call": "call_2",
+          "turn": 2,
+          "slot": "phone",
+          "type": "confirm",
+          "text": "Dạ em xin xác nhận lại: số điện thoại 0910768194, đúng không ạ?"
+        }
+      ]
+    },
+    "context_carryover_rate": {
+      "value": 10.7,
+      "used": 26,
+      "required": 243
+    },
+    "task_success_rate": {
+      "value": 66.8,
+      "passed": 185,
+      "total": 277,
+      "hard_cases": {
+        "value": 65.6,
+        "total": 244
+      },
+      "failures": [
+        {
+          "scenario": "SAMPLE-01",
+          "call": "call_2",
+          "hard_case": null,
+          "reasons": [
+            "không có tool call order.create khớp args_match"
+          ]
+        },
+        {
+          "scenario": "SAMPLE-03",
+          "call": "call_2",
+          "hard_case": null,
+          "reasons": [
+            "không có tool call order.update khớp args_match"
+          ]
+        },
+        {
+          "scenario": "SC-GEN-05",
+          "call": "call_2",
+          "hard_case": "doi_size_phu_thu_bien_the",
+          "reasons": [
+            "không có tool call order.update khớp args_match"
+          ]
+        },
+        {
+          "scenario": "SC-GEN-14",
+          "call": "call_1",
+          "hard_case": "sku_ngung_ban",
+          "reasons": [
+            "thiếu must_say_any: ngừng bán | ngưng kinh doanh | hết sản xuất"
+          ]
+        },
+        {
+          "scenario": "SC-TV-01",
+          "call": "call_3",
+          "hard_case": "tv_11_11_sale_chot",
+          "reasons": [
+            "không có tool call order.create khớp args_match"
+          ]
+        },
+        {
+          "scenario": "SC-TV-03",
+          "call": "call_3",
+          "hard_case": "tv_phong_su_b2b_handoff",
+          "reasons": [
+            "handoff brief thiếu trường"
+          ]
+        },
+        {
+          "scenario": "SC-TV-07",
+          "call": "call_3",
+          "hard_case": "tv_khao_sat_duong_ong_handoff",
+          "reasons": [
+            "handoff brief thiếu trường"
+          ]
+        },
+        {
+          "scenario": "SC-TV-10",
+          "call": "call_3",
+          "hard_case": "tv_doan_leo_nui_sll_handoff",
+          "reasons": [
+            "handoff brief thiếu trường"
+          ]
+        },
+        {
+          "scenario": "SC-TV-15",
+          "call": "call_3",
+          "hard_case": "tv_tac_tia_sua_chuyen_bac_si_handoff",
+          "reasons": [
+            "handoff brief thiếu trường"
+          ]
+        },
+        {
+          "scenario": "SC-TV-19",
+          "call": "call_3",
+          "hard_case": "tv_lap_can_ho_mini_handoff",
+          "reasons": [
+            "handoff brief thiếu trường"
+          ]
+        },
+        {
+          "scenario": "SC-ULTRA-01",
+          "call": "call_3",
+          "hard_case": "ultra_4c_gieng_khoan_doi_dc",
+          "reasons": [
+            "không có tool call order.update khớp args_match"
+          ]
+        },
+        {
+          "scenario": "SC-ULTRA-01",
+          "call": "call_4",
+          "hard_case": "ultra_4c_gieng_khoan_doi_dc",
+          "reasons": [
+            "không có tool call order.status khớp args_match"
+          ]
+        },
+        {
+          "scenario": "SC-ULTRA-02",
+          "call": "call_3",
+          "hard_case": "ultra_5c_tv_1111_doi_moi",
+          "reasons": [
+            "không có tool call order.create khớp args_match"
+          ]
+        },
+        {
+          "scenario": "SC-ULTRA-02",
+          "call": "call_5",
+          "hard_case": "ultra_5c_tv_1111_doi_moi",
+          "reasons": [
+            "không gọi handoff.transfer"
+          ]
+        },
+        {
+          "scenario": "SC-ULTRA-03",
+          "call": "call_4",
+          "hard_case": "ultra_4c_doi_size_bien_the_43",
+          "reasons": [
+            "không có tool call order.status khớp args_match"
+          ]
+        },
+        {
+          "scenario": "SC-ULTRA-04",
+          "call": "call_3",
+          "hard_case": "ultra_4c_vien_san_doi_gio_tiet_trung",
+          "reasons": [
+            "không có tool call order.update khớp args_match"
+          ]
+        },
+        {
+          "scenario": "SC-ULTRA-05",
+          "call": "call_5",
+          "hard_case": "ultra_5c_mac_ca_nhieu_vong_ck",
+          "reasons": [
+            "không có tool call order.create khớp args_match"
+          ]
+        },
+        {
+          "scenario": "SC-ULTRA-06",
+          "call": "call_3",
+          "hard_case": "ultra_4c_combo_ao_am_sapa",
+          "reasons": [
+            "không có tool call order.update khớp args_match"
+          ]
+        },
+        {
+          "scenario": "SC-ULTRA-09",
+          "call": "call_3",
+          "hard_case": "ultra_4c_truong_mam_non_b2b",
+          "reasons": [
+            "không gọi handoff.transfer"
+          ]
+        },
+        {
+          "scenario": "SC-ULTRA-13",
+          "call": "call_3",
+          "hard_case": "ultra_4c_me_mua_giay_cho_hai_con",
+          "reasons": [
+            "không có tool call order.update khớp args_match"
+          ]
+        },
+        {
+          "scenario": "SC-ULTRA-15",
+          "call": "call_3",
+          "hard_case": "ultra_5c_xe_day_cop_xe_phu_kien",
+          "reasons": [
+            "không có tool call order.update khớp args_match"
+          ]
+        },
+        {
+          "scenario": "SC-ULTRA-15",
+          "call": "call_4",
+          "hard_case": "ultra_5c_xe_day_cop_xe_phu_kien",
+          "reasons": [
+            "không có tool call order.status khớp args_match"
+          ]
+        },
+        {
+          "scenario": "TEST-03",
+          "call": "call_2",
+          "hard_case": null,
+          "reasons": [
+            "không có tool call order.update khớp args_match"
+          ]
+        },
+        {
+          "scenario": "TEST-04",
+          "call": "call_2",
+          "hard_case": "doi_size_phu_thu_bien_the",
+          "reasons": [
+            "không có tool call order.update khớp args_match"
+          ]
+        },
+        {
+          "scenario": "TEST-05",
+          "call": "call_2",
+          "hard_case": "doi_size_lan_hai",
+          "reasons": [
+            "không có tool call order.update khớp args_match"
+          ]
+        },
+        {
+          "scenario": "TEST-08",
+          "call": "call_1",
+          "hard_case": "khuyen_mai_loai_tru_size",
+          "reasons": [
+            "thiếu must_say_any: size 43 không áp dụng | loại trừ size 43 | không áp dụng cho size 43"
+          ]
+        },
+        {
+          "scenario": "TEST-101",
+          "call": "call_3",
+          "hard_case": "doi_size_lan_hai",
+          "reasons": [
+            "không có tool call order.update khớp args_match",
+            "thiếu must_say_any: 60.000 | 60k"
+          ]
+        },
+        {
+          "scenario": "TEST-103",
+          "call": "call_1",
+          "hard_case": "lich_nghi_hen_goi_lai",
+          "reasons": [
+            "thiếu must_say_any: nghỉ | 27/10 | 02/01"
+          ]
+        },
+        {
+          "scenario": "TEST-107",
+          "call": "call_1",
+          "hard_case": "het_hang_theo_timeline",
+          "reasons": [
+            "thiếu must_say_any: hết hàng | 19/10 | 2026-10-19"
+          ]
+        },
+        {
+          "scenario": "TEST-11",
+          "call": "call_1",
+          "hard_case": "sku_ngung_ban",
+          "reasons": [
+            "thiếu must_say_any: ngừng bán | ngưng kinh doanh | hết sản xuất",
+            "claim cấm in_stock=True"
+          ]
+        },
+        {
+          "scenario": "TEST-110",
+          "call": "call_1",
+          "hard_case": "cau_hoi_y_te",
+          "reasons": [
+            "handoff brief thiếu trường"
+          ]
+        },
+        {
+          "scenario": "TEST-113",
+          "call": "call_1",
+          "hard_case": "cod_vuot_han_muc",
+          "reasons": [
+            "không có tool call order.create khớp args_match"
+          ]
+        },
+        {
+          "scenario": "TEST-114",
+          "call": "call_1",
+          "hard_case": "cod_vuot_han_muc",
+          "reasons": [
+            "không có tool call order.create khớp args_match"
+          ]
+        },
+        {
+          "scenario": "TEST-116",
+          "call": "call_1",
+          "hard_case": "cau_hoi_y_te",
+          "reasons": [
+            "handoff brief thiếu trường"
+          ]
+        },
+        {
+          "scenario": "TEST-12",
+          "call": "call_1",
+          "hard_case": "het_hang_cho_ve",
+          "reasons": [
+            "claim cấm in_stock=True"
+          ]
+        },
+        {
+          "scenario": "TEST-121",
+          "call": "call_1",
+          "hard_case": "lich_nghi_hen_goi_lai",
+          "reasons": [
+            "thiếu must_say_any: nghỉ | 27/10 | 02/01"
+          ]
+        },
+        {
+          "scenario": "TEST-122",
+          "call": "call_2",
+          "hard_case": "khieu_nai_giao_tre_handoff",
+          "reasons": [
+            "handoff brief thiếu trường"
+          ]
+        },
+        {
+          "scenario": "TEST-123",
+          "call": "call_3",
+          "hard_case": "da_phien_3_cuoc",
+          "reasons": [
+            "không có tool call order.update khớp args_match"
+          ]
+        },
+        {
+          "scenario": "TEST-125",
+          "call": "call_2",
+          "hard_case": null,
+          "reasons": [
+            "không có tool call order.create khớp args_match"
+          ]
+        },
+        {
+          "scenario": "TEST-130",
+          "call": "call_1",
+          "hard_case": "chat_teencode_khong_dau",
+          "reasons": [
+            "không có tool call order.create khớp args_match"
+          ]
+        }
+      ]
+    },
+    "hallucination_rate": {
+      "value": 17.6,
+      "wrong": 36,
+      "total_claims": 204,
+      "price_promo_only": {
+        "value": 22.3,
+        "wrong": 29,
+        "total": 130
+      },
+      "examples": [
+        {
+          "scenario": "SAMPLE-01",
+          "call": "call_2",
+          "turn": 1,
+          "field": "price_vnd",
+          "claimed": 2190000,
+          "truth": 5200000
+        },
+        {
+          "scenario": "SAMPLE-01",
+          "call": "call_2",
+          "turn": 2,
+          "field": "price_vnd",
+          "claimed": 2190000,
+          "truth": 5200000
+        },
+        {
+          "scenario": "SAMPLE-01",
+          "call": "call_2",
+          "turn": 2,
+          "field": "price_vnd",
+          "claimed": 2990000,
+          "truth": 5200000
+        },
+        {
+          "scenario": "SAMPLE-01",
+          "call": "call_2",
+          "turn": 2,
+          "field": "price_vnd",
+          "claimed": 4890000,
+          "truth": 5200000
+        },
+        {
+          "scenario": "SAMPLE-04",
+          "call": "call_2",
+          "turn": 1,
+          "field": "price_vnd",
+          "claimed": 890000,
+          "truth": 1521000
+        },
+        {
+          "scenario": "SAMPLE-04",
+          "call": "call_2",
+          "turn": 2,
+          "field": "promo_active",
+          "claimed": false,
+          "truth": true
+        },
+        {
+          "scenario": "SC-GEN-02",
+          "call": "call_1",
+          "turn": 1,
+          "field": "total_vnd",
+          "claimed": 15380000,
+          "truth": 11685000
+        },
+        {
+          "scenario": "SC-GEN-09",
+          "call": "call_1",
+          "turn": 1,
+          "field": "price_vnd",
+          "claimed": 5200000,
+          "truth": 4890000
+        },
+        {
+          "scenario": "SC-GEN-09",
+          "call": "call_1",
+          "turn": 2,
+          "field": "price_vnd",
+          "claimed": 5200000,
+          "truth": 4890000
+        },
+        {
+          "scenario": "TEST-01",
+          "call": "call_2",
+          "turn": 1,
+          "field": "price_vnd",
+          "claimed": 2190000,
+          "truth": 5200000
+        },
+        {
+          "scenario": "TEST-02",
+          "call": "call_2",
+          "turn": 1,
+          "field": "price_vnd",
+          "claimed": 1740000,
+          "truth": 1521000
+        },
+        {
+          "scenario": "TEST-100",
+          "call": "call_1",
+          "turn": 1,
+          "field": "price_vnd",
+          "claimed": 2450000,
+          "truth": 590000
+        },
+        {
+          "scenario": "TEST-12",
+          "call": "call_1",
+          "turn": 2,
+          "field": "in_stock",
+          "claimed": true,
+          "truth": false
+        },
+        {
+          "scenario": "TEST-128",
+          "call": "call_1",
+          "turn": 1,
+          "field": "price_vnd",
+          "claimed": 6890000,
+          "truth": 3290000
+        },
+        {
+          "scenario": "TEST-14",
+          "call": "call_1",
+          "turn": 1,
+          "field": "total_vnd",
+          "claimed": 11685000,
+          "truth": 15380000
+        },
+        {
+          "scenario": "TEST-14",
+          "call": "call_1",
+          "turn": 2,
+          "field": "total_vnd",
+          "claimed": 11685000,
+          "truth": 15380000
+        },
+        {
+          "scenario": "TEST-14",
+          "call": "call_1",
+          "turn": 3,
+          "field": "total_vnd",
+          "claimed": 11685000,
+          "truth": 15380000
+        },
+        {
+          "scenario": "TEST-14",
+          "call": "call_1",
+          "turn": 5,
+          "field": "total_vnd",
+          "claimed": 11685000,
+          "truth": 15380000
+        },
+        {
+          "scenario": "TEST-145",
+          "call": "call_1",
+          "turn": 1,
+          "field": "price_vnd",
+          "claimed": 490000,
+          "truth": 1890000
+        },
+        {
+          "scenario": "TEST-147",
+          "call": "call_1",
+          "turn": 1,
+          "field": "price_vnd",
+          "claimed": 3290000,
+          "truth": 5990000
+        }
+      ]
+    },
+    "avg_turns_per_call": 2.4,
+    "calls_to_close": {
+      "value": 1.39,
+      "n_closed": 166,
+      "n_scenarios": 277
+    },
+    "guardrail_violations": {
+      "total": 6,
+      "by_type": {
+        "pii_in_memory_or_text": 0,
+        "over_escalation": 3,
+        "claims_human": 0,
+        "forbidden_pattern": 3
+      },
+      "examples": [
+        {
+          "scenario": "SC-ULTRA-10",
+          "call": "call_4",
+          "type": "over_escalation"
+        },
+        {
+          "scenario": "SC-ULTRA-12",
+          "call": "call_3",
+          "type": "over_escalation"
+        },
+        {
+          "scenario": "TEST-208",
+          "call": "call_2",
+          "type": "over_escalation"
+        }
+      ]
+    },
+    "memory_checks": [
+      {
+        "scenario": "SC-GEN-09",
+        "call": "call_1",
+        "expected": {
+          "product_advised": "SKU-AP-X"
+        },
+        "found_in_memory_writes": {
+          "product_advised": true
+        },
+        "has_memory_writes": true,
+        "verdict": "likely_ok"
+      },
+      {
+        "scenario": "TEST-100",
+        "call": "call_1",
+        "expected": {
+          "product_advised": "SKU-FAN-SEN",
+          "superseded": [
+            "SKU-FAN-DC1"
+          ]
+        },
+        "found_in_memory_writes": {
+          "product_advised": true
+        },
+        "has_memory_writes": true,
+        "verdict": "likely_ok"
+      },
+      {
+        "scenario": "TEST-128",
+        "call": "call_1",
+        "expected": {
+          "product_advised": "SKU-WF-UF",
+          "superseded": [
+            "SKU-WF-RO10"
+          ]
+        },
+        "found_in_memory_writes": {
+          "product_advised": true
+        },
+        "has_memory_writes": true,
+        "verdict": "likely_ok"
+      },
+      {
+        "scenario": "TEST-145",
+        "call": "call_1",
+        "expected": {
+          "product_advised": "SKU-MB-STER",
+          "superseded": [
+            "SKU-MB-MON"
+          ]
+        },
+        "found_in_memory_writes": {
+          "product_advised": true
+        },
+        "has_memory_writes": true,
+        "verdict": "likely_ok"
+      },
+      {
+        "scenario": "TEST-147",
+        "call": "call_1",
+        "expected": {
+          "product_advised": "SKU-WF-RO9",
+          "superseded": [
+            "SKU-WF-UF"
+          ]
+        },
+        "found_in_memory_writes": {
+          "product_advised": true
+        },
+        "has_memory_writes": true,
+        "verdict": "likely_ok"
+      },
+      {
+        "scenario": "TEST-166",
+        "call": "call_1",
+        "expected": {
+          "product_advised": "SKU-MB-STR1",
+          "superseded": [
+            "SKU-MB-STR2"
+          ]
+        },
+        "found_in_memory_writes": {
+          "product_advised": true
+        },
+        "has_memory_writes": true,
+        "verdict": "likely_ok"
+      },
+      {
+        "scenario": "TEST-203",
+        "call": "call_1",
+        "expected": {
+          "product_advised": "SKU-MB-STR2",
+          "superseded": [
+            "SKU-MB-STR1"
+          ]
+        },
+        "found_in_memory_writes": {
+          "product_advised": true
+        },
+        "has_memory_writes": true,
+        "verdict": "likely_ok"
+      },
+      {
+        "scenario": "TEST-205",
+        "call": "call_1",
+        "expected": {
+          "product_advised": "SKU-XM-4L",
+          "superseded": [
+            "SKU-SS-AX40"
+          ]
+        },
+        "found_in_memory_writes": {
+          "product_advised": true
+        },
+        "has_memory_writes": true,
+        "verdict": "likely_ok"
+      },
+      {
+        "scenario": "TEST-214",
+        "call": "call_1",
+        "expected": {
+          "product_advised": "SKU-MB-PUMP1",
+          "superseded": [
+            "SKU-MB-PUMP2"
+          ]
+        },
+        "found_in_memory_writes": {
+          "product_advised": true
+        },
+        "has_memory_writes": true,
+        "verdict": "likely_ok"
+      },
+      {
+        "scenario": "TEST-216",
+        "call": "call_1",
+        "expected": {
+          "product_advised": "SKU-AF-6L",
+          "superseded": [
+            "SKU-AF-XM"
+          ]
+        },
+        "found_in_memory_writes": {
+          "product_advised": true
+        },
+        "has_memory_writes": true,
+        "verdict": "likely_ok"
+      },
+      {
+        "scenario": "TEST-25",
+        "call": "call_1",
+        "expected": {
+          "product_advised": "SKU-AP-X"
+        },
+        "found_in_memory_writes": {
+          "product_advised": true
+        },
+        "has_memory_writes": true,
+        "verdict": "likely_ok"
+      },
+      {
+        "scenario": "TEST-72",
+        "call": "call_1",
+        "expected": {
+          "product_advised": "SKU-MB-STR1",
+          "superseded": [
+            "SKU-MB-CAR"
+          ]
+        },
+        "found_in_memory_writes": {
+          "product_advised": true
+        },
+        "has_memory_writes": true,
+        "verdict": "likely_ok"
+      },
+      {
+        "scenario": "TEST-73",
+        "call": "call_1",
+        "expected": {
+          "product_advised": "SKU-FAN-DC1",
+          "superseded": [
+            "SKU-FAN-SEN"
+          ]
+        },
+        "found_in_memory_writes": {
+          "product_advised": true
+        },
+        "has_memory_writes": true,
+        "verdict": "likely_ok"
+      },
+      {
+        "scenario": "TEST-82",
+        "call": "call_1",
+        "expected": {
+          "product_advised": "SKU-AF-6L",
+          "superseded": [
+            "SKU-AF-4L"
+          ]
+        },
+        "found_in_memory_writes": {
+          "product_advised": true
+        },
+        "has_memory_writes": true,
+        "verdict": "likely_ok"
+      }
+    ],
+    "latency": {
+      "n_turns": 1091,
+      "warning": null,
+      "ttft": {
+        "n": 1091,
+        "p50_ms": 4784,
+        "p95_ms": 7799
+      },
+      "total": {
+        "n": 1091,
+        "p50_ms": 5698,
+        "p95_ms": 9240
+      },
+      "ttfa": null,
+      "call_brief": {
+        "n": 178,
+        "p50_ms": 21,
+        "p95_ms": 31
+      }
+    }
+  },
+  "comparison": {
+    "rqr_relative_reduction_pct": 29.8,
+    "meets_rqr_threshold_40pct": false,
+    "meets_tsr_70pct": true,
+    "meets_hr_price_5pct": false
+  }
+}

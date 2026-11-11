@@ -1,0 +1,43 @@
+{
+  "scenario_id": "TEST-62",
+  "level": "M1",
+  "industry": "gia-dung",
+  "region": "nam",
+  "south": true,
+  "persona": "khach_can_ship_gap",
+  "hard_case": "nam_freeship_promo",
+  "customer_phone": "0910490994",
+  "customer_name": "Duy",
+  "honorific": "anh",
+  "notes": "[gia-dung] (nam_freeship_gia_dung) Máy lọc không khí AirPure Mini (SKU-AP-MINI) tại Cần Thơ.",
+  "calls": {
+    "call_1": {
+      "channel": "hotline",
+      "call_date": "2026-10-15",
+      "customer_goal": "đặt gia dụng miền Nam (Cần Thơ) áp NAM-SHIP0 cho Máy lọc không khí AirPure Mini",
+      "customer_turns": [
+        "Bên mình còn chạy ưu đãi miễn cước vận chuyển khu vực miền Nam cho đơn Máy lọc không khí AirPure Mini về Cần Thơ giúp Duy chứ shop?",
+        "Vậy quá tiện rồi Duy lấy ngay Máy lọc không khí AirPure Mini, địa chỉ nhận tại số 24 đường Trần Hưng Đạo, An Phú, Cần Thơ, thu tiền COD."
+      ],
+      "facts_established": {
+        "product_advised": "SKU-AP-MINI",
+        "price_quoted_vnd": 2190000,
+        "payment": "COD",
+        "region": "nam"
+      },
+      "success_if": {
+        "tool_called": "order.create",
+        "args_match": {
+          "sku": "SKU-AP-MINI",
+          "price_vnd": 2190000,
+          "payment": "COD"
+        }
+      },
+      "ground_truth_facts": {
+        "freeship": true,
+        "price_vnd": 2190000
+      },
+      "expected_outcome": "chot_don"
+    }
+  }
+}

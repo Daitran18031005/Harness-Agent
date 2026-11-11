@@ -1,0 +1,59 @@
+{
+  "scenario_id": "TEST-78",
+  "level": "M1",
+  "industry": "gia-dung",
+  "region": "nam",
+  "south": true,
+  "persona": "khach_so_gia",
+  "hard_case": "khuyen_mai_het_han",
+  "customer_phone": "0910617714",
+  "customer_name": "Hùng",
+  "honorific": "anh",
+  "notes": "[gia-dung] (km_het_han_chap_nhan) Máy lọc không khí AirPure Y (SKU-AP-Y) tại TP.HCM.",
+  "calls": {
+    "call_1": {
+      "channel": "hotline",
+      "call_date": "2026-10-16",
+      "customer_goal": "hỏi Máy lọc không khí AirPure Y lúc còn hạn mã GIFT-FILTER (tặng màng lọc)",
+      "customer_turns": [
+        "Nghe bảo đang chạy GIFT-FILTER được tặng màng lọc cho dòng Máy lọc không khí AirPure Y, lưu giúp Hùng ít ngày sau quay lại chốt."
+      ],
+      "facts_established": {
+        "product_advised": "SKU-AP-Y",
+        "promo_code": "GIFT-FILTER"
+      },
+      "expected_outcome": "hen_goi_lai"
+    },
+    "call_2": {
+      "channel": "hotline",
+      "call_date": "2026-10-25",
+      "days_later": 9,
+      "customer_goal": "gọi lại khi GIFT-FILTER đã hết hạn và vẫn đồng ý chốt giá 5.200.000đ",
+      "customer_turns": [
+        "Anh Hùng quay lại đặt chiếc Máy lọc không khí AirPure Y đợt chạy GIFT-FILTER hôm bữa tư vấn nha em.",
+        "Bình thường thôi qua đợt GIFT-FILTER thì Hùng nhận Máy lọc không khí AirPure Y theo niêm yết 5.200.000đ nhé, xuất COD ngay giùm. Chuyển hàng tới số 96 đường Sư Vạn Hạnh, Quận 10, TP.HCM giúp anh, đến nơi gọi số này cho Hùng."
+      ],
+      "must_carry_over": [
+        "product_advised"
+      ],
+      "must_not_ask": [
+        "product_advised"
+      ],
+      "success_if": {
+        "tool_called": "order.create",
+        "args_match": {
+          "sku": "SKU-AP-Y",
+          "price_vnd": 5200000,
+          "payment": "COD"
+        },
+        "forbidden_claims": [
+          {
+            "field": "promo_active",
+            "value": true
+          }
+        ]
+      },
+      "expected_outcome": "chot_don"
+    }
+  }
+}

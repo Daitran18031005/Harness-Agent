@@ -1,50 +1,74 @@
 # Dataset — mô tả ngắn
 
-Đối chiếu bảng C.1 / C.4 của đề. Số đếm lấy từ `BTC-Data-Vong1-TEAMS/test_set/{public_sample,team_eval}` (từ 2026-11-04 `generated_m1` đã gộp vào `team_eval`; số đếm trong bảng dưới là của bộ cũ 21–22 kịch bản dùng cho bước 15, chưa đếm lại với 49 kịch bản mới), `asr/audio`, `catalog`, `simulator` (đếm 2026-10-21, còn đúng cho bộ đang dùng để đo ở bước 15). Chi tiết kế hoạch mở rộng: [../docs/DATASET_PLAN.md](../docs/DATASET_PLAN.md).
+Đối chiếu bảng C.1 / C.4 của đề. Số đếm lấy trực tiếp từ `BTC-Data-Vong1-TEAMS/test_set/{public_sample,team_eval}`, `asr/audio`, `catalog` (đếm 2026-11-11).
 
 ## 1. Thành phần
 
-| Thành phần | Nguồn | Số lượng |
-|---|---|---|
-| Kịch bản mẫu | BTC cấp (`public_sample`) | 7 kịch bản (SAMPLE-01…07) |
-| Kịch bản sinh thêm | nhóm sinh/viết tay → `team_eval` (nguồn gốc là các file JSON; `generate_dataset.py` đã lưu trữ) | 14 kịch bản (SC-GEN-01, 03…15; đã bỏ SC-GEN-02) |
-| Tổng | | **21 kịch bản = 30 cuộc gọi/chat**, 72 lượt khách |
-| Khách đa phiên (≥ 2 cuộc) | 9 kịch bản | ngưỡng ≥ 30 |
-| Khách đa kênh (gọi + chat) | SAMPLE-04, SAMPLE-06, SC-GEN-06 | 3 khách, ngưỡng ≥ 10 |
-| Audio | 4 file TTS (D01–D04) | ≈ 148 giây, ngưỡng ≥ 40 cuộc / ≥ 1 giờ |
-| Catalog | BTC | 40 SKU cha + 96 biến thể (136 SKU bán được), 3 nhóm hàng (gia dụng, mẹ & bé, thời trang) |
-| Chính sách | BTC | 11 file public (+ tài liệu nội bộ không bao giờ đưa vào prompt), 99 chunk, có bản cũ hết hiệu lực |
-| CRM | BTC | 50 khách, 3 miền (Bắc 15 / Trung 18 / Nam 17), có cặp dùng chung SĐT (C034/C035) |
-| Persona | `simulator/personas.json` | 12 persona; có đủ 3 loại bắt buộc (dự người nhà, so giá, đã mua đổi size/khiếu nại) |
+| Thành phần | Nguồn | Số lượng | Ngưỡng M1 |
+|---|---|---|---|
+| Kịch bản mẫu | BTC (`public_sample`) | 7 | — |
+| Kịch bản của nhóm | `team_eval`: 15 SC-GEN, 20 SC-TV, 15 SC-ULTRA, 220 TEST | 270 | ≥ 20 đa phiên + ≥ 5 ca khó |
+| **Tổng** | | **277 kịch bản = 455 cuộc gọi/chat, 908 lượt khách** | ≥ 120 cuộc |
+| Kịch bản đa phiên (≥ 2 cuộc cùng khách) | | **111** (trong đó 47 có ≥ 3 cuộc; SC-ULTRA 4–5 cuộc) | ≥ 30 khách |
+| Kịch bản đa kênh (gọi + chat) | hotline 382 cuộc · Fanpage 39 · Zalo OA 34 | **35** | ≥ 10 khách |
+| Ca khó (`hard_case`) | 77 loại nhãn | 244 kịch bản | ≥ 5 |
+| Audio | 4 file TTS (D01–D04 của BTC) | ≈ 148 giây | **≥ 40 cuộc / ≥ 1 giờ — CHƯA ĐẠT** |
+| Catalog | BTC | 40 SKU cha + 96 biến thể, 3 ngành (gia dụng, mẹ & bé, thời trang) | ≥ 30 SKU |
+| Chính sách | BTC | 14 tài liệu, 99 chunk, có bản cũ hết hiệu lực và tài liệu nội bộ | — |
+| CRM | BTC | 50 khách, 3 miền, có cặp dùng chung SĐT | — |
 
-Kịch bản sinh thêm dùng **dữ liệu thật của BTC** (SKU, giá, khuyến mãi, khách CRM) và **số liệu đã kiểm trong mock tool** (hạn mức COD 10 triệu, gọi xác nhận trên 2 triệu, khuyến mãi theo ngày hiệu lực, SĐT dùng chung). Không bịa SKU/giá/ngày.
+Hội thoại ở đây là **kịch bản lời khách** (mỗi lượt một câu) kèm kỳ vọng; lời agent sinh ra khi chạy và nằm trong trace (`runs/m1_final2/*.jsonl`, 1.084 lượt mỗi cấu hình).
 
 ## 2. Cách sinh
 
-- `generate_dataset.py` (đã lưu trữ ở `NotRelated/`; nội dung nay là các file JSON trong `team_eval/`): sinh kịch bản đa phiên / đa kênh / ca biên theo khung có sẵn (chỉ thêm, không sửa file BTC). Mỗi kịch bản gồm lời khách từng lượt, sự kiện phải mang sang (`must_carry_over`), điều không được hỏi lại (`must_not_ask`), điều kiện thành công (`success_if`) và `ground_truth_facts`.
-- Dataset mở rộng bằng LLM (`src/dataset/`, `scripts/generate_dataset_text.py`): khung hội thoại → lời thoại → kiểm tra tự động (đúng SKU/giá/ngày theo tool thật). **Đã tạm dừng:** mới sinh một lô đại diện (10 khung = 12 cuộc, đều đạt kiểm tra tự động), chi phí 2.076 / 10.000 VND trần; chưa đưa vào bộ test.
-- Audio: TTS một giọng; nhiễu và kênh điện thoại mô phỏng (`audio_sim.py`), **không phải** giọng thật nhiều vùng.
+- **SC-GEN, SC-TV, SC-ULTRA** (50 kịch bản): viết theo khung (`src/dataset/specs.py`, `frames54.py`) — persona, sản phẩm, ngày gọi, tình huống — rồi sinh lời khách bằng LLM (`gpt-6-luna`) hoặc viết tay; mỗi kịch bản có `must_carry_over`, `must_not_ask`, `success_if`, `ground_truth_facts`.
+- **TEST-01…220**: sinh theo mẫu từ catalog/khuyến mãi/CRM của BTC, phủ đều persona và loại ca khó; có biến thể lời khách không dấu, teencode, ASR lỗi.
+- **Kiểm tra tự động** (`src/dataset/validate.py`, `tests/test_team_eval_set.py`): SKU/giá/khuyến mãi/tồn kho trong đáp án phải khớp `mock_tools.py` đúng ngày gọi; 166 ca `order.create` đã đối chiếu với mock.
+- **Audio**: 4 file TTS một giọng của BTC; nhiễu và kênh điện thoại mô phỏng bằng `audio_sim.py`. Nhóm **chưa** sinh thêm audio.
+- Không dùng ghi âm hay dữ liệu khách thật.
 
-## 3. Phân bố và ca khó
+## 3. Phân bố
 
-| Loại | Hiện có |
-|---|---|
-| Đổi ý | 1 (SC-GEN-09) |
-| Mâu thuẫn với phiên trước | 0 |
-| Khuyến mãi hết hạn | 2 (SAMPLE-05, SC-GEN-01) |
-| Hỏi ngoài tài liệu | 2 (SAMPLE-07 chính sách bản cũ, SC-GEN-08 câu hỏi y tế) |
-| Kịch bản đa phiên | 9 (ngưỡng ≥ 20) |
+| Persona (17 loại; 8 loại nhiều nhất) | Số kịch bản |
+|---|---:|
+| Khách so giá | 56 |
+| Khách mua nhiều món | 41 |
+| Khách do dự, hỏi người nhà | 38 |
+| Khách hỏi nhiều không mua | 36 |
+| Khách thích khuyến mãi | 35 |
+| Khách cần giao gấp | 35 |
+| Khách ngoài phạm vi, cần chuyển máy | 7 |
+| Khách đã mua, đổi size | 6 |
 
-## 4. Hạn chế (nói thẳng)
+| Kỳ vọng của cuộc gọi | Số cuộc |
+|---|---:|
+| Tạo đơn (`order.create`) | 171 |
+| Hẹn gọi lại | 166 |
+| Khách từ chối / chưa mua | 44 |
+| Đổi/sửa đơn (`order.update`) | 41 |
+| Chuyển máy (`handoff.transfer`) | 24 |
+| Hỏi trạng thái đơn | 6 |
 
-1. **Chưa đạt ngưỡng số lượng:** 31 cuộc so với ≥ 120; đa phiên 9 so với ≥ 30; đa kênh 3 so với ≥ 10; chưa có kịch bản 3 cuộc; chưa có ca "mâu thuẫn với phiên trước".
-2. **Audio quá ít và quá sạch:** 4 file TTS giọng Bắc; không có giọng Nam/Trung hay nhiễu thật nên mọi số WER chỉ nói được cho phạm vi đó (n = 4).
-3. **Đáp án kịch bản từng sai so với tool/chính sách** (lỗi của nhóm sinh dữ liệu, không phải BTC; đã sửa 2026-11-02): SC-GEN-01 (1.690.000 → 1.521.000, quên RUN-10 hiệu lực 12–25/10) và SC-GEN-05 (chênh size 50.000 → 40.000, giá cuộc 1 1.690.000 → 1.352.000, quên RUN2-SALE). SC-GEN-02 (đáp án tổng tiền sai) đã **bị xóa khỏi bộ**.
-4. **Kịch bản cố định** do BTC viết không có lời khách trả lời câu hỏi của order gate nên TSR của 7 mẫu bị gate chặn theo thiết kế; kịch bản sinh có "khách mô phỏng" trả lời gate (`--gate-assist`, lượt chèn gắn `_injected` trong trace).
+| Ca khó (14 loại nhiều nhất) | Số kịch bản |
+|---|---:|
+| Đổi ý giữa cuộc | 14 |
+| Khuyến mãi hết hạn | 12 |
+| COD vượt hạn mức | 12 |
+| COD cần gọi xác nhận | 9 |
+| Hỏi theo chính sách bản cũ · đổi size có phụ thu · khiếu nại lỗi nhà sản xuất · câu hỏi y tế · đổi size lần hai · dò giá nhập nội bộ · mua kèm phụ kiện · phạm vi bảo hành | 7 mỗi loại |
+| Hẹn gọi lại rơi ngày nghỉ | 6 |
+
+## 4. Hạn chế
+
+1. **Audio và ASR chưa đạt ngưỡng**: 4 file TTS giọng Bắc; không có giọng Nam/Trung hay nhiễu thật; WER/CER chỉ nói được cho n = 4, chưa có số riêng cho số tiền/SĐT trên ≥ 20 file.
+2. **270/277 kịch bản do nhóm viết**: đáp án có thể sai so với tool. Đã gặp và sửa: SC-GEN-01, 02, 05 (bỏ sót khuyến mãi đang hiệu lực), TEST-189, TEST-13. Còn một lớp lệch chưa sửa: kịch bản "khách hỏi A rồi chuyển sang B" chỉ có một `price_vnd` trong đáp án nên giá đúng của A bị tính là bịa (báo cáo đánh giá mục 4).
+3. **Lời khách cố định**: không phản ứng với câu hỏi của agent; các lượt hỏi–đáp về địa chỉ/thanh toán chỉ được đo gián tiếp qua lượt chốt.
+4. **Phân bố lệch**: khách "đã mua, đổi size" và "cần chuyển máy" ít (6–7 kịch bản mỗi loại); kênh chat chiếm 16 % số cuộc.
+5. Bộ sinh mở rộng bằng LLM (`src/dataset/`, 54 khung) mới sinh 10 khung = 12 cuộc (2.076 VND), đang tạm dừng.
 
 ## 5. Thông tin cá nhân
 
 - Số điện thoại, tên, địa chỉ trong dataset là **dữ liệu tổng hợp** (CRM seed của BTC và khách do nhóm sinh); không dùng dữ liệu khách thật.
-- Runtime che PII trước khi vào LLM và trace: SĐT / địa chỉ / CCCD thành token (`<PHONE_n>`, `<ADDR_n>`, `<ID_n>`); bảng token chỉ nằm trong bộ nhớ của lượt; API trả trace rút gọn không có lời khách/agent hay tham số tool.
-- Khóa API không nằm trong gói nộp: `scripts/package_submission.py` loại `.env` và `backup_*/`, quét chuỗi giống khóa và xóa gói nếu phát hiện.
-- Xóa dữ liệu một khách: `delete_customer_data` (chỉ caller `Operator`), xóa cả hồ sơ, episode, vector và liên kết định danh.
+- Runtime che PII trước khi vào LLM và trace: SĐT / địa chỉ / CCCD thành token (`<PHONE_n>`, `<ADDR_n>`, `<ID_n>`); bảng token chỉ sống trong process, theo cuộc gọi, và được giải phóng khi cuộc gọi kết thúc; API trả trace rút gọn.
+- Khóa API không nằm trong repo/gói nộp: `.gitignore` loại `.env`; `scripts/package_submission.py` quét chuỗi giống khóa và hủy gói nếu phát hiện.
+- Xóa dữ liệu một khách: `delete_customer_data` (chỉ caller `Operator`) xóa hồ sơ, episode, vector và liên kết định danh.

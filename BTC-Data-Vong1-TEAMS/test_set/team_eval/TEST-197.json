@@ -1,0 +1,42 @@
+{
+  "scenario_id": "TEST-197",
+  "level": "M1",
+  "industry": "me-be",
+  "region": "bac",
+  "south": false,
+  "persona": "khach_hoi_nhieu_khong_mua",
+  "hard_case": "khieu_nai_loi_nsx",
+  "customer_phone": "0911560194",
+  "customer_name": "Duy",
+  "honorific": "anh",
+  "notes": "[me-be] (bao_hanh_loi_nsx_30d) Xe đẩy gấp gọn Joie Pact (SKU-MB-STR1) tại Bắc Ninh.",
+  "calls": {
+    "call_1": {
+      "channel": "chat_fanpage",
+      "call_date": "2026-10-15",
+      "customer_goal": "hỏi đổi mới 1-1 trong 30 ngày lỗi NSX cho Xe đẩy gấp gọn Joie Pact",
+      "customer_turns": [
+        "Alô em, anh Duy mới nhận Xe đẩy gấp gọn Joie Pact xài tới hôm thứ 13 tự dưng gặp trục trặc phần cứng do lỗi xưởng sản xuất.",
+        "Đã qua 7 ngày đổi trả thường rồi liệu Xe đẩy gấp gọn Joie Pact của Duy có được áp dụng đổi mới 1-1 trong 30 ngày không, hay chỉ sửa bảo hành 12 tháng?"
+      ],
+      "facts_established": {
+        "product_advised": "SKU-MB-STR1"
+      },
+      "success_if": {
+        "tool_called": null,
+        "must_say_any": [
+          "30 ngày",
+          "đổi mới",
+          "1-1",
+          "DT-05"
+        ]
+      },
+      "ground_truth_facts": {
+        "warranty_months": 12,
+        "doa_exchange_days": 30
+      },
+      "expected_outcome": "hen_goi_lai",
+      "channel_identity": "fb.duy.test_197"
+    }
+  }
+}

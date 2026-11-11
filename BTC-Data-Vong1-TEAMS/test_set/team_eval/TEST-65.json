@@ -1,0 +1,41 @@
+{
+  "scenario_id": "TEST-65",
+  "level": "M1",
+  "industry": "thoi-trang",
+  "region": "bac",
+  "south": false,
+  "persona": "khach_hoi_nhieu_khong_mua",
+  "hard_case": "lich_nghi_hen_goi_lai",
+  "customer_phone": "0910514754",
+  "customer_name": "Thành",
+  "honorific": "anh",
+  "notes": "[thoi-trang] (lich_nghi_le_callback) Giày trekking HikePro (SKU-SN-TRK) tại Nam Định.",
+  "calls": {
+    "call_1": {
+      "channel": "hotline",
+      "call_date": "2026-10-15",
+      "customer_goal": "hẹn gọi lại rơi vào ngày nghỉ lễ công ty (2027-01-01)",
+      "customer_turns": [
+        "Thấy bạn bè ở Nam Định khen Giày trekking HikePro khá hợp chuyến leo núi đường rừng ẩm ướt cuối tuần nên Thành gọi hỏi thử thông tin chi tiết.",
+        "Bất tiện quá đúng lúc Thành chuẩn bị lên xe đi công tác Nam Định, phiền shop hẹn gọi lại chuyện Giày trekking HikePro đúng 9h sáng Tết Dương lịch 01/01 được không?"
+      ],
+      "facts_established": {
+        "product_advised": "SKU-SN-TRK",
+        "requested_callback": "2027-01-01T09:00"
+      },
+      "success_if": {
+        "tool_called": "schedule.callback",
+        "must_say_any": [
+          "nghỉ",
+          "27/10",
+          "02/01",
+          "làm việc"
+        ]
+      },
+      "ground_truth_facts": {
+        "holiday_date": "2027-01-01"
+      },
+      "expected_outcome": "hen_goi_lai"
+    }
+  }
+}

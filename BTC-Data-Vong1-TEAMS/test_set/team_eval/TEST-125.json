@@ -1,0 +1,58 @@
+{
+  "scenario_id": "TEST-125",
+  "level": "M1",
+  "industry": "gia-dung",
+  "region": "bac",
+  "south": false,
+  "persona": "khach_hoi_nhieu_khong_mua",
+  "hard_case": null,
+  "customer_phone": "0910989954",
+  "customer_name": "Duy",
+  "honorific": "anh",
+  "notes": "[gia-dung] (da_kenh_zalo_hotline) Màng lọc thay thế AirPure Pro (SKU-AP-FLT-P) tại Nam Định.",
+  "calls": {
+    "call_1": {
+      "channel": "zalo_oa",
+      "channel_identity": "zalo.duy.125",
+      "call_date": "2026-10-15",
+      "customer_goal": "nhắn Zalo hỏi Màng lọc thay thế AirPure Pro để lại SĐT 0910989954",
+      "customer_turns": [
+        "Thấy bạn bè ở Nam Định khen Màng lọc thay thế AirPure Pro khá hợp thay màng lọc chuyên sâu cho máy AirPure Pro nên Duy gọi hỏi thử thông tin chi tiết.",
+        "Ghi giúp Duy số 0910989954 vào hồ sơ Màng lọc thay thế AirPure Pro nhé, hai hôm nữa tiện tay gọi tổng đài đặt sau."
+      ],
+      "facts_established": {
+        "product_advised": "SKU-AP-FLT-P",
+        "price_quoted_vnd": 990000,
+        "phone_provided": "0910989954"
+      },
+      "expected_outcome": "hen_goi_lai"
+    },
+    "call_2": {
+      "channel": "hotline",
+      "days_later": 2,
+      "customer_goal": "gọi hotline nhắc lại đơn đang xem bên Zalo để chốt luôn",
+      "customer_turns": [
+        "Alo em, Duy hồi hôm kia mới nhắn tin Zalo bên shop đây, lên đơn Màng lọc thay thế AirPure Pro đã hỏi luôn giúp anh.",
+        "Địa chỉ nhận là số 10 phố Hàng Đồng, Quang Trung, Nam Định, nhờ shop ghi chú giao cho Duy nha. Thanh toán COD."
+      ],
+      "must_carry_over": [
+        "product_advised"
+      ],
+      "must_not_ask": [
+        "product_advised"
+      ],
+      "success_if": {
+        "tool_called": "order.create",
+        "args_match": {
+          "sku": "SKU-AP-FLT-P",
+          "price_vnd": 990000,
+          "payment": "COD"
+        }
+      },
+      "ground_truth_facts": {
+        "price_vnd": 990000
+      },
+      "expected_outcome": "chot_don"
+    }
+  }
+}

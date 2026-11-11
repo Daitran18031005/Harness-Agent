@@ -5,7 +5,7 @@ Tool: crm.get_customer · order.create · order.status · order.update · schedu
 (Tạm gộp `order.*` ở đây; tách `mcp-order` ở M2.) Tool GHI chỉ dành cho lõi điều phối (xem config/mcp_permissions.json).
 Chạy riêng:  python -m mcp_servers.crm_server   (stdio)
 """
-from typing import Any, Dict, Optional
+from typing import Any, Dict, List, Optional
 
 from mcp.server.mcpserver import Context, MCPServer
 
@@ -24,11 +24,12 @@ def build_server(crm: Optional[CRMTool] = None, order: Optional[OrderCallbackToo
         return guard.run("crm.get_customer", ctx, crm.get_customer, phone=phone, zalo_id=zalo_id, fb_id=fb_id)
 
     @server.tool(name="order.create")
-    def order_create(ctx: Context, customer_phone: str, sku: str, qty: int = 1, price_vnd: Optional[int] = None, promo_code: Optional[str] = None,
-                     payment: str = "COD", address: Optional[str] = None, on: str = "2026-10-15") -> Dict[str, Any]:
-        """Tạo đơn hàng (GHI)."""
+    def order_create(ctx: Context, customer_phone: str, sku: Optional[str] = None, qty: int = 1, price_vnd: Optional[int] = None, promo_code: Optional[str] = None,
+                     payment: str = "COD", address: Optional[str] = None, on: str = "2026-10-15", lines: Optional[List[Dict[str, Any]]] = None,
+                     basket_skus: Optional[List[str]] = None) -> Dict[str, Any]:
+        """Tạo MỘT đơn (GHI): sku + qty + price_vnd, hoặc `lines` = [{sku, qty, price_vnd}] cho đơn nhiều dòng."""
         return guard.run("order.create", ctx, order.create_order, customer_phone=customer_phone, sku=sku, qty=qty, price_vnd=price_vnd,
-                         promo_code=promo_code, payment=payment, address=address, on=on)
+                         promo_code=promo_code, payment=payment, address=address, on=on, lines=lines, basket_skus=basket_skus)
 
     @server.tool(name="order.status")
     def order_status(ctx: Context, order_id: Optional[str] = None, customer_phone: Optional[str] = None) -> Dict[str, Any]:

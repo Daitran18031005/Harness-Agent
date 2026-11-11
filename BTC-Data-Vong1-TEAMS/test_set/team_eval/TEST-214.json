@@ -1,0 +1,50 @@
+{
+  "scenario_id": "TEST-214",
+  "level": "M1",
+  "industry": "me-be",
+  "region": "trung",
+  "south": false,
+  "persona": "khach_so_gia",
+  "hard_case": "doi_y_giua_cuoc",
+  "customer_phone": "0911694834",
+  "customer_name": "Duy",
+  "honorific": "anh",
+  "notes": "[me-be] (doi_y_ha_cap) Máy hút sữa điện đôi Medela Swing Maxi (SKU-MB-PUMP2) tại Quảng Nam.",
+  "calls": {
+    "call_1": {
+      "channel": "hotline",
+      "call_date": "2026-10-15",
+      "customer_goal": "ban đầu hỏi Máy hút sữa điện đôi Medela Swing Maxi, giữa cuộc đổi sang Máy hút sữa điện đôi Spectra S1",
+      "customer_turns": [
+        "Tư vấn giúp Duy dòng Máy hút sữa điện đôi Medela Swing Maxi, nhà ở Quảng Nam có nhu cầu dùng cho mẹ kích sữa chuyên sâu sau sinh cần hút kiệt ngay tuần này.",
+        "Tính đi tính lại ở Quảng Nam thấy Máy hút sữa điện đôi Spectra S1 giá 4.290.000đ hợp với Duy hơn hẳn Máy hút sữa điện đôi Medela Swing Maxi ban đầu.",
+        "Lên đơn cho Duy chính xác mẫu Máy hút sữa điện đôi Spectra S1 sau cùng này nha. Lên đơn giao về số 26 đường Trưng Nữ Vương, Tam Kỳ, Quảng Nam cho anh Duy, kiểm tra kỹ hàng trước khi xuất kho nha em. Thanh toán COD."
+      ],
+      "facts_established": {
+        "initial_product": "SKU-MB-PUMP2",
+        "product_advised": "SKU-MB-PUMP1",
+        "price_quoted_vnd": 4290000,
+        "payment": "COD"
+      },
+      "success_if": {
+        "tool_called": "order.create",
+        "args_match": {
+          "sku": "SKU-MB-PUMP1",
+          "price_vnd": 4290000,
+          "payment": "COD"
+        }
+      },
+      "memory_expectation": {
+        "product_advised": "SKU-MB-PUMP1",
+        "superseded": [
+          "SKU-MB-PUMP2"
+        ]
+      },
+      "ground_truth_facts": {
+        "final_sku": "SKU-MB-PUMP1",
+        "price_vnd": 4290000
+      },
+      "expected_outcome": "chot_don"
+    }
+  }
+}

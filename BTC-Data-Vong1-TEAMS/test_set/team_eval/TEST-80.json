@@ -1,0 +1,45 @@
+{
+  "scenario_id": "TEST-80",
+  "level": "M1",
+  "industry": "me-be",
+  "region": "bac",
+  "south": false,
+  "persona": "khach_can_ship_gap",
+  "hard_case": "freeship_nguong_don_me_be",
+  "customer_phone": "0910633554",
+  "customer_name": "Duy",
+  "honorific": "anh",
+  "notes": "[me-be] (me_be_nguong_freeship) Túi trữ sữa Sunmum 50 túi (SKU-MB-BAG) tại Nam Định.",
+  "calls": {
+    "call_1": {
+      "channel": "chat_fanpage",
+      "call_date": "2026-10-15",
+      "customer_goal": "ghép 5x Túi trữ sữa Sunmum 50 túi cho đủ ngưỡng >= 500k hưởng MOM-FREESHIP",
+      "customer_turns": [
+        "Một món Túi trữ sữa Sunmum 50 túi mức 119.000đ giao tới Nam Định cho Duy chưa đạt ngưỡng miễn phí ship Mẹ & Bé hả shop?",
+        "Duy chốt thành 5 món Túi trữ sữa Sunmum 50 túi đạt 595.000đ vượt mốc 500k miễn phí giao hàng luôn nhé, thanh toán COD tại số 140 phố Hàng Đồng, Quang Trung, Nam Định. Số máy của Duy tại Nam Định là 0910633554 để shipper gọi khi tới."
+      ],
+      "facts_established": {
+        "product_advised": "SKU-MB-BAG",
+        "quantity": 5,
+        "phone_provided": "0910633554"
+      },
+      "success_if": {
+        "tool_called": "order.create",
+        "args_match": {
+          "sku": "SKU-MB-BAG",
+          "qty": 5,
+          "price_vnd": 119000,
+          "payment": "COD"
+        },
+        "must_say_any": [
+          "500",
+          "freeship",
+          "MOM-FREESHIP"
+        ]
+      },
+      "expected_outcome": "chot_don",
+      "channel_identity": "fb.duy.test_80"
+    }
+  }
+}

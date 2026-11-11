@@ -57,7 +57,7 @@ TOOLS = _tools_schema()
 
 def call_dates(spec: Dict[str, Any]) -> Dict[str, str]:
     out, prev = {}, REF_DATE
-    for cn in ("call_1", "call_2", "call_3"):
+    for cn in (f"call_{i}" for i in range(1, 10)):
         c = spec.get("calls", {}).get(cn)
         if c is None:
             continue

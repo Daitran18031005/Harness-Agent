@@ -1,10 +1,8 @@
 """Tính tiền một giỏ hàng ở MỘT nơi duy nhất, dùng cho (a) kết quả `pricing.get_quote` trả cho LLM, (b) tổng "đọc lại đơn" của order gate,
-(c) chốt bất biến trước `order.create`: tổng báo cho khách == tổng backend sẽ ghi.
+(c) tham số `order.create`: tổng báo cho khách == tổng backend ghi.
 
-Hợp đồng tool: `pricing.get_quote` trả MỘT giá cho mỗi đơn vị; `order.create(sku, qty=n)` ghi `final_price_vnd × n` của lời báo giá KHÔNG có `basket_skus`
-(schema BTC chỉ cho `basket_skus` ở get_quote; tầng tool của nhóm cũng không chuyển nó sang order.create). KM "máy thứ 2" làm hai máy cùng SKU (hoặc hai SKU khác nhau)
-có giá khác giá đơn → `synced=False` và đơn KHÔNG được tạo (người gọi chuyển nhân viên).
-Quy tắc đọc từ kết quả `pricing.get_quote` (loại KM `percent_second_item` trong promotions.json), không có tên sản phẩm/kịch bản nào ở đây."""
+Hợp đồng tool (BTC cập nhật 11/2026): giỏ từ 2 máy trở lên được báo giá TỪNG MÁY bằng `pricing.quote_order` (AIR-2ND-50 một máy/đơn, mỗi máy tối đa một KM không cộng dồn),
+và `order.create(lines=[{sku, qty, price_vnd}])` ghi đúng các giá đó. Không có tên sản phẩm/kịch bản/luật KM nào ở đây: mọi con số lấy từ tool."""
 import re
 from typing import Any, Callable, Dict, List, Optional
 
@@ -13,39 +11,39 @@ COD_LIMIT_VND = 10_000_000
 COD_CONFIRM_VND = 2_000_000
 
 
-def _ok(q: Any) -> bool:
-    return isinstance(q, dict) and "error" not in q and isinstance(q.get("final_price_vnd"), (int, float))
-
-
-def price_basket(quote: Callable[[Dict[str, Any]], Dict[str, Any]], lines: List[Dict[str, Any]], on: str,
+def price_basket(call: Callable[[str, Dict[str, Any]], Dict[str, Any]], lines: List[Dict[str, Any]], on: str,
                  customer_phone: Optional[str] = None, address: Optional[str] = None) -> Dict[str, Any]:
-    """`quote(args)` chạy `pricing.get_quote`; `lines` = [{"sku", "qty"}]. Mỗi dòng được báo giá với `basket_skus` = các SKU KHÁC trong giỏ (cách tool hiểu KM "máy thứ 2"
-    giữa hai sản phẩm). Trả {lines, total_vnd (theo chính sách), order_total_vnd (backend sẽ ghi), synced} hoặc {error, sku}.
-    Mỗi dòng: unit_prices_vnd, line_total_vnd, order_unit_vnd, order_line_total_vnd, synced, second_unit_promos."""
-    skus = [str(l["sku"]) for l in lines]
-    out: List[Dict[str, Any]] = []
-    for ln in lines:
-        sku, qty = str(ln["sku"]), max(1, int(ln.get("qty") or 1))
-        others = list(dict.fromkeys(s for s in skus if s.upper() != sku.upper()))
-        base = {"sku": sku, "on": on, "qty": qty, **({"customer_phone": customer_phone} if customer_phone else {}), **({"address": address} if address else {})}
-        q = quote({**base, **({"basket_skus": others} if others else {})})          # giá THEO CHÍNH SÁCH (có KM giữa các SKU trong giỏ)
-        if not _ok(q):
-            return {"error": (q or {}).get("error", "quote_failed") if isinstance(q, dict) else "quote_failed", "sku": sku}
-        qo = quote(base) if others else q                                             # giá backend SẼ GHI: order.create không nhận giỏ
-        if not _ok(qo):
-            return {"error": (qo or {}).get("error", "quote_failed") if isinstance(qo, dict) else "quote_failed", "sku": sku}
-        unit, order_unit = int(q["final_price_vnd"]), int(qo["final_price_vnd"])
-        units, promos = [unit] * qty, []
-        # shortcut: chỉ qty == 2 cùng SKU, không giỏ khác: KM nói 'máy thứ 2' (cặp). Từ máy thứ 3 (và dòng có giỏ khác) KHÔNG áp giảm thêm — quy tắc 'máy thứ 4 có giảm không?' không rõ,
-        # và KM-06 yêu cầu đơn ≥ 3 sản phẩm cùng loại do quản lý duyệt; đoán sẽ báo sai giá. Nâng lên khi BTC làm rõ.
-        if qty == 2 and not others:
-            second = quote({**base, "basket_skus": [sku]})
-            if _ok(second) and int(second["final_price_vnd"]) < order_unit and any(p.get("type") == "percent_second_item" for p in second.get("applied_promos", [])):
-                units, promos = [order_unit, int(second["final_price_vnd"])], second.get("applied_promos", [])
-        out.append({"sku": sku, "qty": qty, "unit_prices_vnd": units, "line_total_vnd": sum(units), "order_unit_vnd": order_unit, "order_line_total_vnd": order_unit * qty,
-                    "synced": sum(units) == order_unit * qty, "second_unit_promos": promos})
-    return {"lines": out, "total_vnd": sum(l["line_total_vnd"] for l in out), "order_total_vnd": sum(l["order_line_total_vnd"] for l in out),
-            "synced": all(l["synced"] for l in out)}
+    """`call(tool, args)` chạy tool giá; `lines` = [{"sku", "qty"}]. Một máy → `pricing.get_quote` (như cũ); từ 2 máy → `pricing.quote_order`.
+    Trả {lines: [{sku, qty, unit_prices_vnd, line_total_vnd, second_unit_promos}], total_vnd} hoặc {error, sku}."""
+    lines = [{"sku": str(l["sku"]), "qty": max(1, int(l.get("qty") or 1))} for l in lines]
+    opt = {**({"customer_phone": customer_phone} if customer_phone else {}), **({"address": address} if address else {})}
+    if len(lines) == 1 and lines[0]["qty"] == 1:
+        q = call("pricing.get_quote", {"sku": lines[0]["sku"], "on": on, "qty": 1, **opt})
+        ok = isinstance(q, dict) and "error" not in q and isinstance(q.get("final_price_vnd"), (int, float))
+        units = [{"line": 0, "final_price_vnd": q["final_price_vnd"]}] if ok else None
+    else:
+        q = call("pricing.quote_order", {"lines": lines, "on": on, **opt})
+        units = q.get("units") if isinstance(q, dict) and "error" not in q else None
+    if not units:
+        q = q if isinstance(q, dict) else {}
+        return {"error": q.get("error", "quote_failed"), "sku": q.get("sku") or lines[0]["sku"]}
+    out = []
+    for i, ln in enumerate(lines):
+        mine = [u for u in units if u["line"] == i]
+        prices = [int(u["final_price_vnd"]) for u in mine]
+        out.append({**ln, "unit_prices_vnd": prices, "line_total_vnd": sum(prices),
+                    "second_unit_promos": [a for u in mine for a in u.get("applied_promos", []) if a.get("type") == "percent_second_item"]})
+    return {"lines": out, "total_vnd": sum(l["line_total_vnd"] for l in out)}
+
+
+def order_args(args: Dict[str, Any], pb: Dict[str, Any]) -> Dict[str, Any]:
+    """Tham số `order.create` cho giỏ `pb`. Một SKU đồng giá → dạng cũ (sku, qty, price_vnd). Còn lại → `lines`, mỗi máy một dòng qty=1 (ghi chú của pricing.quote_order).
+    `sku` (sản phẩm chính) được giữ ở mức đơn cho mã dùng sau đó; mock và script chấm lấy sku/qty/price_vnd của TỪNG DÒNG."""
+    rest = {k: v for k, v in args.items() if k not in ("basket_skus", "lines")}
+    units = [(l["sku"], p) for l in pb["lines"] for p in l["unit_prices_vnd"]]
+    if len(pb["lines"]) == 1 and len({p for _, p in units}) == 1:
+        return rest
+    return {**{k: v for k, v in rest.items() if k not in ("qty", "price_vnd")}, "lines": [{"sku": s, "qty": 1, "price_vnd": p} for s, p in units]}
 
 
 def cod_exceeds(total_vnd: int) -> bool:
@@ -66,13 +64,13 @@ def replace_amount(text: str, old: int, new: int) -> str:
 
 def correct_basket_totals(text: str, calls: List[Dict[str, Any]]) -> str:
     """LLM hay tự nhân `final_price_vnd × qty` rồi nói tổng sai khi báo giá có KM 'máy thứ 2'. Kết quả get_quote của chính cuộc gọi mang `total_vnd` đúng (từ `price_basket`):
-    số tiền 'giá × qty' hoặc `order_total_vnd` KHÁC `total_vnd` trong lời nói được thay bằng `total_vnd`. Chỉ áp cho MỘT SKU, qty ≥ 2, không giỏ khác (giá đơn vị của SKU khác không bị đụng)."""
+    số tiền 'giá × qty' KHÁC `total_vnd` trong lời nói được thay bằng `total_vnd`. Chỉ áp cho MỘT SKU, qty ≥ 2, không giỏ khác (giá đơn vị của SKU khác không bị đụng)."""
     for c in calls:
         r, a = c.get("result") or {}, c.get("args") or {}
         qty = int(a.get("qty") or 1)
         if c.get("name") != "pricing.get_quote" or "error" in r or "total_vnd" not in r or qty < 2 or a.get("basket_skus"):
             continue
         right = int(r["total_vnd"])
-        for wrong in {int(r.get("final_price_vnd") or 0) * qty, int(r.get("order_total_vnd") or 0)} - {right, 0}:
+        for wrong in {int(r.get("final_price_vnd") or 0) * qty} - {right, 0}:
             text = replace_amount(text, wrong, right)
     return text

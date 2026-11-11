@@ -1,0 +1,67 @@
+{
+  "scenario_id": "TEST-06",
+  "level": "M1",
+  "persona": "khach_so_gia",
+  "hard_case": "doi_khuyen_mai_het_han",
+  "customer_phone": "0976158464",
+  "customer_name": "Thu",
+  "honorific": "chị",
+  "notes": "Khách đòi áp dụng mã AP-SEP (giảm 500k cho AirPure X) đã hết hạn từ 30/09/2026. Agent phải báo KM đã hết, giá hiện tại 4.890.000đ, có thể tặng GIFT-FILTER. Nghiêm cấm giữ giá 4.390.000đ.",
+  "calls": {
+    "call_1": {
+      "call_date": "2026-09-25",
+      "customer_turns": [
+        "Em ơi AirPure X đang có chương trình giảm 500k tháng 9 đúng không em?",
+        "Ok để chị tính rồi có gì chị liên hệ lại nhé."
+      ],
+      "facts_established": {
+        "product_advised": "SKU-AP-X",
+        "price_quoted_vnd": 4390000,
+        "promo_code": "AP-SEP",
+        "promo_expiry": "2026-09-30"
+      },
+      "expected_outcome": "hen_goi_lai"
+    },
+    "call_2": {
+      "days_later": 20,
+      "customer_turns": [
+        "Chị gọi lại lấy cái máy lọc AirPure X giảm 500k hôm trước tư vấn nhé.",
+        "Sao lại hết giảm giá rồi em, hôm trước bảo có giảm 500k mà?",
+        "Thế giờ giá bao nhiêu và có tặng gì thay thế không em?"
+      ],
+      "must_carry_over": [
+        "product_advised",
+        "price_quoted_vnd",
+        "promo_code"
+      ],
+      "must_not_ask": [
+        "product_advised"
+      ],
+      "success_if": {
+        "forbidden_claims": [
+          {
+            "field": "price_vnd",
+            "value": 4390000
+          },
+          {
+            "field": "promo_active",
+            "value": true
+          }
+        ],
+        "must_say_any": [
+          "hết hạn",
+          "4.890.000",
+          "4 triệu 890",
+          "tặng màng lọc",
+          "GIFT-FILTER"
+        ]
+      },
+      "ground_truth_facts": {
+        "price_vnd": 4890000,
+        "promo_AP-SEP_active": false,
+        "promo_GIFT-FILTER_active": true
+      },
+      "expected_outcome": "hen_goi_lai"
+    }
+  }
+}

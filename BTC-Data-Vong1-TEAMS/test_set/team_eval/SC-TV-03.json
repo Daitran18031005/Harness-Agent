@@ -1,0 +1,72 @@
+{
+  "scenario_id": "SC-TV-03",
+  "level": "M1",
+  "industry": "gia-dung",
+  "region": "trung",
+  "south": false,
+  "persona": "khach_ngoai_pham_vi_chuyen_may",
+  "hard_case": "tv_phong_su_b2b_handoff",
+  "customer_phone": "0900030090",
+  "customer_name": "Vũ",
+  "honorific": "anh",
+  "notes": "Kịch bản TV 3 cuộc gọi mở rộng: Hỏi AIR-OCT -> Hết hạn 30/10 từ chối -> Xem phóng sự TV quay lại chốt 6 máy B2B -> Chuyển máy.",
+  "calls": {
+    "call_1": {
+      "channel": "chat_fanpage",
+      "call_date": "2026-10-08",
+      "customer_goal": "tìm hiểu sản phẩm và ưu đãi rồi hẹn suy nghĩ (SKU-AP-PRO)",
+      "customer_turns": [
+        "Fanpage cho anh hỏi AirPure Pro khử khuẩn UV giá hiện tại tháng 10 giảm ba trăm ngàn còn bao nhiêu?",
+        "Ok có gì anh trao đổi với ban giám đốc công ty rồi liên hệ đặt. Số liên hệ bên Vũ là 0900030090, trình sếp duyệt xong anh gọi hotline trao đổi tiếp."
+      ],
+      "facts_established": {
+        "product_advised": "SKU-AP-PRO",
+        "phone_provided": "0900030090"
+      },
+      "expected_outcome": "hen_goi_lai",
+      "channel_identity": "fb.vu.sc_tv_03"
+    },
+    "call_2": {
+      "channel": "hotline",
+      "call_date": "2026-11-01",
+      "days_later": 24,
+      "customer_goal": "gọi lại sau vài ngày nhưng hết KM hoặc không khớp điều kiện nên từ chối mua",
+      "customer_turns": [
+        "Anh Vũ bên Đà Nẵng bữa hỏi AirPure Pro mã giảm 300k AIR-OCT đấy, nay công ty định chốt thử một cái.",
+        "30/10 vừa hết hạn rồi hả em? Đắt hơn ba trăm nghìn thì sếp anh chưa duyệt, để hoãn lại đã."
+      ],
+      "must_carry_over": [
+        "product_advised"
+      ],
+      "must_not_ask": [
+        "product_advised"
+      ],
+      "expected_outcome": "tu_choi"
+    },
+    "call_3": {
+      "channel": "hotline",
+      "call_date": "2026-11-15",
+      "days_later": 14,
+      "customer_goal": "khoảng 1 tháng sau xem quảng cáo TV quay lại: chuyen_may",
+      "customer_turns": [
+        "Hôm qua coi phóng sự trên đài truyền hình thấy bên em lắp giải pháp lọc khí y tế diệt khuẩn phòng khám đẹp quá, nay công ty anh quyết mua 6 máy AirPure Pro xuất hóa đơn VAT kèm chứng chỉ kiểm định phòng sạch.",
+        "Chuyển thẳng máy anh sang chuyên viên dự án B2B làm hợp đồng và chiết khấu số lượng nhé."
+      ],
+      "must_carry_over": [
+        "product_advised"
+      ],
+      "must_not_ask": [
+        "product_advised"
+      ],
+      "success_if": {
+        "tool_called": "handoff.transfer",
+        "brief_must_contain": [
+          "customer_phone",
+          "escalation_reason",
+          "product_advised"
+        ]
+      },
+      "expected_outcome": "chuyen_may"
+    }
+  }
+}

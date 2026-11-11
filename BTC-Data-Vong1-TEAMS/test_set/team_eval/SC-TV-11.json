@@ -1,0 +1,72 @@
+{
+  "scenario_id": "SC-TV-11",
+  "level": "M1",
+  "industry": "thoi-trang",
+  "region": "nam",
+  "south": true,
+  "persona": "khach_so_gia",
+  "hard_case": "tv_mua_2_chiec_ao_gio_chot",
+  "customer_phone": "0900030098",
+  "customer_name": "Thảo",
+  "honorific": "chị",
+  "notes": "Kịch bản TV 3 cuộc gọi mở rộng: Hỏi page Windbreak -> Không KM hủy -> Xem TV review đồ du lịch quay lại chốt M navy 690k.",
+  "calls": {
+    "call_1": {
+      "channel": "chat_fanpage",
+      "call_date": "2026-09-29",
+      "customer_goal": "tìm hiểu sản phẩm và ưu đãi rồi hẹn suy nghĩ (SKU-JK-WND)",
+      "customer_turns": [
+        "Áo khoác gió Windbreak mẫu M xanh navy chống mưa phùn nhẹ được không em?",
+        "Chị đang đi công tác chưa về nhà nhận hàng được, hẹn đầu tháng 10 ghé đặt nhé. Ghi lại giúp Thảo số 0900030098 nghen, đi công tác về chị bấm gọi lên đơn sau."
+      ],
+      "facts_established": {
+        "product_advised": "SKU-JK-WND",
+        "phone_provided": "0900030098"
+      },
+      "expected_outcome": "hen_goi_lai",
+      "channel_identity": "fb.thao.sc_tv_11"
+    },
+    "call_2": {
+      "channel": "hotline",
+      "call_date": "2026-10-12",
+      "days_later": 13,
+      "customer_goal": "gọi lại sau vài ngày nhưng hết KM hoặc không khớp điều kiện nên từ chối mua",
+      "customer_turns": [
+        "Chị Thảo bữa nhắn page hỏi áo gió Windbreak nè, có mã giảm nào cho đơn áo khoác tháng 10 không em?",
+        "Không có khuyến mãi áo khoác hả, sáu trăm chín chục một chiếc chị thấy hơi mắc nên thôi nha."
+      ],
+      "must_carry_over": [
+        "product_advised"
+      ],
+      "must_not_ask": [
+        "product_advised"
+      ],
+      "expected_outcome": "tu_choi"
+    },
+    "call_3": {
+      "channel": "hotline",
+      "call_date": "2026-11-19",
+      "days_later": 38,
+      "customer_goal": "khoảng 1 tháng sau xem quảng cáo TV quay lại: chot_don",
+      "customer_turns": [
+        "Mới coi chương trình review đồ du lịch trên kênh truyền hình thấy hai vợ chồng blogger mặc áo khoác gió Windbreak navy lên hình đẹp xỉu, làm chị muốn mua quá.",
+        "Chốt cho chị 1 chiếc size M màu navy 690.000đ về 17 đường 3/2, Quận 11, trả tiền mặt nha em."
+      ],
+      "must_carry_over": [
+        "product_advised"
+      ],
+      "must_not_ask": [
+        "product_advised"
+      ],
+      "success_if": {
+        "tool_called": "order.create",
+        "args_match": {
+          "sku": "SKU-JK-WND-M-NAVY",
+          "price_vnd": 690000,
+          "payment": "COD"
+        }
+      },
+      "expected_outcome": "chot_don"
+    }
+  }
+}

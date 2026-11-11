@@ -1,0 +1,62 @@
+{
+  "scenario_id": "TEST-99",
+  "level": "M1",
+  "industry": "me-be",
+  "region": "nam",
+  "south": true,
+  "persona": "khach_mua_nhieu_mon",
+  "hard_case": "khieu_nai_giao_tre_handoff",
+  "customer_phone": "0910784034",
+  "customer_name": "Trang",
+  "honorific": "chị",
+  "notes": "[me-be] (giao_tre_handoff_ql) Máy hâm sữa Fatz 4 chức năng (SKU-MB-MON) tại Đồng Nai.",
+  "calls": {
+    "call_1": {
+      "channel": "hotline",
+      "call_date": "2026-10-05",
+      "customer_goal": "đặt mua Máy hâm sữa Fatz 4 chức năng",
+      "customer_turns": [
+        "Đang ngắm Máy hâm sữa Fatz 4 chức năng cho pha sữa ban đêm nhanh không phải chờ đun nước, shop kiểm tra hộ Trang kho còn sẵn hàng xuất đi Đồng Nai không nghen?",
+        "Lên đơn giao về số 287 đường Võ Thị Sáu, Thống Nhất, Biên Hòa, Đồng Nai cho chị Trang, kiểm tra kỹ hàng trước khi xuất kho nghen. Khi nào bưu tá giao tới Biên Hòa chị Trang gửi đủ tiền mặt luôn nghen."
+      ],
+      "facts_established": {
+        "product_advised": "SKU-MB-MON",
+        "price_quoted_vnd": 490000,
+        "order_id": "OD800099"
+      },
+      "success_if": {
+        "tool_called": "order.create",
+        "args_match": {
+          "sku": "SKU-MB-MON",
+          "price_vnd": 490000,
+          "payment": "COD"
+        }
+      },
+      "expected_outcome": "chot_don"
+    },
+    "call_2": {
+      "channel": "hotline",
+      "days_later": 8,
+      "customer_goal": "khiếu nại đơn giao chậm quá 8 ngày yêu cầu gặp quản lý",
+      "customer_turns": [
+        "Bực mình lắm rồi nhé! Đơn Máy hâm sữa Fatz 4 chức năng của Trang về Đồng Nai hẹn 2-4 ngày mà 8 hôm rồi không thấy tăm hơi đâu!",
+        "Khỏi xin lỗi suông đi em, nối máy lập tức sang cấp quản lý làm việc trực tiếp vụ đơn Máy hâm sữa Fatz 4 chức năng với chị Trang!"
+      ],
+      "must_carry_over": [
+        "product_advised"
+      ],
+      "must_not_ask": [
+        "product_advised"
+      ],
+      "success_if": {
+        "tool_called": "handoff.transfer",
+        "brief_must_contain": [
+          "customer_phone",
+          "escalation_reason",
+          "product_advised"
+        ]
+      },
+      "expected_outcome": "chuyen_may"
+    }
+  }
+}

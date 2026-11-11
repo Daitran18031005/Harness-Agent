@@ -2399,3 +2399,85 @@ Guardrail 0 vi phạm; 1,15 cuộc tới chốt; 2,85 lượt/cuộc.
 **Chạy thật (2026-11-04):** `docker compose up -d` (Docker Desktop, image `prom/prometheus:v2.55.1`, `grafana/grafana:11.3.1`): Prometheus lấy được job `harness-traces` (job `harness-api` báo `down` vì lúc đó API không chạy); Grafana nạp datasource + dashboard (19 panel); cả 22 truy vấn của dashboard chạy không lỗi (các panel "máy chủ trực tiếp" rỗng đúng như dự kiến khi API không chạy); xem giao diện trong trình duyệt: số liệu hiện đủ (3.258 lượt, TTFT p95 9,84 s đỏ, Total p95 12,0 s đỏ, Call Brief 84 ms, 0 vi phạm guardrail) — là tổng mọi lần đo GĐ2 và cả hai cấu hình, lọc theo lần chạy ở bộ lọc phía trên. **Lưu ý:** tiến trình phải nghe `0.0.0.0` (không phải 127.0.0.1) thì container mới lấy được số — đã ghi vào README/compose.
 **Chưa làm / chưa kiểm:** chưa chạy luồng `harness-api` với lượt chat thật (cần khóa API hợp lệ hoặc nhánh dự phòng); không có Alertmanager; registry nằm trong tiến trình (API một worker).
 **Quan sát từ trace GĐ2 lần 6 (để giảm TTFT):** chờ token đầu của vòng LLM cuối chỉ ≈ 1 s (p50) trong khi TTFT trung vị ≈ 4 s ⇒ phần lớn TTFT nằm ở các bước TRƯỚC vòng cuối (đọc ý khách bằng LLM, vòng LLM chọn tool, tool).
+
+## 13. Hợp đồng tool BTC 11/2026 + lần đo cả bộ (2026-11-11)
+
+**Thay đổi của BTC đã áp dụng:** `pricing.quote_order(lines)` (giá từng máy; AIR-2ND-50 đúng một máy/đơn), `order.create(lines=[{sku,qty,price_vnd}])` một đơn nhiều dòng, `sku` tùy chọn; `reference_eval.py` chấm theo từng dòng. Mã: `src/harness/basket.py` (`price_basket`, `order_args`), `orchestrator.py` (bỏ `_sync_guard`/`_sync_block`, thêm `_order_basket`, `_main_from_lines`, `_basket_in_play`), 2 MCP server, gateway, quyền, PII vault, runner (`call_1..call_9`, khách mô phỏng chỉ nói khi hết lời kịch bản). **979 test xanh** (`runs/_unittest_btc_update_after.txt`).
+
+**Bộ kịch bản:** 7 mẫu BTC + `team_eval/` 270 (15 SC-GEN, 20 SC-TV, 15 SC-ULTRA, 220 TEST) = 277. Đã sửa đáp án TEST-189, TEST-13.
+
+**Lần đo** (`runs/m1_final/`, gpt-4o-mini, 1 seed 42, 2 cấu hình, MCP stdio; `team_eval` có `--gate-assist`, 7 mẫu BTC không có vì lời khách cố định). Chấm bằng `reference_eval.py` mới: `python scripts/m1_final_report.py --root runs/m1_final` → `report.json`, `report.md`.
+
+| Chỉ số | Baseline | Hệ thống |
+|---|---|---|
+| Repeat-Question Rate | 4,1% | 1,6% |
+| Context Carryover Rate | 10,3% | 57,2% |
+| Task Success Rate | 66,1% (183/277) | 76,5% (212/277) |
+| Hallucination giá & KM | 19,1% | 16,3% |
+| Số lượt TB / cuộc | 2,7 | 2,68 |
+| Vi phạm guardrail (ca) | 7 | 8 |
+| TTFT p50 / p95 (1.218 lượt) | — | 4,4 s / 7,6 s |
+
+TSR theo nhóm (full / baseline): SAMPLE 1/7 / 1/7 · SC-GEN 13/15 / 12/15 · SC-TV 18/20 / 14/20 · SC-ULTRA 10/15 / 6/15 · TEST 170/220 / 150/220.
+
+**Chi phí thật:** mẫu 2.251,8 + ba luồng 22.520,0 + 22.361,6 + 21.846,3 = 68.979,7 VND; cộng 2 lần chạy thử 2.629 = **71.609 VND** (trần duyệt 90.000). Không chạm trần.
+
+**Chưa đạt / chưa làm:** (1) 7 mẫu BTC 1/7 — order gate hỏi địa chỉ + hình thức thanh toán mà lời khách cố định không trả lời tiếp (SAMPLE-01: khách nói "giao về địa chỉ cũ" vẫn bị hỏi lại địa chỉ); (2) 28 cuộc không có `order.create` khớp, 21 thiếu `must_say_any` (lịch nghỉ lễ 27/10, hạn đổi 7 ngày, phụ kiện tiêu hao), 9 handoff thiếu trường, 4 ca mẫu cấm "giá nhập/giá sàn" (agent lặp lại chữ của khách khi từ chối); (3) guardrail full 8 > baseline 7; (4) TTFT p95 7,6 s (mục tiêu ≤ 3 s); (5) `submission/` vẫn mang số lần 4; (6) chỉ 1 seed nên chưa có ± std.
+
+### 13.1 Lượt chốt theo luật BTC (2026-11-11)
+
+BTC trả lời: mỗi cuộc gọi được thêm MỘT lượt agent sau lượt khách cuối (`customer_text` rỗng) để đọc lại đơn và gọi `order.create`. Đã làm: `runner.py` chèn lượt đó khi `orchestrator.has_open_order()` (lượt khách cuối kết thúc bằng câu hỏi/xác nhận/đọc lại của order gate); `process_turn(closing=True)` → `_closing_driver` tạo đơn nháp bằng code, không gọi LLM; `OrderGate.evaluate` nhánh `closing`: dùng thông tin đã lưu, thanh toán chưa nói = COD, **thiếu địa chỉ/tên vẫn tạo đơn** và báo nhân viên gọi lại xác nhận (CRM của BTC không có địa chỉ cho khách mẫu, đáp án BTC chỉ đòi sku + giá); vẫn không tạo khi chưa rõ size/màu hoặc COD vượt hạn mức. `closing` chỉ do bộ chạy đánh giá bật, API/UI không đổi. Test: `tests/test_closing_turn.py` (3); cả bộ **982 xanh** (`runs/_unittest_closing_turn.txt`).
+
+**Đo lại 7 mẫu BTC** (`runs/m1_closing/`, 1 seed, không khách mô phỏng, 2.285,6 VND): TSR **7/7** (baseline 4/7; trước đó 1/7 và 1/7) · CCR 57,1 vs 4,8 · hallucination 11,1 vs 44,4 · guardrail 0 vs 0 · số lượt/cuộc 3,54 vs 3,46 · **RQR 8,0 vs 4,2 (kém baseline)** · TTFT p95 6,8 s (46 lượt). Tổng chi tới nay 73.895 VND.
+
+Chưa làm: đo lại `team_eval` (270) theo luật một lượt chốt thay cho khách mô phỏng; xem vì sao RQR full cao hơn baseline; `submission/`.
+
+### 13.2 Nhóm việc không tốn LLM (2026-11-11)
+
+- **Trần chi phí mặc định của `run_eval.py`: 1.500 → 20.000 VND.** Lệnh chuẩn của BTC không truyền `--max-cost-vnd`; bộ ẩn 41 kịch bản (≈ 170 lượt × ~34 VND × 2 cấu hình ≈ 12.000 VND) sẽ bị cắt ngang ở trần cũ.
+- **Hallucination giá/KM — nguyên nhân chính là gán nhãn claim, không phải bịa giá.** Bộ trích lấy "sản phẩm đứng đầu `product.shortlist`" làm chủ đề dù cuộc gọi đang bàn sản phẩm khác (SAMPLE-06) → giá mẫu gợi ý thêm bị ghi `price_vnd`. Sửa: `extract_claims(..., focus_sku=)` nhận sản phẩm đang bàn từ các lượt trước. Chấm lại trace cũ bằng bộ trích mới (không gọi LLM): 7 mẫu BTC **11,1% → 0,0%** (0/8); `team_eval` 16,3% → 15,4% (28/182).
+- **28 claim sai còn lại của `team_eval`:** 25 là giá ĐÚNG theo kết quả tool nhưng của sản phẩm khác sản phẩm trong đáp án — kịch bản dạng "khách hỏi A rồi chuyển sang B", `ground_truth_facts.price_vnd` là giá của B, agent báo đúng giá A ở lượt 1 (TEST-100, 128, 166, 216, 72…). 3 ca không khớp tool: TEST-02 (giá size 43 có phụ thu), TEST-181 (LLM tự nhân 2 × giá, bị gán `price_vnd`), TEST-84 (ngưỡng freeship 2.000.000 bị gán `price_vnd`). Chưa sửa đáp án/kịch bản (dữ liệu của nhóm, chờ quyết định).
+- **RQR 7 mẫu BTC (2/25):** cả hai câu thừa ở SAMPLE-03 cuộc 2 — khách đồng ý ĐỔI size ("ừ em làm thủ tục đổi") nhưng cổng mở đơn bằng code hiểu là chốt MUA, mở đơn nháp thứ hai rồi hỏi địa chỉ/màu. Sửa: `_maybe_open_gate` thêm loại trừ `order_updated_in_call`; lượt chốt không tạo được đơn thì không hỏi nữa (nói rõ đơn chưa tạo). Chưa đo lại bằng LLM thật.
+- Test: `tests/test_closing_turn.py` thêm 1 test + 1 kiểm; cả bộ **983 xanh** (`runs/_unittest_free_fixes.txt`).
+
+### 13.3 Kiểm 26 claim giá, sửa claim sai, Knowledge Gap Loop (2026-11-11)
+
+- **Kiểm 26 claim giá/KM bị tính sai của `team_eval`** (sau khi sửa bộ trích; đối chiếu từng claim với `mock_tools.pricing_get_quote` đúng ngày gọi, kết quả `runs/m1_final/hr_price_check.json`): 23 = giá `final` đúng của sản phẩm KHÁC sản phẩm đáp án; 1 = giá đúng của biến thể khác (TEST-02, size 43 có phụ thu); 1 = giá đúng của máy thứ hai sau AIR-2ND-50 (TEST-49); **1 sai thật** (TEST-184: báo giá niêm yết 7.990.000 của mẫu đang giảm còn 7.690.000). Tức 25/26 là agent đúng; script BTC so mọi claim `price_vnd` của cuộc gọi với MỘT giá đáp án. Thư hỏi BTC: `docs/BAO_CAO_HR_GUI_BTC.md`.
+- **Sửa:** (a) `product.shortlist` gắn `final_price_vnd` (giá sau KM của ngày gọi) cho từng mẫu + dặn báo theo giá này (TEST-184); (b) bộ trích: "tổng giá …" là `total_vnd` (TEST-181), ngưỡng điều kiện "đơn từ 2.000.000đ trở lên" không phải giá (TEST-84 — câu của agent đúng theo [VC-02]), giá mẫu khác chủ đề thành `alt_price_vnd` cả khi số đó có trong kết quả tool. Chấm lại trace cũ: `team_eval` HR giá/KM 16,3% → **14,4%** (26/180); chỉ tính claim khác giá mock: 1/180 = 0,6%. (a) cần chạy lại LLM mới thấy.
+- **Knowledge Gap Loop (C.5):** `scripts/knowledge_gap.py collect|apply` + `data/knowledge_gaps.json` + bộ nạp chính sách đọc thêm `data/kb_supplement/` + kịch bản hồi quy `test_set/knowledge_gap/KG-nn.json`. Chỉ mục có người đổi `status: approved` mới vào kho. Vòng 0 (trace `m1_final` + `m1_closing`, 1.264 lượt): **9 thiếu sót chờ duyệt** (lắp đặt máy lọc nước, tiết kiệm điện, PUMP-GIFT, GIFT-FILTER, NAM-SHIP0…; "giá sàn đại lý", "hoa hồng nội bộ" phải từ chối). Chưa có mục nào được duyệt, chưa đo vòng 1. Hai nguồn feedback dùng: điểm tự động của bộ chấm + câu khách hỏi không trả lời được.
+- Test: `tests/test_knowledge_gap.py` (2); cả bộ **985 xanh** (`runs/_unittest_kg.txt`). `test_pipeline_lifecycle…sweeper` đỏ 1 lần trong 1 lần chạy cả bộ, xanh 3/3 khi chạy riêng (test phụ thuộc thời gian).
+
+### 13.4 Đo lại cả bộ theo luật một lượt chốt (2026-11-11) — `runs/m1_final2/`
+
+277 kịch bản (7 mẫu BTC + 270 `team_eval`), gpt-4o-mini, 1 seed 42, 2 cấu hình, MCP stdio, **không khách mô phỏng**; lượt chốt chỉ thêm khi order gate đang mở. Chấm: `python scripts/m1_final_report.py --root runs/m1_final2`.
+
+| Chỉ số | Baseline | Hệ thống | Ngưỡng đề |
+|---|---|---|---|
+| Repeat-Question Rate | 4,7% | 3,3% (−30%) | giảm ≥ 40% ✗ |
+| Context Carryover Rate | 10,7% | 57,2% | — |
+| Task Success Rate | 66,8% (185/277) | **76,5% (212/277)** | ≥ 70% ✓ |
+| TSR ca khó | — | 75,0% | — |
+| Hallucination giá & KM | 22,3% | 14,6% | ≤ 5% ✗ (xem § 13.3: 25/26 claim là giá đúng của sản phẩm khác đáp án) |
+| Số lượt TB / cuộc | 2,4 | 2,38 | — |
+| Vi phạm guardrail | 6 | 10 (5 chuyển máy thừa + 5 mẫu cấm) | ✗ kém baseline |
+| TTFT p50 / p95 (1.084 lượt) | — | 4,5 s / 7,5 s | ≤ 3 s ✗ |
+| Total p95 | — | 8,9 s | ≤ 8 s ✗ |
+| Call Brief p95 | — | 47 ms | ≤ 5 s ✓ |
+
+TSR theo nhóm (full / baseline): SAMPLE 6/7 / 5/7 · SC-GEN 13/15 / 13/15 · SC-TV 18/20 / 14/20 · SC-ULTRA 10/15 / 6/15 · TEST 165/220 / 147/220.
+Lý do trượt (full, theo cuộc gọi): 24 thiếu `must_say_any` · 21 không có `order.create` khớp · 8 handoff thiếu trường · 5 không có `order.update` · 5 mẫu cấm nội bộ · 2 không chuyển máy · 1 gọi tool cấm.
+**Chi phí:** 2.237,3 + 20.445,0 + 20.311,3 + 20.397,0 = 63.390,6 VND; kiểm chứng sau sửa 4.014,7 + 450,7. Tổng trong trần 75.000: **67.856 VND**. Tổng dự án tới nay ≈ 141.750 VND.
+
+**Lỗi tìm thấy từ lần đo này và đã sửa SAU khi đo (số ở bảng trên CHƯA gồm các sửa này):**
+1. **Lượt chốt tạo đơn khi khách nói "khoan chốt… vội" (TEST-198)** — hậu quả của việc bỏ bước xác nhận. Thêm `reply_reader.authorize_closing`: lớp LLM độc lập đọc toàn bộ lời khách của cuộc gọi, phải có trích dẫn nguyên văn yêu cầu đặt đơn mới cho tạo; không LLM/lỗi → không tạo.
+2. **Khách đồng ý ĐỔI size bị hiểu là chốt MUA** (SAMPLE-03, TEST-40 cuộc 2): code mở đơn nháp, LLM mất lượt gọi `order.update`. Sửa: `_maybe_open_gate` không tự mở khi khách đã có đơn đúng sản phẩm đó (`existing_order_same_product`) hoặc vừa `order.update` xong; prompt bộ đọc nói rõ commit = mua đơn MỚI.
+3. **Hẹn gọi lại "Tết Dương lịch 01/01" bị điền năm đã qua** (2026-01-01 khi gọi ngày 15/10) → tool không dời lịch, agent không báo nghỉ lễ (5 ca thiếu "nghỉ | 27/10 | 02/01"). Sửa: `_future_callback` chuyển ngày đã qua sang lần kế tiếp.
+4. Lượt chốt không tạo được đơn thì không hỏi thêm.
+
+**Kiểm chứng LLM thật sau sửa:** 14 kịch bản (`runs/m1_check/`): 11/14 (trước sửa 10/14), TEST-198 không còn tạo đơn, hallucination giá 0,0%, guardrail 0; 3 kịch bản (`runs/m1_check2/`: SAMPLE-03, TEST-40, TEST-103) **3/3**, RQR 0. Test: **987 xanh** (`runs/_unittest_final3.txt`).
+
+### 13.5 Hồ sơ nộp (2026-11-11, dở dang do hết hạn mức phiên làm việc)
+
+- Đã cập nhật theo số `runs/m1_final2`: `submission/EVALUATION_REPORT.md` (bảng A.6, trước/sau, 12 ca sai), `README.md` (lệnh chuẩn BTC, hạn chế), `DATASET.md` (277 kịch bản/455 cuộc/908 lượt, phân bố), `ARCHITECTURE.md` (danh sách tool, lượt chốt, Knowledge Gap Loop).
+- Sửa thêm: phiếu chuyển máy bù trường `null` + lấy sản phẩm khách nêu từ catalog (8 ca "handoff brief thiếu trường"); 987 test xanh (`runs/_unittest_handoff.txt`); chưa đo lại bằng LLM.
+- **Chưa làm:** `DEMO_SCRIPT.md` và `slides.html` (còn số cũ); rà § 10 cơ sở dữ liệu; giao diện OpenUI; tạo repo git; video.

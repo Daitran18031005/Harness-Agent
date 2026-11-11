@@ -1,7 +1,7 @@
 """
 MCP server `mcp-catalog`: tra cứu sản phẩm, tồn kho theo ngày, báo giá theo khuyến mãi, và chọn sản phẩm theo slot.
 
-Tool: catalog.search · inventory.check · pricing.get_quote · product.shortlist
+Tool: catalog.search · inventory.check · pricing.get_quote · pricing.quote_order · product.shortlist
 Kết quả của `mock_tools.py` (BTC) giữ nguyên. Chạy riêng:  python -m mcp_servers.catalog_server   (stdio)
 """
 from typing import Any, Dict, List, Optional
@@ -42,6 +42,12 @@ def build_server(impl: Optional[CatalogPricingTool] = None, permissions: Optiona
         """Giá cuối cho 1 đơn vị `sku` sau khuyến mãi theo ngày `on` (basket_skus = các SKU KHÁC trong cùng đơn)."""
         return guard.run("pricing.get_quote", ctx, impl.get_quote, sku=sku, on=on, qty=qty, customer_phone=customer_phone,
                          address=address, basket_skus=basket_skus)
+
+    @server.tool(name="pricing.quote_order")
+    def pricing_quote_order(ctx: Context, lines: List[Dict[str, Any]], on: str = "2026-10-15", customer_phone: Optional[str] = None,
+                            address: Optional[str] = None) -> Dict[str, Any]:
+        """Giá TỪNG MÁY cho đơn nhiều dòng `lines` = [{sku, qty}] (KM 'máy thứ 2' chỉ một máy/đơn)."""
+        return guard.run("pricing.quote_order", ctx, impl.quote_order, lines=lines, on=on, customer_phone=customer_phone, address=address)
 
     @server.tool(name="product.shortlist")
     def product_shortlist(ctx: Context, category: Optional[str] = None, query: Optional[str] = None, on: str = "2026-10-15",

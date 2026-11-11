@@ -1,0 +1,58 @@
+{
+  "scenario_id": "TEST-151",
+  "level": "M1",
+  "industry": "thoi-trang",
+  "region": "trung",
+  "south": false,
+  "persona": "khach_do_du_hoi_nguoi_nha",
+  "hard_case": "het_hang_theo_timeline",
+  "customer_phone": "0911195874",
+  "customer_name": "Trung",
+  "honorific": "anh",
+  "notes": "[thoi-trang] (het_hang_timeline_restock) Giày chạy bộ RunLite 2 Pro (SKU-SN-RUN2-41-DEN) tại Huế.",
+  "calls": {
+    "call_1": {
+      "channel": "hotline",
+      "call_date": "2026-10-18",
+      "customer_goal": "hỏi RunLite 2 Pro 41 đen ngày 18/10 hết hàng -> hẹn 24/10 về",
+      "customer_turns": [
+        "Trung hỏi còn đôi RunLite 2 Pro size 41 màu đen hôm nay 18/10 không shop ơi?",
+        "Tới 24/10 mới nhập lại hả em, vậy để gần hôm đó anh Trung gọi nhé."
+      ],
+      "facts_established": {
+        "product_advised": "SKU-SN-RUN2",
+        "variant_sku": "SKU-SN-RUN2-41-DEN"
+      },
+      "success_if": {
+        "tool_called": null,
+        "must_not_call_tools": [
+          "order.create"
+        ]
+      },
+      "expected_outcome": "hen_goi_lai"
+    },
+    "call_2": {
+      "channel": "hotline",
+      "days_later": 7,
+      "customer_goal": "gọi lại 25/10 còn hạn RUN-10 (đến 25/10) chốt 1.521.000đ",
+      "customer_turns": [
+        "Nay 25/10 hàng size 41 đen đã về lại và vẫn kịp ngày cuối giảm 10% RUN-10 đúng không em? Giao về số 22 đường Lê Lợi, Phú Hội, Huế cho Trung nhé."
+      ],
+      "must_carry_over": [
+        "product_advised"
+      ],
+      "must_not_ask": [
+        "product_advised"
+      ],
+      "success_if": {
+        "tool_called": "order.create",
+        "args_match": {
+          "sku": "SKU-SN-RUN2-41-DEN",
+          "price_vnd": 1521000,
+          "payment": "COD"
+        }
+      },
+      "expected_outcome": "chot_don"
+    }
+  }
+}

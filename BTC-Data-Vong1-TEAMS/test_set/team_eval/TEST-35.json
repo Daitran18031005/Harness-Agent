@@ -3,10 +3,10 @@
   "level": "M1",
   "persona": "khach_do_du_hoi_nguoi_nha",
   "hard_case": "het_hang_theo_timeline",
-  "customer_phone": "0900001012",
+  "customer_phone": "0987114477",
   "customer_name": "Chi",
   "honorific": "chị",
-  "notes": "[Mẹ & Bé] Xe đẩy Joie Pact (SKU-MB-STR1). Cuộc 1 (2026-10-15) còn 2 chiếc. Cuộc 2 (2026-10-26 - sau 11 ngày), inventory_timeline ghi nhận hết hàng từ 25/10 (qty=0). Agent phải báo hết hàng.",
+  "notes": "[Mẹ & Bé] Xe đẩy Joie Pact (SKU-MB-STR1). Cuộc 1 (2026-10-15) còn 2 chiếc. Cuộc 2 (2026-10-27 - sau 12 ngày), inventory_timeline ghi nhận hết hàng từ 25/10 (qty=0). Agent phải báo hết hàng.",
   "calls": {
     "call_1": {
       "call_date": "2026-10-15",
@@ -21,7 +21,7 @@
       "expected_outcome": "hen_goi_lai"
     },
     "call_2": {
-      "days_later": 11,
+      "days_later": 12,
       "customer_turns": [
         "Alo em, hôm nay chị gọi lại đặt chiếc xe đẩy Joie Pact hôm trước nhé.",
         "Ủa hết hàng rồi hả em? Tiếc quá vậy."

@@ -1,0 +1,52 @@
+{
+  "scenario_id": "TEST-73",
+  "level": "M1",
+  "industry": "gia-dung",
+  "region": "trung",
+  "south": false,
+  "persona": "khach_do_du_hoi_nguoi_nha",
+  "hard_case": "doi_y_giua_cuoc",
+  "customer_phone": "0910578114",
+  "customer_name": "Minh",
+  "honorific": "anh",
+  "notes": "[gia-dung] (doi_y_nang_cap) Quạt đứng Senko TS16 (SKU-FAN-SEN) tại Đà Nẵng.",
+  "calls": {
+    "call_1": {
+      "channel": "zalo_oa",
+      "call_date": "2026-10-15",
+      "customer_goal": "ban đầu hỏi Quạt đứng Senko TS16, giữa cuộc đổi sang Quạt đứng DC inverter Panasonic F-409",
+      "customer_turns": [
+        "Thấy bạn bè ở Đà Nẵng khen Quạt đứng Senko TS16 khá hợp phòng sinh viên cần cây quạt mát khỏe bình dân nên Minh gọi hỏi thử thông tin chi tiết.",
+        "À thôi dừng Quạt đứng Senko TS16 lại đi em, chốt giúp anh Minh qua hẳn chiếc Quạt đứng DC inverter Panasonic F-409 giá 2.450.000đ cho khỏi lăn tăn.",
+        "Lên đơn cho Minh chính xác mẫu Quạt đứng DC inverter Panasonic F-409 sau cùng này nha. Ship về tận nơi tại số 266 đường Ông Ích Khiêm, Thanh Khê, Đà Nẵng, người nhận ghi tên Minh nhé. Thanh toán COD. Ghi số điện thoại 0910578114 của Minh vào vận đơn nha."
+      ],
+      "facts_established": {
+        "initial_product": "SKU-FAN-SEN",
+        "product_advised": "SKU-FAN-DC1",
+        "price_quoted_vnd": 2450000,
+        "payment": "COD",
+        "phone_provided": "0910578114"
+      },
+      "success_if": {
+        "tool_called": "order.create",
+        "args_match": {
+          "sku": "SKU-FAN-DC1",
+          "price_vnd": 2450000,
+          "payment": "COD"
+        }
+      },
+      "memory_expectation": {
+        "product_advised": "SKU-FAN-DC1",
+        "superseded": [
+          "SKU-FAN-SEN"
+        ]
+      },
+      "ground_truth_facts": {
+        "final_sku": "SKU-FAN-DC1",
+        "price_vnd": 2450000
+      },
+      "expected_outcome": "chot_don",
+      "channel_identity": "zalo.minh.test_73"
+    }
+  }
+}

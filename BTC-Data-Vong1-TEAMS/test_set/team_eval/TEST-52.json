@@ -1,0 +1,81 @@
+{
+  "scenario_id": "TEST-52",
+  "level": "M1",
+  "industry": "thoi-trang",
+  "region": "bac",
+  "south": false,
+  "persona": "khach_mua_nhieu_mon",
+  "hard_case": "da_phien_3_cuoc",
+  "customer_phone": "0910411794",
+  "customer_name": "Trung",
+  "honorific": "anh",
+  "notes": "[thoi-trang] (da_phien_3_cuoc_doi_tt) Giày sneaker Urban Classic (SKU-SN-CAS-40-DEN) tại Nghệ An.",
+  "calls": {
+    "call_1": {
+      "channel": "zalo_oa",
+      "call_date": "2026-10-15",
+      "customer_goal": "3 phiên: phiên 1 tư vấn Giày sneaker Urban Classic",
+      "customer_turns": [
+        "Shop ơi, anh Trung đang tìm hiểu Giày sneaker Urban Classic dùng cho đi làm văn phòng phối đồ đơn giản hằng ngày.",
+        "Nghe hợp lý đấy, lưu tên Trung với mẫu Giày sneaker Urban Classic nhé để tối bàn gia đình xong đặt. Trung gửi kèm số cầm tay 0910411794 để bên em lưu trước, bàn xong anh gọi điện."
+      ],
+      "facts_established": {
+        "product_advised": "SKU-SN-CAS",
+        "price_quoted_vnd": 890000,
+        "phone_provided": "0910411794"
+      },
+      "expected_outcome": "hen_goi_lai",
+      "channel_identity": "zalo.trung.test_52"
+    },
+    "call_2": {
+      "channel": "hotline",
+      "days_later": 2,
+      "customer_goal": "phiên 2 đặt đơn về địa chỉ ban đầu",
+      "customer_turns": [
+        "Gia đình Trung thống nhất xong rồi, em đặt luôn Giày sneaker Urban Classic size 40 màu den hôm trước xem nhé.",
+        "Đóng gói gửi về số 84 đường Lê Nin, Hưng Phúc, TP Vinh, Nghệ An, cứ đọc tên Trung bảo vệ chung cư nhận giùm hoặc gọi trực tiếp. Thanh toán COD."
+      ],
+      "must_carry_over": [
+        "product_advised"
+      ],
+      "must_not_ask": [
+        "product_advised"
+      ],
+      "facts_established": {
+        "order_id": "OD700052",
+        "price_quoted_vnd": 890000
+      },
+      "success_if": {
+        "tool_called": "order.create",
+        "args_match": {
+          "sku": "SKU-SN-CAS-40-DEN",
+          "price_vnd": 890000,
+          "payment": "COD"
+        }
+      },
+      "expected_outcome": "chot_don"
+    },
+    "call_3": {
+      "channel": "hotline",
+      "days_later": 2,
+      "customer_goal": "phiên 3 kiểm tra trạng thái đơn hoặc đổi địa chỉ sang cơ quan",
+      "customer_turns": [
+        "Em tra giùm Trung xem đơn Giày sneaker Urban Classic xuất kho chưa, với đổi nốt nhận sang cổng cơ quan ở trung tâm Nghệ An giúp anh."
+      ],
+      "must_carry_over": [
+        "order_id",
+        "product_advised"
+      ],
+      "must_not_ask": [
+        "product_advised"
+      ],
+      "success_if": {
+        "tool_called": "order.update",
+        "args_match": {
+          "action": "update_address"
+        }
+      },
+      "expected_outcome": "chot_don"
+    }
+  }
+}

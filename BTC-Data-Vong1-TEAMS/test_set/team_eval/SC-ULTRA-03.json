@@ -1,0 +1,102 @@
+{
+  "scenario_id": "SC-ULTRA-03",
+  "level": "M1",
+  "industry": "thoi-trang",
+  "region": "bac",
+  "south": false,
+  "persona": "khach_mua_nhieu_mon",
+  "hard_case": "ultra_4c_doi_size_bien_the_43",
+  "customer_phone": "0900040003",
+  "customer_name": "Cường",
+  "honorific": "anh",
+  "notes": "Kịch bản siêu khó trên 3 cuộc gọi: 4 cuộc: Mua RunLite 2 Pro 41 đen -> Đổi 42 đen -> Đổi tiếp lên size 43 xám (+50k phụ thu biến thể) -> Kiểm tra trạng thái đơn đổi.",
+  "calls": {
+    "call_1": {
+      "channel": "hotline",
+      "call_date": "2026-10-08",
+      "customer_goal": "mua RunLite 2 Pro 41 đen",
+      "customer_turns": [
+        "Lấy anh đôi RunLite 2 Pro size 41 màu đen, giao 12 Lê Hồng Phong, Hải Phòng, thu tiền khi nhận hàng."
+      ],
+      "expected_outcome": "chot_don",
+      "facts_established": {
+        "product_advised": "SKU-SN-RUN2",
+        "variant_sku": "SKU-SN-RUN2-41-DEN"
+      },
+      "success_if": {
+        "tool_called": "order.create",
+        "args_match": {
+          "sku": "SKU-SN-RUN2-41-DEN",
+          "price_vnd": 1690000,
+          "payment": "COD"
+        }
+      }
+    },
+    "call_2": {
+      "channel": "hotline",
+      "call_date": "2026-10-10",
+      "customer_goal": "đổi size 42 đen",
+      "customer_turns": [
+        "Giày 41 hơi kích mũi ngón chân cái, đổi giùm anh sang size 42 màu đen với em."
+      ],
+      "expected_outcome": "chot_don",
+      "days_later": 2,
+      "must_carry_over": [
+        "product_advised"
+      ],
+      "must_not_ask": [
+        "product_advised"
+      ],
+      "success_if": {
+        "tool_called": "order.update",
+        "args_match": {
+          "action": "exchange_size",
+          "new_variant_sku": "SKU-SN-RUN2-42-DEN"
+        }
+      }
+    },
+    "call_3": {
+      "channel": "hotline",
+      "call_date": "2026-10-13",
+      "customer_goal": "đổi tiếp size 43 xám lần 2 có phí + phụ thu",
+      "customer_turns": [
+        "Chân anh đi tất dày vẫn hơi chật, cho anh đổi sang size 43 màu xám luôn được không?",
+        "Phí đổi lần hai 60k với phụ thu size lớn 50k anh đồng ý nhé."
+      ],
+      "expected_outcome": "chot_don",
+      "days_later": 3,
+      "must_carry_over": [
+        "product_advised"
+      ],
+      "must_not_ask": [
+        "product_advised"
+      ],
+      "success_if": {
+        "tool_called": "order.update",
+        "args_match": {
+          "action": "exchange_size",
+          "new_variant_sku": "SKU-SN-RUN2-43-XAM"
+        }
+      }
+    },
+    "call_4": {
+      "channel": "hotline",
+      "call_date": "2026-10-16",
+      "customer_goal": "kiểm tra hành trình đơn đổi",
+      "customer_turns": [
+        "Anh Cường ở Hải Phòng hỏi chút, đôi 43 màu xám đổi lần hai bên kho xuất đi chưa em?"
+      ],
+      "expected_outcome": "hen_goi_lai",
+      "days_later": 3,
+      "must_carry_over": [
+        "product_advised"
+      ],
+      "must_not_ask": [
+        "product_advised"
+      ],
+      "success_if": {
+        "tool_called": "order.status"
+      }
+    }
+  }
+}

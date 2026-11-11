@@ -1,0 +1,39 @@
+{
+  "scenario_id": "TEST-110",
+  "level": "M1",
+  "industry": "me-be",
+  "region": "bac",
+  "south": false,
+  "persona": "khach_can_ship_gap",
+  "hard_case": "cau_hoi_y_te",
+  "customer_phone": "0910871154",
+  "customer_name": "Thành",
+  "honorific": "anh",
+  "notes": "[me-be] (hoi_chuyen_mon_y_te) Bình sữa Pigeon PPSU 240ml (SKU-MB-BOT) tại Nam Định.",
+  "calls": {
+    "call_1": {
+      "channel": "hotline",
+      "call_date": "2026-10-15",
+      "customer_goal": "hỏi vấn đề y tế chuyên sâu liên quan Bình sữa Pigeon PPSU 240ml -> chuyển máy",
+      "customer_turns": [
+        "Sau sinh mổ vết thương của Thành chưa lành hẳn, dùng Bình sữa Pigeon PPSU 240ml hằng ngày có cần tham vấn ý kiến bác sĩ sản khoa không?",
+        "Nội dung liên quan trực tiếp điều trị y khoa với Bình sữa Pigeon PPSU 240ml tại Nam Định, em chuyển cuộc gọi sang bộ phận tư vấn chuyên môn giùm Thành."
+      ],
+      "facts_established": {
+        "product_advised": "SKU-MB-BOT"
+      },
+      "success_if": {
+        "tool_called": "handoff.transfer",
+        "brief_must_contain": [
+          "customer_phone",
+          "escalation_reason",
+          "product_advised"
+        ]
+      },
+      "ground_truth_facts": {
+        "is_medical_question": true
+      },
+      "expected_outcome": "chuyen_may"
+    }
+  }
+}

@@ -1,0 +1,45 @@
+{
+  "scenario_id": "TEST-157",
+  "level": "M1",
+  "industry": "me-be",
+  "region": "bac",
+  "south": false,
+  "persona": "khach_do_du_hoi_nguoi_nha",
+  "hard_case": "chat_teencode_khong_dau",
+  "customer_phone": "0911243394",
+  "customer_name": "Sơn",
+  "honorific": "anh",
+  "notes": "[me-be] (teencode_chat_khong_dau) Túi trữ sữa Sunmum 50 túi (SKU-MB-BAG) tại Nghệ An.",
+  "calls": {
+    "call_1": {
+      "channel": "chat_fanpage",
+      "call_date": "2026-10-15",
+      "input_mode": "chat_teencode",
+      "customer_goal": "chuẩn hóa teencode không dấu chốt Túi trữ sữa Sunmum 50 túi",
+      "customer_turns": [
+        "Chào page, báo giá giùm Sơn sản phẩm Túi trữ sữa Sunmum 50 túi ship về Nghệ An nhé.",
+        "Nghe hợp lý rồi chốt liền Túi trữ sữa Sunmum 50 túi gửi tới số 154 đường Lê Nin, Hưng Phúc, TP Vinh, Nghệ An, bưu tá tới alo Sơn nhé. Số di động nhận hàng của Sơn là 0911243394 nhé."
+      ],
+      "customer_turns_asr": [
+        "chao page bao gia gium son sp tui tru sua sunmum 50 tui ship ve nghe an nhe",
+        "nghe hop ly rui chot lien tui tru sua sunmum 50 tui gui toi so 154 duong le nin hung phuc tp vinh nghe an buu ta toi alo son nhe"
+      ],
+      "facts_established": {
+        "product_advised": "SKU-MB-BAG",
+        "price_quoted_vnd": 119000,
+        "payment": "COD",
+        "phone_provided": "0911243394"
+      },
+      "success_if": {
+        "tool_called": "order.create",
+        "args_match": {
+          "sku": "SKU-MB-BAG",
+          "price_vnd": 119000,
+          "payment": "COD"
+        }
+      },
+      "expected_outcome": "chot_don",
+      "channel_identity": "fb.son.test_157"
+    }
+  }
+}

@@ -15,7 +15,7 @@ from src.tools.mcp_gateway import LocalToolGateway, MCPConnectionError, MCPToolG
 from src.tools.tool_impl import reset_mock_state
 
 EXPECTED = {
-    "catalog": {"catalog.search", "inventory.check", "pricing.get_quote", "product.shortlist", "admin.audit"},
+    "catalog": {"catalog.search", "inventory.check", "pricing.get_quote", "pricing.quote_order", "product.shortlist", "admin.audit"},
     "crm": {"crm.get_customer", "order.create", "order.status", "order.update", "schedule.callback", "handoff.transfer",
             "admin.reset_state", "admin.audit"},
 }

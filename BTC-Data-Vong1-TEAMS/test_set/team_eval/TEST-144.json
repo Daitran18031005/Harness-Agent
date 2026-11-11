@@ -1,0 +1,66 @@
+{
+  "scenario_id": "TEST-144",
+  "level": "M1",
+  "industry": "thoi-trang",
+  "region": "nam",
+  "south": true,
+  "persona": "khach_so_gia",
+  "hard_case": "doi_size_7_ngay",
+  "customer_phone": "0911140434",
+  "customer_name": "Kiên",
+  "honorific": "anh",
+  "notes": "[thoi-trang] (doi_size_mien_phi_7d) Áo phao lông vũ Warmly (SKU-JK-DWN-S-DEN) tại Cần Thơ.",
+  "calls": {
+    "call_1": {
+      "channel": "hotline",
+      "call_date": "2026-10-08",
+      "customer_goal": "mua Áo phao lông vũ Warmly biến thể S den",
+      "customer_turns": [
+        "Kiên chốt mua Áo phao lông vũ Warmly bản S den, đóng gói ship COD về số 148 đường Trần Hưng Đạo, An Phú, Cần Thơ giùm em."
+      ],
+      "facts_established": {
+        "order_id": "OD900144",
+        "product_advised": "SKU-JK-DWN",
+        "variant_sku": "SKU-JK-DWN-S-DEN",
+        "size": "S",
+        "color": "den",
+        "price_quoted_vnd": 1490000
+      },
+      "success_if": {
+        "tool_called": "order.create",
+        "args_match": {
+          "sku": "SKU-JK-DWN-S-DEN",
+          "price_vnd": 1490000,
+          "payment": "COD"
+        }
+      },
+      "expected_outcome": "chot_don"
+    },
+    "call_2": {
+      "channel": "hotline",
+      "days_later": 2,
+      "customer_goal": "đổi lần đầu sang size L màu navy miễn phí trong 7 ngày",
+      "customer_turns": [
+        "Áo phao lông vũ Warmly cỡ S mặc hơi chật vai, cho Kiên chuyển đơn qua cỡ L màu navy nhé, mới nhận 2 hôm đổi lần đầu không tốn phí vận chuyển phải không?"
+      ],
+      "must_carry_over": [
+        "order_id",
+        "variant_sku"
+      ],
+      "must_not_ask": [
+        "product_advised"
+      ],
+      "success_if": {
+        "tool_called": "order.update",
+        "args_match": {
+          "action": "exchange_size",
+          "new_variant_sku": "SKU-JK-DWN-L-NAVY"
+        }
+      },
+      "ground_truth_facts": {
+        "exchange_fee_vnd": 0
+      },
+      "expected_outcome": "chot_don"
+    }
+  }
+}

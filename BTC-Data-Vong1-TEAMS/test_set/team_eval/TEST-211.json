@@ -1,0 +1,68 @@
+{
+  "scenario_id": "TEST-211",
+  "level": "M1",
+  "industry": "thoi-trang",
+  "region": "trung",
+  "south": false,
+  "persona": "khach_can_ship_gap",
+  "hard_case": "qua_han_doi_tra_7_ngay",
+  "customer_phone": "0911671074",
+  "customer_name": "Vy",
+  "honorific": "chị",
+  "notes": "[thoi-trang] (qua_han_doi_tra_7d) Giày chạy bộ RunLite 2 Pro (SKU-SN-RUN2-39-DEN) tại Nha Trang.",
+  "calls": {
+    "call_1": {
+      "channel": "hotline",
+      "call_date": "2026-10-08",
+      "customer_goal": "mua Giày chạy bộ RunLite 2 Pro biến thể 39 den",
+      "customer_turns": [
+        "Gửi cho Vy một suất Giày chạy bộ RunLite 2 Pro cỡ 39 den thanh toán khi nhận tại số 231 phố Hoàng Hoa Thám, Lộc Thọ, Nha Trang nha shop."
+      ],
+      "facts_established": {
+        "order_id": "OD900211",
+        "product_advised": "SKU-SN-RUN2",
+        "variant_sku": "SKU-SN-RUN2-39-DEN",
+        "size": 39,
+        "color": "den",
+        "price_quoted_vnd": 1690000
+      },
+      "success_if": {
+        "tool_called": "order.create",
+        "args_match": {
+          "sku": "SKU-SN-RUN2-39-DEN",
+          "price_vnd": 1690000,
+          "payment": "COD"
+        }
+      },
+      "expected_outcome": "chot_don"
+    },
+    "call_2": {
+      "channel": "hotline",
+      "days_later": 12,
+      "customer_goal": "gọi đòi trả/đổi size khi đã quá 7 ngày (ngày thứ 12)",
+      "customer_turns": [
+        "Từ hôm Vy nhận Giày chạy bộ RunLite 2 Pro ở Nha Trang tới giờ trôi qua 12 hôm mất rồi mới mở hộp ra thử không vừa, liệu có xin đổi sang cỡ khác được không?"
+      ],
+      "must_carry_over": [
+        "order_id",
+        "product_advised"
+      ],
+      "must_not_ask": [
+        "product_advised"
+      ],
+      "success_if": {
+        "tool_called": null,
+        "must_say_any": [
+          "7 ngày",
+          "bảy ngày",
+          "quá hạn",
+          "DT-01"
+        ]
+      },
+      "ground_truth_facts": {
+        "within_return_window": false
+      },
+      "expected_outcome": "tu_choi"
+    }
+  }
+}

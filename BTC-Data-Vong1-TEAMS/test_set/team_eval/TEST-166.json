@@ -1,0 +1,52 @@
+{
+  "scenario_id": "TEST-166",
+  "level": "M1",
+  "industry": "me-be",
+  "region": "trung",
+  "south": false,
+  "persona": "khach_hoi_nhieu_khong_mua",
+  "hard_case": "doi_y_giua_cuoc",
+  "customer_phone": "0911314674",
+  "customer_name": "Vy",
+  "honorific": "chị",
+  "notes": "[me-be] (doi_y_ha_cap) Xe đẩy 2 chiều Combi Sugocal (SKU-MB-STR2) tại Nha Trang.",
+  "calls": {
+    "call_1": {
+      "channel": "chat_fanpage",
+      "call_date": "2026-10-15",
+      "customer_goal": "ban đầu hỏi Xe đẩy 2 chiều Combi Sugocal, giữa cuộc đổi sang Xe đẩy gấp gọn Joie Pact",
+      "customer_turns": [
+        "Cho chị Vy hỏi nhanh mẫu Xe đẩy 2 chiều Combi Sugocal, chị chú trọng mái che rộng khi mang về bé sơ sinh cần đẩy hai chiều quay mặt với mẹ.",
+        "Nghe em phân tích thông số xong thì thôi Xe đẩy 2 chiều Combi Sugocal, cho Vy quay xe qua lấy Xe đẩy gấp gọn Joie Pact mức 3.490.000đ nhé.",
+        "Lên đơn cho Vy chính xác mẫu Xe đẩy gấp gọn Joie Pact sau cùng này nha. Nhận tại số 81 phố Hoàng Hoa Thám, Lộc Thọ, Nha Trang nha em, tên Vy, có gì bưu tá alo trước 15 phút. Thanh toán COD. SĐT của chị Vy tại Nha Trang là 0911314674 nha shop."
+      ],
+      "facts_established": {
+        "initial_product": "SKU-MB-STR2",
+        "product_advised": "SKU-MB-STR1",
+        "price_quoted_vnd": 3490000,
+        "payment": "COD",
+        "phone_provided": "0911314674"
+      },
+      "success_if": {
+        "tool_called": "order.create",
+        "args_match": {
+          "sku": "SKU-MB-STR1",
+          "price_vnd": 3490000,
+          "payment": "COD"
+        }
+      },
+      "memory_expectation": {
+        "product_advised": "SKU-MB-STR1",
+        "superseded": [
+          "SKU-MB-STR2"
+        ]
+      },
+      "ground_truth_facts": {
+        "final_sku": "SKU-MB-STR1",
+        "price_vnd": 3490000
+      },
+      "expected_outcome": "chot_don",
+      "channel_identity": "fb.vy.test_166"
+    }
+  }
+}

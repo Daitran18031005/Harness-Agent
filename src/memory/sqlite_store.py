@@ -22,12 +22,13 @@ import sqlite3
 import logging
 import threading
 import weakref
-from datetime import datetime
+from datetime import datetime, timedelta
 from typing import Dict, Any, List, Optional
 
 logger = logging.getLogger("harness.memory")
 
 SCHEMA_VERSION = 2
+WORKING_RETENTION_DAYS = 30      # shortcut: giữ phiên làm việc bỏ dở 30 ngày rồi xóa lúc mở DB; cần chính sách lưu trữ khác thì đưa vào config
 CODE_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
 
 
@@ -175,6 +176,8 @@ class SQLiteStore:
         c.execute("CREATE UNIQUE INDEX IF NOT EXISTS uq_active_fact ON customer_profiles(customer_id, key) WHERE superseded=0")
         c.execute("CREATE UNIQUE INDEX IF NOT EXISTS uq_episode ON episodic_records(customer_id, session_id)")
         c.execute(f"PRAGMA user_version={SCHEMA_VERSION}")
+        # D10: working session (nguyên văn hội thoại của MỘT cuộc gọi) không dùng lại sau khi cuộc gọi kết thúc; phiên bị bỏ dở quá hạn thì xóa khi mở DB.
+        c.execute("DELETE FROM working_sessions WHERE updated_at < ?", ((datetime.now() - timedelta(days=WORKING_RETENTION_DAYS)).isoformat(),))
         c.commit()
 
     def _backup_before_migration(self) -> None:
@@ -264,15 +267,16 @@ class SQLiteStore:
             except sqlite3.Error as e:
                 return self._fail("renew_profile_fact", e)
 
-    def load_all_profiles(self) -> Dict[str, Dict[str, List[Dict[str, Any]]]]:
-        """customer_id -> key -> danh sách phiên bản (cũ -> mới), mỗi phiên bản đủ metadata/provenance."""
+    def load_all_profiles(self, customer_id: Optional[str] = None) -> Dict[str, Dict[str, List[Dict[str, Any]]]]:
+        """customer_id -> key -> danh sách phiên bản (cũ -> mới), mỗi phiên bản đủ metadata/provenance. Có `customer_id` → chỉ đọc khách đó (D12)."""
         if not self.available:
             return {}
         with self._lock:
             try:
                 cur = self._conn.execute(
                     "SELECT customer_id, key, value, confidence, source_session, observed_at, ttl_days, superseded, superseded_by, "
-                    "source_call, source_turn, source_channel, observed_on FROM customer_profiles ORDER BY rowid ASC")
+                    "source_call, source_turn, source_channel, observed_on FROM customer_profiles "
+                    + ("WHERE customer_id=? " if customer_id is not None else "") + "ORDER BY rowid ASC", (customer_id,) if customer_id is not None else ())
                 out: Dict[str, Dict[str, List[Dict[str, Any]]]] = {}
                 for cid, key, value, conf, src, obs, ttl, sup, sup_by, scall, sturn, schan, obs_on in cur.fetchall():
                     out.setdefault(cid, {}).setdefault(key, []).append({
@@ -305,8 +309,8 @@ class SQLiteStore:
             except sqlite3.Error as e:
                 return self._fail("append_episode", e)
 
-    def load_all_episodes(self) -> Dict[str, List[Dict[str, Any]]]:
-        """Sắp theo NGÀY GỌI (call_date, call_index), không theo giờ máy (D5)."""
+    def load_all_episodes(self, customer_id: Optional[str] = None) -> Dict[str, List[Dict[str, Any]]]:
+        """Sắp theo NGÀY GỌI (call_date, call_index), không theo giờ máy (D5). Có `customer_id` → chỉ đọc khách đó (D12)."""
         if not self.available:
             return {}
         with self._lock:
@@ -314,7 +318,8 @@ class SQLiteStore:
                 cur = self._conn.execute(
                     "SELECT customer_id, session_id, call_index, call_date, channel, customer_goal, "
                     "product_advised, price_quoted_vnd, promo_code, promo_expiry, blocker, outcome, summary "
-                    "FROM episodic_records ORDER BY call_date ASC, call_index ASC, rowid ASC")
+                    "FROM episodic_records " + ("WHERE customer_id=? " if customer_id is not None else "")
+                    + "ORDER BY call_date ASC, call_index ASC, rowid ASC", (customer_id,) if customer_id is not None else ())
                 out: Dict[str, List[Dict[str, Any]]] = {}
                 cols = ["session_id", "call_index", "call_date", "channel", "customer_goal", "product_advised",
                         "price_quoted_vnd", "promo_code", "promo_expiry", "blocker", "outcome", "summary"]

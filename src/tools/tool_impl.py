@@ -122,14 +122,22 @@ class CatalogPricingTool:
         }
 
 
+    def quote_order(self, lines: list, on: str = "2026-10-15", customer_phone: str = None, address: str = None) -> Dict[str, Any]:
+        if btc_mock:
+            return btc_mock.pricing_quote_order(lines=lines, on=on, customer_phone=customer_phone, address=address)
+        return {"error": "quote_order_unavailable"}
+
+
 class OrderCallbackTool:
     """Tạo đơn hàng, cập nhật đổi trả, đặt lịch gọi lại, Handoff chuyển máy"""
     def __init__(self):
         pass
 
-    def create_order(self, customer_phone: str, sku: str, qty: int = 1, price_vnd: int = None, promo_code: str = None, payment: str = "COD", address: str = None, on: str = "2026-10-15") -> Dict[str, Any]:
+    def create_order(self, customer_phone: str, sku: str = None, qty: int = 1, price_vnd: int = None, promo_code: str = None, payment: str = "COD", address: str = None, on: str = "2026-10-15",
+                     lines: list = None, basket_skus: list = None) -> Dict[str, Any]:
         if btc_mock:
-            return btc_mock.order_create(customer_phone=customer_phone, sku=sku, qty=qty, price_vnd=price_vnd, promo_code=promo_code, payment=payment, address=address, on=on)
+            return btc_mock.order_create(customer_phone=customer_phone, sku=sku, qty=qty, price_vnd=price_vnd, promo_code=promo_code, payment=payment, address=address, on=on,
+                                         lines=lines, basket_skus=basket_skus)
         return {
             "order_id": f"OD{int(time.time()) % 1000000}",
             "status": "created",

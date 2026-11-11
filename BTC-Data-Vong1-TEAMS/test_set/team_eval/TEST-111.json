@@ -1,0 +1,68 @@
+{
+  "scenario_id": "TEST-111",
+  "level": "M1",
+  "industry": "thoi-trang",
+  "region": "nam",
+  "south": true,
+  "persona": "khach_mua_nhieu_mon",
+  "hard_case": "qua_han_doi_tra_7_ngay",
+  "customer_phone": "0910879074",
+  "customer_name": "Hằng",
+  "honorific": "chị",
+  "notes": "[thoi-trang] (qua_han_doi_tra_7d) Giày sneaker Urban Classic (SKU-SN-CAS-41-DEN) tại Cần Thơ.",
+  "calls": {
+    "call_1": {
+      "channel": "hotline",
+      "call_date": "2026-10-08",
+      "customer_goal": "mua Giày sneaker Urban Classic biến thể 41 den",
+      "customer_turns": [
+        "Alô em, Hằng lấy 1 chiếc Giày sneaker Urban Classic size 41 màu den gửi COD về số 271 đường Mậu Thân, Ninh Kiều, Cần Thơ."
+      ],
+      "facts_established": {
+        "order_id": "OD900111",
+        "product_advised": "SKU-SN-CAS",
+        "variant_sku": "SKU-SN-CAS-41-DEN",
+        "size": 41,
+        "color": "den",
+        "price_quoted_vnd": 890000
+      },
+      "success_if": {
+        "tool_called": "order.create",
+        "args_match": {
+          "sku": "SKU-SN-CAS-41-DEN",
+          "price_vnd": 890000,
+          "payment": "COD"
+        }
+      },
+      "expected_outcome": "chot_don"
+    },
+    "call_2": {
+      "channel": "hotline",
+      "days_later": 12,
+      "customer_goal": "gọi đòi trả/đổi size khi đã quá 7 ngày (ngày thứ 12)",
+      "customer_turns": [
+        "Từ hôm Hằng nhận Giày sneaker Urban Classic ở Cần Thơ tới giờ trôi qua 12 hôm mất rồi mới mở hộp ra thử không vừa, liệu có xin đổi sang cỡ khác được không?"
+      ],
+      "must_carry_over": [
+        "order_id",
+        "product_advised"
+      ],
+      "must_not_ask": [
+        "product_advised"
+      ],
+      "success_if": {
+        "tool_called": null,
+        "must_say_any": [
+          "7 ngày",
+          "bảy ngày",
+          "quá hạn",
+          "DT-01"
+        ]
+      },
+      "ground_truth_facts": {
+        "within_return_window": false
+      },
+      "expected_outcome": "tu_choi"
+    }
+  }
+}

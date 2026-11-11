@@ -178,7 +178,7 @@ class MemoryService:
 
     def profile_versions(self, customer_id: str) -> Dict[str, List[ProfileFact]]:
         """Mọi phiên bản của mọi fact (kể cả đã bị thay thế), nhóm theo key — cho dòng thời gian trên UI."""
-        return {key: self.profile.get_history(customer_id, key) for key in self.profile._store.get(customer_id, {})}
+        return {key: self.profile.get_history(customer_id, key) for key in self.profile._of(customer_id)}
 
     def timeline(self, customer_id: str) -> Dict[str, Any]:
         """Dòng thời gian của khách: {"episodes": [EpisodeRecord], "versions": {key: [ProfileFact]}} (cùng giao diện RemoteMemoryService.timeline)."""

@@ -1,0 +1,52 @@
+{
+  "scenario_id": "TEST-82",
+  "level": "M1",
+  "industry": "gia-dung",
+  "region": "bac",
+  "south": false,
+  "persona": "khach_mua_nhieu_mon",
+  "hard_case": "doi_y_giua_cuoc",
+  "customer_phone": "0910649394",
+  "customer_name": "Minh",
+  "honorific": "anh",
+  "notes": "[gia-dung] (doi_y_nang_cap) Nồi chiên không dầu Lock&Lock 4L (SKU-AF-4L) tại Nghệ An.",
+  "calls": {
+    "call_1": {
+      "channel": "zalo_oa",
+      "call_date": "2026-10-15",
+      "customer_goal": "ban đầu hỏi Nồi chiên không dầu Lock&Lock 4L, giữa cuộc đổi sang Nồi chiên không dầu Philips 6.2L",
+      "customer_turns": [
+        "Minh tham khảo Nồi chiên không dầu Lock&Lock 4L nãy giờ, phân vân nhất đoạn dung tích 4L nhỏ gọn vừa ngăn bếp khi đặt tại Nghệ An.",
+        "Khoan đã Minh nghĩ kỹ lại rồi, bỏ Nồi chiên không dầu Lock&Lock 4L đi chắc anh nâng hẳn lên Nồi chiên không dầu Philips 6.2L (tầm 3.990.000đ) cho vừa vặn hơn.",
+        "Lên đơn cho Minh chính xác mẫu Nồi chiên không dầu Philips 6.2L sau cùng này nha. Đóng gói gửi về số 184 đường Lê Nin, Hưng Phúc, TP Vinh, Nghệ An, cứ đọc tên Minh bảo vệ chung cư nhận giùm hoặc gọi trực tiếp. Thanh toán COD. SĐT nhận bưu kiện của anh Minh tại Vinh là 0910649394."
+      ],
+      "facts_established": {
+        "initial_product": "SKU-AF-4L",
+        "product_advised": "SKU-AF-6L",
+        "price_quoted_vnd": 3990000,
+        "payment": "COD",
+        "phone_provided": "0910649394"
+      },
+      "success_if": {
+        "tool_called": "order.create",
+        "args_match": {
+          "sku": "SKU-AF-6L",
+          "price_vnd": 3990000,
+          "payment": "COD"
+        }
+      },
+      "memory_expectation": {
+        "product_advised": "SKU-AF-6L",
+        "superseded": [
+          "SKU-AF-4L"
+        ]
+      },
+      "ground_truth_facts": {
+        "final_sku": "SKU-AF-6L",
+        "price_vnd": 3990000
+      },
+      "expected_outcome": "chot_don",
+      "channel_identity": "zalo.minh.test_82"
+    }
+  }
+}

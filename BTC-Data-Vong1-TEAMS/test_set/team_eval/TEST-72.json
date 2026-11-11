@@ -1,0 +1,50 @@
+{
+  "scenario_id": "TEST-72",
+  "level": "M1",
+  "industry": "me-be",
+  "region": "nam",
+  "south": true,
+  "persona": "khach_so_gia",
+  "hard_case": "doi_y_giua_cuoc",
+  "customer_phone": "0910570194",
+  "customer_name": "Kiên",
+  "honorific": "anh",
+  "notes": "[me-be] (doi_y_ha_cap) Ghế ngồi ô tô cho bé Chicco (SKU-MB-CAR) tại Đồng Nai.",
+  "calls": {
+    "call_1": {
+      "channel": "hotline",
+      "call_date": "2026-10-15",
+      "customer_goal": "ban đầu hỏi Ghế ngồi ô tô cho bé Chicco, giữa cuộc đổi sang Xe đẩy gấp gọn Joie Pact",
+      "customer_turns": [
+        "Shop ơi, anh Kiên đang tìm hiểu Ghế ngồi ô tô cho bé Chicco dùng cho lắp ghế an toàn trên ô tô gia đình cho bé đi xa.",
+        "Tính đi tính lại ở Đồng Nai thấy Xe đẩy gấp gọn Joie Pact giá 3.490.000đ hợp với Kiên hơn hẳn Ghế ngồi ô tô cho bé Chicco ban đầu.",
+        "Lên đơn cho Kiên chính xác mẫu Xe đẩy gấp gọn Joie Pact sau cùng này nha. Chuyển hàng tới số 244 khu công nghiệp Amata, Long Bình, Đồng Nai giúp anh, đến nơi gọi số này cho Kiên. Thanh toán COD."
+      ],
+      "facts_established": {
+        "initial_product": "SKU-MB-CAR",
+        "product_advised": "SKU-MB-STR1",
+        "price_quoted_vnd": 3490000,
+        "payment": "COD"
+      },
+      "success_if": {
+        "tool_called": "order.create",
+        "args_match": {
+          "sku": "SKU-MB-STR1",
+          "price_vnd": 3490000,
+          "payment": "COD"
+        }
+      },
+      "memory_expectation": {
+        "product_advised": "SKU-MB-STR1",
+        "superseded": [
+          "SKU-MB-CAR"
+        ]
+      },
+      "ground_truth_facts": {
+        "final_sku": "SKU-MB-STR1",
+        "price_vnd": 3490000
+      },
+      "expected_outcome": "chot_don"
+    }
+  }
+}

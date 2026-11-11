@@ -1,0 +1,44 @@
+{
+  "scenario_id": "TEST-181",
+  "level": "M1",
+  "industry": "me-be",
+  "region": "trung",
+  "south": false,
+  "persona": "khach_can_ship_gap",
+  "hard_case": "cod_vuot_han_muc",
+  "customer_phone": "0911433474",
+  "customer_name": "Oanh",
+  "honorific": "chị",
+  "notes": "[me-be] (cod_vuot_tran_giam_sl) Máy hút sữa điện đôi Medela Swing Maxi (SKU-MB-PUMP2) tại Nha Trang.",
+  "calls": {
+    "call_1": {
+      "channel": "hotline",
+      "call_date": "2026-10-15",
+      "customer_goal": "định đặt 2x vượt COD 10tr nên rút xuống 1x COD",
+      "customer_turns": [
+        "Chị Oanh định gom 2 máy Máy hút sữa điện đôi Medela Swing Maxi về Nha Trang trong một đơn COD cho đỡ lắt nhắt nhiều lần.",
+        "Lố trần 10 triệu (11.980.000đ) cho Máy hút sữa điện đôi Medela Swing Maxi không thu hộ được à? Thôi Oanh ngại ra ngân hàng, tách về 1 chiếc 5.990.000đ đi COD về Nha Trang cho gọn.",
+        "Chuyển hàng tới số 131 phố Hoàng Hoa Thám, Lộc Thọ, Nha Trang giúp chị, đến nơi gọi số này cho Oanh."
+      ],
+      "facts_established": {
+        "product_advised": "SKU-MB-PUMP2",
+        "price_quoted_vnd": 5990000,
+        "payment": "COD"
+      },
+      "success_if": {
+        "tool_called": "order.create",
+        "args_match": {
+          "sku": "SKU-MB-PUMP2",
+          "qty": 1,
+          "price_vnd": 5990000,
+          "payment": "COD"
+        }
+      },
+      "ground_truth_facts": {
+        "cod_limit_vnd": 10000000,
+        "price_vnd": 5990000
+      },
+      "expected_outcome": "chot_don"
+    }
+  }
+}

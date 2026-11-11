@@ -1,0 +1,45 @@
+{
+  "scenario_id": "TEST-218",
+  "level": "M1",
+  "industry": "gia-dung",
+  "region": "bac",
+  "south": false,
+  "persona": "khach_mua_nhieu_mon",
+  "hard_case": null,
+  "customer_phone": "0911726514",
+  "customer_name": "Tiến",
+  "honorific": "anh",
+  "notes": "[gia-dung] (cod_nho_chot_ngay) Màng lọc thay thế AirPure X/Y (SKU-AP-FLT-X) tại Quảng Ninh.",
+  "calls": {
+    "call_1": {
+      "channel": "zalo_oa",
+      "call_date": "2026-10-15",
+      "customer_goal": "mua nhanh Màng lọc thay thế AirPure X/Y giá dưới 2tr COD",
+      "customer_turns": [
+        "Tư vấn giúp Tiến dòng Màng lọc thay thế AirPure X/Y, nhà ở Quảng Ninh có nhu cầu dùng cho thay lõi lọc bụi định kỳ sau 6 tháng cho máy AirPure ngay tuần này.",
+        "Nghe báo Màng lọc thay thế AirPure X/Y đúng 690.000đ là ổn rồi, đơn của Tiến dưới hai triệu chắc không cần gọi lại xác nhận nhiều vòng vậy?",
+        "Chuyển hàng tới số 114 đường Hạ Long, Bãi Cháy, Quảng Ninh giúp anh, đến nơi gọi 0911726514 cho Tiến, anh gửi tiền COD cho anh shipper tại Bãi Cháy luôn nhé."
+      ],
+      "facts_established": {
+        "product_advised": "SKU-AP-FLT-X",
+        "price_quoted_vnd": 690000,
+        "payment": "COD",
+        "phone_provided": "0911726514"
+      },
+      "success_if": {
+        "tool_called": "order.create",
+        "args_match": {
+          "sku": "SKU-AP-FLT-X",
+          "price_vnd": 690000,
+          "payment": "COD"
+        }
+      },
+      "ground_truth_facts": {
+        "price_vnd": 690000,
+        "needs_confirmation_call": false
+      },
+      "expected_outcome": "chot_don",
+      "channel_identity": "zalo.tien.test_218"
+    }
+  }
+}

@@ -1,0 +1,52 @@
+{
+  "scenario_id": "TEST-128",
+  "level": "M1",
+  "industry": "gia-dung",
+  "region": "bac",
+  "south": false,
+  "persona": "khach_can_ship_gap",
+  "hard_case": "doi_y_giua_cuoc",
+  "customer_phone": "0911013714",
+  "customer_name": "Thành",
+  "honorific": "anh",
+  "notes": "[gia-dung] (doi_y_ha_cap) Máy lọc nước RO Kangaroo 10 lõi (SKU-WF-RO10) tại Hà Nội.",
+  "calls": {
+    "call_1": {
+      "channel": "chat_fanpage",
+      "call_date": "2026-10-15",
+      "customer_goal": "ban đầu hỏi Máy lọc nước RO Kangaroo 10 lõi, giữa cuộc đổi sang Máy lọc nước UF Sunhouse",
+      "customer_turns": [
+        "Alô em, anh Thành đang tìm hiểu Máy lọc nước RO Kangaroo 10 lõi dùng cho gia đình đông người cần nguồn khoáng kiềm 10 lõi.",
+        "Thành vừa hỏi lại người nhà xong quyết định chuyển hướng từ Máy lọc nước RO Kangaroo 10 lõi mua Máy lọc nước UF Sunhouse (3.290.000đ) nha.",
+        "Lên đơn cho Thành chính xác mẫu Máy lọc nước UF Sunhouse sau cùng này nha. Lên đơn giao về số 76 ngách 62 Đặng Văn Ngữ, Đống Đa, Hà Nội cho anh Thành, kiểm tra kỹ hàng trước khi xuất kho nha. Thanh toán COD. Thành dùng SĐT 0911013714 để bưu tá Đống Đa liên hệ giao."
+      ],
+      "facts_established": {
+        "initial_product": "SKU-WF-RO10",
+        "product_advised": "SKU-WF-UF",
+        "price_quoted_vnd": 3290000,
+        "payment": "COD",
+        "phone_provided": "0911013714"
+      },
+      "success_if": {
+        "tool_called": "order.create",
+        "args_match": {
+          "sku": "SKU-WF-UF",
+          "price_vnd": 3290000,
+          "payment": "COD"
+        }
+      },
+      "memory_expectation": {
+        "product_advised": "SKU-WF-UF",
+        "superseded": [
+          "SKU-WF-RO10"
+        ]
+      },
+      "ground_truth_facts": {
+        "final_sku": "SKU-WF-UF",
+        "price_vnd": 3290000
+      },
+      "expected_outcome": "chot_don",
+      "channel_identity": "fb.thanh.test_128"
+    }
+  }
+}

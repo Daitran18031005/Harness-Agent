@@ -1,0 +1,39 @@
+{
+  "scenario_id": "TEST-170",
+  "level": "M1",
+  "industry": "thoi-trang",
+  "region": "bac",
+  "south": false,
+  "persona": "khach_can_ship_gap",
+  "hard_case": "hoi_ngoai_tai_lieu_doi_thu",
+  "customer_phone": "0911346354",
+  "customer_name": "Duy",
+  "honorific": "anh",
+  "notes": "[thoi-trang] (hoi_doi_thu_ngoai_tl) Giày chạy bộ RunLite 2 Pro (SKU-SN-RUN2) tại Nam Định.",
+  "calls": {
+    "call_1": {
+      "channel": "chat_fanpage",
+      "call_date": "2026-10-15",
+      "customer_goal": "so sánh Giày chạy bộ RunLite 2 Pro với sản phẩm đối thủ ngoài corpus",
+      "customer_turns": [
+        "Duy tham khảo Giày chạy bộ RunLite 2 Pro nãy giờ, phân vân nhất đoạn form ôm chân nâng đỡ gót khi tiếp đất khi đặt tại Nam Định.",
+        "Nhân viên bán hàng rành thị trường nhận xét khách quan giùm anh Duy coi Giày chạy bộ RunLite 2 Pro có thắng nổi mẫu xách tay Hàn Quốc không?",
+        "Không đánh giá chê bai hãng khác bên ngoài hệ thống Giày chạy bộ RunLite 2 Pro hả, Duy ghi nhận cách tư vấn khách quan này."
+      ],
+      "facts_established": {
+        "product_advised": "SKU-SN-RUN2"
+      },
+      "success_if": {
+        "tool_called": null,
+        "must_not_call_tools": [
+          "order.create"
+        ]
+      },
+      "ground_truth_facts": {
+        "competitor_outside_corpus": true
+      },
+      "expected_outcome": "hen_goi_lai",
+      "channel_identity": "fb.duy.test_170"
+    }
+  }
+}

@@ -1,0 +1,57 @@
+{
+  "scenario_id": "TEST-126",
+  "level": "M1",
+  "industry": "gia-dung",
+  "region": "nam",
+  "south": true,
+  "persona": "khach_do_du_hoi_nguoi_nha",
+  "hard_case": null,
+  "customer_phone": "0910997874",
+  "customer_name": "Trang",
+  "honorific": "chị",
+  "notes": "[gia-dung] (da_kenh_fb_doi_sl_dc) Màng lọc thay thế AirPure X/Y (SKU-AP-FLT-X) tại Cần Thơ.",
+  "calls": {
+    "call_1": {
+      "channel": "chat_fanpage",
+      "channel_identity": "fb.trang.126",
+      "call_date": "2026-10-15",
+      "customer_goal": "chat Fanpage hỏi 1 bộ Màng lọc thay thế AirPure X/Y kèm số 0910997874",
+      "customer_turns": [
+        "Cho chị Trang hỏi nhanh mẫu Màng lọc thay thế AirPure X/Y, mình chú trọng tự lắp tại nhà khi mang về thay lõi lọc bụi định kỳ sau 6 tháng cho máy AirPure.",
+        "Lưu số 0910997874 giúp chị Trang tại Cần Thơ, lúc nào gia đình chốt lấy Màng lọc thay thế AirPure X/Y thì gọi tổng đài."
+      ],
+      "facts_established": {
+        "product_advised": "SKU-AP-FLT-X",
+        "price_quoted_vnd": 690000,
+        "phone_provided": "0910997874"
+      },
+      "expected_outcome": "hen_goi_lai"
+    },
+    "call_2": {
+      "channel": "hotline",
+      "days_later": 3,
+      "customer_goal": "gọi hotline đổi số lượng thành 2 bộ và chốt đơn",
+      "customer_turns": [
+        "Hôm trước chat page hỏi lẻ 1 Màng lọc thay thế AirPure X/Y, nay Trang đổi lên 2 bộ giao chung địa chỉ ở Cần Thơ cho tiết kiệm chuyến xe.",
+        "Địa chỉ nhận là số 41 đường Mậu Thân, Ninh Kiều, Cần Thơ, nhờ shop ghi chú giao cho Trang nghen. Chị Trang thanh toán qua hình thức banking trước cho tiện nhận hàng ở Cần Thơ nha."
+      ],
+      "must_carry_over": [
+        "product_advised"
+      ],
+      "must_not_ask": [
+        "product_advised"
+      ],
+      "success_if": {
+        "tool_called": "order.create",
+        "args_match": {
+          "sku": "SKU-AP-FLT-X",
+          "qty": 2,
+          "price_vnd": 690000,
+          "payment": "bank"
+        },
+        "total_match_vnd": 1380000
+      },
+      "expected_outcome": "chot_don"
+    }
+  }
+}

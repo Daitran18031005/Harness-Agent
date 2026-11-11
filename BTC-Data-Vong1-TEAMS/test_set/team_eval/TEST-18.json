@@ -1,0 +1,51 @@
+{
+  "scenario_id": "TEST-18",
+  "level": "M1",
+  "persona": "khach_quay_lai_sau_8_thang",
+  "hard_case": "ttl_dia_chi_het_han",
+  "customer_phone": "0977879432",
+  "customer_name": "Loan",
+  "honorific": "chị",
+  "notes": "Khách cũ C033 (Loan, 0977879432) có phiên gần nhất 2026-03-29 (> 180 ngày trước, hết hạn TTL địa chỉ). Agent khi chốt đơn mới PHẢI hỏi xác nhận lại địa chỉ giao hàng hiện tại.",
+  "calls": {
+    "call_1": {
+      "call_date": "2026-10-15",
+      "customer_turns": [
+        "Em ơi chị Loan hồi tháng 3 từng nhắn Zalo hỏi nồi chiên đây, nay chị đặt 1 chiếc Lock&Lock 4L.",
+        "Nồi chiên Lock&Lock 4L giá 1.890.000đ đúng không? Chốt đơn luôn cho chị nhé.",
+        "Nhà chị mới chuyển rồi, địa chỉ hiện tại là số 68 Kim Mã, Ba Đình, Hà Nội em nhé."
+      ],
+      "facts_established": {
+        "product_advised": "SKU-AF-4L",
+        "price_quoted_vnd": 1890000,
+        "payment": "COD"
+      },
+      "success_if": {
+        "tool_called": "order.create",
+        "args_match": {
+          "sku": "SKU-AF-4L",
+          "price_vnd": 1890000
+        },
+        "must_say_any": [
+          "địa chỉ",
+          "xác nhận địa chỉ",
+          "giao về đâu"
+        ]
+      },
+      "ground_truth_facts": {
+        "address_ttl_expired": true,
+        "price_vnd": 1890000
+      },
+      "expected_outcome": "chot_don",
+      "seed_history": [
+        {
+          "session_id": "S-OLD-2",
+          "date": "2026-03-29",
+          "channel": "zalo_oa",
+          "summary": "Hỏi nồi chiên Xiaomi 4.5L, từng lưu địa chỉ giao cũ: 12 Lê Duẩn, Hải Châu, Đà Nẵng",
+          "outcome": "hen_goi_lai"
+        }
+      ]
+    }
+  }
+}

@@ -1,0 +1,37 @@
+{
+  "scenario_id": "TEST-102",
+  "level": "M1",
+  "industry": "gia-dung",
+  "region": "nam",
+  "south": true,
+  "persona": "khach_so_gia",
+  "hard_case": "doanh_nghiep_vat_handoff",
+  "customer_phone": "0910807794",
+  "customer_name": "Tiến",
+  "honorific": "anh",
+  "notes": "[gia-dung] (b2b_doanh_nghiep_vat) Quạt đứng Senko TS16 (SKU-FAN-SEN) tại Đồng Nai.",
+  "calls": {
+    "call_1": {
+      "channel": "hotline",
+      "call_date": "2026-10-15",
+      "customer_goal": "mua sỉ 14 bộ Quạt đứng Senko TS16 xuất VAT -> handoff B2B",
+      "customer_turns": [
+        "Khách sạn của bên Tiến ở Đồng Nai cần nhập lô 14 sản phẩm Quạt đứng Senko TS16 trong tháng này.",
+        "Chuyển thẳng cuộc gọi của Tiến qua nhân viên phụ trách đơn sỉ doanh nghiệp Đồng Nai để gửi báo giá Quạt đứng Senko TS16 kèm mẫu hợp đồng nhé."
+      ],
+      "facts_established": {
+        "product_advised": "SKU-FAN-SEN",
+        "quantity": 14
+      },
+      "success_if": {
+        "tool_called": "handoff.transfer",
+        "brief_must_contain": [
+          "customer_phone",
+          "escalation_reason",
+          "product_advised"
+        ]
+      },
+      "expected_outcome": "chuyen_may"
+    }
+  }
+}

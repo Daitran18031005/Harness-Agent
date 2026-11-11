@@ -47,7 +47,7 @@ Nhấn mạnh: tại lượt 3–4 hệ thống **cố ý chưa tạo đơn** ch
 
 ## Cảnh 3 — Kết quả đo và giới hạn (6:00–7:30)
 
-Chiếu slide 9–13 hoặc `EVALUATION_REPORT.md`: TSR 71,4 % (bộ sinh 100 %), RQR giảm 76,5 % so với baseline, CCR 52,4 % so với 3,6 %, HR giá/KM 0,0 % so với 29,3 % (đáp án GEN-01 được sửa sau khi thấy điểm — nói rõ); **nói rõ chưa đạt**: TTFT ≤ 3 s, dataset còn nhỏ.
+Chiếu slide 9–14 hoặc `EVALUATION_REPORT.md` (277 kịch bản, 2 cấu hình, 1 seed): TSR 76,5 % so với baseline 66,8 %; CCR 57,2 % so với 10,7 %; khách gọi 4–5 lần: 67 % so với 40 %. Chạy trực tiếp một lệnh chấm để thấy bảng in ra: `python scripts/m1_final_report.py --root runs/m1_final2` (chấm lại từ trace, không tốn LLM). **Nói rõ chưa đạt**: RQR mới giảm 30 % (cần 40 %), Hallucination giá 14,6 % theo script (25/26 claim là giá đúng của sản phẩm khác đáp án), TTFT p95 7,5 s, guardrail kém baseline, audio/ASR mới 4 file.
 
 ## Cảnh 4 — Kết (7:30–8:00)
 

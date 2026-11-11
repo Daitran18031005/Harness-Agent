@@ -27,6 +27,7 @@ UNMASK_ALLOWED: Dict[str, frozenset] = {
     "order.create": frozenset({"customer_phone", "address", "recipient_phone"}),     # recipient_phone chỉ dùng cho order gate, gỡ trước khi gọi MCP
     "order.status": frozenset({"customer_phone"}),
     "pricing.get_quote": frozenset({"customer_phone", "address"}),
+    "pricing.quote_order": frozenset({"customer_phone", "address"}),
     "schedule.callback": frozenset({"customer_phone"}),
     "handoff.transfer": frozenset({"customer_phone"}),     # nằm trong brief{}
     "crm.get_customer": frozenset({"phone"}),

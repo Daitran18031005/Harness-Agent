@@ -1,0 +1,70 @@
+{
+  "scenario_id": "SC-TV-02",
+  "level": "M1",
+  "industry": "gia-dung",
+  "region": "nam",
+  "south": true,
+  "persona": "khach_so_gia",
+  "hard_case": "tv_hieu_nham_gia_tu_choi",
+  "customer_phone": "0900030089",
+  "customer_name": "Mai",
+  "honorific": "chị",
+  "notes": "Kịch bản TV 3 cuộc gọi mở rộng: Hỏi GIFT-FILTER -> Hết hạn 22/10 hủy -> Xem TV hiểu nhầm giá Mini đòi giá 2tr -> Từ chối.",
+  "calls": {
+    "call_1": {
+      "channel": "zalo_oa",
+      "call_date": "2026-09-26",
+      "customer_goal": "tìm hiểu sản phẩm và ưu đãi rồi hẹn suy nghĩ (SKU-AP-Y)",
+      "customer_turns": [
+        "Shop ơi cho hỏi AirPure Y phòng em bé 28m2 tháng 9 đang tặng màng lọc hay trừ tiền vậy?",
+        "Ừ gửi báo giá qua đây để tui coi lại tài chính cuối tuần nhắn lại sau nha. Lưu số Zalo của Mai là 0900030089 giùm shop nhé, cần gì chị alo tổng đài."
+      ],
+      "facts_established": {
+        "product_advised": "SKU-AP-Y",
+        "phone_provided": "0900030089"
+      },
+      "expected_outcome": "hen_goi_lai",
+      "channel_identity": "zalo.mai.sc_tv_02"
+    },
+    "call_2": {
+      "channel": "hotline",
+      "call_date": "2026-10-25",
+      "days_later": 29,
+      "customer_goal": "gọi lại sau vài ngày nhưng hết KM hoặc không khớp điều kiện nên từ chối mua",
+      "customer_turns": [
+        "Chị Mai nhắn Zalo bữa trước hỏi AirPure Y có quà màng lọc GIFT-FILTER nè, nay gửi địa chỉ giao luôn nghen.",
+        "Quà màng lọc hết hạn từ 22/10 rồi sao? Thôi không còn quà thì chị hủy không mua nữa nghen."
+      ],
+      "must_carry_over": [
+        "product_advised"
+      ],
+      "must_not_ask": [
+        "product_advised"
+      ],
+      "expected_outcome": "tu_choi"
+    },
+    "call_3": {
+      "channel": "hotline",
+      "call_date": "2026-11-12",
+      "days_later": 18,
+      "customer_goal": "khoảng 1 tháng sau xem quảng cáo TV quay lại: tu_choi",
+      "customer_turns": [
+        "Hồi chiều coi quảng cáo truyền hình thấy chạy chữ máy lọc không khí AirPure từ hơn 2 triệu, vậy chiếc Y này bán cho chị hai triệu hai đi.",
+        "Ủa cái hai triệu một trăm chín chục là mẫu Mini còn mẫu Y vẫn bốn triệu bốn hơn sau 15% hả? Treo đầu dê bán thịt chó quá chị không chốt đâu."
+      ],
+      "must_carry_over": [
+        "product_advised"
+      ],
+      "must_not_ask": [
+        "product_advised"
+      ],
+      "success_if": {
+        "tool_called": null,
+        "must_not_call_tools": [
+          "order.create"
+        ]
+      },
+      "expected_outcome": "tu_choi"
+    }
+  }
+}

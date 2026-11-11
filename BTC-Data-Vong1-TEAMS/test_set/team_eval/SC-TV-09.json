@@ -1,0 +1,70 @@
+{
+  "scenario_id": "SC-TV-09",
+  "level": "M1",
+  "industry": "thoi-trang",
+  "region": "bac",
+  "south": false,
+  "persona": "khach_so_gia",
+  "hard_case": "tv_het_mau_be_xl_tu_choi",
+  "customer_phone": "0900030096",
+  "customer_name": "Trâm",
+  "honorific": "chị",
+  "notes": "Kịch bản TV 3 cuộc gọi mở rộng: Hỏi Warmly XL be -> Không freeship hủy -> Xem TV thời tiết quay lại nhưng XL be hết kho -> Từ chối.",
+  "calls": {
+    "call_1": {
+      "channel": "zalo_oa",
+      "call_date": "2026-09-27",
+      "customer_goal": "tìm hiểu sản phẩm và ưu đãi rồi hẹn suy nghĩ (SKU-JK-DWN)",
+      "customer_turns": [
+        "Áo phao lông vũ Warmly size XL màu be có mặc chống rét dưới 10 độ được không shop?",
+        "Để chị hỏi xem chồng có thích màu be sáng không rồi ít hôm báo nhé. Trâm để lại số 0900030096 ở đây nhé, tối hỏi ý anh nhà xong gọi hotline báo shop."
+      ],
+      "facts_established": {
+        "product_advised": "SKU-JK-DWN",
+        "phone_provided": "0900030096"
+      },
+      "expected_outcome": "hen_goi_lai",
+      "channel_identity": "zalo.tram.sc_tv_09"
+    },
+    "call_2": {
+      "channel": "hotline",
+      "call_date": "2026-10-09",
+      "days_later": 12,
+      "customer_goal": "gọi lại sau vài ngày nhưng hết KM hoặc không khớp điều kiện nên từ chối mua",
+      "customer_turns": [
+        "Chị Trâm bữa hỏi áo phao Warmly đây, giờ đặt có được mã giảm sinh nhật hay miễn ship không em?",
+        "Đơn dưới 2 triệu không miễn ship ngoài Bắc hả? Chán thế thôi chị không đặt nữa."
+      ],
+      "must_carry_over": [
+        "product_advised"
+      ],
+      "must_not_ask": [
+        "product_advised"
+      ],
+      "expected_outcome": "tu_choi"
+    },
+    "call_3": {
+      "channel": "hotline",
+      "call_date": "2026-11-13",
+      "days_later": 35,
+      "customer_goal": "khoảng 1 tháng sau xem quảng cáo TV quay lại: tu_choi",
+      "customer_turns": [
+        "Hôm qua coi dự báo thời tiết trên TV thấy báo sắp đón đợt không khí lạnh tăng cường, lại chiếu quảng cáo áo phao Warmly màu be đẹp quá nên chị gọi chốt chiếc size XL màu be.",
+        "Cỡ XL màu be hết sạch kho rồi chỉ còn đen với xanh navy thôi à? Chồng chị kén chỉ mặc màu sáng, hết đúng màu trên TV thì chị nghỉ mua nhé."
+      ],
+      "must_carry_over": [
+        "product_advised"
+      ],
+      "must_not_ask": [
+        "product_advised"
+      ],
+      "success_if": {
+        "tool_called": null,
+        "must_not_call_tools": [
+          "order.create"
+        ]
+      },
+      "expected_outcome": "tu_choi"
+    }
+  }
+}

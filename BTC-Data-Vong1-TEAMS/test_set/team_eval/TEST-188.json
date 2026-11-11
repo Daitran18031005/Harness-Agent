@@ -1,0 +1,41 @@
+{
+  "scenario_id": "TEST-188",
+  "level": "M1",
+  "industry": "gia-dung",
+  "region": "bac",
+  "south": false,
+  "persona": "khach_can_ship_gap",
+  "hard_case": "lich_nghi_hen_goi_lai",
+  "customer_phone": "0911488914",
+  "customer_name": "Duy",
+  "honorific": "anh",
+  "notes": "[gia-dung] (lich_nghi_le_callback) Combo AirPure Y + 2 màng lọc (SKU-BDL-AIR) tại Hà Nội.",
+  "calls": {
+    "call_1": {
+      "channel": "hotline",
+      "call_date": "2026-10-15",
+      "customer_goal": "hẹn gọi lại rơi vào ngày nghỉ lễ công ty (2026-10-26)",
+      "customer_turns": [
+        "Alô em, anh Duy đang tìm hiểu Combo AirPure Y + 2 màng lọc dùng cho mua máy lọc AirPure Y kèm sẵn hai màng thay thế.",
+        "Giờ Duy phải vào phòng họp gấp rồi, nhờ tổng đài set lịch 9h sáng ngày thứ Hai 26/10 gọi lại chốt đơn Combo AirPure Y + 2 màng lọc."
+      ],
+      "facts_established": {
+        "product_advised": "SKU-BDL-AIR",
+        "requested_callback": "2026-10-26T09:00"
+      },
+      "success_if": {
+        "tool_called": "schedule.callback",
+        "must_say_any": [
+          "nghỉ",
+          "27/10",
+          "02/01",
+          "làm việc"
+        ]
+      },
+      "ground_truth_facts": {
+        "holiday_date": "2026-10-26"
+      },
+      "expected_outcome": "hen_goi_lai"
+    }
+  }
+}

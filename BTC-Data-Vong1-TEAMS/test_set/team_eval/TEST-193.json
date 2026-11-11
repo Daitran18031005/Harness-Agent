@@ -1,0 +1,53 @@
+{
+  "scenario_id": "TEST-193",
+  "level": "M1",
+  "industry": "thoi-trang",
+  "region": "trung",
+  "south": false,
+  "persona": "khach_do_du_hoi_nguoi_nha",
+  "hard_case": "phien_ban_chinh_sach_cu",
+  "customer_phone": "0911528514",
+  "customer_name": "Sơn",
+  "honorific": "anh",
+  "notes": "[thoi-trang] (chinh_sach_cu_2026_06) Tất thể thao RunLite (3 đôi) (SKU-SN-SOCK) tại Đà Nẵng.",
+  "calls": {
+    "call_1": {
+      "channel": "zalo_oa",
+      "call_date": "2026-10-15",
+      "customer_goal": "trích chính sách cũ 2026-06 (14 ngày/20k) cho Tất thể thao RunLite (3 đôi) -> agent đính chính",
+      "customer_turns": [
+        "Anh Sơn coi bài viết cũ ghi Tất thể thao RunLite (3 đôi) hưởng hạn đổi tới 14 hôm, phí đổi size thu hai chục nghìn mà sao nghe bạn bảo đổi rồi?",
+        "À quy định tháng 10 cho Tất thể thao RunLite (3 đôi) rút lại thành 7 ngày với đổi size lần đầu miễn phí hả, Sơn cảm ơn em đã cập nhật đúng."
+      ],
+      "facts_established": {
+        "product_advised": "SKU-SN-SOCK"
+      },
+      "success_if": {
+        "tool_called": null,
+        "must_say_any": [
+          "7 ngày",
+          "bảy ngày",
+          "0đ",
+          "miễn phí"
+        ],
+        "forbidden_claims": [
+          {
+            "field": "return_days",
+            "value": 14
+          },
+          {
+            "field": "exchange_fee_vnd",
+            "value": 20000
+          }
+        ]
+      },
+      "ground_truth_facts": {
+        "return_days": 7,
+        "exchange_fee_vnd": 0,
+        "policy_version": "2026-10"
+      },
+      "expected_outcome": "hen_goi_lai",
+      "channel_identity": "zalo.son.test_193"
+    }
+  }
+}

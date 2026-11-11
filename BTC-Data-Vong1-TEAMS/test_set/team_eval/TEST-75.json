@@ -1,0 +1,40 @@
+{
+  "scenario_id": "TEST-75",
+  "level": "M1",
+  "industry": "gia-dung",
+  "region": "nam",
+  "south": true,
+  "persona": "khach_thich_khuyen_mai",
+  "hard_case": "pham_vi_bao_hanh",
+  "customer_phone": "0910593954",
+  "customer_name": "Tiến",
+  "honorific": "anh",
+  "notes": "[gia-dung] (bao_hanh_phu_kien) Quạt đứng DC inverter Panasonic F-409 (SKU-FAN-DC1) tại Vũng Tàu.",
+  "calls": {
+    "call_1": {
+      "channel": "hotline",
+      "call_date": "2026-10-15",
+      "customer_goal": "hỏi phạm vi bảo hành phụ kiện tiêu hao của Quạt đứng DC inverter Panasonic F-409",
+      "customer_turns": [
+        "Trong phiếu bảo hành Quạt đứng DC inverter Panasonic F-409 gửi về Vũng Tàu, các món như dây cắm điện, ốc khóa cánh và pin điều khiển bị lão hóa thì Tiến có được hỗ trợ thay không tốn phí chứ?",
+        "À phụ kiện tiêu hao như remote điều khiển từ xa, lồng quạt và dây nguồn trên Quạt đứng DC inverter Panasonic F-409 không thuộc phạm vi bảo hành phần thân máy chính đúng không em, Tiến cảm ơn giải thích rõ nha."
+      ],
+      "facts_established": {
+        "product_advised": "SKU-FAN-DC1"
+      },
+      "success_if": {
+        "tool_called": null,
+        "must_say_any": [
+          "tiêu hao",
+          "phụ kiện",
+          "không thuộc",
+          "BH-01"
+        ]
+      },
+      "ground_truth_facts": {
+        "consumables_covered": false
+      },
+      "expected_outcome": "hen_goi_lai"
+    }
+  }
+}

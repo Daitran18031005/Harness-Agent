@@ -1,0 +1,81 @@
+{
+  "scenario_id": "TEST-95",
+  "level": "M1",
+  "industry": "me-be",
+  "region": "bac",
+  "south": false,
+  "persona": "khach_hoi_nhieu_khong_mua",
+  "hard_case": "da_phien_3_cuoc",
+  "customer_phone": "0910752354",
+  "customer_name": "Khải",
+  "honorific": "anh",
+  "notes": "[me-be] (da_phien_3_cuoc_doi_tt) Túi trữ sữa Sunmum 50 túi (SKU-MB-BAG) tại Nam Định.",
+  "calls": {
+    "call_1": {
+      "channel": "chat_fanpage",
+      "call_date": "2026-10-15",
+      "customer_goal": "3 phiên: phiên 1 tư vấn Túi trữ sữa Sunmum 50 túi",
+      "customer_turns": [
+        "Shop báo giúp Khải giá lăn bánh về Nam Định của Túi trữ sữa Sunmum 50 túi kèm khuyến mãi hiện hành nha.",
+        "Thông tin Túi trữ sữa Sunmum 50 túi ổn rồi em, cho Khải tại Nam Định thời gian suy nghĩ một hôm rồi gọi lại. Khải nhắn thêm SĐT 0910752354 về Nam Định nhé, suy nghĩ xong ngày mai gọi tổng đài."
+      ],
+      "facts_established": {
+        "product_advised": "SKU-MB-BAG",
+        "price_quoted_vnd": 119000,
+        "phone_provided": "0910752354"
+      },
+      "expected_outcome": "hen_goi_lai",
+      "channel_identity": "fb.khai.test_95"
+    },
+    "call_2": {
+      "channel": "hotline",
+      "days_later": 2,
+      "customer_goal": "phiên 2 đặt đơn về địa chỉ ban đầu",
+      "customer_turns": [
+        "Khải chốt đặt luôn Túi trữ sữa Sunmum 50 túi bữa trước hỏi ở Nam Định nha em.",
+        "Địa chỉ nhận là số 190 phố Hàng Đồng, Quang Trung, Nam Định, nhờ shop ghi chú giao cho Khải nha. Thanh toán COD."
+      ],
+      "must_carry_over": [
+        "product_advised"
+      ],
+      "must_not_ask": [
+        "product_advised"
+      ],
+      "facts_established": {
+        "order_id": "OD700095",
+        "price_quoted_vnd": 119000
+      },
+      "success_if": {
+        "tool_called": "order.create",
+        "args_match": {
+          "sku": "SKU-MB-BAG",
+          "price_vnd": 119000,
+          "payment": "COD"
+        }
+      },
+      "expected_outcome": "chot_don"
+    },
+    "call_3": {
+      "channel": "hotline",
+      "days_later": 2,
+      "customer_goal": "phiên 3 kiểm tra trạng thái đơn hoặc đổi địa chỉ sang cơ quan",
+      "customer_turns": [
+        "Bưu tá chưa tới chỗ Khải đúng không em? Chuyển giúp địa chỉ đơn Túi trữ sữa Sunmum 50 túi qua số nhà mới bên quận trung tâm Nam Định nhé."
+      ],
+      "must_carry_over": [
+        "order_id",
+        "product_advised"
+      ],
+      "must_not_ask": [
+        "product_advised"
+      ],
+      "success_if": {
+        "tool_called": "order.update",
+        "args_match": {
+          "action": "update_address"
+        }
+      },
+      "expected_outcome": "chot_don"
+    }
+  }
+}

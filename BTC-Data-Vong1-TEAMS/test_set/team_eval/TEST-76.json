@@ -1,0 +1,45 @@
+{
+  "scenario_id": "TEST-76",
+  "level": "M1",
+  "industry": "me-be",
+  "region": "trung",
+  "south": false,
+  "persona": "khach_mua_nhieu_mon",
+  "hard_case": "freeship_nguong_don_me_be",
+  "customer_phone": "0910601874",
+  "customer_name": "Sơn",
+  "honorific": "anh",
+  "notes": "[me-be] (me_be_nguong_freeship) Máy hâm sữa Fatz 4 chức năng (SKU-MB-MON) tại Huế.",
+  "calls": {
+    "call_1": {
+      "channel": "zalo_oa",
+      "call_date": "2026-10-15",
+      "customer_goal": "ghép 2x Máy hâm sữa Fatz 4 chức năng cho đủ ngưỡng >= 500k hưởng MOM-FREESHIP",
+      "customer_turns": [
+        "Sơn ở Huế muốn mua 1 chiếc Máy hâm sữa Fatz 4 chức năng giá 490.000đ nhưng dưới 500k thì mất ship hả em?",
+        "Sơn chốt thành 2 món Máy hâm sữa Fatz 4 chức năng đạt 980.000đ vượt mốc 500k miễn phí giao hàng luôn nhé, thanh toán COD tại số 52 đường Lê Lợi, Phú Hội, Huế. Nhờ shop điền SĐT người nhận 0910601874 cho Sơn ở Huế nhé."
+      ],
+      "facts_established": {
+        "product_advised": "SKU-MB-MON",
+        "quantity": 2,
+        "phone_provided": "0910601874"
+      },
+      "success_if": {
+        "tool_called": "order.create",
+        "args_match": {
+          "sku": "SKU-MB-MON",
+          "qty": 2,
+          "price_vnd": 490000,
+          "payment": "COD"
+        },
+        "must_say_any": [
+          "500",
+          "freeship",
+          "MOM-FREESHIP"
+        ]
+      },
+      "expected_outcome": "chot_don",
+      "channel_identity": "zalo.son.test_76"
+    }
+  }
+}

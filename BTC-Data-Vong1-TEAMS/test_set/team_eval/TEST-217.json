@@ -1,0 +1,41 @@
+{
+  "scenario_id": "TEST-217",
+  "level": "M1",
+  "industry": "gia-dung",
+  "region": "bac",
+  "south": false,
+  "persona": "khach_do_du_hoi_nguoi_nha",
+  "hard_case": "pham_vi_bao_hanh",
+  "customer_phone": "0911718594",
+  "customer_name": "Minh",
+  "honorific": "anh",
+  "notes": "[gia-dung] (bao_hanh_phu_kien) Máy lọc không khí AirPure Y (SKU-AP-Y) tại Nghệ An.",
+  "calls": {
+    "call_1": {
+      "channel": "zalo_oa",
+      "call_date": "2026-10-15",
+      "customer_goal": "hỏi phạm vi bảo hành phụ kiện tiêu hao của Máy lọc không khí AirPure Y",
+      "customer_turns": [
+        "Shop ơi màng lọc HEPA thay định kỳ, dây nguồn và nắp cảm biến của Máy lọc không khí AirPure Y thuộc diện linh kiện thay thế định kỳ hay cũng được bảo hành chung cho Minh như thân sản phẩm?",
+        "À phụ kiện tiêu hao như màng lọc HEPA thay định kỳ, dây nguồn và nắp cảm biến trên Máy lọc không khí AirPure Y không thuộc phạm vi bảo hành phần thân máy chính đúng không em, Minh cảm ơn giải thích rõ nha."
+      ],
+      "facts_established": {
+        "product_advised": "SKU-AP-Y"
+      },
+      "success_if": {
+        "tool_called": null,
+        "must_say_any": [
+          "tiêu hao",
+          "phụ kiện",
+          "không thuộc",
+          "BH-01"
+        ]
+      },
+      "ground_truth_facts": {
+        "consumables_covered": false
+      },
+      "expected_outcome": "hen_goi_lai",
+      "channel_identity": "zalo.minh.test_217"
+    }
+  }
+}

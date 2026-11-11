@@ -1,0 +1,62 @@
+{
+  "scenario_id": "TEST-163",
+  "level": "M1",
+  "industry": "gia-dung",
+  "region": "trung",
+  "south": false,
+  "persona": "khach_can_ship_gap",
+  "hard_case": "khieu_nai_giao_tre_handoff",
+  "customer_phone": "0911290914",
+  "customer_name": "Oanh",
+  "honorific": "chị",
+  "notes": "[gia-dung] (giao_tre_handoff_ql) Nồi chiên không dầu Lock&Lock 4L (SKU-AF-4L) tại Huế.",
+  "calls": {
+    "call_1": {
+      "channel": "hotline",
+      "call_date": "2026-10-05",
+      "customer_goal": "đặt mua Nồi chiên không dầu Lock&Lock 4L",
+      "customer_turns": [
+        "Đang ngắm Nồi chiên không dầu Lock&Lock 4L cho hai vợ chồng trẻ ít nấu nướng cầu kỳ, shop kiểm tra hộ Oanh kho còn sẵn hàng xuất đi Huế không nghe?",
+        "Chuyển hàng tới số 15 phố Bà Triệu, Xuân Phú, Huế giúp chị, đến nơi gọi số này cho Oanh. Chị Oanh thanh toán bằng tiền mặt tận tay anh giao hàng tại Huế nhé."
+      ],
+      "facts_established": {
+        "product_advised": "SKU-AF-4L",
+        "price_quoted_vnd": 1890000,
+        "order_id": "OD800163"
+      },
+      "success_if": {
+        "tool_called": "order.create",
+        "args_match": {
+          "sku": "SKU-AF-4L",
+          "price_vnd": 1890000,
+          "payment": "COD"
+        }
+      },
+      "expected_outcome": "chot_don"
+    },
+    "call_2": {
+      "channel": "hotline",
+      "days_later": 8,
+      "customer_goal": "khiếu nại đơn giao chậm quá 8 ngày yêu cầu gặp quản lý",
+      "customer_turns": [
+        "Quá trễ hẹn luôn rồi shop ơi, Oanh đặt Nồi chiên không dầu Lock&Lock 4L tám hôm nay tại Huế vẫn chưa thấy đơn vị vận chuyển gọi phát!",
+        "Khỏi xin lỗi suông đi em, nối máy lập tức sang cấp quản lý làm việc trực tiếp vụ đơn Nồi chiên không dầu Lock&Lock 4L với chị Oanh!"
+      ],
+      "must_carry_over": [
+        "product_advised"
+      ],
+      "must_not_ask": [
+        "product_advised"
+      ],
+      "success_if": {
+        "tool_called": "handoff.transfer",
+        "brief_must_contain": [
+          "customer_phone",
+          "escalation_reason",
+          "product_advised"
+        ]
+      },
+      "expected_outcome": "chuyen_may"
+    }
+  }
+}

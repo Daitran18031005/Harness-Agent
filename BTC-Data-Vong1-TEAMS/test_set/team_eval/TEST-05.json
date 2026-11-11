@@ -6,44 +6,95 @@
   "customer_phone": "0936270107",
   "customer_name": "Tuấn",
   "honorific": "anh",
-  "notes": "Đổi size lần thứ 2 trên cùng một đơn. Cuộc 1: mua Urban Classic 39 đen. Cuộc 2: đổi lên 40 (lần 1 miễn phí, DT-03), vẫn kích mũi nên đổi tiếp lên 41: từ lần 2 khách chịu 30.000đ/chiều x 2 = 60.000đ (order.update trả fee_vnd=60000). Agent phải báo đúng phí 60k.",
+  "notes": "Đổi size lần thứ 2 trên cùng đơn hàng OD682110. DT-03 quy định: đổi lần 1 miễn phí (call_2); từ lần 2 khách chịu phí 2 chiều 60.000đ (call_3). Agent phải mang order_id và báo đúng phí 60k.",
   "calls": {
     "call_1": {
-      "call_date": "2026-10-10",
-      "customer_goal": "mua giày Urban Classic size 39 màu đen",
+      "call_date": "2026-10-08",
       "customer_turns": [
-        "Em ơi giày sneaker Urban Classic màu đen size 39 còn hàng không em?",
-        "Ok lên đơn cho anh, thanh toán COD, giao về 12 Nguyễn Trãi, Thanh Xuân, Hà Nội."
+        "Anh Tuấn đang ngắm đôi sneaker Urban Classic size 39 bản màu đen để đi làm hằng ngày.",
+        "Giá 890.000đ hợp lý rồi, em xuất đơn mã OD682110 gửi COD về số 45 Nguyễn Du, Quận 1, TP.HCM cho anh nha."
       ],
       "facts_established": {
         "product_advised": "SKU-SN-CAS",
         "variant_sku": "SKU-SN-CAS-39-DEN",
+        "size": 39,
         "color": "den",
         "price_quoted_vnd": 890000,
+        "order_id": "OD682110",
         "payment": "COD"
+      },
+      "success_if": {
+        "tool_called": "order.create",
+        "args_match": {
+          "sku": "SKU-SN-CAS-39-DEN",
+          "price_vnd": 890000,
+          "payment": "COD"
+        }
       },
       "expected_outcome": "chot_don"
     },
     "call_2": {
-      "days_later": 3,
-      "customer_goal": "đổi size hai lần liên tiếp",
+      "days_later": 4,
       "customer_turns": [
-        "Alo em, đôi Urban Classic anh mới nhận hơi chật, đổi lên size 40 màu đen được không em?",
-        "Ok em làm thủ tục đổi giúp anh nhé.",
-        "Mà đi thử size 40 vẫn hơi kích mũi, giờ anh đổi tiếp lên size 41 màu đen thì phí bao nhiêu em?",
-        "Ừ 60k phí vận chuyển hai chiều đúng không, em làm thủ tục đổi tiếp lên size 41 cho anh nhé."
+        "Tuấn vừa bóc hộp đôi Urban Classic nhận hôm trước, size 39 xỏ vào bị ôm gót hơi chật em ạ.",
+        "Lần đổi đầu tiên trong 7 ngày anh xin nâng lên cỡ 40 màu đen cho thoải mái nhé, chắc không tính phí đổi đúng không em?"
       ],
       "must_carry_over": [
+        "order_id",
         "variant_sku",
+        "size",
         "color"
       ],
       "must_not_ask": [
         "product_advised",
-        "color"
+        "order_id",
+        "color",
+        "payment"
       ],
+      "facts_established": {
+        "order_id": "OD682110",
+        "variant_sku": "SKU-SN-CAS-40-DEN",
+        "size": 40,
+        "color": "den"
+      },
       "success_if": {
         "tool_called": "order.update",
         "args_match": {
+          "order_id": "OD682110",
+          "action": "exchange_size",
+          "new_variant_sku": "SKU-SN-CAS-40-DEN"
+        }
+      },
+      "ground_truth_facts": {
+        "exchange_fee_vnd": 0,
+        "return_days": 7
+      },
+      "expected_outcome": "chot_don"
+    },
+    "call_3": {
+      "days_later": 3,
+      "customer_turns": [
+        "Alo em, đơn OD682110 giày Urban Classic lần trước anh đổi từ 39 lên 40 rồi nhưng vẫn hơi kích mũi.",
+        "Giờ anh muốn đổi tiếp lên size 41 màu đen nữa thì có được không em, phí bao nhiêu?",
+        "Ừ 60k phí vận chuyển hai chiều đúng không, em làm thủ tục đổi tiếp cho anh nhé."
+      ],
+      "must_carry_over": [
+        "order_id",
+        "product_advised"
+      ],
+      "must_not_ask": [
+        "product_advised",
+        "order_id"
+      ],
+      "facts_established": {
+        "order_id": "OD682110",
+        "previous_exchanges": 1,
+        "new_size": 41
+      },
+      "success_if": {
+        "tool_called": "order.update",
+        "args_match": {
+          "order_id": "OD682110",
           "action": "exchange_size",
           "new_variant_sku": "SKU-SN-CAS-41-DEN"
         },

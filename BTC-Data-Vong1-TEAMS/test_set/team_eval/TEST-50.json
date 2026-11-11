@@ -1,0 +1,42 @@
+{
+  "scenario_id": "TEST-50",
+  "level": "M1",
+  "industry": "gia-dung",
+  "region": "bac",
+  "south": false,
+  "persona": "khach_can_ship_gap",
+  "hard_case": "khieu_nai_loi_nsx",
+  "customer_phone": "0910395954",
+  "customer_name": "Khải",
+  "honorific": "anh",
+  "notes": "[gia-dung] (bao_hanh_loi_nsx_30d) Máy lọc không khí Xiaomi Smart 4 Pro (SKU-XM-4P) tại Nam Định.",
+  "calls": {
+    "call_1": {
+      "channel": "chat_fanpage",
+      "call_date": "2026-10-15",
+      "customer_goal": "hỏi đổi mới 1-1 trong 30 ngày lỗi NSX cho Máy lọc không khí Xiaomi Smart 4 Pro",
+      "customer_turns": [
+        "Hôm nay là ngày thứ 16 kể từ lúc Khải nhận Máy lọc không khí Xiaomi Smart 4 Pro mà máy có dấu hiệu lỗi kỹ thuật NSX rõ ràng luôn.",
+        "Ngoài chế độ bảo hành hãng 24 tháng ra, Khải dính lỗi sản xuất trên Máy lọc không khí Xiaomi Smart 4 Pro trong mốc 30 ngày đầu được đổi nguyên bộ mới đúng không?"
+      ],
+      "facts_established": {
+        "product_advised": "SKU-XM-4P"
+      },
+      "success_if": {
+        "tool_called": null,
+        "must_say_any": [
+          "30 ngày",
+          "đổi mới",
+          "1-1",
+          "DT-05"
+        ]
+      },
+      "ground_truth_facts": {
+        "warranty_months": 24,
+        "doa_exchange_days": 30
+      },
+      "expected_outcome": "hen_goi_lai",
+      "channel_identity": "fb.khai.test_50"
+    }
+  }
+}

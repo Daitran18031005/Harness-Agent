@@ -25,7 +25,7 @@ from src.harness.fact_usage import fact_mentioned, used_by_agent  # noqa: E402
 from src.common.money import numbers_in  # noqa: E402
 
 SCEN_DIR = os.path.join(CODE_DIR, "BTC-Data-Vong1-TEAMS", "test_set", "public_sample")
-CALLS = ("call_1", "call_2", "call_3")
+CALLS = tuple(f"call_{i}" for i in range(1, 10))
 MONEY_FIELDS = ("price_vnd", "list_price_vnd", "final_price_vnd", "discount_vnd", "total_vnd", "exchange_fee_vnd",
                 "cod_limit_vnd", "variant_price_delta_vnd")
 

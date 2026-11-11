@@ -1,0 +1,52 @@
+{
+  "scenario_id": "TEST-216",
+  "level": "M1",
+  "industry": "gia-dung",
+  "region": "nam",
+  "south": true,
+  "persona": "khach_do_du_hoi_nguoi_nha",
+  "hard_case": "doi_y_giua_cuoc",
+  "customer_phone": "0911710674",
+  "customer_name": "Trang",
+  "honorific": "chị",
+  "notes": "[gia-dung] (doi_y_nang_cap) Nồi chiên không dầu Xiaomi 4.5L (SKU-AF-XM) tại Cần Thơ.",
+  "calls": {
+    "call_1": {
+      "channel": "zalo_oa",
+      "call_date": "2026-10-15",
+      "customer_goal": "ban đầu hỏi Nồi chiên không dầu Xiaomi 4.5L, giữa cuộc đổi sang Nồi chiên không dầu Philips 6.2L",
+      "customer_turns": [
+        "Trang định sắm Nồi chiên không dầu Xiaomi 4.5L vì thấy hợp phòng bếp tối giản thích đồ gia dụng Xiaomi, bên shop tư vấn thêm cho mình với.",
+        "À thôi dừng Nồi chiên không dầu Xiaomi 4.5L lại đi em, chốt giúp chị Trang qua hẳn chiếc Nồi chiên không dầu Philips 6.2L giá 3.990.000đ cho khỏi lăn tăn.",
+        "Lên đơn cho Trang chính xác mẫu Nồi chiên không dầu Philips 6.2L sau cùng này nha. Địa chỉ nhận là số 61 đường Mậu Thân, Ninh Kiều, Cần Thơ, nhờ shop ghi chú giao cho Trang nghen. Thanh toán COD. Trang cho số 0911710674 để shipper Cần Thơ dễ liên lạc khi tới."
+      ],
+      "facts_established": {
+        "initial_product": "SKU-AF-XM",
+        "product_advised": "SKU-AF-6L",
+        "price_quoted_vnd": 3990000,
+        "payment": "COD",
+        "phone_provided": "0911710674"
+      },
+      "success_if": {
+        "tool_called": "order.create",
+        "args_match": {
+          "sku": "SKU-AF-6L",
+          "price_vnd": 3990000,
+          "payment": "COD"
+        }
+      },
+      "memory_expectation": {
+        "product_advised": "SKU-AF-6L",
+        "superseded": [
+          "SKU-AF-XM"
+        ]
+      },
+      "ground_truth_facts": {
+        "final_sku": "SKU-AF-6L",
+        "price_vnd": 3990000
+      },
+      "expected_outcome": "chot_don",
+      "channel_identity": "zalo.trang.test_216"
+    }
+  }
+}

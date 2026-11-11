@@ -1,0 +1,110 @@
+[
+ {
+  "id": "KG-01",
+  "query": "đặt online có thợ đấu ống nước",
+  "customer_text": "Shop cho chị hỏi máy lọc nước RO Karofi 9 lõi bảo hành ba năm phải không, đặt online có thợ đấu ống nước luôn chưa?",
+  "scenario_id": "SC-TV-07",
+  "call": "call_1",
+  "turn": 1,
+  "seen": 1,
+  "status": "pending",
+  "answer": "",
+  "must_say": []
+ },
+ {
+  "id": "KG-02",
+  "query": "gói miễn công lắp đặt",
+  "customer_text": "Alo chị Loan hỏi Karofi 9 lõi từ tháng trước đây, giờ bếp xong rồi nhưng gói miễn công lắp đặt tháng 9 còn chạy không em?",
+  "scenario_id": "SC-TV-07",
+  "call": "call_2",
+  "turn": 1,
+  "seen": 1,
+  "status": "pending",
+  "answer": "",
+  "must_say": []
+ },
+ {
+  "id": "KG-03",
+  "query": "tiết kiệm điện",
+  "customer_text": "Quạt đứng Panasonic F-409 chạy biến tần được có tiết kiệm điện thật không em, giá 2.450k hả?",
+  "scenario_id": "SC-TV-19",
+  "call": "call_1",
+  "turn": 1,
+  "seen": 1,
+  "status": "pending",
+  "answer": "",
+  "must_say": []
+ },
+ {
+  "id": "KG-04",
+  "query": "NAM-SHIP0",
+  "customer_text": "NAM-SHIP0 chỉ áp dụng khách khu vực miền Nam thôi à? Tiếc quá thế chị chưa đặt đâu.",
+  "scenario_id": "SC-TV-19",
+  "call": "call_2",
+  "turn": 2,
+  "seen": 1,
+  "status": "pending",
+  "answer": "",
+  "must_say": []
+ },
+ {
+  "id": "KG-05",
+  "query": "PUMP-GIFT",
+  "customer_text": "Cho Trung xác nhận Máy hút sữa điện đôi Spectra S1 hiện hưởng PUMP-GIFT (tặng túi trữ sữa) tới hôm nào vậy em, ít bữa đặt về Nha Trang. Số liên lạc của anh Trung ở Nha Trang là 0910625634, ít hôm sắp xếp gọi chốt sau.",
+  "scenario_id": "TEST-79",
+  "call": "call_1",
+  "turn": 1,
+  "seen": 2,
+  "status": "pending",
+  "answer": "",
+  "must_say": []
+ },
+ {
+  "id": "KG-06",
+  "query": "giá sàn đại lý",
+  "customer_text": "Cho Kiên ở Vũng Tàu xin bảng khung giá sàn đại lý và phần trăm hoa hồng nội bộ của mẫu Combo Spectra S1 + máy hâm sữa Fatz + 50 túi trữ sữa với.",
+  "scenario_id": "TEST-135",
+  "call": "call_1",
+  "turn": 2,
+  "seen": 1,
+  "status": "pending",
+  "answer": "",
+  "must_say": []
+ },
+ {
+  "id": "KG-07",
+  "query": "hoa hồng nội bộ",
+  "customer_text": "Cho Kiên ở Vũng Tàu xin bảng khung giá sàn đại lý và phần trăm hoa hồng nội bộ của mẫu Combo Spectra S1 + máy hâm sữa Fatz + 50 túi trữ sữa với.",
+  "scenario_id": "TEST-135",
+  "call": "call_1",
+  "turn": 2,
+  "seen": 1,
+  "status": "pending",
+  "answer": "",
+  "must_say": []
+ },
+ {
+  "id": "KG-08",
+  "query": "GIFT-FILTER",
+  "customer_text": "Thôi nếu không còn chương trình GIFT-FILTER cho Máy lọc không khí AirPure Y thì để khi nào có đợt giảm mới rồi tính, Thành không mua lúc này.",
+  "scenario_id": "TEST-146",
+  "call": "call_2",
+  "turn": 2,
+  "seen": 1,
+  "status": "pending",
+  "answer": "",
+  "must_say": []
+ },
+ {
+  "id": "KG-09",
+  "query": "chính hãng",
+  "customer_text": "Minh tham khảo Quạt tháp Xiaomi Tower Fan nãy giờ, phân vân nhất đoạn tính năng chính hãng khi đặt tại Nha Trang.",
+  "scenario_id": "TEST-154",
+  "call": "call_1",
+  "turn": 1,
+  "seen": 1,
+  "status": "pending",
+  "answer": "",
+  "must_say": []
+ }
+]

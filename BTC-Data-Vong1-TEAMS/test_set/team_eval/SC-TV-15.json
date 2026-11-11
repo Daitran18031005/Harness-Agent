@@ -1,0 +1,72 @@
+{
+  "scenario_id": "SC-TV-15",
+  "level": "M1",
+  "industry": "me-be",
+  "region": "trung",
+  "south": false,
+  "persona": "khach_ngoai_pham_vi_chuyen_may",
+  "hard_case": "tv_tac_tia_sua_chuyen_bac_si_handoff",
+  "customer_phone": "0900030102",
+  "customer_name": "Nga",
+  "honorific": "chị",
+  "notes": "Kịch bản TV 3 cuộc gọi mở rộng: Hỏi Medela -> Không giảm hủy -> Xem TV tắc tia sữa hỏi chuyên môn y tế -> Chuyển máy.",
+  "calls": {
+    "call_1": {
+      "channel": "chat_fanpage",
+      "call_date": "2026-09-26",
+      "customer_goal": "tìm hiểu sản phẩm và ưu đãi rồi hẹn suy nghĩ (SKU-MB-PUMP2)",
+      "customer_turns": [
+        "Chị mới sinh bé đầu muốn hỏi máy Medela Swing Maxi lực hút 2 pha có mạnh hơn máy đơn không em?",
+        "Cảm ơn em, mấy hôm nữa ra viện chị nhắn lại xem có mua không nhé. Số điện thoại của Nga là 0900030102 ạ, xuất viện về nhà chị sẽ gọi tư vấn tiếp."
+      ],
+      "facts_established": {
+        "product_advised": "SKU-MB-PUMP2",
+        "phone_provided": "0900030102"
+      },
+      "expected_outcome": "hen_goi_lai",
+      "channel_identity": "fb.nga.sc_tv_15"
+    },
+    "call_2": {
+      "channel": "hotline",
+      "call_date": "2026-10-09",
+      "days_later": 13,
+      "customer_goal": "gọi lại sau vài ngày nhưng hết KM hoặc không khớp điều kiện nên từ chối mua",
+      "customer_turns": [
+        "Chị Nga ở Đà Nẵng bữa hỏi Medela Swing Maxi nè, chị muốn hỏi đặt cọc giữ giá ưu đãi năm trăm ngàn được không?",
+        "Máy không có giảm giá tháng này à? Thế chị đi mượn tạm máy người quen chứ không mua nữa."
+      ],
+      "must_carry_over": [
+        "product_advised"
+      ],
+      "must_not_ask": [
+        "product_advised"
+      ],
+      "expected_outcome": "tu_choi"
+    },
+    "call_3": {
+      "channel": "hotline",
+      "call_date": "2026-11-18",
+      "days_later": 40,
+      "customer_goal": "khoảng 1 tháng sau xem quảng cáo TV quay lại: chuyen_may",
+      "customer_turns": [
+        "Tối qua xem tọa đàm sức khỏe sau sinh trên truyền hình thấy nói dùng máy hút không đúng cữ dễ gây áp xe vú, hiện chị đang bị sốt nhẹ tắc tia sữa nặng rồi nên muốn hỏi bác sĩ tư vấn phác đồ dùng Medela Swing Maxi có an toàn không.",
+        "Nối máy giúp chị gặp chuyên viên có chuyên môn y tế hỗ trợ trực tiếp ngay nhé em."
+      ],
+      "must_carry_over": [
+        "product_advised"
+      ],
+      "must_not_ask": [
+        "product_advised"
+      ],
+      "success_if": {
+        "tool_called": "handoff.transfer",
+        "brief_must_contain": [
+          "customer_phone",
+          "escalation_reason",
+          "product_advised"
+        ]
+      },
+      "expected_outcome": "chuyen_may"
+    }
+  }
+}

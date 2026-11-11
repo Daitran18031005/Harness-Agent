@@ -1,0 +1,70 @@
+{
+  "scenario_id": "SC-TV-20",
+  "level": "M1",
+  "industry": "thoi-trang",
+  "region": "nam",
+  "south": true,
+  "persona": "khach_so_gia",
+  "hard_case": "tv_mua_dung_gia_sau_quang_cao_chot",
+  "customer_phone": "0900030107",
+  "customer_name": "Vinh",
+  "honorific": "anh",
+  "notes": "Kịch bản TV 3 cuộc gọi mở rộng: Hỏi RUN-10 -> Trễ hạn 28/10 hủy -> Xem TV phong trào chạy bộ quay lại chốt 41 đen 1.290k.",
+  "calls": {
+    "call_1": {
+      "channel": "hotline",
+      "call_date": "2026-10-14",
+      "customer_goal": "tìm hiểu sản phẩm và ưu đãi rồi hẹn suy nghĩ (SKU-SN-RUN1)",
+      "customer_turns": [
+        "Giày chạy bộ RunLite 1 có mã RUN-10 giảm 10% áp dụng size 41 màu đen không em?",
+        "Ừ cũng vừa chân đấy mà cuối tuần lãnh lương anh mới gọi lại mua nha."
+      ],
+      "facts_established": {
+        "product_advised": "SKU-SN-RUN1"
+      },
+      "expected_outcome": "hen_goi_lai"
+    },
+    "call_2": {
+      "channel": "hotline",
+      "call_date": "2026-10-28",
+      "days_later": 14,
+      "customer_goal": "gọi lại sau vài ngày nhưng hết KM hoặc không khớp điều kiện nên từ chối mua",
+      "customer_turns": [
+        "Alo anh Vinh Tân Bình bữa hỏi RunLite 1 giảm 10% nè, lên đơn 41 đen giúp anh.",
+        "Hết hạn RUN-10 từ 25/10 rồi hả, tăng lại một triệu hai chín chục thì thôi anh để bữa khác."
+      ],
+      "must_carry_over": [
+        "product_advised"
+      ],
+      "must_not_ask": [
+        "product_advised"
+      ],
+      "expected_outcome": "tu_choi"
+    },
+    "call_3": {
+      "channel": "hotline",
+      "call_date": "2026-11-22",
+      "days_later": 25,
+      "customer_goal": "khoảng 1 tháng sau xem quảng cáo TV quay lại: chot_don",
+      "customer_turns": [
+        "Hồi sáng ngồi uống cà phê coi TV thấy giới thiệu phong trào chạy bộ cuối năm dùng đôi RunLite 1 đế EVA bền nhẹ quá, tự nhiên máu chạy nổi lên lại rồi.",
+        "Thôi chốt luôn đôi RunLite 1 size 41 màu đen giá niêm yết 1.290.000đ về 64 Hoàng Văn Thụ, Tân Bình, COD giúp anh nghen."
+      ],
+      "must_carry_over": [
+        "product_advised"
+      ],
+      "must_not_ask": [
+        "product_advised"
+      ],
+      "success_if": {
+        "tool_called": "order.create",
+        "args_match": {
+          "sku": "SKU-SN-RUN1-41-DEN",
+          "price_vnd": 1290000,
+          "payment": "COD"
+        }
+      },
+      "expected_outcome": "chot_don"
+    }
+  }
+}

@@ -1,0 +1,38 @@
+{
+  "scenario_id": "TEST-185",
+  "level": "M1",
+  "industry": "gia-dung",
+  "region": "bac",
+  "south": false,
+  "persona": "khach_so_gia",
+  "hard_case": "hoi_ngoai_tai_lieu_doi_thu",
+  "customer_phone": "0911465154",
+  "customer_name": "Trâm",
+  "honorific": "chị",
+  "notes": "[gia-dung] (hoi_doi_thu_ngoai_tl) Máy lọc không khí Xiaomi Smart 4 Lite (SKU-XM-4L) tại Hà Nội.",
+  "calls": {
+    "call_1": {
+      "channel": "hotline",
+      "call_date": "2026-10-15",
+      "customer_goal": "so sánh Máy lọc không khí Xiaomi Smart 4 Lite với sản phẩm đối thủ ngoài corpus",
+      "customer_turns": [
+        "Alo, Trâm cần gấp thông số với giá chuẩn hôm nay của Máy lọc không khí Xiaomi Smart 4 Lite cho chạy êm tiết kiệm.",
+        "So với dòng xách tay Đức trên sàn thương mại điện tử thì Máy lọc không khí Xiaomi Smart 4 Lite hơn hay thua ở điểm gì thực tế cho Trâm biết với?",
+        "À không có dữ liệu kiểm định của đối thủ ngoài hệ thống với Máy lọc không khí Xiaomi Smart 4 Lite nên không so bừa hả, Trâm thấy nói vậy đàng hoàng đấy."
+      ],
+      "facts_established": {
+        "product_advised": "SKU-XM-4L"
+      },
+      "success_if": {
+        "tool_called": null,
+        "must_not_call_tools": [
+          "order.create"
+        ]
+      },
+      "ground_truth_facts": {
+        "competitor_outside_corpus": true
+      },
+      "expected_outcome": "hen_goi_lai"
+    }
+  }
+}

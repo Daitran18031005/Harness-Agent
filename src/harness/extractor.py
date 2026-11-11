@@ -81,11 +81,14 @@ _PRICE_ROLES = [  # (từ khóa, field) — từ khóa GẦN số nhất (đứn
     (re.compile(r"nhích lên|tăng thêm|tăng lên|chênh lệch|chênh|cao hơn|đắt hơn|rẻ hơn|thấp hơn|phụ thu biến thể", re.I), "variant_price_delta_vnd"),    (re.compile(r"giá gốc|giá niêm yết|giá cũ|giá chưa giảm|giá lẻ|giá list", re.I), "list_price_vnd"),
     (re.compile(r"giảm giá|giảm(?! còn)|tiết kiệm|bớt|ưu đãi", re.I), "discount_vnd"),   # đứng trước 'giá' để thắng khi hòa vị trí
     (re.compile(r"hạn mức", re.I), "cod_limit_vnd"),
-    (re.compile(r"tổng cộng|tổng|thành tiền", re.I), "total_vnd"),
+    (re.compile(r"tổng giá(?: trị)?|tổng cộng|tổng|thành tiền", re.I), "total_vnd"),   # "tổng giá sẽ là …" là TỔNG, không phải giá một sản phẩm (TEST-181)
     (re.compile(r"phí đổi|phí hoàn|phụ thu", re.I), "exchange_fee_vnd"),
     (re.compile(r"còn|chỉ|đồng giá|giá", re.I), "price_vnd"),
 ]
 _SKIP_AMOUNT = re.compile(r"trị giá|quà|tặng kèm|phí ship|phí vận chuyển|ship", re.I)
+# ngưỡng điều kiện ("miễn phí vận chuyển với đơn từ 2.000.000đ trở lên") không phải giá sản phẩm (TEST-84)
+_THRESHOLD_BEFORE = re.compile(r"(?:đơn(?: hàng)?|hóa đơn|giá trị)\s+(?:từ|trên|tối thiểu|đạt)\s*$", re.I)
+_THRESHOLD_AFTER = re.compile(r"^[\d.,\s]*(?:đ|vnđ|vnd|đồng|k|triệu|tr)?\s*trở lên", re.I)
 _FINAL_CUES = re.compile(r"giá cuối|sau (?:khi )?(?:khuyến mãi|km|giảm|ưu đãi)|thanh toán|còn lại", re.I)
 
 _IN_STOCK_TRUE = re.compile(r"còn hàng|còn sẵn|có sẵn|sẵn hàng|còn size|còn màu|vẫn còn", re.I)
@@ -132,6 +135,9 @@ def _tool_amounts(tool_calls: List[Dict[str, Any]]) -> Dict[int, str]:
         res = tc.get("result") or {}
         if not isinstance(res, dict):
             continue
+        for it in res.get("items") or []:               # product.shortlist: giá sau KM của từng mẫu là GIÁ, không phải "giá niêm yết"
+            if isinstance(it, dict) and isinstance(it.get("final_price_vnd"), int):
+                roles[it["final_price_vnd"]] = "price_vnd"
         if isinstance(res.get("list_price_vnd"), int):
             roles.setdefault(res["list_price_vnd"], "list_price_vnd")
         if isinstance(res.get("final_price_vnd"), int):
@@ -145,8 +151,9 @@ def _tool_amounts(tool_calls: List[Dict[str, Any]]) -> Dict[int, str]:
     return roles
 
 
-def _listed_products(tool_calls: List[Dict[str, Any]]) -> Tuple[Dict[str, str], Optional[str]]:
-    """({tên thường: sku} của sản phẩm trong kết quả tool, sku CHỦ ĐỀ). Chủ đề = sản phẩm của pricing.get_quote cuối lượt, nếu không có thì sản phẩm đứng đầu product.shortlist."""
+def _listed_products(tool_calls: List[Dict[str, Any]], focus_sku: Optional[str] = None) -> Tuple[Dict[str, str], Optional[str]]:
+    """({tên thường: sku} của sản phẩm trong kết quả tool, sku CHỦ ĐỀ). Chủ đề = sản phẩm của pricing.get_quote cuối lượt; nếu không có thì sản phẩm cuộc gọi ĐANG bàn
+    từ các lượt trước (`focus_sku`); chưa bàn gì mới lấy sản phẩm đứng đầu product.shortlist (SAMPLE-06: đang bàn Xiaomi, shortlist xếp Samsung đầu → giá Samsung bị ghi nhầm là price_vnd)."""
     names: Dict[str, str] = {}
     subject: Optional[str] = None
     for tc in tool_calls or []:
@@ -155,11 +162,11 @@ def _listed_products(tool_calls: List[Dict[str, Any]]) -> Tuple[Dict[str, str], 
         for it in items:
             if it.get("sku") and it.get("name"):
                 names[str(it["name"]).lower()] = str(it["sku"])
-        if tc.get("name") == "product.shortlist" and items and subject is None:
+        if tc.get("name") == "product.shortlist" and items and subject is None and not focus_sku:
             subject = items[0].get("sku")
         if tc.get("name") == "pricing.get_quote" and isinstance((tc.get("args") or {}).get("sku"), str):
             subject = tc["args"]["sku"]
-    return names, subject
+    return names, subject or focus_sku
 
 
 def _iso_date(day: int, month: int, year: Optional[int], call_date: Optional[str]) -> Optional[str]:
@@ -191,7 +198,7 @@ def _amount_role(clause: str, start: int, roles: Dict[int, str], value: int) -> 
 
 
 def extract_claims(text: str, tool_calls: Optional[List[Dict[str, Any]]] = None,
-                   call_date: Optional[str] = None) -> List[Dict[str, Any]]:
+                   call_date: Optional[str] = None, focus_sku: Optional[str] = None) -> List[Dict[str, Any]]:
     text = text or ""
     claims: List[Dict[str, Any]] = []
     seen = set()
@@ -203,7 +210,9 @@ def extract_claims(text: str, tool_calls: Optional[List[Dict[str, Any]]] = None,
             claims.append({"field": field, "value": value, "text": snippet.strip()})
 
     roles = _tool_amounts(tool_calls or [])
-    listed, subject = _listed_products(tool_calls or [])
+    listed, subject = _listed_products(tool_calls or [], focus_sku)
+    item_prices = {it["final_price_vnd"] for tc in tool_calls or [] if isinstance(tc.get("result"), dict) for it in tc["result"].get("items") or []
+                   if isinstance(it, dict) and isinstance(it.get("final_price_vnd"), int)}
 
     # --- số tiền, theo từng mệnh đề
     for clause in _CLAUSE_SPLIT.split(text):
@@ -216,10 +225,12 @@ def extract_claims(text: str, tool_calls: Optional[List[Dict[str, Any]]] = None,
         for value, idx in amounts:
             if _SKIP_AMOUNT.search(clause[max(0, idx - 14):idx + 1]) and value not in roles:
                 continue
+            if value not in roles and (_THRESHOLD_BEFORE.search(clause[:idx]) or _THRESHOLD_AFTER.search(clause[idx:])):
+                continue
             role = _amount_role(clause, idx, roles, value)
             if role is None:
                 continue
-            if role in ("price_vnd", "list_price_vnd") and subject and value not in roles:
+            if role in ("price_vnd", "list_price_vnd") and subject and (value not in roles or value in item_prices):
                 # giá của MẪU KHÁC được liệt kê (khách hỏi so sánh/mẫu nào hợp lý) không phải claim về sản phẩm chủ đề: ground truth `price_vnd` chỉ nói về sản phẩm chủ đề
                 named = [s for n, s in listed.items() if n in clause.lower()]
                 if named and not any(s.startswith(subject) or subject.startswith(s) for s in named):

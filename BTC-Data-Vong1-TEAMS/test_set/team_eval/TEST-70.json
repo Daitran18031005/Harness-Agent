@@ -1,0 +1,47 @@
+{
+  "scenario_id": "TEST-70",
+  "level": "M1",
+  "industry": "me-be",
+  "region": "trung",
+  "south": false,
+  "persona": "khach_mua_nhieu_mon",
+  "hard_case": "cod_can_xac_nhan",
+  "customer_phone": "0910554354",
+  "customer_name": "Trung",
+  "honorific": "anh",
+  "notes": "[me-be] (cod_xac_nhan_chot) Xe đẩy 2 chiều Combi Sugocal (SKU-MB-STR2) tại Quảng Nam.",
+  "calls": {
+    "call_1": {
+      "channel": "hotline",
+      "call_date": "2026-10-15",
+      "customer_goal": "đặt COD Xe đẩy 2 chiều Combi Sugocal trên 2tr có xác nhận",
+      "customer_turns": [
+        "Trung tham khảo Xe đẩy 2 chiều Combi Sugocal nãy giờ, phân vân nhất đoạn hệ giảm xóc bảo vệ cột sống bé dưới 15kg khi đặt tại Quảng Nam.",
+        "Đơn Xe đẩy 2 chiều Combi Sugocal này hơn hai triệu (6.790.000đ) thì lát tổng đài gọi điện cho Trung xác nhận lại một vòng trước khi giao Quảng Nam phải không em?",
+        "Cứ tiến hành đặt Xe đẩy 2 chiều Combi Sugocal theo COD nhé. Đóng gói gửi về số 200 đường Hùng Vương, An Mỹ, Tam Kỳ, Quảng Nam, cứ đọc tên Trung bảo vệ chung cư nhận giùm hoặc gọi trực tiếp."
+      ],
+      "facts_established": {
+        "product_advised": "SKU-MB-STR2",
+        "price_quoted_vnd": 6790000,
+        "payment": "COD"
+      },
+      "success_if": {
+        "tool_called": "order.create",
+        "args_match": {
+          "sku": "SKU-MB-STR2",
+          "price_vnd": 6790000,
+          "payment": "COD"
+        },
+        "must_say_any": [
+          "xác nhận",
+          "gọi"
+        ]
+      },
+      "ground_truth_facts": {
+        "price_vnd": 6790000,
+        "needs_confirmation_call": true
+      },
+      "expected_outcome": "chot_don"
+    }
+  }
+}

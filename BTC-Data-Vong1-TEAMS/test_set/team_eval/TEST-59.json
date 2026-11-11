@@ -1,0 +1,39 @@
+{
+  "scenario_id": "TEST-59",
+  "level": "M1",
+  "industry": "gia-dung",
+  "region": "bac",
+  "south": false,
+  "persona": "khach_hoi_nhieu_khong_mua",
+  "hard_case": "hoi_ngoai_tai_lieu_doi_thu",
+  "customer_phone": "0910467234",
+  "customer_name": "Khải",
+  "honorific": "anh",
+  "notes": "[gia-dung] (hoi_doi_thu_ngoai_tl) Máy lọc không khí AirPure X (SKU-AP-X) tại Quảng Ninh.",
+  "calls": {
+    "call_1": {
+      "channel": "chat_fanpage",
+      "call_date": "2026-10-15",
+      "customer_goal": "so sánh Máy lọc không khí AirPure X với sản phẩm đối thủ ngoài corpus",
+      "customer_turns": [
+        "Shop báo giúp Khải giá lăn bánh về Quảng Ninh của Máy lọc không khí AirPure X kèm khuyến mãi hiện hành nha.",
+        "Bạn Khải bảo mua hàng nội địa Trung Quốc hoặc thương hiệu ngoài siêu thị rẻ hơn con Máy lọc không khí AirPure X, shop đánh giá hộ xem cái nào đáng tiền?",
+        "Bên em chỉ đối chiếu thông số Máy lọc không khí AirPure X hãng mình bán không bình luận hàng ngoài à? Ừ để anh Khải tìm hiểu thêm."
+      ],
+      "facts_established": {
+        "product_advised": "SKU-AP-X"
+      },
+      "success_if": {
+        "tool_called": null,
+        "must_not_call_tools": [
+          "order.create"
+        ]
+      },
+      "ground_truth_facts": {
+        "competitor_outside_corpus": true
+      },
+      "expected_outcome": "hen_goi_lai",
+      "channel_identity": "fb.khai.test_59"
+    }
+  }
+}

@@ -1,0 +1,100 @@
+{
+  "scenario_id": "SC-ULTRA-04",
+  "level": "M1",
+  "industry": "me-be",
+  "region": "bac",
+  "south": false,
+  "persona": "khach_mua_nhieu_mon",
+  "hard_case": "ultra_4c_vien_san_doi_gio_tiet_trung",
+  "customer_phone": "0900040004",
+  "customer_name": "Hiền",
+  "honorific": "chị",
+  "notes": "Kịch bản siêu khó trên 3 cuộc gọi: 4 cuộc: Hỏi máy hút sữa Medela Swing Maxi -> Giao Bệnh viện Phụ sản -> Xuất viện đổi về nhà sau 18h -> Hỏi vệ sinh van.",
+  "calls": {
+    "call_1": {
+      "channel": "hotline",
+      "call_date": "2026-09-10",
+      "customer_goal": "tư vấn máy hút sữa cho mẹ sinh mổ",
+      "customer_turns": [
+        "Chị mới sinh mổ sữa về chậm, tìm máy hút điện đôi êm cho đầu ti.",
+        "Giá Medela Swing Maxi năm triệu chín chín hả em? Để chị hỏi bác sĩ đã nhé."
+      ],
+      "expected_outcome": "hen_goi_lai",
+      "facts_established": {
+        "product_advised": "SKU-MB-PUMP2"
+      }
+    },
+    "call_2": {
+      "channel": "hotline",
+      "call_date": "2026-09-12",
+      "customer_goal": "đặt giao bệnh viện",
+      "customer_turns": [
+        "Chị Hiền lấy Medela Swing Maxi nhé, gửi về phòng 502 nhà A Bệnh viện Phụ sản Hà Nội, trả tiền mặt."
+      ],
+      "expected_outcome": "chot_don",
+      "days_later": 2,
+      "must_carry_over": [
+        "product_advised"
+      ],
+      "must_not_ask": [
+        "product_advised"
+      ],
+      "success_if": {
+        "tool_called": "order.create",
+        "args_match": {
+          "sku": "SKU-MB-PUMP2",
+          "price_vnd": 5990000,
+          "payment": "COD"
+        }
+      }
+    },
+    "call_3": {
+      "channel": "hotline",
+      "call_date": "2026-09-14",
+      "customer_goal": "xuất viện đổi giao nhà buổi tối",
+      "customer_turns": [
+        "Chị được xuất viện sớm, em báo ship đổi giao về 78 Trần Hưng Đạo, Hoàn Kiếm sau 6 giờ chiều giúp chị nha."
+      ],
+      "expected_outcome": "chot_don",
+      "days_later": 2,
+      "must_carry_over": [
+        "product_advised"
+      ],
+      "must_not_ask": [
+        "product_advised"
+      ],
+      "success_if": {
+        "tool_called": "order.update",
+        "args_match": {
+          "action": "update_address"
+        }
+      }
+    },
+    "call_4": {
+      "channel": "hotline",
+      "call_date": "2026-09-17",
+      "customer_goal": "hỏi tiệt trùng van silicone",
+      "customer_turns": [
+        "Máy hút thích lắm nhưng van vàng với màng silicone có luộc nước sôi trăm độ hay cho vào máy UV được không em?"
+      ],
+      "expected_outcome": "hen_goi_lai",
+      "days_later": 3,
+      "must_carry_over": [
+        "product_advised"
+      ],
+      "must_not_ask": [
+        "product_advised"
+      ],
+      "success_if": {
+        "tool_called": null,
+        "must_say_any": [
+          "van",
+          "silicone",
+          "tiệt trùng",
+          "nước sôi",
+          "UV"
+        ]
+      }
+    }
+  }
+}

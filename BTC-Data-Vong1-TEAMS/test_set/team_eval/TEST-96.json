@@ -1,0 +1,51 @@
+{
+  "scenario_id": "TEST-96",
+  "level": "M1",
+  "industry": "gia-dung",
+  "region": "nam",
+  "south": true,
+  "persona": "khach_so_gia",
+  "hard_case": "khuyen_mai_het_han",
+  "customer_phone": "0910760274",
+  "customer_name": "Hùng",
+  "honorific": "anh",
+  "notes": "[gia-dung] (km_het_han_tu_choi) Máy lọc không khí AirPure X (SKU-AP-X) tại Bình Dương.",
+  "calls": {
+    "call_1": {
+      "channel": "hotline",
+      "call_date": "2026-09-28",
+      "customer_goal": "hỏi Máy lọc không khí AirPure X lúc còn hạn mã AP-SEP (giảm 500k)",
+      "customer_turns": [
+        "Nghe bảo đang chạy AP-SEP được giảm 500k cho dòng Máy lọc không khí AirPure X, lưu giúp Hùng ít ngày sau quay lại chốt."
+      ],
+      "facts_established": {
+        "product_advised": "SKU-AP-X",
+        "promo_code": "AP-SEP"
+      },
+      "expected_outcome": "hen_goi_lai"
+    },
+    "call_2": {
+      "channel": "hotline",
+      "call_date": "2026-10-08",
+      "days_later": 10,
+      "customer_goal": "gọi lại khi AP-SEP hết hạn nên từ chối không mua",
+      "customer_turns": [
+        "Shop giữ giúp Hùng suất AP-SEP bữa coi Máy lọc không khí AirPure X được không, nay gọi lên đơn nha.",
+        "Cao hơn lúc Hùng dự tính nhiều quá vì mất mã AP-SEP cho Máy lọc không khí AirPure X, thôi bỏ qua đơn này em nhé."
+      ],
+      "must_carry_over": [
+        "product_advised"
+      ],
+      "must_not_ask": [
+        "product_advised"
+      ],
+      "success_if": {
+        "tool_called": null,
+        "must_not_call_tools": [
+          "order.create"
+        ]
+      },
+      "expected_outcome": "tu_choi"
+    }
+  }
+}

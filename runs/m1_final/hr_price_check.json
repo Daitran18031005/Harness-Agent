@@ -1,0 +1,262 @@
+[
+ [
+  "SC-GEN-09",
+  "call_1",
+  "1",
+  "2190000",
+  "4890000",
+  "SKU-AP-X",
+  "[('SKU-AP-MINI', 'final')]",
+  "chiếc Máy lọc không khí AirPure Mini có giá 2.190.000 VNĐ"
+ ],
+ [
+  "TEST-02",
+  "call_2",
+  "1",
+  "1740000",
+  "1521000",
+  "SKU-SN-RUN2-41-DEN",
+  "[('SKU-SN-RUN2-43-DEN', 'final'), ('SKU-SN-RUN2-43-TRANG', 'final')]",
+  "Size 43: Đen (giá 1.740.000 VNĐ)"
+ ],
+ [
+  "TEST-100",
+  "call_1",
+  "1",
+  "2450000",
+  "590000",
+  "SKU-FAN-SEN",
+  "[('SKU-FAN-DC1', 'final')]",
+  "Giá: 2.450.000 VNĐ"
+ ],
+ [
+  "TEST-114",
+  "call_1",
+  "2",
+  "5200000",
+  "6390000",
+  "SKU-BDL-AIR",
+  "[('SKU-AP-Y', 'final')]",
+  "Combo AirPure Y: 5.200.000đ"
+ ],
+ [
+  "TEST-128",
+  "call_1",
+  "1",
+  "6890000",
+  "3290000",
+  "SKU-WF-UF",
+  "[('SKU-WF-RO10', 'final')]",
+  "em đã tìm thấy sản phẩm \"Máy lọc nước RO Kangaroo 10 lõi\" với giá niêm"
+ ],
+ [
+  "TEST-145",
+  "call_1",
+  "1",
+  "490000",
+  "1890000",
+  "SKU-MB-STER",
+  "[('SKU-MB-MON', 'final')]",
+  "Giá niêm yết: 490.000 VNĐ"
+ ],
+ [
+  "TEST-147",
+  "call_1",
+  "1",
+  "3290000",
+  "5990000",
+  "SKU-WF-RO9",
+  "[('SKU-WF-UF', 'final')]",
+  "em xin báo giá cho anh/chị về sản phẩm Máy lọc nước UF Sunhouse như sa"
+ ],
+ [
+  "TEST-166",
+  "call_1",
+  "1",
+  "6790000",
+  "3490000",
+  "SKU-MB-STR1",
+  "[('SKU-MB-STR2', 'final')]",
+  "Giá: 6.790.000 VNĐ"
+ ],
+ [
+  "TEST-172",
+  "call_1",
+  "3",
+  "1590000",
+  "3990000",
+  "None",
+  "[('SKU-AF-XM', 'final')]",
+  "Giá: 1.590.000 VNĐ"
+ ],
+ [
+  "TEST-172",
+  "call_1",
+  "3",
+  "1890000",
+  "3990000",
+  "None",
+  "[('SKU-AF-4L', 'final')]",
+  "Giá: 1.890.000 VNĐ"
+ ],
+ [
+  "TEST-184",
+  "call_1",
+  "1",
+  "7990000",
+  "5490000",
+  "None",
+  "[('SKU-AP-PRO', 'list(≠final 7690000)')]",
+  "Giá: 7.990.000 VNĐ"
+ ],
+ [
+  "TEST-184",
+  "call_1",
+  "1",
+  "2990000",
+  "5490000",
+  "None",
+  "[('SKU-XM-4L', 'final')]",
+  "Giá: 2.990.000 VNĐ"
+ ],
+ [
+  "TEST-203",
+  "call_1",
+  "1",
+  "3490000",
+  "6790000",
+  "SKU-MB-STR2",
+  "[('SKU-MB-STR1', 'final')]",
+  "em xin báo giá cho anh/chị về sản phẩm Xe đẩy gấp gọn Joie Pact như sa"
+ ],
+ [
+  "TEST-214",
+  "call_1",
+  "1",
+  "5990000",
+  "4290000",
+  "SKU-MB-PUMP1",
+  "[('SKU-MB-PUMP2', 'final')]",
+  "Giá: 5.990.000 VNĐ"
+ ],
+ [
+  "TEST-216",
+  "call_1",
+  "1",
+  "1590000",
+  "3990000",
+  "SKU-AF-6L",
+  "[('SKU-AF-XM', 'final')]",
+  "Em xin giới thiệu sản phẩm Nồi chiên không dầu Xiaomi 4.5L với giá niê"
+ ],
+ [
+  "TEST-25",
+  "call_1",
+  "1",
+  "2190000",
+  "4890000",
+  "SKU-AP-X",
+  "[('SKU-AP-MINI', 'final')]",
+  "chiếc Máy lọc không khí AirPure Mini có giá 2.190.000 VNĐ"
+ ],
+ [
+  "TEST-33",
+  "call_1",
+  "1",
+  "6790000",
+  "3490000",
+  "SKU-MB-STR1",
+  "[('SKU-MB-STR2', 'final')]",
+  "Giá: 6.790.000 VNĐ"
+ ],
+ [
+  "TEST-34",
+  "call_1",
+  "1",
+  "4290000",
+  "4790000",
+  "SKU-BDL-MOM",
+  "[('SKU-MB-PUMP1', 'final')]",
+  "Máy hút sữa điện đôi Spectra S1: giá 4.290.000 VNĐ"
+ ],
+ [
+  "TEST-34",
+  "call_1",
+  "1",
+  "490000",
+  "4790000",
+  "SKU-BDL-MOM",
+  "[('SKU-MB-MON', 'final')]",
+  "Máy hâm sữa Fatz 4 chức năng: giá 490.000 VNĐ"
+ ],
+ [
+  "TEST-44",
+  "call_1",
+  "1",
+  "5200000",
+  "6390000",
+  "SKU-BDL-AIR",
+  "[('SKU-AP-Y', 'final')]",
+  "Máy lọc không khí AirPure Y có giá 5.200.000 VNĐ"
+ ],
+ [
+  "TEST-44",
+  "call_1",
+  "1",
+  "690000",
+  "6390000",
+  "SKU-BDL-AIR",
+  "[('SKU-AP-FLT-X', 'final')]",
+  "Màng lọc thay thế AirPure X/Y có giá 690.000 VNĐ mỗi cái"
+ ],
+ [
+  "TEST-44",
+  "call_1",
+  "2",
+  "5200000",
+  "6390000",
+  "SKU-BDL-AIR",
+  "[('SKU-AP-Y', 'final')]",
+  "Máy lọc không khí AirPure Y có giá 5.200.000 VNĐ"
+ ],
+ [
+  "TEST-44",
+  "call_1",
+  "2",
+  "690000",
+  "6390000",
+  "SKU-BDL-AIR",
+  "[('SKU-AP-FLT-X', 'final')]",
+  "Màng lọc thay thế AirPure X/Y có giá 690.000 VNĐ mỗi cái"
+ ],
+ [
+  "TEST-49",
+  "call_1",
+  "1",
+  "3245000",
+  "6490000",
+  "SKU-SS-AX40",
+  "[]",
+  "1 máy giá 3.245.000 VNĐ (giảm 50% cho máy thứ 2)"
+ ],
+ [
+  "TEST-72",
+  "call_1",
+  "1",
+  "4990000",
+  "3490000",
+  "SKU-MB-STR1",
+  "[('SKU-MB-CAR', 'final')]",
+  "Em đã tìm thấy sản phẩm \"Ghế ngồi ô tô cho bé Chicco\" với giá 4.990.00"
+ ],
+ [
+  "TEST-73",
+  "call_1",
+  "1",
+  "590000",
+  "2450000",
+  "SKU-FAN-DC1",
+  "[('SKU-FAN-SEN', 'final')]",
+  "Giá: 590.000 VNĐ"
+ ]
+]

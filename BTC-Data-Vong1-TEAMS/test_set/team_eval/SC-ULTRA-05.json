@@ -1,0 +1,115 @@
+{
+  "scenario_id": "SC-ULTRA-05",
+  "level": "M1",
+  "industry": "gia-dung",
+  "region": "bac",
+  "south": false,
+  "persona": "khach_goi_lan_3_het_kien_nhan",
+  "hard_case": "ultra_5c_mac_ca_nhieu_vong_ck",
+  "customer_phone": "0900040005",
+  "customer_name": "Nghĩa",
+  "honorific": "anh",
+  "notes": "Kịch bản siêu khó trên 3 cuộc gọi: 5 cuộc: Ép giá 7tr -> Đòi tặng 2 màng -> So giá xách tay -> Check ngày hết hạn AIR-OCT -> Chốt chuyển khoản đúng giá 7.690k.",
+  "calls": {
+    "call_1": {
+      "channel": "hotline",
+      "call_date": "2026-10-06",
+      "customer_goal": "mặc cả AirPure Pro xuống 7 triệu",
+      "customer_turns": [
+        "AirPure Pro bớt tròn 7 triệu cho anh Nghĩa lấy ngay hôm nay đi em.",
+        "Không xuống sâu được à? Thế thôi để anh cân nhắc."
+      ],
+      "expected_outcome": "hen_goi_lai",
+      "facts_established": {
+        "product_advised": "SKU-AP-PRO"
+      }
+    },
+    "call_2": {
+      "channel": "hotline",
+      "call_date": "2026-10-09",
+      "customer_goal": "đòi tặng thêm 2 màng lọc",
+      "customer_turns": [
+        "Hay giữ giá 7.69 triệu nhưng tặng kèm anh 2 cái màng lọc Pro luôn đi."
+      ],
+      "expected_outcome": "hen_goi_lai",
+      "days_later": 3,
+      "must_carry_over": [
+        "product_advised"
+      ],
+      "must_not_ask": [
+        "product_advised"
+      ],
+      "success_if": {
+        "tool_called": null
+      }
+    },
+    "call_3": {
+      "channel": "hotline",
+      "call_date": "2026-10-13",
+      "customer_goal": "so sánh hàng xách tay",
+      "customer_turns": [
+        "Ngoài hàng xách tay bán rẻ hơn nhiều, sao bên em không hạ giá cạnh tranh?"
+      ],
+      "expected_outcome": "hen_goi_lai",
+      "days_later": 4,
+      "must_carry_over": [
+        "product_advised"
+      ],
+      "must_not_ask": [
+        "product_advised"
+      ],
+      "success_if": {
+        "tool_called": null
+      }
+    },
+    "call_4": {
+      "channel": "hotline",
+      "call_date": "2026-10-28",
+      "customer_goal": "hỏi hạn KM AIR-OCT",
+      "customer_turns": [
+        "Anh Nghĩa hỏi mã giảm 300k cho AirPure Pro còn chạy tới hôm nào em nhỉ?"
+      ],
+      "expected_outcome": "hen_goi_lai",
+      "days_later": 15,
+      "must_carry_over": [
+        "product_advised"
+      ],
+      "must_not_ask": [
+        "product_advised"
+      ],
+      "success_if": {
+        "tool_called": null,
+        "must_say_any": [
+          "30/10",
+          "30-10",
+          "7.690.000",
+          "AIR-OCT"
+        ]
+      }
+    },
+    "call_5": {
+      "channel": "hotline",
+      "call_date": "2026-10-29",
+      "customer_goal": "chốt trước hạn AIR-OCT bằng chuyển khoản",
+      "customer_turns": [
+        "Chốt kịp trước hết tháng 10 nhé, lên đơn AirPure Pro 7.690.000đ giao 88 phố Huế, anh chuyển khoản."
+      ],
+      "expected_outcome": "chot_don",
+      "days_later": 1,
+      "must_carry_over": [
+        "product_advised"
+      ],
+      "must_not_ask": [
+        "product_advised"
+      ],
+      "success_if": {
+        "tool_called": "order.create",
+        "args_match": {
+          "sku": "SKU-AP-PRO",
+          "price_vnd": 7690000,
+          "payment": "bank"
+        }
+      }
+    }
+  }
+}

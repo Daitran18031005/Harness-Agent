@@ -6,13 +6,13 @@
   "customer_phone": "0975475177",
   "customer_name": "Long",
   "honorific": "anh",
-  "notes": "Khách mua giày trekking HikePro size 42 màu xám (1.990.000đ), thanh toán COD. Dưới 2.000.000đ nên needs_confirmation_call=false. Đơn được tạo trực tiếp.",
+  "notes": "Khách mua giày trekking HikePro size 42 xám trị giá 1.990.000đ thanh toán COD. Dưới 2.000.000đ nên needs_confirmation_call=false.",
   "calls": {
     "call_1": {
       "call_date": "2026-10-15",
       "customer_turns": [
         "Em ơi đôi giày trekking HikePro size 42 màu xám giá bao nhiêu?",
-        "Ok lên đơn giúp anh, giao COD về số 19 đường 3/2, quận 10, TP.HCM nhé."
+        "1.990.000đ hả em? Ok lên đơn giúp anh, giao COD về số 19 đường 3/2, quận 10, TP.HCM nhé."
       ],
       "facts_established": {
         "product_advised": "SKU-SN-TRK",

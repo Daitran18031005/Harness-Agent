@@ -1,56 +1,59 @@
-"""Giá báo == giá đơn khi mua nhiều máy (KM 'máy thứ 2'): `price_basket`, chốt trước order.create, hạn mức COD trên tổng đúng của giỏ.
-Mọi con số đối chiếu với mock_tools.py của BTC ngày 2026-10-15 (AirPure Pro: AIR-OCT −300.000 máy 1, AIR-2ND-50 −50% máy 2)."""
+"""Giá báo == giá đơn khi mua nhiều máy (KM 'máy thứ 2'): `price_basket` (pricing.quote_order), order.create(lines), hạn mức COD trên tổng của giỏ.
+Mọi con số đối chiếu với mock_tools.py của BTC (bản 11/2026) ngày 2026-10-15 (AirPure Pro: AIR-OCT −300.000, AIR-2ND-50 −50% cho MỘT máy mỗi đơn)."""
 import unittest
 from tests._helpers import build_components
 from tests.test_orchestrator import FakeLLM
 from src.channels.normalizer import InputChannel
-from src.harness.basket import price_basket, cod_exceeds, cod_needs_confirmation, replace_amount, correct_basket_totals
+from src.harness.basket import price_basket, order_args, cod_exceeds, cod_needs_confirmation, replace_amount, correct_basket_totals
 
 ON = "2026-10-15"
 PRO, AP_X, AP_Y, SHOE, RUN2 = "SKU-AP-PRO", "SKU-AP-X", "SKU-AP-Y", "SKU-SN-CAS-39-DEN", "SKU-SN-RUN2-40-DEN"
 
 
-def mock_quote(args):
+def mock_call(tool, args):
     import mock_tools
-    a = {k: v for k, v in args.items() if k in ("sku", "on", "qty", "customer_phone", "address", "basket_skus")}
-    return mock_tools.pricing_get_quote(**a)
+    return (mock_tools.pricing_quote_order if tool == "pricing.quote_order" else mock_tools.pricing_get_quote)(**args)
 
 
 def basket(*lines):
-    return price_basket(mock_quote, [{"sku": s, "qty": q} for s, q in lines], ON)
+    return price_basket(mock_call, [{"sku": s, "qty": q} for s, q in lines], ON)
 
 
 class PriceBasketTest(unittest.TestCase):
     def setUp(self):
         build_components()                     # reset trạng thái mock
 
-    def test_two_same_machines_apply_second_item_and_are_unsynced(self):
+    def test_two_same_machines_apply_second_item_to_one_unit(self):
         pb = basket((PRO, 2))
         self.assertEqual(pb["lines"][0]["unit_prices_vnd"], [7690000, 3995000])
-        self.assertEqual((pb["total_vnd"], pb["order_total_vnd"], pb["synced"]), (11685000, 15380000, False))
+        self.assertEqual(pb["total_vnd"], 11685000)
+        self.assertEqual([a["promo_code"] for a in pb["lines"][0]["second_unit_promos"]], ["AIR-2ND-50"])
 
     def test_single_unit_unchanged(self):
-        pb = basket((AP_Y, 1))
-        self.assertEqual((pb["total_vnd"], pb["order_total_vnd"], pb["synced"]), (5200000, 5200000, True))
+        self.assertEqual(basket((AP_Y, 1))["total_vnd"], 5200000)
 
     def test_product_without_second_item_promo_is_price_times_qty(self):
-        pb = basket((SHOE, 2))
-        self.assertEqual((pb["total_vnd"], pb["synced"]), (1780000, True))
+        self.assertEqual(basket((SHOE, 2))["total_vnd"], 1780000)
 
-    def test_three_same_machines_get_no_extra_discount(self):
-        pb = basket((PRO, 3))
-        self.assertEqual(pb["lines"][0]["unit_prices_vnd"], [7690000] * 3)
-        self.assertEqual((pb["total_vnd"], pb["order_total_vnd"], pb["synced"]), (23070000, 23070000, True))
+    def test_three_same_machines_only_one_gets_second_item_discount(self):
+        pb = basket((PRO, 3))                  # luật BTC 11/2026: đúng MỘT máy mỗi đơn được giảm 50%
+        self.assertEqual(pb["lines"][0]["unit_prices_vnd"], [7690000, 7690000, 3995000])
+        self.assertEqual(pb["total_vnd"], 19375000)
 
-    def test_two_different_machines_policy_total_but_order_create_cannot_carry_basket(self):
+    def test_two_different_machines_cheaper_one_gets_discount(self):
         pb = basket((AP_X, 1), (AP_Y, 1))
-        self.assertEqual([l["line_total_vnd"] for l in pb["lines"]], [2445000, 5200000])      # máy rẻ hơn (AP-X) được giảm 50% theo giỏ
-        self.assertEqual([l["order_line_total_vnd"] for l in pb["lines"]], [4890000, 5200000])  # order.create không nhận giỏ → ghi giá không KM
-        self.assertEqual((pb["total_vnd"], pb["order_total_vnd"], pb["synced"]), (7645000, 10090000, False))
+        self.assertEqual([l["line_total_vnd"] for l in pb["lines"]], [2445000, 5200000])
+        self.assertEqual(pb["total_vnd"], 7645000)
 
-    def test_two_different_products_without_basket_promo_are_synced(self):
-        pb = basket((SHOE, 1), (RUN2, 1))
-        self.assertEqual((pb["total_vnd"], pb["order_total_vnd"], pb["synced"]), (2411000, 2411000, True))
+    def test_two_different_products_without_basket_promo(self):
+        self.assertEqual(basket((SHOE, 1), (RUN2, 1))["total_vnd"], 2411000)
+
+    def test_order_args_uniform_keeps_old_form_and_mixed_uses_lines(self):
+        base = {"customer_phone": "0900000001", "sku": PRO, "qty": 3, "price_vnd": 1, "basket_skus": [AP_Y]}
+        self.assertEqual(order_args({**base, "sku": SHOE, "qty": 2}, basket((SHOE, 2))), {"customer_phone": "0900000001", "sku": SHOE, "qty": 2, "price_vnd": 1})
+        out = order_args(base, basket((PRO, 3)))
+        self.assertEqual(out["lines"], [{"sku": PRO, "qty": 1, "price_vnd": v} for v in (7690000, 7690000, 3995000)])
+        self.assertFalse({"qty", "price_vnd", "basket_skus"} & set(out))
 
     def test_unknown_sku_returns_error(self):
         self.assertIn("error", basket(("SKU-KHONG-CO", 1)))
@@ -108,25 +111,22 @@ class OrderSyncTest(unittest.TestCase):
     def _create(sku, qty=1, payment="CK", **kw):
         return ("order.create", {"customer_phone": "CURRENT_CUSTOMER", "sku": sku, "qty": qty, "payment": payment, **kw})
 
-    def test_quote_for_two_machines_reports_policy_total_and_flags_mismatch(self):
+    def test_quote_for_two_machines_reports_basket_total(self):
         self._setup()
         _, tc, _ = self._run([("pricing.get_quote", {"sku": PRO, "qty": 2})])
         r = tc[0]["result"]
-        self.assertEqual((r["total_vnd"], r["order_total_vnd"], r["price_synced"]), (11685000, 15380000, False))
-        self.assertEqual(r["final_price_vnd"], 7690000)                      # order.create vẫn kiểm giá theo đơn vị 1
+        self.assertEqual((r["total_vnd"], r["unit_prices_vnd"], r["final_price_vnd"]), (11685000, [7690000, 3995000], 7690000))
 
-    def test_unsynced_two_machines_never_create_order_and_hand_off_once(self):
+    def test_two_machines_create_one_order_with_per_unit_lines(self):
         self._setup()
-        final, tc, _ = self._run([self._create(PRO, 2, price_vnd=7690000)])
+        _, tc, _ = self._run([self._create(PRO, 2, price_vnd=7690000)])
         m = self._mock()
-        self.assertEqual(len(m._ORDERS), 0)                                  # backend sẽ ghi 15.380.000 ≠ 11.685.000 → không tạo
-        self.assertFalse([c for c in tc if c["name"] == "order.create" and "order_id" in (c.get("result") or {})])
-        self.assertEqual(len([t for t in m._TICKETS if t["action"] == "handoff"]), 1)
-        self.assertIn("11.685.000", final)
-        self.assertNotIn("15.380.000", final)                                # một con số duy nhất
-        self._run([self._create(PRO, 2, price_vnd=7690000)])                 # khách nhắc lại: không tạo phiếu thứ hai
-        self.assertEqual(len([t for t in m._TICKETS if t["action"] == "handoff"]), 1)
-        self.assertEqual(len(m._ORDERS), 0)
+        self.assertEqual([o["total_vnd"] for o in m._ORDERS.values()], [11685000])      # tổng báo == tổng backend ghi
+        oc = next(c for c in tc if c["name"] == "order.create")
+        self.assertEqual(oc["args"]["lines"], [{"sku": PRO, "qty": 1, "price_vnd": 7690000}, {"sku": PRO, "qty": 1, "price_vnd": 3995000}])
+        self.assertEqual(len([t for t in m._TICKETS if t["action"] == "handoff"]), 0)
+        self._run([self._create(PRO, 2, price_vnd=7690000)])                 # khách nhắc lại: không tạo đơn thứ hai
+        self.assertEqual(len(m._ORDERS), 1)
 
     def test_single_unit_still_creates_order(self):
         self._setup()
@@ -138,37 +138,33 @@ class OrderSyncTest(unittest.TestCase):
         self._setup()
         _, tc, _ = self._run([("pricing.get_quote", {"sku": SHOE, "qty": 2}), self._create(SHOE, 2, price_vnd=890000)])
         self.assertEqual(tc[0]["result"]["total_vnd"], 1780000)
-        self.assertTrue(tc[0]["result"]["price_synced"])
         self.assertEqual(tc[1]["result"]["total_vnd"], 1780000)              # tổng báo == tổng đơn
         self.assertEqual(len(self._mock()._ORDERS), 1)
 
     def test_three_machines_quote_equals_order_total(self):
         self._setup()
         _, tc, _ = self._run([("pricing.get_quote", {"sku": PRO, "qty": 3}), self._create(PRO, 3, price_vnd=7690000)])
-        self.assertEqual(tc[0]["result"]["total_vnd"], 23070000)
-        self.assertEqual(tc[1]["result"]["total_vnd"], 23070000)
+        self.assertEqual(tc[0]["result"]["total_vnd"], 19375000)
+        self.assertEqual(tc[1]["result"]["total_vnd"], 19375000)
         self.assertEqual(len(self._mock()._ORDERS), 1)
 
-    def test_two_different_machines_total_is_reported_but_orders_are_not_created(self):
-        """Tổng giỏ 2 máy khác SKU do price_basket tính (7.645.000); order.create không nhận giỏ nên sẽ ghi 10.090.000 → không tạo đơn nào, chuyển nhân viên."""
+    def test_two_different_machines_create_one_order_with_basket_total(self):
         self._setup()
-        final, tc, _ = self._run([("pricing.get_quote", {"sku": AP_X, "qty": 1, "basket_skus": [AP_Y]}),
-                                  self._create(AP_X, 1, price_vnd=2445000, basket_skus=[AP_Y])])
-        q = next(c for c in tc if c["name"] == "pricing.get_quote")["result"]     # lời gọi của cổng/handoff đứng trước trong trace
-        self.assertEqual((q["total_vnd"], q["order_total_vnd"], q["price_synced"]), (7645000, 10090000, False))
+        _, tc, _ = self._run([("pricing.get_quote", {"sku": AP_X, "qty": 1, "basket_skus": [AP_Y]}),
+                              self._create(AP_X, 1, price_vnd=2445000, basket_skus=[AP_Y])])
+        self.assertEqual(next(c for c in tc if c["name"] == "pricing.get_quote")["result"]["total_vnd"], 7645000)
         m = self._mock()
-        self.assertEqual(len(m._ORDERS), 0)
-        self.assertEqual(len([t for t in m._TICKETS if t["action"] == "handoff"]), 1)
-        self.assertIn("7.645.000", final)
+        self.assertEqual([(o["total_vnd"], [l["sku"] for l in o["lines"]]) for o in m._ORDERS.values()], [(7645000, [AP_X, AP_Y])])
+        self.assertEqual(len([t for t in m._TICKETS if t["action"] == "handoff"]), 0)
 
-    def test_two_different_products_quote_equals_sum_of_orders(self):
+    def test_two_different_products_are_one_order_even_if_llm_calls_twice(self):
         self._setup()
         _, tc, _ = self._run([("pricing.get_quote", {"sku": SHOE, "qty": 1, "basket_skus": [RUN2]}),
                               self._create(SHOE, 1, price_vnd=890000, basket_skus=[RUN2]),
                               self._create(RUN2, 1, price_vnd=1521000, basket_skus=[SHOE])])
         self.assertEqual(tc[0]["result"]["total_vnd"], 2411000)
-        self.assertEqual(tc[1]["result"]["total_vnd"] + tc[2]["result"]["total_vnd"], 2411000)
-        self.assertEqual(len(self._mock()._ORDERS), 2)
+        self.assertEqual([o["total_vnd"] for o in self._mock()._ORDERS.values()], [2411000])
+        self.assertTrue(tc[2]["result"].get("already_done"))
 
     def test_cod_blocks_correct_total_over_limit(self):
         self._setup(order_gate=True)
@@ -178,15 +174,14 @@ class OrderSyncTest(unittest.TestCase):
         self.assertIn("11.685.000", final)                                   # hạn mức tính trên tổng ĐÚNG, không phải 15.380.000
         self.assertNotIn("15.380.000", final)
 
-    def test_cod_not_blocked_by_wrong_old_total(self):
-        """AP-Y x2: tổng đúng 7.800.000 ≤ 10.000.000 (cách cũ ra 10.400.000 > hạn mức) → không được nói 'vượt hạn mức COD'; đơn không tạo vì lệch giá, chuyển nhân viên."""
+    def test_cod_not_blocked_when_basket_total_is_under_limit(self):
+        """AP-Y x2: tổng đúng 7.800.000 ≤ 10.000.000 (nhân giá × 2 ra 10.400.000 > hạn mức) → không được nói 'vượt hạn mức COD', không chuyển nhân viên; order gate hỏi phần còn thiếu."""
         self._setup(order_gate=True)
         final, tc, _ = self._run([self._create(AP_Y, 2, payment="COD", price_vnd=5200000)])
         m = self._mock()
-        self.assertEqual(len(m._ORDERS), 0)
         self.assertNotIn("hạn mức", final)
-        self.assertIn("7.800.000", final)
-        self.assertEqual(len([t for t in m._TICKETS if t["action"] == "handoff"]), 1)
+        self.assertEqual(len([t for t in m._TICKETS if t["action"] == "handoff"]), 0)
+        self.assertEqual(len(m._ORDERS), 0)                                  # gate chưa đủ thông tin giao hàng
 
     def test_cod_limit_applies_to_whole_basket_not_each_line(self):
         """PRO (7.690.000) + AP-Y (2.600.000 nhờ KM máy thứ 2) = 10.290.000: từng dòng ≤ 10.000.000 nhưng cả giỏ vượt → không COD, không tách đơn để lách."""

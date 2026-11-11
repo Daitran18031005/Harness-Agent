@@ -1,0 +1,39 @@
+{
+  "scenario_id": "TEST-53",
+  "level": "M1",
+  "industry": "me-be",
+  "region": "bac",
+  "south": false,
+  "persona": "khach_hoi_nhieu_khong_mua",
+  "hard_case": "cau_hoi_y_te",
+  "customer_phone": "0910419714",
+  "customer_name": "Duy",
+  "honorific": "anh",
+  "notes": "[me-be] (hoi_chuyen_mon_y_te) Máy tiệt trùng sấy khô Moaz Bebe (SKU-MB-STER) tại Hà Nội.",
+  "calls": {
+    "call_1": {
+      "channel": "hotline",
+      "call_date": "2026-10-15",
+      "customer_goal": "hỏi vấn đề y tế chuyên sâu liên quan Máy tiệt trùng sấy khô Moaz Bebe -> chuyển máy",
+      "customer_turns": [
+        "Con Duy sinh non ở tuần 34 hệ miễn dịch còn yếu, dùng Máy tiệt trùng sấy khô Moaz Bebe có phải tuân thủ chỉ định nhi khoa đặc biệt nào không?",
+        "Câu hỏi chuyên môn sức khỏe liên quan Máy tiệt trùng sấy khô Moaz Bebe cần tư vấn viên y tế chuyên sâu xác nhận, chuyển máy giúp anh Duy nhé."
+      ],
+      "facts_established": {
+        "product_advised": "SKU-MB-STER"
+      },
+      "success_if": {
+        "tool_called": "handoff.transfer",
+        "brief_must_contain": [
+          "customer_phone",
+          "escalation_reason",
+          "product_advised"
+        ]
+      },
+      "ground_truth_facts": {
+        "is_medical_question": true
+      },
+      "expected_outcome": "chuyen_may"
+    }
+  }
+}

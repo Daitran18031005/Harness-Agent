@@ -1,0 +1,43 @@
+{
+  "scenario_id": "TEST-155",
+  "level": "M1",
+  "industry": "me-be",
+  "region": "bac",
+  "south": false,
+  "persona": "khach_hoi_nhieu_khong_mua",
+  "hard_case": "so_noi_bang_chu",
+  "customer_phone": "0911227554",
+  "customer_name": "Thành",
+  "honorific": "anh",
+  "notes": "[me-be] (asr_so_noi_tieng_viet) Xe đẩy 2 chiều Combi Sugocal (SKU-MB-STR2) tại Nam Định.",
+  "calls": {
+    "call_1": {
+      "channel": "hotline",
+      "call_date": "2026-10-15",
+      "input_mode": "asr_transcript",
+      "customer_goal": "chuẩn hóa ASR/ITN số nói bằng chữ cho Xe đẩy 2 chiều Combi Sugocal",
+      "customer_turns": [
+        "Kiểm tra tồn kho tại Nam Định giùm Thành mặt hàng Xe đẩy 2 chiều Combi Sugocal giá 6.790.000đ chuyên dùng cho nhu cầu bé sơ sinh cần đẩy hai chiều quay mặt với mẹ nha.",
+        "Cứ báo giá chuẩn rồi chờ Thành ở số nhà 110 Nam Định một hôm cân đối tài chính rồi chủ động gọi lại đặt nha."
+      ],
+      "customer_turns_asr": [
+        "kiểm tra tồn kho tại nam định giùm thành mặt hàng xe đẩy hai chiều combi sugocal giá sáu triệu bảy trăm chín mươi nghìn đồng chuyên dùng cho nhu cầu bé sơ sinh cần đẩy hai chiều quay mặt với mẹ nha",
+        "cứ báo giá chuẩn rồi chờ thành ở số nhà một trăm mười nam định một hôm cân đối tài chính rồi chủ động gọi lại đặt nha"
+      ],
+      "facts_established": {
+        "product_advised": "SKU-MB-STR2",
+        "price_quoted_vnd": 6790000
+      },
+      "success_if": {
+        "tool_called": null,
+        "must_not_call_tools": [
+          "order.create"
+        ]
+      },
+      "ground_truth_facts": {
+        "price_vnd": 6790000
+      },
+      "expected_outcome": "hen_goi_lai"
+    }
+  }
+}

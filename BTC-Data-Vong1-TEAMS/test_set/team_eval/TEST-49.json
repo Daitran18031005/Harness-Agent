@@ -1,0 +1,44 @@
+{
+  "scenario_id": "TEST-49",
+  "level": "M1",
+  "industry": "gia-dung",
+  "region": "trung",
+  "south": false,
+  "persona": "khach_do_du_hoi_nguoi_nha",
+  "hard_case": "cod_vuot_han_muc",
+  "customer_phone": "0910388034",
+  "customer_name": "Sơn",
+  "honorific": "anh",
+  "notes": "[gia-dung] (cod_vuot_tran_giam_sl) Máy lọc không khí Samsung AX40 (SKU-SS-AX40) tại Nha Trang.",
+  "calls": {
+    "call_1": {
+      "channel": "hotline",
+      "call_date": "2026-10-15",
+      "customer_goal": "định đặt 2x vượt COD 10tr nên rút xuống 1x COD",
+      "customer_turns": [
+        "Cho Sơn hỏi mua cùng lúc 2 sản phẩm Máy lọc không khí Samsung AX40 chuyển về Nha Trang trả tiền mặt hết một lần được không?",
+        "Đơn Máy lọc không khí Samsung AX40 hơn 10 triệu (12.980.000đ) bị chặn COD bắt chuyển khoản trước hả? Sơn ngại chuyển khoản lắm, giảm xuống lấy 1 chiếc trả COD (6.490.000đ) thôi.",
+        "Ship về tận nơi tại số 18 đường Yersin, Phương Sài, Nha Trang, người nhận ghi tên Sơn nhé."
+      ],
+      "facts_established": {
+        "product_advised": "SKU-SS-AX40",
+        "price_quoted_vnd": 6490000,
+        "payment": "COD"
+      },
+      "success_if": {
+        "tool_called": "order.create",
+        "args_match": {
+          "sku": "SKU-SS-AX40",
+          "qty": 1,
+          "price_vnd": 6490000,
+          "payment": "COD"
+        }
+      },
+      "ground_truth_facts": {
+        "cod_limit_vnd": 10000000,
+        "price_vnd": 6490000
+      },
+      "expected_outcome": "chot_don"
+    }
+  }
+}

@@ -1,0 +1,68 @@
+{
+  "scenario_id": "SC-TV-14",
+  "level": "M1",
+  "industry": "me-be",
+  "region": "nam",
+  "south": true,
+  "persona": "khach_so_gia",
+  "hard_case": "tv_sai_gia_truyen_hinh_tu_choi",
+  "customer_phone": "0900030101",
+  "customer_name": "Dung",
+  "honorific": "chị",
+  "notes": "Kịch bản TV 3 cuộc gọi mở rộng: Hỏi Combi Sugocal -> Đòi giảm không được hủy -> Xem TV nhầm giá 5.5tr không bán được -> Từ chối.",
+  "calls": {
+    "call_1": {
+      "channel": "hotline",
+      "call_date": "2026-09-25",
+      "customer_goal": "tìm hiểu sản phẩm và ưu đãi rồi hẹn suy nghĩ (SKU-MB-STR2)",
+      "customer_turns": [
+        "Xe đẩy 2 chiều Combi Sugocal dùng cho bé sơ sinh nằm phẳng hoàn toàn được không em?",
+        "Ừ giá 6 triệu bảy chín cũng cao nên để chị bàn lại với ông bà ngoại đã."
+      ],
+      "facts_established": {
+        "product_advised": "SKU-MB-STR2"
+      },
+      "expected_outcome": "hen_goi_lai"
+    },
+    "call_2": {
+      "channel": "hotline",
+      "call_date": "2026-10-11",
+      "days_later": 16,
+      "customer_goal": "gọi lại sau vài ngày nhưng hết KM hoặc không khớp điều kiện nên từ chối mua",
+      "customer_turns": [
+        "Alo chị Dung quận 5 hỏi xe Combi Sugocal hôm trước đây, bên mình có hỗ trợ trả góp 0% hay giảm giá không em?",
+        "Không có ưu đãi giảm tiền mặt trực tiếp thì chị suy nghĩ thêm, tạm gác lại nhé."
+      ],
+      "must_carry_over": [
+        "product_advised"
+      ],
+      "must_not_ask": [
+        "product_advised"
+      ],
+      "expected_outcome": "tu_choi"
+    },
+    "call_3": {
+      "channel": "hotline",
+      "call_date": "2026-11-15",
+      "days_later": 35,
+      "customer_goal": "khoảng 1 tháng sau xem quảng cáo TV quay lại: tu_choi",
+      "customer_turns": [
+        "Hôm qua xem truyền hình cáp thấy phóng sự bảo dòng xe Combi Sugocal chỉ tầm năm triệu rưỡi, nay em bán năm triệu rưỡi chị chuyển khoản ngay.",
+        "Bên mình không hạ xuống năm triệu rưỡi được mà giữ nguyên 6.790.000đ hả? Vậy TV đưa tin sai làm mất công gọi quá, chị thôi không mua nữa."
+      ],
+      "must_carry_over": [
+        "product_advised"
+      ],
+      "must_not_ask": [
+        "product_advised"
+      ],
+      "success_if": {
+        "tool_called": null,
+        "must_not_call_tools": [
+          "order.create"
+        ]
+      },
+      "expected_outcome": "tu_choi"
+    }
+  }
+}

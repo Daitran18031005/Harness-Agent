@@ -1,0 +1,41 @@
+{
+  "scenario_id": "TEST-131",
+  "level": "M1",
+  "industry": "gia-dung",
+  "region": "bac",
+  "south": false,
+  "persona": "khach_so_gia",
+  "hard_case": "khieu_nai_loi_nsx",
+  "customer_phone": "0911037474",
+  "customer_name": "Trâm",
+  "honorific": "chị",
+  "notes": "[gia-dung] (bao_hanh_loi_nsx_30d) Máy lọc không khí AirPure Mini (SKU-AP-MINI) tại Quảng Ninh.",
+  "calls": {
+    "call_1": {
+      "channel": "hotline",
+      "call_date": "2026-10-15",
+      "customer_goal": "hỏi đổi mới 1-1 trong 30 ngày lỗi NSX cho Máy lọc không khí AirPure Mini",
+      "customer_turns": [
+        "Khổ quá Máy lọc không khí AirPure Mini Trâm đặt mới chạy sang ngày thứ 23 bị lỗi kỹ thuật từ nhà máy thì bên mình xử lý sao?",
+        "Chính sách cho Máy lọc không khí AirPure Mini có đổi hẳn chiếc mới một đổi một trong vòng ba mươi ngày đầu lỗi nhà sản xuất giúp Trâm không em, chứ bảo hành 24 tháng sửa lâu lắm?"
+      ],
+      "facts_established": {
+        "product_advised": "SKU-AP-MINI"
+      },
+      "success_if": {
+        "tool_called": null,
+        "must_say_any": [
+          "30 ngày",
+          "đổi mới",
+          "1-1",
+          "DT-05"
+        ]
+      },
+      "ground_truth_facts": {
+        "warranty_months": 24,
+        "doa_exchange_days": 30
+      },
+      "expected_outcome": "hen_goi_lai"
+    }
+  }
+}

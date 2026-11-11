@@ -1,0 +1,36 @@
+{
+  "scenario_id": "TEST-119",
+  "level": "M1",
+  "industry": "me-be",
+  "region": "bac",
+  "south": false,
+  "persona": "khach_hoi_nhieu_khong_mua",
+  "hard_case": "hoan_giua_gate",
+  "customer_phone": "0910942434",
+  "customer_name": "Thành",
+  "honorific": "anh",
+  "notes": "[me-be] (hoan_giua_order_gate) Xe đẩy gấp gọn Joie Pact (SKU-MB-STR1) tại Quảng Ninh.",
+  "calls": {
+    "call_1": {
+      "channel": "hotline",
+      "call_date": "2026-10-15",
+      "customer_goal": "hoãn chốt ngay tại Order Gate cho Xe đẩy gấp gọn Joie Pact -> cấm order.create",
+      "customer_turns": [
+        "Shop báo giúp Thành giá lăn bánh về Quảng Ninh của Xe đẩy gấp gọn Joie Pact kèm khuyến mãi hiện hành nha.",
+        "Thống nhất thông tin giao Xe đẩy gấp gọn Joie Pact tới số 158 phố Kênh Liêm, Hồng Hải, Quảng Ninh người nhận Thành đã nhé.",
+        "À tới bước đọc lại đơn Xe đẩy gấp gọn Joie Pact khoan bấm chốt vội em nhé, để anh Thành nhắn tin hỏi ý kiến người nhà một tiếng rồi mai gọi lại chốt sau."
+      ],
+      "facts_established": {
+        "product_advised": "SKU-MB-STR1",
+        "price_quoted_vnd": 3490000
+      },
+      "success_if": {
+        "tool_called": null,
+        "must_not_call_tools": [
+          "order.create"
+        ]
+      },
+      "expected_outcome": "hen_goi_lai"
+    }
+  }
+}

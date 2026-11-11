@@ -1,0 +1,41 @@
+{
+  "scenario_id": "TEST-153",
+  "level": "M1",
+  "industry": "gia-dung",
+  "region": "nam",
+  "south": true,
+  "persona": "khach_mua_nhieu_mon",
+  "hard_case": "mua_kem_phu_kien",
+  "customer_phone": "0911211714",
+  "customer_name": "Trang",
+  "honorific": "chị",
+  "notes": "[gia-dung] (mua_them_phu_kien_kem) Máy lọc nước RO Karofi 9 lõi (SKU-WF-RO9) tại Bình Dương.",
+  "calls": {
+    "call_1": {
+      "channel": "hotline",
+      "call_date": "2026-10-15",
+      "customer_goal": "mua Máy lọc nước RO Karofi 9 lõi kèm phụ kiện Bộ lõi lọc thay thế RO 1-2-3 trong cùng đơn",
+      "customer_turns": [
+        "Alo, Trang cần gấp thông số với giá chuẩn hôm nay của Máy lọc nước RO Karofi 9 lõi cho lắp gầm bếp.",
+        "Lấy cho Trang một Máy lọc nước RO Karofi 9 lõi kèm thêm một Bộ lõi lọc thay thế RO 1-2-3 (390.000đ) dự phòng luôn trong một đơn nhé.",
+        "Tính tổng cả cặp Máy lọc nước RO Karofi 9 lõi cho Trang đúng 6.380.000đ thu tiền khi giao tới nơi nhé. Lên đơn giao về số 75 khu Chánh Nghĩa, Thủ Dầu Một, Bình Dương cho chị Trang, kiểm tra kỹ hàng trước khi xuất kho nghen."
+      ],
+      "facts_established": {
+        "product_advised": "SKU-WF-RO9",
+        "accessory_sku": "SKU-WF-CORE"
+      },
+      "success_if": {
+        "tool_called": "order.create",
+        "args_match": {
+          "sku": "SKU-WF-RO9",
+          "price_vnd": 5990000,
+          "payment": "COD"
+        },
+        "also_ordered": [
+          "SKU-WF-CORE"
+        ]
+      },
+      "expected_outcome": "chot_don"
+    }
+  }
+}

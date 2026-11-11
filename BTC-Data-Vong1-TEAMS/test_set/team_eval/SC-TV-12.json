@@ -1,0 +1,68 @@
+{
+  "scenario_id": "SC-TV-12",
+  "level": "M1",
+  "industry": "thoi-trang",
+  "region": "bac",
+  "south": false,
+  "persona": "khach_so_gia",
+  "hard_case": "tv_phi_ship_freeship_tu_choi",
+  "customer_phone": "0900030099",
+  "customer_name": "Hải",
+  "honorific": "anh",
+  "notes": "Kịch bản TV 3 cuộc gọi mở rộng: Hỏi Urban Classic -> Không tặng tất hủy -> Xem TV hiểu nhầm freeship mọi đơn -> Từ chối.",
+  "calls": {
+    "call_1": {
+      "channel": "hotline",
+      "call_date": "2026-09-23",
+      "customer_goal": "tìm hiểu sản phẩm và ưu đãi rồi hẹn suy nghĩ (SKU-SN-CAS)",
+      "customer_turns": [
+        "Sneaker Urban Classic size 40 màu xám giá 890k đi làm văn phòng có êm chân không em?",
+        "Để anh hỏi lại cậu em cùng phòng xem có mua chung luôn một thể không nhé."
+      ],
+      "facts_established": {
+        "product_advised": "SKU-SN-CAS"
+      },
+      "expected_outcome": "hen_goi_lai"
+    },
+    "call_2": {
+      "channel": "hotline",
+      "call_date": "2026-10-08",
+      "days_later": 15,
+      "customer_goal": "gọi lại sau vài ngày nhưng hết KM hoặc không khớp điều kiện nên từ chối mua",
+      "customer_turns": [
+        "Alo anh Hải đây, nay cậu em bận nên anh đặt riêng một đôi Urban Classic 40 xám thôi, nhớ tặng tất kèm theo nhé.",
+        "Phải mua thêm chứ không tặng tất free à? Thế thôi anh không đặt nữa."
+      ],
+      "must_carry_over": [
+        "product_advised"
+      ],
+      "must_not_ask": [
+        "product_advised"
+      ],
+      "expected_outcome": "tu_choi"
+    },
+    "call_3": {
+      "channel": "hotline",
+      "call_date": "2026-11-17",
+      "days_later": 40,
+      "customer_goal": "khoảng 1 tháng sau xem quảng cáo TV quay lại: tu_choi",
+      "customer_turns": [
+        "Hồi trưa lướt TV thấy quảng cáo shop mình chạy chữ miễn phí giao hàng toàn quốc, anh gọi đặt đôi Urban Classic size 40 xám nhưng không mất 30k ship đúng không?",
+        "Đơn từ hai triệu mới được freeship còn giày 890k vẫn tính cước vận chuyển hả? Trên TV nói chung chung gây hiểu lầm quá, anh hủy không mua nhé."
+      ],
+      "must_carry_over": [
+        "product_advised"
+      ],
+      "must_not_ask": [
+        "product_advised"
+      ],
+      "success_if": {
+        "tool_called": null,
+        "must_not_call_tools": [
+          "order.create"
+        ]
+      },
+      "expected_outcome": "tu_choi"
+    }
+  }
+}

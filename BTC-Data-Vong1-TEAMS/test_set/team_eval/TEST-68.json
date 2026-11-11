@@ -1,0 +1,40 @@
+{
+  "scenario_id": "TEST-68",
+  "level": "M1",
+  "industry": "gia-dung",
+  "region": "bac",
+  "south": false,
+  "persona": "khach_can_ship_gap",
+  "hard_case": "het_hang_theo_timeline",
+  "customer_phone": "0910538514",
+  "customer_name": "Khải",
+  "honorific": "anh",
+  "notes": "[gia-dung] (het_hang_timeline_restock) Quạt tháp Xiaomi Tower Fan (SKU-FAN-TWR) tại Hà Nội.",
+  "calls": {
+    "call_1": {
+      "channel": "chat_fanpage",
+      "call_date": "2026-10-15",
+      "customer_goal": "hỏi Quạt tháp Xiaomi Tower Fan hết hàng chuyển sang Panasonic F-409",
+      "customer_turns": [
+        "Shop có sẵn cây Quạt tháp Xiaomi Tower Fan không Khải đặt một cái?",
+        "Hết hàng chưa có ngày về hả? Thế thôi chốt luôn cây Quạt đứng Panasonic F-409 giao COD về số 156 ngách 62 Đặng Văn Ngữ, Đống Đa, Hà Nội. SĐT liên hệ giao của Khải là 0910538514 nhé."
+      ],
+      "facts_established": {
+        "initial_product": "SKU-FAN-TWR",
+        "product_advised": "SKU-FAN-DC1",
+        "price_quoted_vnd": 2450000,
+        "phone_provided": "0910538514"
+      },
+      "success_if": {
+        "tool_called": "order.create",
+        "args_match": {
+          "sku": "SKU-FAN-DC1",
+          "price_vnd": 2450000,
+          "payment": "COD"
+        }
+      },
+      "expected_outcome": "chot_don",
+      "channel_identity": "fb.khai.test_68"
+    }
+  }
+}

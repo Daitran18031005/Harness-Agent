@@ -1,0 +1,36 @@
+{
+  "scenario_id": "TEST-105",
+  "level": "M1",
+  "industry": "me-be",
+  "region": "nam",
+  "south": true,
+  "persona": "khach_thich_khuyen_mai",
+  "hard_case": "hoan_giua_gate",
+  "customer_phone": "0910831554",
+  "customer_name": "Hùng",
+  "honorific": "anh",
+  "notes": "[me-be] (hoan_giua_order_gate) Xe đẩy 2 chiều Combi Sugocal (SKU-MB-STR2) tại Vũng Tàu.",
+  "calls": {
+    "call_1": {
+      "channel": "hotline",
+      "call_date": "2026-10-15",
+      "customer_goal": "hoãn chốt ngay tại Order Gate cho Xe đẩy 2 chiều Combi Sugocal -> cấm order.create",
+      "customer_turns": [
+        "Thấy bạn bè ở Vũng Tàu khen Xe đẩy 2 chiều Combi Sugocal khá hợp bé sơ sinh cần đẩy hai chiều quay mặt với mẹ nên Hùng gọi hỏi thử thông tin chi tiết.",
+        "Chốt tạm địa chỉ số 130 đường Lê Hồng Phong, Phường 7, Vũng Tàu tên Hùng bên dưới thông tin chiếc Xe đẩy 2 chiều Combi Sugocal nhé.",
+        "À tới bước đọc lại đơn Xe đẩy 2 chiều Combi Sugocal khoan bấm chốt vội em nhé, để anh Hùng nhắn tin hỏi ý kiến người nhà một tiếng rồi mai gọi lại chốt sau."
+      ],
+      "facts_established": {
+        "product_advised": "SKU-MB-STR2",
+        "price_quoted_vnd": 6790000
+      },
+      "success_if": {
+        "tool_called": null,
+        "must_not_call_tools": [
+          "order.create"
+        ]
+      },
+      "expected_outcome": "hen_goi_lai"
+    }
+  }
+}

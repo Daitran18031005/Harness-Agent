@@ -349,21 +349,22 @@ def c03() -> Dict[str, Any]:
 def c04() -> Dict[str, Any]:
     ADDR_NAM = "số 102 đường Cách Mạng Tháng Tám, quận 10, TP.HCM"
     phone, d = "0900010009", "2026-10-15"
-    fresh = T.simulate_order(phone, "SKU-SS-AX40", None, None, "COD", ADDR_NAM, d, qty=2)
+    # BTC 11/2026: 2 máy lọc không khí chỉ còn 1,5 lần giá (AIR-2ND-50 tính trong order.create) nên không còn vượt hạn mức COD; khung dùng sản phẩm không có KM máy thứ 2
+    fresh = T.simulate_order(phone, "SKU-WF-RO10", None, None, "COD", ADDR_NAM, d, qty=2)
     total = fresh.get("total_vnd")
-    bank = T.simulate_order(phone, "SKU-SS-AX40", None, None, "bank", ADDR_NAM, d, qty=2)
-    q = T.quote("SKU-SS-AX40", d)
-    v = {"product": var(T.product_name("SKU-SS-AX40"), "tên sản phẩm ĐẦY ĐỦ đã gồm loại hàng (đừng viết thêm loại hàng phía trước)", ("sku", "SKU-SS-AX40")), "unit_price": var(T.money(q["final_price_vnd"]), "giá một máy", ("price_vnd", q["final_price_vnd"])),
+    bank = T.simulate_order(phone, "SKU-WF-RO10", None, None, "bank", ADDR_NAM, d, qty=2)
+    q = T.quote("SKU-WF-RO10", d)
+    v = {"product": var(T.product_name("SKU-WF-RO10"), "tên sản phẩm ĐẦY ĐỦ đã gồm loại hàng (đừng viết thêm loại hàng phía trước)", ("sku", "SKU-WF-RO10")), "unit_price": var(T.money(q["final_price_vnd"]), "giá một máy", ("price_vnd", q["final_price_vnd"])),
          "total": var(T.money(total), "tổng tiền hai máy", ("total_vnd", total)), "cod_limit": var(T.money(fresh["limit_vnd"]), "hạn mức thanh toán COD tối đa một đơn", ("cod_limit_vnd", fresh["limit_vnd"])),
          "order_id": var(bank["order_id"], "mã đơn sau khi khách chuyển sang chuyển khoản", ("order_id", bank["order_id"])), "address": var(ADDR_NAM, "địa chỉ giao — CHỈ dùng sau khi khách đã đọc địa chỉ", after="address")}
     c = call("call_1", "hotline", "mua 2 máy, COD vượt hạn mức → đổi sang chuyển khoản", "agent",
-             f"Khách muốn mua 2 máy lọc không khí Samsung AX40 (cho hai phòng), thanh toán COD, giao về {ADDR_NAM}; nghe COD vượt hạn mức thì đồng ý chuyển khoản.",
+             f"Khách muốn mua 2 máy lọc nước RO Kangaroo 10 lõi (cho hai nhà), thanh toán COD, giao về {ADDR_NAM}; nghe COD vượt hạn mức thì đồng ý chuyển khoản.",
              "Agent báo {product} giá {unit_price}/máy, tổng {total}; thử đặt COD thì hệ thống báo vượt hạn mức COD {cod_limit} một đơn; giải thích rõ và đề nghị chuyển khoản; "
              "khách đồng ý → đặt đơn thanh toán chuyển khoản, mã đơn {order_id}, giao về {address}.",
              [fact("quantity", 2, "mua 2 máy"), fact("payment", "COD", "ban đầu muốn COD"), fact("address", ADDR_NAM, f"giao về {ADDR_NAM}")], v,
-             {"success_if": {"tool_called": "order.create", "args_match": {"sku": "SKU-SS-AX40", "qty": 2, "payment": "bank"}},
+             {"success_if": {"tool_called": "order.create", "args_match": {"sku": "SKU-WF-RO10", "qty": 2, "payment": "bank"}},
               "ground_truth_facts": {"cod_limit_vnd": fresh["limit_vnd"], "total_vnd": total},
-              "facts_established": {"product_advised": "SKU-SS-AX40", "price_quoted_vnd": q["final_price_vnd"]},
+              "facts_established": {"product_advised": "SKU-WF-RO10", "price_quoted_vnd": q["final_price_vnd"]},
               "expected_outcome": "chot_don"}, n_turns=(8, 11), date=d, abs_date=d)
     return {"scenario": _meta("SC-C04", "C", "khach_mua_nhieu_mon", "cod_vuot_han_muc", phone, "Hạnh", "chị",
                               "COD vượt hạn mức 10 triệu (tool báo lỗi thật): agent phải nêu đúng hạn mức và chuyển sang chuyển khoản, không tự nói 'đã tạo đơn COD'."),

@@ -1,0 +1,72 @@
+{
+  "scenario_id": "SC-TV-13",
+  "level": "M1",
+  "industry": "me-be",
+  "region": "bac",
+  "south": false,
+  "persona": "khach_so_gia",
+  "hard_case": "tv_me_va_con_chot_spectra",
+  "customer_phone": "0900030100",
+  "customer_name": "Phượng",
+  "honorific": "chị",
+  "notes": "Kịch bản TV 3 cuộc gọi mở rộng: Hỏi Zalo PUMP-GIFT -> Hết hạn 13/10 bực hủy -> Xem VTV3 Mẹ & Con chốt Spectra S1 4.290k.",
+  "calls": {
+    "call_1": {
+      "channel": "zalo_oa",
+      "call_date": "2026-10-12",
+      "customer_goal": "tìm hiểu sản phẩm và ưu đãi rồi hẹn suy nghĩ (SKU-MB-PUMP1)",
+      "customer_turns": [
+        "Zalo cho chị hỏi máy hút sữa Spectra S1 4.290k đang có mã PUMP-GIFT tặng 50 túi trữ sữa đến ngày nào?",
+        "Chị sắp sinh tuần sau mới rảnh đặt, lưu thông tin giúp chị trước nha. Em note giùm Phượng SĐT 0900030100 vào hồ sơ nha, tuần tới rảnh chị alo đặt mua."
+      ],
+      "facts_established": {
+        "product_advised": "SKU-MB-PUMP1",
+        "phone_provided": "0900030100"
+      },
+      "expected_outcome": "hen_goi_lai",
+      "channel_identity": "zalo.phuong.sc_tv_13"
+    },
+    "call_2": {
+      "channel": "hotline",
+      "call_date": "2026-10-16",
+      "days_later": 4,
+      "customer_goal": "gọi lại sau vài ngày nhưng hết KM hoặc không khớp điều kiện nên từ chối mua",
+      "customer_turns": [
+        "Chị Phượng bữa hỏi Spectra S1 tặng 50 túi trữ sữa đây, nay chị sinh xong rồi giao máy kèm túi quà nhé.",
+        "PUMP-GIFT hết hạn hôm 13/10 rồi à em? Đúng lúc cần lại cắt quà tặng thế chị chưa lấy ngay đâu."
+      ],
+      "must_carry_over": [
+        "product_advised"
+      ],
+      "must_not_ask": [
+        "product_advised"
+      ],
+      "expected_outcome": "tu_choi"
+    },
+    "call_3": {
+      "channel": "hotline",
+      "call_date": "2026-11-14",
+      "days_later": 29,
+      "customer_goal": "khoảng 1 tháng sau xem quảng cáo TV quay lại: chot_don",
+      "customer_turns": [
+        "Sáng nay nằm nghỉ coi chương trình Mẹ & Con trên VTV3 thấy chuyên gia khen pin sạc Spectra S1 hút êm cực kỳ nên chồng chị giục mua luôn.",
+        "Lấy cho chị một bộ Spectra S1 4.290.000đ giao 31 đường Láng, Đống Đa, Hà Nội, thanh toán COD nhé."
+      ],
+      "must_carry_over": [
+        "product_advised"
+      ],
+      "must_not_ask": [
+        "product_advised"
+      ],
+      "success_if": {
+        "tool_called": "order.create",
+        "args_match": {
+          "sku": "SKU-MB-PUMP1",
+          "price_vnd": 4290000,
+          "payment": "COD"
+        }
+      },
+      "expected_outcome": "chot_don"
+    }
+  }
+}

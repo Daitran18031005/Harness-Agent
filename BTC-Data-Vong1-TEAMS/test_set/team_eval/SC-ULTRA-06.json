@@ -1,0 +1,100 @@
+{
+  "scenario_id": "SC-ULTRA-06",
+  "level": "M1",
+  "industry": "thoi-trang",
+  "region": "bac",
+  "south": false,
+  "persona": "khach_mua_nhieu_mon",
+  "hard_case": "ultra_4c_combo_ao_am_sapa",
+  "customer_phone": "0900040006",
+  "customer_name": "Phương",
+  "honorific": "chị",
+  "notes": "Kịch bản siêu khó trên 3 cuộc gọi: 4 cuộc: Hỏi áo đi Sa Pa -> Chốt Warmly L đen -> Đổi size XL navy -> Hỏi quy trình giao áo đổi tại nhà DT-03.",
+  "calls": {
+    "call_1": {
+      "channel": "hotline",
+      "call_date": "2026-10-15",
+      "customer_goal": "tư vấn áo khoác đi Sa Pa",
+      "customer_turns": [
+        "Nhà chị sắp đi Sa Pa lạnh lắm, áo phao Warmly với áo gió Windbreak mẫu nào giữ nhiệt tốt?"
+      ],
+      "expected_outcome": "hen_goi_lai",
+      "facts_established": {
+        "product_advised": "SKU-JK-DWN"
+      }
+    },
+    "call_2": {
+      "channel": "hotline",
+      "call_date": "2026-10-17",
+      "customer_goal": "chốt mua Warmly size L màu đen",
+      "customer_turns": [
+        "Lấy chị 1 áo phao Warmly size L màu đen 1.490.000đ nhé, ship COD 19 Quang Trung, TP. Vinh."
+      ],
+      "expected_outcome": "chot_don",
+      "days_later": 2,
+      "must_carry_over": [
+        "product_advised"
+      ],
+      "must_not_ask": [
+        "product_advised"
+      ],
+      "success_if": {
+        "tool_called": "order.create",
+        "args_match": {
+          "sku": "SKU-JK-DWN-L-DEN",
+          "price_vnd": 1490000,
+          "payment": "COD"
+        }
+      }
+    },
+    "call_3": {
+      "channel": "hotline",
+      "call_date": "2026-10-20",
+      "customer_goal": "đổi sang size XL navy",
+      "customer_turns": [
+        "Chồng chị mặc thử size L hơi ngắn tay, đổi lên size XL màu navy chịu thêm 40k phụ thu em nhé."
+      ],
+      "expected_outcome": "chot_don",
+      "days_later": 3,
+      "must_carry_over": [
+        "product_advised"
+      ],
+      "must_not_ask": [
+        "product_advised"
+      ],
+      "success_if": {
+        "tool_called": "order.update",
+        "args_match": {
+          "action": "exchange_size",
+          "new_variant_sku": "SKU-JK-DWN-XL-NAVY"
+        }
+      }
+    },
+    "call_4": {
+      "channel": "hotline",
+      "call_date": "2026-10-22",
+      "customer_goal": "hỏi thủ tục giao áo đổi tại nhà",
+      "customer_turns": [
+        "Shipper tới giao áo XL rồi, chị đưa lại áo L còn nguyên mác cho bạn ấy là xong, không mất thêm phí ship hả em?"
+      ],
+      "expected_outcome": "hen_goi_lai",
+      "days_later": 2,
+      "must_carry_over": [
+        "product_advised"
+      ],
+      "must_not_ask": [
+        "product_advised"
+      ],
+      "success_if": {
+        "tool_called": null,
+        "must_say_any": [
+          "miễn phí",
+          "0đ",
+          "nguyên tem",
+          "DT-03",
+          "DT-01"
+        ]
+      }
+    }
+  }
+}

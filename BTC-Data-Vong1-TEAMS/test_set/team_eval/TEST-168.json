@@ -1,0 +1,37 @@
+{
+  "scenario_id": "TEST-168",
+  "level": "M1",
+  "industry": "gia-dung",
+  "region": "nam",
+  "south": true,
+  "persona": "khach_do_du_hoi_nguoi_nha",
+  "hard_case": "doanh_nghiep_vat_handoff",
+  "customer_phone": "0911330514",
+  "customer_name": "Ánh",
+  "honorific": "chị",
+  "notes": "[gia-dung] (b2b_doanh_nghiep_vat) Máy lọc nước RO Karofi 9 lõi (SKU-WF-RO9) tại Bình Dương.",
+  "calls": {
+    "call_1": {
+      "channel": "hotline",
+      "call_date": "2026-10-15",
+      "customer_goal": "mua sỉ 8 bộ Máy lọc nước RO Karofi 9 lõi xuất VAT -> handoff B2B",
+      "customer_turns": [
+        "Phòng mua sắm chỗ Ánh tại Bình Dương liên hệ hỏi báo giá dự án cho 8 đơn vị Máy lọc nước RO Karofi 9 lõi.",
+        "Dự án lấy 8 Máy lọc nước RO Karofi 9 lõi ở Bình Dương yêu cầu báo giá đóng dấu mộc công ty, em nối máy sang bộ phận B2B cho Ánh luôn nha."
+      ],
+      "facts_established": {
+        "product_advised": "SKU-WF-RO9",
+        "quantity": 8
+      },
+      "success_if": {
+        "tool_called": "handoff.transfer",
+        "brief_must_contain": [
+          "customer_phone",
+          "escalation_reason",
+          "product_advised"
+        ]
+      },
+      "expected_outcome": "chuyen_may"
+    }
+  }
+}

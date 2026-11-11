@@ -46,7 +46,7 @@ def spent_vnd(llm_client) -> float:
     """Tổng chi phí (VND) đã tiêu của 1 LLMClient (cộng dồn mọi lượt gọi kể cả bộ trích slot khó)."""
     tracker = llm_client.cost_tracker
     return tracker.cumulative_usd_cost * tracker._vnd_rate()
-CALL_NAMES = ("call_1", "call_2", "call_3")
+CALL_NAMES = tuple(f"call_{i}" for i in range(1, 10))      # kịch bản nhóm (SC-ULTRA) có tới 5 cuộc; script chấm BTC duyệt sorted(calls)
 
 
 class ScenarioRunner:
@@ -253,7 +253,7 @@ class ScenarioRunner:
 
                 self._flush_fn = flush
                 queue = [(raw, False) for raw in turns_to_use]
-                t_idx, n_injected = 0, 0
+                t_idx, n_injected, closing = 0, 0, False
                 while queue:
                     turn_raw, injected = queue.pop(0)
                     t_idx += 1
@@ -263,7 +263,7 @@ class ScenarioRunner:
 
                     # 1. Normalize
                     turn = normalizer.normalize(raw_text=turn_raw, channel=channel, contact_id=contact_id,
-                                                is_audio=has_asr and not injected, reference_date=call_date)
+                                                is_audio=has_asr and not injected and not closing, reference_date=call_date)
                     # 2–3. Identity + Call Brief (đo từ lúc nhận diện khách tới khi Brief sẵn sàng)
                     t_brief = time.perf_counter()
                     identity = stack["resolver"].resolve(turn, memory=stack["resolver_memory"])
@@ -274,7 +274,7 @@ class ScenarioRunner:
 
                     # 4. Orchestrator — dùng 100% output thật từ pipeline, không hard-code lại.
                     resp_text, tool_calls, meta = stack["orchestrator"].process_turn(
-                        turn, brief, current_date=call_date, call_name=call_name)
+                        turn, brief, current_date=call_date, call_name=call_name, closing=closing)
                     t_end = time.perf_counter()
                     lat = measure_latency(t_start, t_end, meta.get("llm_timing"))
 
@@ -300,11 +300,17 @@ class ScenarioRunner:
                         # Trường gỡ lỗi (tiền tố '_'): Brief của lượt này mang theo gì — dùng để kiểm baseline stateless.
                         extra=extra)
                     pending.append(pending_row)
-                    if gate_assist and n_injected < MAX_INJECTED_PER_CALL and meta.get("order_gate"):
-                        reply = assist_reply(meta["order_gate"][-1], brief.customer_name if brief.customer_name != "Quý khách" else "")
+                    # Khách mô phỏng chỉ lên tiếng khi lời kịch bản của cuộc gọi đã HẾT: lời thật của khách (địa chỉ, thanh toán, món mua kèm ở lượt sau) luôn đi trước.
+                    # Tên người nhận: khách mô phỏng biết tên của chính mình (`customer_name` của kịch bản) khi hệ thống chưa có hồ sơ.
+                    if gate_assist and not queue and n_injected < MAX_INJECTED_PER_CALL and meta.get("order_gate"):
+                        reply = assist_reply(meta["order_gate"][-1], (brief.customer_name if brief.customer_name != "Quý khách" else "") or spec.get("customer_name") or "")
                         if reply:
                             queue.insert(0, (reply, True))
                             n_injected += 1
+                    # Luật chấm BTC 11/2026: sau lượt khách cuối, agent được MỘT lượt (customer_text rỗng) để đọc lại đơn và gọi order.create.
+                    if not queue and not closing and stack["orchestrator"].has_open_order(identity.customer_id, call_date):
+                        queue.append(("", False))
+                        closing = True
                     self._enforce_budget(llm_client, max_cost_vnd, flush)
 
                 # Thời điểm kích hoạt #1: CUỐI CUỘC GỌI -> chốt episode + trích slot khó (LLM, ≤ 1 lần).

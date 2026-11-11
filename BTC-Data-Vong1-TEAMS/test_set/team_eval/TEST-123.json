@@ -1,0 +1,79 @@
+{
+  "scenario_id": "TEST-123",
+  "level": "M1",
+  "industry": "gia-dung",
+  "region": "nam",
+  "south": true,
+  "persona": "khach_thich_khuyen_mai",
+  "hard_case": "da_phien_3_cuoc",
+  "customer_phone": "0910974114",
+  "customer_name": "Hùng",
+  "honorific": "anh",
+  "notes": "[gia-dung] (da_phien_3_cuoc_doi_tt) Màng lọc thay thế AirPure Pro (SKU-AP-FLT-P) tại TP.HCM.",
+  "calls": {
+    "call_1": {
+      "channel": "hotline",
+      "call_date": "2026-10-15",
+      "customer_goal": "3 phiên: phiên 1 tư vấn Màng lọc thay thế AirPure Pro",
+      "customer_turns": [
+        "Shop báo giúp Hùng giá lăn bánh về TP.HCM của Màng lọc thay thế AirPure Pro kèm khuyến mãi hiện hành nha.",
+        "Ok thông tin rõ ràng rồi em, Hùng hỏi nốt ý người nhà về Màng lọc thay thế AirPure Pro rồi alo đặt sau."
+      ],
+      "facts_established": {
+        "product_advised": "SKU-AP-FLT-P",
+        "price_quoted_vnd": 990000
+      },
+      "expected_outcome": "hen_goi_lai"
+    },
+    "call_2": {
+      "channel": "hotline",
+      "days_later": 2,
+      "customer_goal": "phiên 2 đặt đơn về địa chỉ ban đầu",
+      "customer_turns": [
+        "Hùng chốt đặt luôn Màng lọc thay thế AirPure Pro bữa trước hỏi ở TP.HCM nha em.",
+        "Nhận tại số 246 đường Sư Vạn Hạnh, Quận 10, TP.HCM nha em, tên Hùng, có gì bưu tá alo trước 15 phút. Thanh toán COD."
+      ],
+      "must_carry_over": [
+        "product_advised"
+      ],
+      "must_not_ask": [
+        "product_advised"
+      ],
+      "facts_established": {
+        "order_id": "OD700123",
+        "price_quoted_vnd": 990000
+      },
+      "success_if": {
+        "tool_called": "order.create",
+        "args_match": {
+          "sku": "SKU-AP-FLT-P",
+          "price_vnd": 990000,
+          "payment": "COD"
+        }
+      },
+      "expected_outcome": "chot_don"
+    },
+    "call_3": {
+      "channel": "hotline",
+      "days_later": 2,
+      "customer_goal": "phiên 3 kiểm tra trạng thái đơn hoặc đổi địa chỉ sang cơ quan",
+      "customer_turns": [
+        "Đột xuất Hùng phải trực cơ quan cả tuần nên gọi nhờ đổi điểm nhận đơn Màng lọc thay thế AirPure Pro về trung tâm TP.HCM nhé."
+      ],
+      "must_carry_over": [
+        "order_id",
+        "product_advised"
+      ],
+      "must_not_ask": [
+        "product_advised"
+      ],
+      "success_if": {
+        "tool_called": "order.update",
+        "args_match": {
+          "action": "update_address"
+        }
+      },
+      "expected_outcome": "chot_don"
+    }
+  }
+}

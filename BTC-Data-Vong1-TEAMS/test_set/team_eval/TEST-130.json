@@ -1,0 +1,45 @@
+{
+  "scenario_id": "TEST-130",
+  "level": "M1",
+  "industry": "gia-dung",
+  "region": "trung",
+  "south": false,
+  "persona": "khach_hoi_nhieu_khong_mua",
+  "hard_case": "chat_teencode_khong_dau",
+  "customer_phone": "0911029554",
+  "customer_name": "Vy",
+  "honorific": "chị",
+  "notes": "[gia-dung] (teencode_chat_khong_dau) Nồi chiên không dầu Xiaomi 4.5L (SKU-AF-XM) tại Đà Nẵng.",
+  "calls": {
+    "call_1": {
+      "channel": "zalo_oa",
+      "call_date": "2026-10-15",
+      "input_mode": "chat_teencode",
+      "customer_goal": "chuẩn hóa teencode không dấu chốt Nồi chiên không dầu Xiaomi 4.5L",
+      "customer_turns": [
+        "Chào page, báo giá giùm Vy sản phẩm Nồi chiên không dầu Xiaomi 4.5L ship về Đà Nẵng nhé.",
+        "Ok b ơi lên đơn ngay Nồi chiên không dầu Xiaomi 4.5L gửi về số 129 khu Nam Việt Á, Ngũ Hành Sơn, Đà Nẵng giúp Vy, nhận hàng thanh toán COD. Chị Vy nhắn kèm số 0911029554 cho anh giao hàng ở Ngũ Hành Sơn gọi nha."
+      ],
+      "customer_turns_asr": [
+        "chao page bao gia gium vy sp noi chien khong dau xiaomi 4.5l ship ve da nang nhe",
+        "ok b oi len don ngay noi chien khong dau xiaomi 4.5l gui ve so 129 khu nam viet a ngu hanh son da nang giup vy nhan hang tt cod"
+      ],
+      "facts_established": {
+        "product_advised": "SKU-AF-XM",
+        "price_quoted_vnd": 1590000,
+        "payment": "COD",
+        "phone_provided": "0911029554"
+      },
+      "success_if": {
+        "tool_called": "order.create",
+        "args_match": {
+          "sku": "SKU-AF-XM",
+          "price_vnd": 1590000,
+          "payment": "COD"
+        }
+      },
+      "expected_outcome": "chot_don",
+      "channel_identity": "zalo.vy.test_130"
+    }
+  }
+}

@@ -3,16 +3,16 @@
   "level": "M1",
   "persona": "khach_da_mua_doi_size",
   "hard_case": null,
-  "customer_phone": "0900001016",
+  "customer_phone": "0939556677",
   "customer_name": "Quyên",
   "honorific": "chị",
-  "notes": "[Thời trang] Áo khoác gió Windbreak (SKU-JK-WND: 690.000đ). Đổi size lần đầu từ M sang L màu đen trong hạn 7 ngày. DT-01 & DT-03: phí 0đ, gọi order.update.",
+  "notes": "[Thời trang] Áo khoác gió Windbreak (SKU-JK-WND: 690.000đ). Đổi size lần đầu M->L đen trong 7 ngày miễn phí.",
   "calls": {
     "call_1": {
       "call_date": "2026-10-12",
       "customer_turns": [
-        "Em ơi áo khoác gió Windbreak màu đen size M giá bao nhiêu?",
-        "Ok lên đơn cho chị áo size M màu đen nhé, COD về 10 Chu Văn An, Ba Đình, Hà Nội."
+        "Shop báo giúp chị mẫu áo khoác gió Windbreak bản M màu đen hôm nay giá bán đúng 690 nghìn phải không?",
+        "Chuyển bưu điện giao tới số 10 Chu Văn An, Ba Đình, Hà Nội giúp chị nhé, chị trả tiền mặt trực tiếp."
       ],
       "facts_established": {
         "product_advised": "SKU-JK-WND",
@@ -23,14 +23,22 @@
         "order_id": "OD682780",
         "payment": "COD"
       },
-      "expected_outcome": "chot_don"
+      "expected_outcome": "chot_don",
+      "success_if": {
+        "tool_called": "order.create",
+        "args_match": {
+          "sku": "SKU-JK-WND-M-DEN",
+          "price_vnd": 690000,
+          "payment": "COD"
+        }
+      }
     },
     "call_2": {
       "days_later": 3,
       "customer_turns": [
-        "Alo em, đơn OD682780 áo gió chị nhận rồi nhưng mặc bị kích vai quá.",
-        "Chị muốn đổi lên size L cùng màu đen có mất phí gì không em?",
-        "Ok làm thủ tục đổi sang size L giúp chị nhé."
+        "Chị mới bóc kiện hàng Windbreak mã OD682780 sáng nay, mặc thử vào hơi ôm phần vai mất rồi.",
+        "Trong hạn bảy ngày đầu chị xin chuyển lên cỡ L màu đen chắc miễn cước đổi size hoàn toàn đúng không em?",
+        "Vậy chốt đổi qua cỡ L đen luôn giùm chị nha."
       ],
       "must_carry_over": [
         "order_id",

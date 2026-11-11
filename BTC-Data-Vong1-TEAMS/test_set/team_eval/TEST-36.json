@@ -3,10 +3,10 @@
   "level": "M1",
   "persona": "khach_can_ship_gap",
   "hard_case": "cod_can_xac_nhan",
-  "customer_phone": "0900001013",
+  "customer_phone": "0966332211",
   "customer_name": "Tùng",
   "honorific": "anh",
-  "notes": "[Mẹ & Bé] Máy hút sữa Medela Swing Maxi (SKU-MB-PUMP2: 5.990.000đ). Giá trị trên 2 triệu, VC-03 quy định needs_confirmation_call=true, agent phải thông báo cho khách.",
+  "notes": "[Mẹ & Bé] Máy hút sữa Medela Swing Maxi (SKU-MB-PUMP2: 5.990.000đ). Giá trị > 2 triệu, needs_confirmation_call=true.",
   "calls": {
     "call_1": {
       "call_date": "2026-10-15",

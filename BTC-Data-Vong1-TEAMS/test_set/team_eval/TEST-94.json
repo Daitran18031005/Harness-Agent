@@ -1,0 +1,41 @@
+{
+  "scenario_id": "TEST-94",
+  "level": "M1",
+  "industry": "gia-dung",
+  "region": "trung",
+  "south": false,
+  "persona": "khach_mua_nhieu_mon",
+  "hard_case": "mua_kem_phu_kien",
+  "customer_phone": "0910744434",
+  "customer_name": "Sơn",
+  "honorific": "anh",
+  "notes": "[gia-dung] (mua_them_phu_kien_kem) Máy lọc nước UF Sunhouse (SKU-WF-UF) tại Nha Trang.",
+  "calls": {
+    "call_1": {
+      "channel": "hotline",
+      "call_date": "2026-10-15",
+      "customer_goal": "mua Máy lọc nước UF Sunhouse kèm phụ kiện Bộ lõi lọc thay thế RO 1-2-3 trong cùng đơn",
+      "customer_turns": [
+        "Sơn tham khảo Máy lọc nước UF Sunhouse nãy giờ, phân vân nhất đoạn công nghệ siêu lọc UF 5 tầng giữ khoáng khi đặt tại Nha Trang.",
+        "Lấy cho Sơn một Máy lọc nước UF Sunhouse kèm thêm một Bộ lõi lọc thay thế RO 1-2-3 (390.000đ) dự phòng luôn trong một đơn nhé.",
+        "Xuất giúp Sơn đủ bộ Máy lọc nước UF Sunhouse kèm Bộ lõi lọc thay thế RO 1-2-3 tổng 3.680.000đ thanh toán lúc nhận. Đóng gói gửi về số 168 đường Yersin, Phương Sài, Nha Trang, cứ đọc tên Sơn bảo vệ chung cư nhận giùm hoặc gọi trực tiếp."
+      ],
+      "facts_established": {
+        "product_advised": "SKU-WF-UF",
+        "accessory_sku": "SKU-WF-CORE"
+      },
+      "success_if": {
+        "tool_called": "order.create",
+        "args_match": {
+          "sku": "SKU-WF-UF",
+          "price_vnd": 3290000,
+          "payment": "COD"
+        },
+        "also_ordered": [
+          "SKU-WF-CORE"
+        ]
+      },
+      "expected_outcome": "chot_don"
+    }
+  }
+}

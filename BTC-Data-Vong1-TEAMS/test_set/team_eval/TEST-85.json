@@ -1,0 +1,43 @@
+{
+  "scenario_id": "TEST-85",
+  "level": "M1",
+  "industry": "gia-dung",
+  "region": "trung",
+  "south": false,
+  "persona": "khach_can_ship_gap",
+  "hard_case": "so_noi_bang_chu",
+  "customer_phone": "0910673154",
+  "customer_name": "Vy",
+  "honorific": "chị",
+  "notes": "[gia-dung] (asr_so_noi_tieng_viet) Màng lọc thay thế Xiaomi Smart 4 (SKU-XM-FLT) tại Đà Nẵng.",
+  "calls": {
+    "call_1": {
+      "channel": "hotline",
+      "call_date": "2026-10-15",
+      "input_mode": "asr_transcript",
+      "customer_goal": "chuẩn hóa ASR/ITN số nói bằng chữ cho Màng lọc thay thế Xiaomi Smart 4",
+      "customer_turns": [
+        "Chị tên Vy, hỏi gấp thông số kỹ thuật của Màng lọc thay thế Xiaomi Smart 4 (590.000đ) phục vụ nhu cầu thay màng lọc trụ cho máy Xiaomi Smart 4 giao tới Đà Nẵng.",
+        "Tạm ghi nhận địa chỉ số nhà 259 ở Đà Nẵng, hẹn tối mai Vy bàn gia đình rồi gọi lại sau."
+      ],
+      "customer_turns_asr": [
+        "chị tên vy hỏi gấp thông số kỹ thuật của màng lọc thay thế xiaomi smart bốn năm trăm chín mươi nghìn đồng phục vụ nhu cầu thay màng lọc trụ cho máy xiaomi smart bốn giao tới đà nẵng",
+        "tạm ghi nhận địa chỉ số nhà hai trăm năm mươi chín ở đà nẵng hẹn tối mai vy bàn gia đình rồi gọi lại sau"
+      ],
+      "facts_established": {
+        "product_advised": "SKU-XM-FLT",
+        "price_quoted_vnd": 590000
+      },
+      "success_if": {
+        "tool_called": null,
+        "must_not_call_tools": [
+          "order.create"
+        ]
+      },
+      "ground_truth_facts": {
+        "price_vnd": 590000
+      },
+      "expected_outcome": "hen_goi_lai"
+    }
+  }
+}

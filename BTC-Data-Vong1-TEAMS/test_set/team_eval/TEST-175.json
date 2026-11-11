@@ -1,0 +1,51 @@
+{
+  "scenario_id": "TEST-175",
+  "level": "M1",
+  "industry": "gia-dung",
+  "region": "trung",
+  "south": false,
+  "persona": "khach_thich_khuyen_mai",
+  "hard_case": "khuyen_mai_het_han",
+  "customer_phone": "0911385954",
+  "customer_name": "Khải",
+  "honorific": "anh",
+  "notes": "[gia-dung] (km_het_han_tu_choi) Máy lọc không khí AirPure Pro (SKU-AP-PRO) tại Huế.",
+  "calls": {
+    "call_1": {
+      "channel": "hotline",
+      "call_date": "2026-10-17",
+      "customer_goal": "hỏi Máy lọc không khí AirPure Pro lúc còn hạn mã AIR-OCT (giảm 300k)",
+      "customer_turns": [
+        "Khải tham khảo trước Máy lọc không khí AirPure Pro đang có gói AIR-OCT (giảm 300k), ít hôm bàn gia đình xong chốt ở Huế."
+      ],
+      "facts_established": {
+        "product_advised": "SKU-AP-PRO",
+        "promo_code": "AIR-OCT"
+      },
+      "expected_outcome": "hen_goi_lai"
+    },
+    "call_2": {
+      "channel": "hotline",
+      "call_date": "2026-11-02",
+      "days_later": 16,
+      "customer_goal": "gọi lại khi AIR-OCT hết hạn nên từ chối không mua",
+      "customer_turns": [
+        "Cho anh Khải chốt Máy lọc không khí AirPure Pro theo suất khuyến mãi AIR-OCT hôm trước hỏi với.",
+        "Không còn ưu đãi AIR-OCT thì chiếc Máy lọc không khí AirPure Pro hơi vượt ngân sách của Khải, cảm ơn em hẹn dịp khác."
+      ],
+      "must_carry_over": [
+        "product_advised"
+      ],
+      "must_not_ask": [
+        "product_advised"
+      ],
+      "success_if": {
+        "tool_called": null,
+        "must_not_call_tools": [
+          "order.create"
+        ]
+      },
+      "expected_outcome": "tu_choi"
+    }
+  }
+}

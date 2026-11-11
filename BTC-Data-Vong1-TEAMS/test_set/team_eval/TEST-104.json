@@ -1,0 +1,46 @@
+{
+  "scenario_id": "TEST-104",
+  "level": "M1",
+  "industry": "gia-dung",
+  "region": "bac",
+  "south": false,
+  "persona": "khach_can_ship_gap",
+  "hard_case": "cod_vuot_han_muc",
+  "customer_phone": "0910823634",
+  "customer_name": "Khải",
+  "honorific": "anh",
+  "notes": "[gia-dung] (cod_vuot_tran_ck) Nồi chiên không dầu Philips 6.2L (SKU-AF-6L) tại Quảng Ninh.",
+  "calls": {
+    "call_1": {
+      "channel": "hotline",
+      "call_date": "2026-10-15",
+      "customer_goal": "mua 3x Nồi chiên không dầu Philips 6.2L vượt COD 10tr chuyển sang CK",
+      "customer_turns": [
+        "Alo, anh Khải tại Quảng Ninh tính đặt 3 món Nồi chiên không dầu Philips 6.2L biếu họ hàng, shipper thu hộ tiền mặt được hết chứ?",
+        "Ra thế, vượt mức trần 10 triệu tổng 11.970.000đ cho 3 Nồi chiên không dầu Philips 6.2L thì quy định chỉ cho Khải chuyển khoản hả em?",
+        "Không sao, vậy xuất thanh toán chuyển khoản ngân hàng 3 Nồi chiên không dầu Philips 6.2L cho Khải luôn đi. Lên đơn giao về số 108 phố Kênh Liêm, Hồng Hải, Quảng Ninh cho anh Khải, kiểm tra kỹ hàng trước khi xuất kho nha."
+      ],
+      "facts_established": {
+        "product_advised": "SKU-AF-6L",
+        "quantity": 3,
+        "price_quoted_vnd": 3990000,
+        "payment": "bank"
+      },
+      "success_if": {
+        "tool_called": "order.create",
+        "args_match": {
+          "sku": "SKU-AF-6L",
+          "qty": 3,
+          "price_vnd": 3990000,
+          "payment": "bank"
+        },
+        "total_match_vnd": 11970000
+      },
+      "ground_truth_facts": {
+        "cod_limit_vnd": 10000000,
+        "total_vnd": 11970000
+      },
+      "expected_outcome": "chot_don"
+    }
+  }
+}

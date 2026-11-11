@@ -1,0 +1,43 @@
+{
+  "scenario_id": "TEST-201",
+  "level": "M1",
+  "industry": "gia-dung",
+  "region": "nam",
+  "south": true,
+  "persona": "khach_thich_khuyen_mai",
+  "hard_case": null,
+  "customer_phone": "0911591874",
+  "customer_name": "Tiến",
+  "honorific": "anh",
+  "notes": "[gia-dung] (cod_nho_chot_ngay) Màng lọc thay thế AirPure Pro (SKU-AP-FLT-P) tại Bình Dương.",
+  "calls": {
+    "call_1": {
+      "channel": "hotline",
+      "call_date": "2026-10-15",
+      "customer_goal": "mua nhanh Màng lọc thay thế AirPure Pro giá dưới 2tr COD",
+      "customer_turns": [
+        "Thấy bạn bè ở Bình Dương khen Màng lọc thay thế AirPure Pro khá hợp thay màng lọc chuyên sâu cho máy AirPure Pro nên Tiến gọi hỏi thử thông tin chi tiết.",
+        "Ưng mẫu Màng lọc thay thế AirPure Pro với giá 990.000đ quá, Tiến thanh toán trực tiếp cho shipper ở Bình Dương là xong hết hả em?",
+        "Nhận tại số 282 phường Thuận Giao, Thuận An, Bình Dương nha em, tên Tiến, có gì bưu tá alo trước 15 phút. Tới Thuận An bên giao hàng thu giúp anh Tiến khoản tiền mặt khi bàn giao hộp sản phẩm nghen."
+      ],
+      "facts_established": {
+        "product_advised": "SKU-AP-FLT-P",
+        "price_quoted_vnd": 990000,
+        "payment": "COD"
+      },
+      "success_if": {
+        "tool_called": "order.create",
+        "args_match": {
+          "sku": "SKU-AP-FLT-P",
+          "price_vnd": 990000,
+          "payment": "COD"
+        }
+      },
+      "ground_truth_facts": {
+        "price_vnd": 990000,
+        "needs_confirmation_call": false
+      },
+      "expected_outcome": "chot_don"
+    }
+  }
+}

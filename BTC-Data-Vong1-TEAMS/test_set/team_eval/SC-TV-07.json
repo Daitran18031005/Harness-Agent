@@ -1,0 +1,72 @@
+{
+  "scenario_id": "SC-TV-07",
+  "level": "M1",
+  "industry": "gia-dung",
+  "region": "bac",
+  "south": false,
+  "persona": "khach_ngoai_pham_vi_chuyen_may",
+  "hard_case": "tv_khao_sat_duong_ong_handoff",
+  "customer_phone": "0900030094",
+  "customer_name": "Loan",
+  "honorific": "chị",
+  "notes": "Kịch bản TV 3 cuộc gọi mở rộng: Hỏi Karofi 9 lõi -> Hết KM lắp đặt từ chối -> Xem TV quay lại đòi thợ khảo sát chuyên sâu -> Handoff.",
+  "calls": {
+    "call_1": {
+      "channel": "chat_fanpage",
+      "call_date": "2026-09-24",
+      "customer_goal": "tìm hiểu sản phẩm và ưu đãi rồi hẹn suy nghĩ (SKU-WF-RO9)",
+      "customer_turns": [
+        "Shop cho chị hỏi máy lọc nước RO Karofi 9 lõi bảo hành ba năm phải không, đặt online có thợ đấu ống nước luôn chưa?",
+        "Ừ chị chờ thợ xây sửa xong phòng bếp đầu tháng sau chị nhắn chốt nha. Nhờ em lưu SĐT 0900030094 giúp chị Loan, sửa xong bếp chị sẽ gọi điện đặt máy."
+      ],
+      "facts_established": {
+        "product_advised": "SKU-WF-RO9",
+        "phone_provided": "0900030094"
+      },
+      "expected_outcome": "hen_goi_lai",
+      "channel_identity": "fb.loan.sc_tv_07"
+    },
+    "call_2": {
+      "channel": "hotline",
+      "call_date": "2026-10-08",
+      "days_later": 14,
+      "customer_goal": "gọi lại sau vài ngày nhưng hết KM hoặc không khớp điều kiện nên từ chối mua",
+      "customer_turns": [
+        "Alo chị Loan hỏi Karofi 9 lõi từ tháng trước đây, giờ bếp xong rồi nhưng gói miễn công lắp đặt tháng 9 còn chạy không em?",
+        "Hết khuyến mãi công lắp rồi lại còn chỉ còn ít hàng à? Vậy chị chưa đặt vội đâu."
+      ],
+      "must_carry_over": [
+        "product_advised"
+      ],
+      "must_not_ask": [
+        "product_advised"
+      ],
+      "expected_outcome": "tu_choi"
+    },
+    "call_3": {
+      "channel": "hotline",
+      "call_date": "2026-11-10",
+      "days_later": 33,
+      "customer_goal": "khoảng 1 tháng sau xem quảng cáo TV quay lại: chuyen_may",
+      "customer_turns": [
+        "Hôm qua bật TV thấy chương trình nhà đẹp giới thiệu dòng lọc nước RO công suất lớn lắp âm tủ bếp chung cư cao cấp, nhà chị đường ống đồng riêng nên cần kỹ thuật viên qua khảo sát trước khi ký lắp 2 máy.",
+        "Nối máy giúp chị sang bộ phận kỹ thuật chuyên sâu đặt lịch khảo sát tận nhà nhé."
+      ],
+      "must_carry_over": [
+        "product_advised"
+      ],
+      "must_not_ask": [
+        "product_advised"
+      ],
+      "success_if": {
+        "tool_called": "handoff.transfer",
+        "brief_must_contain": [
+          "customer_phone",
+          "escalation_reason",
+          "product_advised"
+        ]
+      },
+      "expected_outcome": "chuyen_may"
+    }
+  }
+}

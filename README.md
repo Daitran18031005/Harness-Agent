@@ -29,7 +29,7 @@ API phát `GET /metrics`; `python -m monitoring.trace_exporter --host 0.0.0.0` p
   1. **TSR tương tác (TSR chính)** — khách mô phỏng trả lời được gate (`run_eval.py --gate-assist`; lượt chèn gắn `_injected` trong trace); cuộc tạo đơn đạt khi `order.create` đúng SKU/giá **sau khi khách xác nhận**. Dùng cho 54 kịch bản mới (luật P5 đảm bảo lời khách có đáp án cho gate).
   2. **Kiểm tra kịch bản cố định (7 mẫu BTC)** — KHÔNG tính vào TSR chính; đạt = không tạo đơn sớm + đã tới bước đọc lại đơn. `--gate-assist` bị từ chối với kịch bản BTC.
 - **Phát lại lỗi UI bằng LLM thật**: `python scripts/ui_replay.py` (lời khách chép từ ảnh chụp UI, trần 400 VND trong mã) — chạy sau mỗi thay đổi hội thoại; test đơn vị không thay được.
-- **Trần chi phí cứng luôn bật**: `run_eval.py` mặc định 1.500 VND (`--max-cost-vnd` để đổi, phải > 0); client kiểm trước MỖI lần gọi API (kể cả vòng giữa lượt) và dừng khi chạm trần (`BudgetExceeded` kế thừa `BaseException` để không bị `except Exception` nuốt). Run chẩn đoán nhiều seed: `scripts/diagnose_seeds.py` (trần 3.000 VND nằm trong mã).
+- **Trần chi phí cứng luôn bật**: `run_eval.py` mặc định 20.000 VND (đủ cho bộ ẩn BTC 41 kịch bản × 2 cấu hình; chạy thử nên đặt thấp hơn) (`--max-cost-vnd` để đổi, phải > 0); client kiểm trước MỖI lần gọi API (kể cả vòng giữa lượt) và dừng khi chạm trần (`BudgetExceeded` kế thừa `BaseException` để không bị `except Exception` nuốt). Run chẩn đoán nhiều seed: `scripts/diagnose_seeds.py` (trần 3.000 VND nằm trong mã).
 
 ## Kiến trúc MCP — 3 server thật (`mcp_servers/`)
 

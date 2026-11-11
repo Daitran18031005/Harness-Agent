@@ -1,0 +1,58 @@
+{
+  "scenario_id": "TEST-90",
+  "level": "M1",
+  "industry": "gia-dung",
+  "region": "nam",
+  "south": true,
+  "persona": "khach_so_gia",
+  "hard_case": null,
+  "customer_phone": "0910712754",
+  "customer_name": "Kiên",
+  "honorific": "anh",
+  "notes": "[gia-dung] (da_kenh_zalo_hotline) Màng lọc thay thế Xiaomi Smart 4 (SKU-XM-FLT) tại Vũng Tàu.",
+  "calls": {
+    "call_1": {
+      "channel": "zalo_oa",
+      "channel_identity": "zalo.kiên.90",
+      "call_date": "2026-10-15",
+      "customer_goal": "nhắn Zalo hỏi Màng lọc thay thế Xiaomi Smart 4 để lại SĐT 0910712754",
+      "customer_turns": [
+        "Kiên tham khảo Màng lọc thay thế Xiaomi Smart 4 nãy giờ, phân vân nhất đoạn khớp đúng ngàm nhận diện trên app Mi Home khi đặt tại Vũng Tàu.",
+        "Để lại số 0910712754 qua đây trước nha shop, cuối tuần Kiên alo trực tiếp xác nhận đơn Màng lọc thay thế Xiaomi Smart 4."
+      ],
+      "facts_established": {
+        "product_advised": "SKU-XM-FLT",
+        "price_quoted_vnd": 590000,
+        "phone_provided": "0910712754"
+      },
+      "expected_outcome": "hen_goi_lai"
+    },
+    "call_2": {
+      "channel": "hotline",
+      "days_later": 2,
+      "customer_goal": "gọi hotline nhắc lại đơn đang xem bên Zalo để chốt luôn",
+      "customer_turns": [
+        "Chào em, Kiên vừa chat Zalo hai ngày trước về Màng lọc thay thế Xiaomi Smart 4 đây, nay gọi qua tổng đài chốt nhanh món đó về Vũng Tàu nhé.",
+        "Chuyển hàng tới số 80 đường Lê Hồng Phong, Phường 7, Vũng Tàu giúp anh, đến nơi gọi số này cho Kiên. Thanh toán COD."
+      ],
+      "must_carry_over": [
+        "product_advised"
+      ],
+      "must_not_ask": [
+        "product_advised"
+      ],
+      "success_if": {
+        "tool_called": "order.create",
+        "args_match": {
+          "sku": "SKU-XM-FLT",
+          "price_vnd": 590000,
+          "payment": "COD"
+        }
+      },
+      "ground_truth_facts": {
+        "price_vnd": 590000
+      },
+      "expected_outcome": "chot_don"
+    }
+  }
+}

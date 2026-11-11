@@ -1,0 +1,68 @@
+{
+  "scenario_id": "SC-TV-06",
+  "level": "M1",
+  "industry": "gia-dung",
+  "region": "trung",
+  "south": false,
+  "persona": "khach_so_gia",
+  "hard_case": "tv_dieu_kien_the_tu_choi",
+  "customer_phone": "0900030093",
+  "customer_name": "Bình",
+  "honorific": "anh",
+  "notes": "Kịch bản TV 3 cuộc gọi mở rộng: Hỏi UF Sunhouse -> Không gộp KM rời đi -> Xem TV đòi giảm tiền mặt thay thẻ tín dụng -> Từ chối.",
+  "calls": {
+    "call_1": {
+      "channel": "hotline",
+      "call_date": "2026-09-28",
+      "customer_goal": "tìm hiểu sản phẩm và ưu đãi rồi hẹn suy nghĩ (SKU-WF-UF)",
+      "customer_turns": [
+        "Máy lọc nước UF Sunhouse không dùng điện giá ba triệu hai chín chục đang có ưu đãi gì cho khách miền Trung không?",
+        "Để anh xem lại kích thước gầm chậu rửa bát nhà mình rồi gọi lại."
+      ],
+      "facts_established": {
+        "product_advised": "SKU-WF-UF"
+      },
+      "expected_outcome": "hen_goi_lai"
+    },
+    "call_2": {
+      "channel": "hotline",
+      "call_date": "2026-10-10",
+      "days_later": 12,
+      "customer_goal": "gọi lại sau vài ngày nhưng hết KM hoặc không khớp điều kiện nên từ chối mua",
+      "customer_turns": [
+        "Bữa trước anh hỏi máy Sunhouse UF muốn lấy kèm bộ lõi thay định kỳ được giảm chung không em?",
+        "Không gộp khuyến mãi giảm thêm được à? Vậy thôi anh ra điện máy gần nhà mua cho tiện."
+      ],
+      "must_carry_over": [
+        "product_advised"
+      ],
+      "must_not_ask": [
+        "product_advised"
+      ],
+      "expected_outcome": "tu_choi"
+    },
+    "call_3": {
+      "channel": "hotline",
+      "call_date": "2026-11-14",
+      "days_later": 35,
+      "customer_goal": "khoảng 1 tháng sau xem quảng cáo TV quay lại: tu_choi",
+      "customer_turns": [
+        "Anh coi quảng cáo tivi thấy bảo mua lọc nước hoàn tiền năm trăm ngàn qua đối tác ngân hàng, anh trả tiền mặt khi nhận có được trừ trực tiếp năm trăm ngàn không?",
+        "Bắt quẹt thẻ tín dụng ngân hàng liên kết mới được à, anh không xài thẻ tín dụng đâu. Thế dẹp khỏi mua nữa nhé."
+      ],
+      "must_carry_over": [
+        "product_advised"
+      ],
+      "must_not_ask": [
+        "product_advised"
+      ],
+      "success_if": {
+        "tool_called": null,
+        "must_not_call_tools": [
+          "order.create"
+        ]
+      },
+      "expected_outcome": "tu_choi"
+    }
+  }
+}

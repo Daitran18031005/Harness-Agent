@@ -84,5 +84,10 @@ def load_policy_chunks(policy_dir: Optional[str] = None) -> List[PolicyChunk]:
             all_chunks.extend(_parse_file(path, fname))
         except Exception as e:
             logger.warning("[RAG] failed to parse policy file %s (%s) — skipped.", fname, e)
+    # Kho BỔ SUNG của Knowledge Gap Loop (scripts/knowledge_gap.py apply): chỉ chứa mục đã có người duyệt; thư mục không tồn tại = chưa bổ sung gì.
+    extra = os.path.abspath(os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", "data", "kb_supplement"))
+    if policy_dir is None and os.path.isdir(extra):
+        for fname in sorted(f for f in os.listdir(extra) if f.endswith(".md")):
+            all_chunks.extend(_parse_file(os.path.join(extra, fname), fname))
     logger.info("[RAG] loaded %d policy chunks from %s", len(all_chunks), resolved)
     return all_chunks

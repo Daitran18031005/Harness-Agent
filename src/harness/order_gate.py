@@ -153,6 +153,7 @@ class GateState:
     last_ask_key: Optional[tuple] = None   # (hành động, trường hỏi, trường xác nhận) của câu hỏi gần nhất — để phát hiện câu hỏi LẶP
     last_ask_turn: Optional[int] = None
     ask_streak: int = 0                    # số lần LIÊN TIẾP hỏi đúng câu đó mà khách chưa trả lời được
+    closing: bool = False                  # LƯỢT CHỐT của cuộc gọi (luật BTC 11/2026: sau lượt khách cuối, agent được một lượt đọc lại + tạo đơn, khách không nói gì nữa)
     phone_ok: bool = False                 # khách đã nói "đúng sdt/số này" (kể cả TRƯỚC khi gate hỏi) → số đang gọi coi như đã xác nhận
 
 
@@ -346,6 +347,20 @@ class OrderGate:
         to_confirm = [f for f in FIELDS if fields[f].status == "known"]
         report = {f: {"status": fields[f].status, "shown": fields[f].shown if fields[f].status != "missing" else None} for f in FIELDS}
         base = {"turn": st.turn, "fields": report}
+
+        if st.closing:
+            # Không còn ai để hỏi/xác nhận: thông tin đã lưu được dùng luôn, thanh toán chưa nói = COD (mặc định của backend), địa chỉ/tên chưa có thì nhân viên gọi lại.
+            # Vẫn KHÔNG tạo đơn khi chưa rõ mua biến thể nào hoặc SĐT nhận không hợp lệ.
+            assumed, missing, to_confirm = [f for f in missing + to_confirm if f not in ("item", "recipient_phone")], [f for f in missing if f in ("item", "recipient_phone")], []
+            if not missing:
+                qty = int(fields["qty"].value or 1)
+                item = (product.name + (f" {product.variant_label}" if product.variant_label else "")).strip() or draft.sku
+                pay = PAYMENT_LABEL.get(fields["payment"].value or "COD", fields["payment"].value or "COD")
+                later = [LABEL_SHORT[f] for f in ("recipient_name", "address") if fields[f].status == "missing"]
+                say = (f"Dạ em đọc lại đơn mình nhé: {qty} {item}" + (f", tổng {money(total)}" if total else "") + f"; {pay}."
+                       + (f" Em chưa có {' và '.join(later)} nên nhân viên sẽ gọi lại {addressing} để xác nhận trước khi giao ạ." if later else ""))
+                st.stage, st.snapshot, st.created = "done", snap, {"snapshot": snap, "turn": st.turn, "real": {k: v.value for k, v in fields.items()}}
+                return self._record(st, {**base, "allow": True, "action": "allow_closing", "assumed": assumed, "say": say})
 
         if missing or to_confirm:
             asks = missing[:2]

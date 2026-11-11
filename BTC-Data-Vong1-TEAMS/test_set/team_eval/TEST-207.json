@@ -1,0 +1,91 @@
+{
+  "scenario_id": "TEST-207",
+  "level": "M1",
+  "industry": "thoi-trang",
+  "region": "nam",
+  "south": true,
+  "persona": "khach_thich_khuyen_mai",
+  "hard_case": "doi_size_lan_hai",
+  "customer_phone": "0911639394",
+  "customer_name": "Kiên",
+  "honorific": "anh",
+  "notes": "[thoi-trang] (doi_size_lan_hai_60k) Giày chạy bộ RunLite 1 (SKU-SN-RUN1-42-XAM) tại Đồng Nai.",
+  "calls": {
+    "call_1": {
+      "channel": "hotline",
+      "call_date": "2026-10-27",
+      "customer_goal": "mua Giày chạy bộ RunLite 1 biến thể 42 xam",
+      "customer_turns": [
+        "Anh Kiên đặt luôn Giày chạy bộ RunLite 1 size 42 màu xam, ship COD thẳng về số 134 khu công nghiệp Amata, Long Bình, Đồng Nai."
+      ],
+      "facts_established": {
+        "order_id": "OD900207",
+        "product_advised": "SKU-SN-RUN1",
+        "variant_sku": "SKU-SN-RUN1-42-XAM",
+        "size": 42,
+        "color": "xam",
+        "price_quoted_vnd": 1290000
+      },
+      "success_if": {
+        "tool_called": "order.create",
+        "args_match": {
+          "sku": "SKU-SN-RUN1-42-XAM",
+          "price_vnd": 1290000,
+          "payment": "COD"
+        }
+      },
+      "expected_outcome": "chot_don"
+    },
+    "call_2": {
+      "channel": "hotline",
+      "days_later": 2,
+      "customer_goal": "đổi lần 1 sang 38 miễn phí",
+      "customer_turns": [
+        "Cho Kiên đổi đơn Giày chạy bộ RunLite 1 size 42 sang 38 màu den nhé."
+      ],
+      "must_carry_over": [
+        "order_id"
+      ],
+      "must_not_ask": [
+        "product_advised"
+      ],
+      "success_if": {
+        "tool_called": "order.update",
+        "args_match": {
+          "action": "exchange_size",
+          "new_variant_sku": "SKU-SN-RUN1-38-DEN"
+        }
+      },
+      "expected_outcome": "chot_don"
+    },
+    "call_3": {
+      "channel": "hotline",
+      "days_later": 2,
+      "customer_goal": "đổi lần 2 trên cùng đơn phải chịu phí ship 60k (DT-03)",
+      "customer_turns": [
+        "Thiệt tình ngại ghê mà Giày chạy bộ RunLite 1 cỡ 38 lại hơi kích ngón chân Kiên, cho đổi lượt hai lên cỡ 39 màu trang chịu đủ 60.000đ ship hai lượt luôn."
+      ],
+      "must_carry_over": [
+        "order_id"
+      ],
+      "must_not_ask": [
+        "product_advised"
+      ],
+      "success_if": {
+        "tool_called": "order.update",
+        "args_match": {
+          "action": "exchange_size",
+          "new_variant_sku": "SKU-SN-RUN1-39-TRANG"
+        },
+        "must_say_any": [
+          "60.000",
+          "60k"
+        ]
+      },
+      "ground_truth_facts": {
+        "exchange_fee_vnd": 60000
+      },
+      "expected_outcome": "chot_don"
+    }
+  }
+}

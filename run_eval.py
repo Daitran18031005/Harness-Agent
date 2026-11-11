@@ -27,7 +27,7 @@ EVAL_SCRIPT = os.path.join(HERE, "BTC-Data-Vong1-TEAMS", "eval", "reference_eval
 CONFIG_CHOICES = ["full", "baseline_no_memory", "full_oracle", "both"]
 
 
-DEFAULT_MAX_COST_VND = 1500.0          # trần mặc định cho mọi lần chạy có LLM thật (ghi đè bằng --max-cost-vnd)
+DEFAULT_MAX_COST_VND = 20000.0         # trần mặc định (ghi đè bằng --max-cost-vnd). Đủ cho bộ ẩn BTC 41 kịch bản × 2 cấu hình (≈ 170 lượt × ~34 VND × 2 ≈ 12.000); 1.500 cũ sẽ cắt ngang lần chấm của BTC
 
 
 def build_parser() -> argparse.ArgumentParser:
@@ -44,7 +44,7 @@ def build_parser() -> argparse.ArgumentParser:
                    help="Chèn lượt khách mô phỏng trả lời order gate (hỏi/xác nhận/đọc lại đơn) — chỉ để đo gate trên kịch bản BTC có lời khách cố định")
     p.add_argument("--max-cost-vnd", type=float, default=None,
                    help="Hàng rào chi phí CỨNG (VND, tổng mọi cấu hình/lần lặp), kiểm trước mỗi lần gọi API: chạm ngưỡng thì dừng ngay (mã thoát 3). "
-                        "Mặc định 1.500 VND; luôn bật.")
+                        "Mặc định 20.000 VND; luôn bật.")
     return p
 
 

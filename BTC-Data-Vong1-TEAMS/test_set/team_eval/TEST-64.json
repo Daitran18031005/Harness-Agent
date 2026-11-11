@@ -1,0 +1,46 @@
+{
+  "scenario_id": "TEST-64",
+  "level": "M1",
+  "industry": "me-be",
+  "region": "trung",
+  "south": false,
+  "persona": "khach_mua_nhieu_mon",
+  "hard_case": "cod_vuot_han_muc",
+  "customer_phone": "0910506834",
+  "customer_name": "Minh",
+  "honorific": "anh",
+  "notes": "[me-be] (cod_vuot_tran_ck) Máy hút sữa điện đôi Spectra S1 (SKU-MB-PUMP1) tại Nha Trang.",
+  "calls": {
+    "call_1": {
+      "channel": "hotline",
+      "call_date": "2026-10-15",
+      "customer_goal": "mua 3x Máy hút sữa điện đôi Spectra S1 vượt COD 10tr chuyển sang CK",
+      "customer_turns": [
+        "Shop ơi, anh Minh ở Nha Trang cần mua một lượt 3 bộ Máy hút sữa điện đôi Spectra S1 cho mấy căn hộ của người thân.",
+        "Ra thế, vượt mức trần 10 triệu tổng 12.870.000đ cho 3 Máy hút sữa điện đôi Spectra S1 thì quy định chỉ cho Minh chuyển khoản hả em?",
+        "Không sao, vậy xuất thanh toán chuyển khoản ngân hàng 3 Máy hút sữa điện đôi Spectra S1 cho Minh luôn đi. Đóng gói gửi về số 68 đường Yersin, Phương Sài, Nha Trang, cứ đọc tên Minh bảo vệ chung cư nhận giùm hoặc gọi trực tiếp."
+      ],
+      "facts_established": {
+        "product_advised": "SKU-MB-PUMP1",
+        "quantity": 3,
+        "price_quoted_vnd": 4290000,
+        "payment": "bank"
+      },
+      "success_if": {
+        "tool_called": "order.create",
+        "args_match": {
+          "sku": "SKU-MB-PUMP1",
+          "qty": 3,
+          "price_vnd": 4290000,
+          "payment": "bank"
+        },
+        "total_match_vnd": 12870000
+      },
+      "ground_truth_facts": {
+        "cod_limit_vnd": 10000000,
+        "total_vnd": 12870000
+      },
+      "expected_outcome": "chot_don"
+    }
+  }
+}

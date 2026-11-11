@@ -1,0 +1,37 @@
+{
+  "scenario_id": "TEST-63",
+  "level": "M1",
+  "industry": "thoi-trang",
+  "region": "nam",
+  "south": true,
+  "persona": "khach_thich_khuyen_mai",
+  "hard_case": "hoan_giua_gate",
+  "customer_phone": "0910498914",
+  "customer_name": "Kiên",
+  "honorific": "anh",
+  "notes": "[thoi-trang] (hoan_giua_order_gate) Áo phao lông vũ Warmly (SKU-JK-DWN-XL-NAVY) tại TP.HCM.",
+  "calls": {
+    "call_1": {
+      "channel": "hotline",
+      "call_date": "2026-10-15",
+      "customer_goal": "hoãn chốt ngay tại Order Gate cho Áo phao lông vũ Warmly -> cấm order.create",
+      "customer_turns": [
+        "Shop báo giúp Kiên giá lăn bánh về TP.HCM của Áo phao lông vũ Warmly size XL màu navy kèm khuyến mãi hiện hành nha.",
+        "Chốt tạm địa chỉ số 46 đường Sư Vạn Hạnh, Quận 10, TP.HCM tên Kiên bên dưới thông tin chiếc Áo phao lông vũ Warmly nhé.",
+        "À tới bước đọc lại đơn Áo phao lông vũ Warmly khoan bấm chốt vội em nhé, để anh Kiên nhắn tin hỏi ý kiến người nhà một tiếng rồi mai gọi lại chốt sau."
+      ],
+      "facts_established": {
+        "product_advised": "SKU-JK-DWN",
+        "price_quoted_vnd": 1530000,
+        "variant_sku": "SKU-JK-DWN-XL-NAVY"
+      },
+      "success_if": {
+        "tool_called": null,
+        "must_not_call_tools": [
+          "order.create"
+        ]
+      },
+      "expected_outcome": "hen_goi_lai"
+    }
+  }
+}

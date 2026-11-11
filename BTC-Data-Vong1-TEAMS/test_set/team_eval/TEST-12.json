@@ -1,0 +1,74 @@
+{
+  "scenario_id": "TEST-12",
+  "level": "M1",
+  "persona": "khach_do_du_hoi_nguoi_nha",
+  "hard_case": "het_hang_cho_ve",
+  "customer_phone": "0991280845",
+  "customer_name": "Việt",
+  "honorific": "anh",
+  "notes": "Cuộc 1 (2026-10-15): Xiaomi 4 Pro đang hết hàng (qty=0), dự kiến về 2026-10-19. Agent không được hứa giao ngay, phải nêu ngày về dự kiến. Cuộc 2 (2026-10-20): đã về hàng (qty=20), khách chốt đơn kèm quà tặng XM-COMBO.",
+  "calls": {
+    "call_1": {
+      "call_date": "2026-10-15",
+      "customer_turns": [
+        "Alo cho anh hỏi máy lọc không khí Xiaomi 4 Pro giá bao nhiêu vậy em?",
+        "Sản phẩm này hiện tại có sẵn hàng giao liền không em?",
+        "À 19/10 mới về hàng à. Thế để anh chờ rồi gọi lại sau nhé."
+      ],
+      "facts_established": {
+        "product_advised": "SKU-XM-4P",
+        "price_quoted_vnd": 5490000,
+        "stock_status": "het_hang",
+        "restock_expected": "2026-10-19"
+      },
+      "success_if": {
+        "must_say_any": [
+          "19/10",
+          "19 tháng 10",
+          "tạm hết hàng",
+          "chờ về hàng"
+        ],
+        "forbidden_claims": [
+          {
+            "field": "in_stock",
+            "value": true
+          }
+        ]
+      },
+      "ground_truth_facts": {
+        "in_stock": false,
+        "restock_date": "2026-10-19",
+        "price_vnd": 5490000
+      },
+      "expected_outcome": "hen_goi_lai"
+    },
+    "call_2": {
+      "days_later": 5,
+      "customer_turns": [
+        "Alo em, hôm nay 20/10 rồi, máy Xiaomi 4 Pro hôm trước về hàng chưa em?",
+        "Ok lên đơn cho anh nhé, giao về 36 Nguyễn Hữu Thọ, quận 7, TP.HCM, thanh toán COD."
+      ],
+      "must_carry_over": [
+        "product_advised",
+        "price_quoted_vnd"
+      ],
+      "must_not_ask": [
+        "product_advised"
+      ],
+      "success_if": {
+        "tool_called": "order.create",
+        "args_match": {
+          "sku": "SKU-XM-4P",
+          "price_vnd": 5490000,
+          "payment": "COD"
+        }
+      },
+      "ground_truth_facts": {
+        "in_stock": true,
+        "price_vnd": 5490000,
+        "promo_XM-COMBO_active": true
+      },
+      "expected_outcome": "chot_don"
+    }
+  }
+}

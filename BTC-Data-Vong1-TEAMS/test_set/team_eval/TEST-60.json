@@ -1,0 +1,43 @@
+{
+  "scenario_id": "TEST-60",
+  "level": "M1",
+  "industry": "me-be",
+  "region": "nam",
+  "south": true,
+  "persona": "khach_so_gia",
+  "hard_case": null,
+  "customer_phone": "0910475154",
+  "customer_name": "Hùng",
+  "honorific": "anh",
+  "notes": "[me-be] (cod_nho_chot_ngay) Bình sữa Pigeon PPSU 240ml (SKU-MB-BOT) tại Vũng Tàu.",
+  "calls": {
+    "call_1": {
+      "channel": "hotline",
+      "call_date": "2026-10-15",
+      "customer_goal": "mua nhanh Bình sữa Pigeon PPSU 240ml giá dưới 2tr COD",
+      "customer_turns": [
+        "Shop ơi, anh Hùng đang tìm hiểu Bình sữa Pigeon PPSU 240ml dùng cho bé tập ti bình sợ sặc hơi đầy bụng.",
+        "Chốt nhanh Bình sữa Pigeon PPSU 240ml mức 289.000đ luôn nhé, món dưới hai triệu Hùng nhận ship thẳng luôn nha.",
+        "Chuyển hàng tới số 260 đường Lê Hồng Phong, Phường 7, Vũng Tàu giúp anh, đến nơi gọi số này cho Hùng. Thanh toán tiền mặt khi nhận hàng luôn nha."
+      ],
+      "facts_established": {
+        "product_advised": "SKU-MB-BOT",
+        "price_quoted_vnd": 289000,
+        "payment": "COD"
+      },
+      "success_if": {
+        "tool_called": "order.create",
+        "args_match": {
+          "sku": "SKU-MB-BOT",
+          "price_vnd": 289000,
+          "payment": "COD"
+        }
+      },
+      "ground_truth_facts": {
+        "price_vnd": 289000,
+        "needs_confirmation_call": false
+      },
+      "expected_outcome": "chot_don"
+    }
+  }
+}

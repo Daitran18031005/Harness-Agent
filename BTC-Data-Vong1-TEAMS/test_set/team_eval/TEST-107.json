@@ -1,0 +1,63 @@
+{
+  "scenario_id": "TEST-107",
+  "level": "M1",
+  "industry": "gia-dung",
+  "region": "bac",
+  "south": false,
+  "persona": "khach_hoi_nhieu_khong_mua",
+  "hard_case": "het_hang_theo_timeline",
+  "customer_phone": "0910847394",
+  "customer_name": "Duy",
+  "honorific": "anh",
+  "notes": "[gia-dung] (het_hang_timeline_restock) Máy lọc không khí Xiaomi Smart 4 Pro (SKU-XM-4P) tại Bắc Ninh.",
+  "calls": {
+    "call_1": {
+      "channel": "chat_fanpage",
+      "call_date": "2026-10-16",
+      "customer_goal": "hỏi Xiaomi Smart 4 Pro lúc đang hết hàng (16/10) hẹn chờ ngày về",
+      "customer_turns": [
+        "Shop check tồn kho giúp mình chiếc Xiaomi Smart 4 Pro nhé, mai giao luôn kịp không? Duy gửi số 0910847394 để bạn check kho xong nhắn hoặc lát mình gọi lại hotline hỏi tiếp."
+      ],
+      "facts_established": {
+        "product_advised": "SKU-XM-4P",
+        "phone_provided": "0910847394"
+      },
+      "success_if": {
+        "tool_called": null,
+        "must_not_call_tools": [
+          "order.create"
+        ],
+        "must_say_any": [
+          "hết hàng",
+          "19/10",
+          "2026-10-19"
+        ]
+      },
+      "expected_outcome": "hen_goi_lai",
+      "channel_identity": "fb.duy.test_107"
+    },
+    "call_2": {
+      "channel": "hotline",
+      "days_later": 4,
+      "customer_goal": "gọi lại ngày 20/10 hàng đã về kho chốt đơn",
+      "customer_turns": [
+        "Hôm 20 rồi kho đã về chiếc Xiaomi 4 Pro như hẹn chưa em, lên đơn COD về số 174 khu đô thị Vườn Sen, Từ Sơn, Bắc Ninh cho Duy nhé."
+      ],
+      "must_carry_over": [
+        "product_advised"
+      ],
+      "must_not_ask": [
+        "product_advised"
+      ],
+      "success_if": {
+        "tool_called": "order.create",
+        "args_match": {
+          "sku": "SKU-XM-4P",
+          "price_vnd": 5490000,
+          "payment": "COD"
+        }
+      },
+      "expected_outcome": "chot_don"
+    }
+  }
+}

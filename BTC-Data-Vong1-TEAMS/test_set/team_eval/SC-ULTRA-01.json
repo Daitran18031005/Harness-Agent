@@ -1,0 +1,94 @@
+{
+  "scenario_id": "SC-ULTRA-01",
+  "level": "M1",
+  "industry": "gia-dung",
+  "region": "bac",
+  "south": false,
+  "persona": "khach_mua_nhieu_mon",
+  "hard_case": "ultra_4c_gieng_khoan_doi_dc",
+  "customer_phone": "0900040001",
+  "customer_name": "Bách",
+  "honorific": "anh",
+  "notes": "Kịch bản siêu khó trên 3 cuộc gọi: 4 cuộc: Tư vấn nước giếng khoan -> Chốt giao Hà Nội -> Đổi địa chỉ Nam Định -> Nhận hàng hỏi thiếu quà.",
+  "calls": {
+    "call_1": {
+      "channel": "hotline",
+      "call_date": "2026-09-15",
+      "customer_goal": "tư vấn nguồn nước giếng khoan",
+      "customer_turns": [
+        "Chào em, nước giếng khoan nhà anh hơi phèn, đang tính lắp máy lọc RO tầm dưới 7 triệu.",
+        "Máy Kangaroo 10 lõi bảo hành mấy năm, tỉ lệ lọc sạch sao em?",
+        "Ok để anh đo lại gầm tủ bếp rồi chốt nhé."
+      ],
+      "expected_outcome": "hen_goi_lai",
+      "facts_established": {
+        "product_advised": "SKU-WF-RO10"
+      }
+    },
+    "call_2": {
+      "channel": "hotline",
+      "call_date": "2026-09-18",
+      "customer_goal": "chốt mua giao Hà Nội",
+      "customer_turns": [
+        "Alo, anh Bách hôm trước xem máy Kangaroo 10 lõi đây, giao về 45 Tây Sơn, Đống Đa giúp anh, thu hộ COD nhé."
+      ],
+      "expected_outcome": "chot_don",
+      "days_later": 3,
+      "must_carry_over": [
+        "product_advised"
+      ],
+      "must_not_ask": [
+        "product_advised"
+      ],
+      "success_if": {
+        "tool_called": "order.create",
+        "args_match": {
+          "sku": "SKU-WF-RO10",
+          "price_vnd": 6890000,
+          "payment": "COD"
+        }
+      }
+    },
+    "call_3": {
+      "channel": "hotline",
+      "call_date": "2026-09-19",
+      "customer_goal": "đổi địa chỉ giao về Nam Định",
+      "customer_turns": [
+        "Em ơi đơn Kangaroo mới đặt, anh phải về Nam Định gấp, chuyển giao về số 15 Hàng Tiện, TP. Nam Định giúp anh kịp không?"
+      ],
+      "expected_outcome": "chot_don",
+      "days_later": 1,
+      "must_carry_over": [
+        "product_advised"
+      ],
+      "must_not_ask": [
+        "product_advised"
+      ],
+      "success_if": {
+        "tool_called": "order.update",
+        "args_match": {
+          "action": "update_address"
+        }
+      }
+    },
+    "call_4": {
+      "channel": "hotline",
+      "call_date": "2026-09-22",
+      "customer_goal": "nhận máy hỏi tách kiện lõi lọc",
+      "customer_turns": [
+        "Bưu tá giao máy tới Nam Định rồi, mở thùng chưa thấy lõi dự phòng bên trong em kiểm tra giùm anh với."
+      ],
+      "expected_outcome": "hen_goi_lai",
+      "days_later": 3,
+      "must_carry_over": [
+        "product_advised"
+      ],
+      "must_not_ask": [
+        "product_advised"
+      ],
+      "success_if": {
+        "tool_called": "order.status"
+      }
+    }
+  }
+}

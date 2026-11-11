@@ -1,0 +1,50 @@
+{
+  "scenario_id": "TEST-132",
+  "level": "M1",
+  "industry": "gia-dung",
+  "region": "nam",
+  "south": true,
+  "persona": "khach_so_gia",
+  "hard_case": "khuyen_mai_may_thu_hai",
+  "customer_phone": "0911045394",
+  "customer_name": "Hùng",
+  "honorific": "anh",
+  "notes": "[gia-dung] (air_2nd_50_hai_may) Máy lọc không khí Samsung AX40 (SKU-SS-AX40) tại Đồng Nai.",
+  "calls": {
+    "call_1": {
+      "channel": "hotline",
+      "call_date": "2026-10-15",
+      "customer_goal": "mua 2 máy Máy lọc không khí Samsung AX40 + Máy lọc không khí AirPure Y áp AIR-2ND-50",
+      "customer_turns": [
+        "Shop báo giúp Hùng giá ghép đơn 2 máy là Máy lọc không khí Samsung AX40 (6.490.000đ) với Máy lọc không khí AirPure Y dùng đồng thời cho gia đình nhé.",
+        "Đủ điều kiện ăn mã giảm 50% máy thứ hai (2.600.000đ) AIR-2ND-50 đúng không, giao trọn bộ COD về số 164 khu công nghiệp Amata, Long Bình, Đồng Nai giùm Hùng."
+      ],
+      "facts_established": {
+        "product_advised": "SKU-SS-AX40",
+        "second_sku": "SKU-AP-Y",
+        "promo_code": "AIR-2ND-50"
+      },
+      "success_if": {
+        "tool_called": "order.create",
+        "args_match": {
+          "sku": "SKU-SS-AX40",
+          "price_vnd": 6490000,
+          "payment": "COD"
+        },
+        "also_ordered": [
+          "SKU-AP-Y"
+        ],
+        "must_say_any": [
+          "50%",
+          "AIR-2ND-50"
+        ]
+      },
+      "ground_truth_facts": {
+        "primary_price_vnd": 6490000,
+        "second_discounted_vnd": 2600000,
+        "promo_code": "AIR-2ND-50"
+      },
+      "expected_outcome": "chot_don"
+    }
+  }
+}

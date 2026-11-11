@@ -1,0 +1,45 @@
+{
+  "scenario_id": "TEST-89",
+  "level": "M1",
+  "industry": "thoi-trang",
+  "region": "bac",
+  "south": false,
+  "persona": "khach_hoi_nhieu_khong_mua",
+  "hard_case": "chat_teencode_khong_dau",
+  "customer_phone": "0910704834",
+  "customer_name": "Duy",
+  "honorific": "anh",
+  "notes": "[thoi-trang] (teencode_chat_khong_dau) Tất thể thao RunLite (3 đôi) (SKU-SN-SOCK) tại Quảng Ninh.",
+  "calls": {
+    "call_1": {
+      "channel": "chat_fanpage",
+      "call_date": "2026-10-15",
+      "input_mode": "chat_teencode",
+      "customer_goal": "chuẩn hóa teencode không dấu chốt Tất thể thao RunLite (3 đôi)",
+      "customer_turns": [
+        "Cho Duy hỏi nhanh Tất thể thao RunLite (3 đôi) giao tới Quảng Ninh hết mấy ngày với giá nhiêu ạ?",
+        "Giá chuẩn đấy đặt luôn Tất thể thao RunLite (3 đôi) gửi COD tới số 58 phố Kênh Liêm, Hồng Hải, Quảng Ninh cho anh Duy nha. Anh Duy dùng số 0910704834 nhận hàng ở Hồng Hải nhé em."
+      ],
+      "customer_turns_asr": [
+        "cho duy hoi nhanh tat the thao runlite (3 doi) giao toi quang ninh het may ngay vs gia nhieu a",
+        "gia chuan day dat lun tat the thao runlite (3 doi) gui cod toi so 58 pho kenh liem hong hai quang ninh cho duy nha"
+      ],
+      "facts_established": {
+        "product_advised": "SKU-SN-SOCK",
+        "price_quoted_vnd": 149000,
+        "payment": "COD",
+        "phone_provided": "0910704834"
+      },
+      "success_if": {
+        "tool_called": "order.create",
+        "args_match": {
+          "sku": "SKU-SN-SOCK",
+          "price_vnd": 149000,
+          "payment": "COD"
+        }
+      },
+      "expected_outcome": "chot_don",
+      "channel_identity": "fb.duy.test_89"
+    }
+  }
+}

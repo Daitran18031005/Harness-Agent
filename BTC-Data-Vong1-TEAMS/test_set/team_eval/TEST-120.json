@@ -1,0 +1,46 @@
+{
+  "scenario_id": "TEST-120",
+  "level": "M1",
+  "industry": "gia-dung",
+  "region": "nam",
+  "south": true,
+  "persona": "khach_so_gia",
+  "hard_case": "cod_vuot_han_muc",
+  "customer_phone": "0910950354",
+  "customer_name": "Tiến",
+  "honorific": "anh",
+  "notes": "[gia-dung] (cod_vuot_tran_ck) Máy lọc nước RO Kangaroo 10 lõi (SKU-WF-RO10) tại Vũng Tàu.",
+  "calls": {
+    "call_1": {
+      "channel": "hotline",
+      "call_date": "2026-10-15",
+      "customer_goal": "mua 2x Máy lọc nước RO Kangaroo 10 lõi vượt COD 10tr chuyển sang CK",
+      "customer_turns": [
+        "Nhà Tiến đang trang bị đồng loạt cho đại gia đình nên lấy hẳn 2 chiếc Máy lọc nước RO Kangaroo 10 lõi giao tới Vũng Tàu.",
+        "Ra thế, vượt mức trần 10 triệu tổng 13.780.000đ cho 2 Máy lọc nước RO Kangaroo 10 lõi thì quy định chỉ cho Tiến chuyển khoản hả em?",
+        "Không sao, vậy xuất thanh toán chuyển khoản ngân hàng 2 Máy lọc nước RO Kangaroo 10 lõi cho Tiến luôn đi. Chuyển hàng tới số 180 đường Lê Hồng Phong, Phường 7, Vũng Tàu giúp anh, đến nơi gọi số này cho Tiến."
+      ],
+      "facts_established": {
+        "product_advised": "SKU-WF-RO10",
+        "quantity": 2,
+        "price_quoted_vnd": 6890000,
+        "payment": "bank"
+      },
+      "success_if": {
+        "tool_called": "order.create",
+        "args_match": {
+          "sku": "SKU-WF-RO10",
+          "qty": 2,
+          "price_vnd": 6890000,
+          "payment": "bank"
+        },
+        "total_match_vnd": 13780000
+      },
+      "ground_truth_facts": {
+        "cod_limit_vnd": 10000000,
+        "total_vnd": 13780000
+      },
+      "expected_outcome": "chot_don"
+    }
+  }
+}

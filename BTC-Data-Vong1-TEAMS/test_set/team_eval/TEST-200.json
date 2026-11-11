@@ -1,0 +1,43 @@
+{
+  "scenario_id": "TEST-200",
+  "level": "M1",
+  "industry": "gia-dung",
+  "region": "nam",
+  "south": true,
+  "persona": "khach_mua_nhieu_mon",
+  "hard_case": "nam_freeship_promo",
+  "customer_phone": "0911583954",
+  "customer_name": "Tiến",
+  "honorific": "anh",
+  "notes": "[gia-dung] (nam_freeship_gia_dung) Màng lọc thay thế AirPure X/Y (SKU-AP-FLT-X) tại Cần Thơ.",
+  "calls": {
+    "call_1": {
+      "channel": "hotline",
+      "call_date": "2026-10-15",
+      "customer_goal": "đặt gia dụng miền Nam (Cần Thơ) áp NAM-SHIP0 cho Màng lọc thay thế AirPure X/Y",
+      "customer_turns": [
+        "Alo em ơi, Tiến ở Cần Thơ đặt Màng lọc thay thế AirPure X/Y giá 690.000đ có được hưởng miễn phí ship miền Nam không?",
+        "Duyệt liền đi em, giao thẳng Màng lọc thay thế AirPure X/Y tới số 278 khu dân cư Hưng Phú, Cái Răng, Cần Thơ cho Tiến, trả tiền mặt tận tay."
+      ],
+      "facts_established": {
+        "product_advised": "SKU-AP-FLT-X",
+        "price_quoted_vnd": 690000,
+        "payment": "COD",
+        "region": "nam"
+      },
+      "success_if": {
+        "tool_called": "order.create",
+        "args_match": {
+          "sku": "SKU-AP-FLT-X",
+          "price_vnd": 690000,
+          "payment": "COD"
+        }
+      },
+      "ground_truth_facts": {
+        "freeship": true,
+        "price_vnd": 690000
+      },
+      "expected_outcome": "chot_don"
+    }
+  }
+}

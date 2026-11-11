@@ -1,0 +1,50 @@
+{
+  "scenario_id": "TEST-67",
+  "level": "M1",
+  "industry": "gia-dung",
+  "region": "bac",
+  "south": false,
+  "persona": "khach_do_du_hoi_nguoi_nha",
+  "hard_case": "khuyen_mai_may_thu_hai",
+  "customer_phone": "0910530594",
+  "customer_name": "Sơn",
+  "honorific": "anh",
+  "notes": "[gia-dung] (air_2nd_50_hai_may) Máy lọc không khí AirPure Y (SKU-AP-Y) tại Nghệ An.",
+  "calls": {
+    "call_1": {
+      "channel": "hotline",
+      "call_date": "2026-10-15",
+      "customer_goal": "mua 2 máy Máy lọc không khí AirPure Y + Máy lọc không khí Xiaomi Smart 4 Lite áp AIR-2ND-50",
+      "customer_turns": [
+        "Shop ơi, anh Sơn muốn đặt chung giỏ gồm một Máy lọc không khí AirPure Y và một Máy lọc không khí Xiaomi Smart 4 Lite chuyển về Nghệ An.",
+        "Áp mã AIR-2ND-50 giảm 50% cho Máy lọc không khí Xiaomi Smart 4 Lite còn 1.495.000đ được luôn hôm nay đúng không em? Giao COD cho Sơn về số 134 đường Lê Nin, Hưng Phúc, TP Vinh, Nghệ An nhé."
+      ],
+      "facts_established": {
+        "product_advised": "SKU-AP-Y",
+        "second_sku": "SKU-XM-4L",
+        "promo_code": "AIR-2ND-50"
+      },
+      "success_if": {
+        "tool_called": "order.create",
+        "args_match": {
+          "sku": "SKU-AP-Y",
+          "price_vnd": 5200000,
+          "payment": "COD"
+        },
+        "also_ordered": [
+          "SKU-XM-4L"
+        ],
+        "must_say_any": [
+          "50%",
+          "AIR-2ND-50"
+        ]
+      },
+      "ground_truth_facts": {
+        "primary_price_vnd": 5200000,
+        "second_discounted_vnd": 1495000,
+        "promo_code": "AIR-2ND-50"
+      },
+      "expected_outcome": "chot_don"
+    }
+  }
+}

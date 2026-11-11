@@ -1,0 +1,62 @@
+{
+  "scenario_id": "TEST-191",
+  "level": "M1",
+  "industry": "gia-dung",
+  "region": "bac",
+  "south": false,
+  "persona": "khach_hoi_nhieu_khong_mua",
+  "hard_case": "khieu_nai_giao_tre_handoff",
+  "customer_phone": "0911512674",
+  "customer_name": "Thành",
+  "honorific": "anh",
+  "notes": "[gia-dung] (giao_tre_handoff_ql) Bộ lõi lọc thay thế RO 1-2-3 (SKU-WF-CORE) tại Hải Phòng.",
+  "calls": {
+    "call_1": {
+      "channel": "hotline",
+      "call_date": "2026-10-05",
+      "customer_goal": "đặt mua Bộ lõi lọc thay thế RO 1-2-3",
+      "customer_turns": [
+        "Shop báo giúp Thành giá lăn bánh về Hải Phòng của Bộ lõi lọc thay thế RO 1-2-3 kèm khuyến mãi hiện hành nha.",
+        "Địa chỉ nhận là số 62 khu dân cư Anh Dũng, Dương Kinh, Hải Phòng, nhờ shop ghi chú giao cho Thành nha. Thành thanh toán khi nhận kiện hàng COD ngay tại nhà ở Dương Kinh nhé em."
+      ],
+      "facts_established": {
+        "product_advised": "SKU-WF-CORE",
+        "price_quoted_vnd": 390000,
+        "order_id": "OD800191"
+      },
+      "success_if": {
+        "tool_called": "order.create",
+        "args_match": {
+          "sku": "SKU-WF-CORE",
+          "price_vnd": 390000,
+          "payment": "COD"
+        }
+      },
+      "expected_outcome": "chot_don"
+    },
+    "call_2": {
+      "channel": "hotline",
+      "days_later": 8,
+      "customer_goal": "khiếu nại đơn giao chậm quá 8 ngày yêu cầu gặp quản lý",
+      "customer_turns": [
+        "Làm ăn kiểu gì mà Thành đặt Bộ lõi lọc thay thế RO 1-2-3 giao Hải Phòng hơn tuần nay bưu tá vẫn bặt vô âm tín thế hả?",
+        "Không nghe giải thích nữa, chuyển máy gấp cho trưởng ca hoặc quản lý giải quyết hoàn tiền đơn Bộ lõi lọc thay thế RO 1-2-3 cho Thành!"
+      ],
+      "must_carry_over": [
+        "product_advised"
+      ],
+      "must_not_ask": [
+        "product_advised"
+      ],
+      "success_if": {
+        "tool_called": "handoff.transfer",
+        "brief_must_contain": [
+          "customer_phone",
+          "escalation_reason",
+          "product_advised"
+        ]
+      },
+      "expected_outcome": "chuyen_may"
+    }
+  }
+}

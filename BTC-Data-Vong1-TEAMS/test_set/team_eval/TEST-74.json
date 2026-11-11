@@ -1,0 +1,91 @@
+{
+  "scenario_id": "TEST-74",
+  "level": "M1",
+  "industry": "thoi-trang",
+  "region": "bac",
+  "south": false,
+  "persona": "khach_can_ship_gap",
+  "hard_case": "doi_size_lan_hai",
+  "customer_phone": "0910586034",
+  "customer_name": "Thành",
+  "honorific": "anh",
+  "notes": "[thoi-trang] (doi_size_lan_hai_60k) Giày chạy bộ RunLite 2 Pro (SKU-SN-RUN2-41-XAM) tại Quảng Ninh.",
+  "calls": {
+    "call_1": {
+      "channel": "hotline",
+      "call_date": "2026-10-27",
+      "customer_goal": "mua Giày chạy bộ RunLite 2 Pro biến thể 41 xam",
+      "customer_turns": [
+        "Gửi cho Thành một suất Giày chạy bộ RunLite 2 Pro cỡ 41 xam thanh toán khi nhận tại số 288 phố Kênh Liêm, Hồng Hải, Quảng Ninh nha shop."
+      ],
+      "facts_established": {
+        "order_id": "OD900074",
+        "product_advised": "SKU-SN-RUN2",
+        "variant_sku": "SKU-SN-RUN2-41-XAM",
+        "size": 41,
+        "color": "xam",
+        "price_quoted_vnd": 1690000
+      },
+      "success_if": {
+        "tool_called": "order.create",
+        "args_match": {
+          "sku": "SKU-SN-RUN2-41-XAM",
+          "price_vnd": 1690000,
+          "payment": "COD"
+        }
+      },
+      "expected_outcome": "chot_don"
+    },
+    "call_2": {
+      "channel": "hotline",
+      "days_later": 2,
+      "customer_goal": "đổi lần 1 sang 38 miễn phí",
+      "customer_turns": [
+        "Thành nhận Giày chạy bộ RunLite 2 Pro size 41 ở Quảng Ninh thử bị lệch form, đổi giúp sang 38 den nha."
+      ],
+      "must_carry_over": [
+        "order_id"
+      ],
+      "must_not_ask": [
+        "product_advised"
+      ],
+      "success_if": {
+        "tool_called": "order.update",
+        "args_match": {
+          "action": "exchange_size",
+          "new_variant_sku": "SKU-SN-RUN2-38-DEN"
+        }
+      },
+      "expected_outcome": "chot_don"
+    },
+    "call_3": {
+      "channel": "hotline",
+      "days_later": 2,
+      "customer_goal": "đổi lần 2 trên cùng đơn phải chịu phí ship 60k (DT-03)",
+      "customer_turns": [
+        "Thành thử tiếp Giày chạy bộ RunLite 2 Pro size 38 thấy hơi bó mũi rồi em, đổi lần 2 nhích lên size 39 màu xam và đóng phí vận chuyển 60k theo quy định nha."
+      ],
+      "must_carry_over": [
+        "order_id"
+      ],
+      "must_not_ask": [
+        "product_advised"
+      ],
+      "success_if": {
+        "tool_called": "order.update",
+        "args_match": {
+          "action": "exchange_size",
+          "new_variant_sku": "SKU-SN-RUN2-39-XAM"
+        },
+        "must_say_any": [
+          "60.000",
+          "60k"
+        ]
+      },
+      "ground_truth_facts": {
+        "exchange_fee_vnd": 60000
+      },
+      "expected_outcome": "chot_don"
+    }
+  }
+}

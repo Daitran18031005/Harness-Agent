@@ -1,4 +1,24 @@
-# test_set/team_eval — bộ kịch bản đánh giá chung của nhóm (gộp 2026-11-04)
+# test_set/team_eval — bộ kịch bản đánh giá của nhóm
+
+> **Cập nhật 2026-11-11.** Thư mục hiện có **270 kịch bản** (442 cuộc gọi, 869 lượt khách): 15 `SC-GEN`, 20 `SC-TV` (quay lại sau quảng cáo TV, 3 cuộc),
+> 15 `SC-ULTRA` (4–5 cuộc), 220 `TEST` — bộ bổ sung ngày 2026-11-09 thay cho bộ 42 kịch bản gộp ngày 2026-11-04 (mô tả cách gộp cũ ở cuối file, giữ để đối chiếu).
+> Đã đối chiếu đáp án với `eval/mock_tools.py` bản BTC 11/2026 (`pricing.quote_order`, `order.create(lines)`): 166 cuộc có `order.create` đều tạo được đơn đúng giá.
+>
+> Sửa khi đối chiếu (2026-11-11):
+> | Kịch bản | Lỗi | Sửa |
+> |---|---|---|
+> | TEST-189 | 6 máy AirPure Mini ghi tổng 13.140.000 (6 × 2.190.000); luật BTC mới: đúng một máy/đơn được AIR-2ND-50 → 12.045.000, và đơn phải tạo bằng `lines` (mỗi máy một dòng) nên `args_match.qty = 6` không thể khớp | tổng 12.045.000 (lời khách + đáp án), bỏ `qty` khỏi `args_match` |
+> | TEST-13 | `ground_truth_facts.in_stock=false` bị đối chiếu với SKU cha (còn hàng) | đổi thành `variant_in_stock` |
+>
+> Chưa sửa (không ảnh hưởng chấm, bộ kiểm `scripts/validate_scenarios.py` vẫn báo): SĐT ngoài dải giả `09000xxxxx` (S9), SC-ULTRA có 4–5 cuộc (S1), nhãn `hard_case` không theo
+> quy ước của nhóm (S7), vài `facts_established` không có trong lời khách (S3). TEST-01…06 dùng lại khách của SAMPLE BTC — bộ chạy cấp bộ nhớ mới cho từng kịch bản nên không lẫn.
+> Mã đơn ghi sẵn trong TEST-03/04/05/40 và SC-GEN-05 (`OD6827xx`) mock không sinh ra được; script chấm chấp nhận mã do `order.create` của cuộc trước trả về.
+>
+> Chạy: `python run_eval.py --scenarios BTC-Data-Vong1-TEAMS/test_set/team_eval --config both --gate-assist ...` · gộp + chấm: `python scripts/m1_final_report.py --root runs/m1_final`.
+
+---
+
+## (Cũ) Bộ 42 kịch bản gộp ngày 2026-11-04
 
 Gộp `generated_m1` (15 kịch bản SC-GEN, nhóm sinh bằng `generate_dataset.py`) và `custom_test_45` (45 kịch bản TEST, bộ viết tay mới đưa vào) thành **42 kịch bản**.
 Kịch bản của BTC nằm riêng ở `../public_sample/` và **không bị sửa**. Gốc các thư mục đã gộp được giữ (không xóa) ở

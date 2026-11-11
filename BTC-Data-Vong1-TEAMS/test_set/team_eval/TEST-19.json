@@ -1,0 +1,43 @@
+{
+  "scenario_id": "TEST-19",
+  "level": "M1",
+  "persona": "khach_hoi_ngoai_tai_lieu",
+  "hard_case": "phien_ban_chinh_sach_cu",
+  "customer_phone": "0905154382",
+  "customer_name": "Thắng",
+  "honorific": "anh",
+  "notes": "Khách đọc tài liệu cũ chinh-sach-doi-tra-v2026-06 (hết hiệu lực: 14 ngày, phí đổi 20k). Agent phải đính chính chính sách cập nhật mới nhất (DT-01: 7 ngày, DT-03: đổi size lần đầu miễn phí).",
+  "calls": {
+    "call_1": {
+      "call_date": "2026-10-15",
+      "customer_turns": [
+        "Anh đọc trên mạng thấy bên em cho đổi hàng trong 14 ngày đúng không?",
+        "Với lại phí đổi size là 20 nghìn đồng phải không em?",
+        "À vậy là áp dụng chính sách mới 7 ngày và miễn phí đổi lần đầu hả em? Ok anh hiểu rồi."
+      ],
+      "success_if": {
+        "tool_called": null,
+        "must_say_any": [
+          "7 ngày",
+          "bảy ngày"
+        ],
+        "forbidden_claims": [
+          {
+            "field": "return_days",
+            "value": 14
+          },
+          {
+            "field": "exchange_fee_vnd",
+            "value": 20000
+          }
+        ]
+      },
+      "ground_truth_facts": {
+        "return_days": 7,
+        "exchange_fee_vnd": 0,
+        "old_policy_superseded": true
+      },
+      "expected_outcome": "hen_goi_lai"
+    }
+  }
+}

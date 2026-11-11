@@ -59,7 +59,7 @@ def order_created_after_confirmation(rows: List[Dict[str, Any]], success_if: Dic
     readback_turns = {t for t, evs in _events(rows).items() if any(e.get("action") == "readback" for e in evs)}
     seen_match = False
     for r, tc in _created(rows):
-        if not ref.args_match(success_if.get("args_match"), tc.get("args", {}), aliases):
+        if not any(ref.args_match(success_if.get("args_match"), ln, aliases) for ln in ref.order_lines([tc])):      # đơn nhiều dòng (lines): khớp theo TỪNG DÒNG như script BTC
             continue
         seen_match = True
         if (r["turn"] - 1) in readback_turns and is_explicit_consent(r.get("customer_text", "")):

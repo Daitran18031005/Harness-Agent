@@ -1,0 +1,50 @@
+{
+  "scenario_id": "TEST-171",
+  "level": "M1",
+  "industry": "gia-dung",
+  "region": "nam",
+  "south": true,
+  "persona": "khach_hoi_nhieu_khong_mua",
+  "hard_case": "khuyen_mai_may_thu_hai",
+  "customer_phone": "0911354274",
+  "customer_name": "Minh",
+  "honorific": "anh",
+  "notes": "[gia-dung] (air_2nd_50_hai_may) Máy lọc không khí AirPure X (SKU-AP-X) tại Đồng Nai.",
+  "calls": {
+    "call_1": {
+      "channel": "hotline",
+      "call_date": "2026-10-15",
+      "customer_goal": "mua 2 máy Máy lọc không khí AirPure X + Máy lọc không khí AirPure Mini áp AIR-2ND-50",
+      "customer_turns": [
+        "Nhà Minh ở Đồng Nai có phòng khách lẫn phòng ngủ nên lấy cặp đôi Máy lọc không khí AirPure X cộng thêm Máy lọc không khí AirPure Mini luôn hôm nay.",
+        "Áp khuyến mãi AIR-2ND-50 giảm năm mươi phần trăm cho Máy lọc không khí AirPure Mini thành 1.095.000đ giúp Minh, thu tiền mặt tại số 200 phường Trảng Dài, Biên Hòa, Đồng Nai."
+      ],
+      "facts_established": {
+        "product_advised": "SKU-AP-X",
+        "second_sku": "SKU-AP-MINI",
+        "promo_code": "AIR-2ND-50"
+      },
+      "success_if": {
+        "tool_called": "order.create",
+        "args_match": {
+          "sku": "SKU-AP-X",
+          "price_vnd": 4890000,
+          "payment": "COD"
+        },
+        "also_ordered": [
+          "SKU-AP-MINI"
+        ],
+        "must_say_any": [
+          "50%",
+          "AIR-2ND-50"
+        ]
+      },
+      "ground_truth_facts": {
+        "primary_price_vnd": 4890000,
+        "second_discounted_vnd": 1095000,
+        "promo_code": "AIR-2ND-50"
+      },
+      "expected_outcome": "chot_don"
+    }
+  }
+}

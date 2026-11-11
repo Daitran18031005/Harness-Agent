@@ -1,0 +1,37 @@
+{
+  "scenario_id": "TEST-46",
+  "level": "M1",
+  "industry": "gia-dung",
+  "region": "trung",
+  "south": false,
+  "persona": "khach_mua_nhieu_mon",
+  "hard_case": "doanh_nghiep_vat_handoff",
+  "customer_phone": "0910364274",
+  "customer_name": "Minh",
+  "honorific": "anh",
+  "notes": "[gia-dung] (b2b_doanh_nghiep_vat) Máy lọc nước RO Kangaroo 10 lõi (SKU-WF-RO10) tại Huế.",
+  "calls": {
+    "call_1": {
+      "channel": "hotline",
+      "call_date": "2026-10-15",
+      "customer_goal": "mua sỉ 18 bộ Máy lọc nước RO Kangaroo 10 lõi xuất VAT -> handoff B2B",
+      "customer_turns": [
+        "Bên văn phòng công ty anh Minh ở Huế muốn đặt số lượng sỉ 18 chiếc Máy lọc nước RO Kangaroo 10 lõi.",
+        "Chuyển thẳng cuộc gọi của Minh qua nhân viên phụ trách đơn sỉ doanh nghiệp Huế để gửi báo giá Máy lọc nước RO Kangaroo 10 lõi kèm mẫu hợp đồng nhé."
+      ],
+      "facts_established": {
+        "product_advised": "SKU-WF-RO10",
+        "quantity": 18
+      },
+      "success_if": {
+        "tool_called": "handoff.transfer",
+        "brief_must_contain": [
+          "customer_phone",
+          "escalation_reason",
+          "product_advised"
+        ]
+      },
+      "expected_outcome": "chuyen_may"
+    }
+  }
+}

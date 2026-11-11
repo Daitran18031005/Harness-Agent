@@ -1,0 +1,68 @@
+{
+  "scenario_id": "TEST-115",
+  "level": "M1",
+  "industry": "thoi-trang",
+  "region": "trung",
+  "south": false,
+  "persona": "khach_do_du_hoi_nguoi_nha",
+  "hard_case": "qua_han_doi_tra_7_ngay",
+  "customer_phone": "0910910754",
+  "customer_name": "Trung",
+  "honorific": "anh",
+  "notes": "[thoi-trang] (qua_han_doi_tra_7d) Giày chạy bộ RunLite 1 (SKU-SN-RUN1-40-TRANG) tại Quảng Nam.",
+  "calls": {
+    "call_1": {
+      "channel": "hotline",
+      "call_date": "2026-10-08",
+      "customer_goal": "mua Giày chạy bộ RunLite 1 biến thể 40 trang",
+      "customer_turns": [
+        "Lên đơn giúp Trung món Giày chạy bộ RunLite 1 cỡ 40 màu trang giao tới số 70 đường Hùng Vương, An Mỹ, Tam Kỳ, Quảng Nam, thu hộ nha."
+      ],
+      "facts_established": {
+        "order_id": "OD900115",
+        "product_advised": "SKU-SN-RUN1",
+        "variant_sku": "SKU-SN-RUN1-40-TRANG",
+        "size": 40,
+        "color": "trang",
+        "price_quoted_vnd": 1290000
+      },
+      "success_if": {
+        "tool_called": "order.create",
+        "args_match": {
+          "sku": "SKU-SN-RUN1-40-TRANG",
+          "price_vnd": 1290000,
+          "payment": "COD"
+        }
+      },
+      "expected_outcome": "chot_don"
+    },
+    "call_2": {
+      "channel": "hotline",
+      "days_later": 12,
+      "customer_goal": "gọi đòi trả/đổi size khi đã quá 7 ngày (ngày thứ 12)",
+      "customer_turns": [
+        "Trung mua Giày chạy bộ RunLite 1 gần hai tuần (12 ngày) rồi nhưng cất tủ nay mang ra thử không hợp muốn đổi trả hoàn tiền được không em?"
+      ],
+      "must_carry_over": [
+        "order_id",
+        "product_advised"
+      ],
+      "must_not_ask": [
+        "product_advised"
+      ],
+      "success_if": {
+        "tool_called": null,
+        "must_say_any": [
+          "7 ngày",
+          "bảy ngày",
+          "quá hạn",
+          "DT-01"
+        ]
+      },
+      "ground_truth_facts": {
+        "within_return_window": false
+      },
+      "expected_outcome": "tu_choi"
+    }
+  }
+}

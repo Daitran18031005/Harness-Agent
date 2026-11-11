@@ -1,0 +1,40 @@
+{
+  "scenario_id": "TEST-56",
+  "level": "M1",
+  "industry": "gia-dung",
+  "region": "bac",
+  "south": false,
+  "persona": "khach_can_ship_gap",
+  "hard_case": "mac_ca_khong_thanh",
+  "customer_phone": "0910443474",
+  "customer_name": "Thành",
+  "honorific": "anh",
+  "notes": "[gia-dung] (mac_ca_giu_gia_tu_choi) Màng lọc thay thế AirPure X/Y (SKU-AP-FLT-X) tại Hải Phòng.",
+  "calls": {
+    "call_1": {
+      "channel": "chat_fanpage",
+      "call_date": "2026-10-15",
+      "customer_goal": "mặc cả Màng lọc thay thế AirPure X/Y xuống 490.000đ không thành công -> từ chối",
+      "customer_turns": [
+        "Alô em, anh Thành đang tìm hiểu Màng lọc thay thế AirPure X/Y dùng cho thay lõi lọc bụi định kỳ sau 6 tháng cho máy AirPure.",
+        "Để giá hữu nghị 490.000đ cho Thành lấy Màng lọc thay thế AirPure X/Y ngay bây giờ chứ 690.000đ cao quá.",
+        "Thế thì Màng lọc thay thế AirPure X/Y không khớp ngân sách ở Hải Phòng rồi em ạ, cảm ơn tư vấn nhé chắc Thành tìm lựa chọn khác."
+      ],
+      "facts_established": {
+        "product_advised": "SKU-AP-FLT-X",
+        "price_quoted_vnd": 690000
+      },
+      "success_if": {
+        "tool_called": null,
+        "must_not_call_tools": [
+          "order.create"
+        ]
+      },
+      "ground_truth_facts": {
+        "price_vnd": 690000
+      },
+      "expected_outcome": "tu_choi",
+      "channel_identity": "fb.thanh.test_56"
+    }
+  }
+}

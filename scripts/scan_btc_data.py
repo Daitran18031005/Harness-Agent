@@ -29,7 +29,7 @@ def _n(x):
 def call_dates(spec):
     from src.eval.runner import ScenarioRunner
     out, prev = {}, "2026-10-15"
-    for cn in ("call_1", "call_2", "call_3"):
+    for cn in sorted(spec["calls"]):
         if cn in spec["calls"]:
             prev = ScenarioRunner._call_date(spec["calls"][cn], prev)
             out[cn] = prev

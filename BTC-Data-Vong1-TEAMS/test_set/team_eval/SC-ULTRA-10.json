@@ -1,0 +1,89 @@
+{
+  "scenario_id": "SC-ULTRA-10",
+  "level": "M1",
+  "industry": "thoi-trang",
+  "region": "bac",
+  "south": false,
+  "persona": "khach_mua_nhieu_mon",
+  "hard_case": "ultra_4c_trekking_ta_xua_hoa_toc",
+  "customer_phone": "0900040010",
+  "customer_name": "Khánh",
+  "honorific": "anh",
+  "notes": "Kịch bản siêu khó trên 3 cuộc gọi: 4 cuộc: Hỏi giày leo Tà Xùa -> Chốt size 41 xám -> Check tiến độ hỏa tốc -> Hỏi xịt bảo quản sau mưa.",
+  "calls": {
+    "call_1": {
+      "channel": "hotline",
+      "call_date": "2026-10-05",
+      "customer_goal": "tư vấn giày trekking đi Tà Xùa",
+      "customer_turns": [
+        "Cuối tuần anh đi trekking Tà Xùa trơn trượt lắm, đôi HikePro đế gai bám bùn tốt không em?"
+      ],
+      "expected_outcome": "hen_goi_lai",
+      "facts_established": {
+        "product_advised": "SKU-SN-TRK"
+      }
+    },
+    "call_2": {
+      "channel": "hotline",
+      "call_date": "2026-10-07",
+      "customer_goal": "chốt size 41 màu xám",
+      "customer_turns": [
+        "Lấy đôi HikePro size 41 màu xám giá 1.990.000đ giao gấp về 24 Lý Thái Tổ, Bắc Ninh nhé."
+      ],
+      "expected_outcome": "chot_don",
+      "days_later": 2,
+      "must_carry_over": [
+        "product_advised"
+      ],
+      "must_not_ask": [
+        "product_advised"
+      ],
+      "success_if": {
+        "tool_called": "order.create",
+        "args_match": {
+          "sku": "SKU-SN-TRK-41-XAM",
+          "price_vnd": 1990000,
+          "payment": "COD"
+        }
+      }
+    },
+    "call_3": {
+      "channel": "hotline",
+      "call_date": "2026-10-08",
+      "customer_goal": "check trạng thái đơn sắp lên xe",
+      "customer_turns": [
+        "Hai giờ chiều rồi chưa thấy bưu tá tới, tối nay anh ra bến xe rồi em tra đơn giùm anh với!"
+      ],
+      "expected_outcome": "hen_goi_lai",
+      "days_later": 1,
+      "must_carry_over": [
+        "product_advised"
+      ],
+      "must_not_ask": [
+        "product_advised"
+      ],
+      "success_if": {
+        "tool_called": "order.status"
+      }
+    },
+    "call_4": {
+      "channel": "hotline",
+      "call_date": "2026-10-09",
+      "customer_goal": "hỏi xịt bảo quản vải lưới EVA",
+      "customer_turns": [
+        "Giày đi êm chân lắm em, trên này sương ẩm anh xịt nano phủ chống nước lên chất liệu vải lưới EVA có hại keo không?"
+      ],
+      "expected_outcome": "hen_goi_lai",
+      "days_later": 1,
+      "must_carry_over": [
+        "product_advised"
+      ],
+      "must_not_ask": [
+        "product_advised"
+      ],
+      "success_if": {
+        "tool_called": null
+      }
+    }
+  }
+}

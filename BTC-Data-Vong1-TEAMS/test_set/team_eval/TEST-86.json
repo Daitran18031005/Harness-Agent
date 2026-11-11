@@ -1,0 +1,45 @@
+{
+  "scenario_id": "TEST-86",
+  "level": "M1",
+  "industry": "thoi-trang",
+  "region": "bac",
+  "south": false,
+  "persona": "khach_can_ship_gap",
+  "hard_case": null,
+  "customer_phone": "0910681074",
+  "customer_name": "Khải",
+  "honorific": "anh",
+  "notes": "[thoi-trang] (cod_nho_chot_ngay) Tất thể thao RunLite (3 đôi) (SKU-SN-SOCK) tại Hải Phòng.",
+  "calls": {
+    "call_1": {
+      "channel": "chat_fanpage",
+      "call_date": "2026-10-15",
+      "customer_goal": "mua nhanh Tất thể thao RunLite (3 đôi) giá dưới 2tr COD",
+      "customer_turns": [
+        "Khải tham khảo Tất thể thao RunLite (3 đôi) nãy giờ, phân vân nhất đoạn set ba đôi thấm hút mồ hôi RunLite khi đặt tại Hải Phòng.",
+        "Rồi Khải duyệt mức 149.000đ của Tất thể thao RunLite (3 đôi), cứ cho bưu tá chạy giao luôn khỏi gọi xác nhận thêm nha.",
+        "Lên đơn giao về số 272 khu dân cư Anh Dũng, Dương Kinh, Hải Phòng cho anh Khải, kiểm tra kỹ hàng trước khi xuất kho nha. Số nhận bưu phẩm của anh Khải là 0910681074, tới nơi giao mình trả COD tiền mặt trực tiếp nha."
+      ],
+      "facts_established": {
+        "product_advised": "SKU-SN-SOCK",
+        "price_quoted_vnd": 149000,
+        "payment": "COD",
+        "phone_provided": "0910681074"
+      },
+      "success_if": {
+        "tool_called": "order.create",
+        "args_match": {
+          "sku": "SKU-SN-SOCK",
+          "price_vnd": 149000,
+          "payment": "COD"
+        }
+      },
+      "ground_truth_facts": {
+        "price_vnd": 149000,
+        "needs_confirmation_call": false
+      },
+      "expected_outcome": "chot_don",
+      "channel_identity": "fb.khai.test_86"
+    }
+  }
+}

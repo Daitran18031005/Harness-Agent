@@ -1,0 +1,53 @@
+{
+  "scenario_id": "TEST-88",
+  "level": "M1",
+  "industry": "thoi-trang",
+  "region": "trung",
+  "south": false,
+  "persona": "khach_hoi_nhieu_khong_mua",
+  "hard_case": "phien_ban_chinh_sach_cu",
+  "customer_phone": "0910696914",
+  "customer_name": "Nga",
+  "honorific": "chị",
+  "notes": "[thoi-trang] (chinh_sach_cu_2026_06) Giày chạy bộ RunLite 1 (2025) — NGỪNG BÁN (SKU-SN-RUN1-OLD) tại Huế.",
+  "calls": {
+    "call_1": {
+      "channel": "chat_fanpage",
+      "call_date": "2026-10-15",
+      "customer_goal": "trích chính sách cũ 2026-06 (14 ngày/20k) cho Giày chạy bộ RunLite 1 (2025) — NGỪNG BÁN -> agent đính chính",
+      "customer_turns": [
+        "Bữa tháng 6 Nga đọc ảnh chụp chính sách của shop bảo Giày chạy bộ RunLite 1 (2025) — NGỪNG BÁN đổi trả thoải mái tới 14 ngày, phí đổi cỡ có 20 nghìn à?",
+        "May Nga hỏi trước tránh nhầm tờ rơi cũ hồi tháng 6 của Giày chạy bộ RunLite 1 (2025) — NGỪNG BÁN, giờ cứ theo mốc 7 ngày và miễn phí lần đầu nhé."
+      ],
+      "facts_established": {
+        "product_advised": "SKU-SN-RUN1-OLD"
+      },
+      "success_if": {
+        "tool_called": null,
+        "must_say_any": [
+          "7 ngày",
+          "bảy ngày",
+          "0đ",
+          "miễn phí"
+        ],
+        "forbidden_claims": [
+          {
+            "field": "return_days",
+            "value": 14
+          },
+          {
+            "field": "exchange_fee_vnd",
+            "value": 20000
+          }
+        ]
+      },
+      "ground_truth_facts": {
+        "return_days": 7,
+        "exchange_fee_vnd": 0,
+        "policy_version": "2026-10"
+      },
+      "expected_outcome": "hen_goi_lai",
+      "channel_identity": "fb.nga.test_88"
+    }
+  }
+}

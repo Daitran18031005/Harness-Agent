@@ -1,0 +1,39 @@
+{
+  "scenario_id": "TEST-118",
+  "level": "M1",
+  "industry": "gia-dung",
+  "region": "trung",
+  "south": false,
+  "persona": "khach_hoi_nhieu_khong_mua",
+  "hard_case": "hoi_ngoai_tai_lieu_doi_thu",
+  "customer_phone": "0910934514",
+  "customer_name": "Oanh",
+  "honorific": "chị",
+  "notes": "[gia-dung] (hoi_doi_thu_ngoai_tl) Nồi chiên không dầu Xiaomi 4.5L (SKU-AF-XM) tại Huế.",
+  "calls": {
+    "call_1": {
+      "channel": "chat_fanpage",
+      "call_date": "2026-10-15",
+      "customer_goal": "so sánh Nồi chiên không dầu Xiaomi 4.5L với sản phẩm đối thủ ngoài corpus",
+      "customer_turns": [
+        "Cho chị Oanh hỏi nhanh mẫu Nồi chiên không dầu Xiaomi 4.5L, chị chú trọng giá tầm trung khi mang về phòng bếp tối giản thích đồ gia dụng Xiaomi.",
+        "Bạn Oanh bảo mua hàng nội địa Trung Quốc hoặc thương hiệu ngoài siêu thị rẻ hơn con Nồi chiên không dầu Xiaomi 4.5L, shop đánh giá hộ xem cái nào đáng tiền?",
+        "Ừ thôi Oanh tự xem thêm đánh giá thực tế về mấy dòng ngoài rồi cân nhắc lại với Nồi chiên không dầu Xiaomi 4.5L bên em sau nhé."
+      ],
+      "facts_established": {
+        "product_advised": "SKU-AF-XM"
+      },
+      "success_if": {
+        "tool_called": null,
+        "must_not_call_tools": [
+          "order.create"
+        ]
+      },
+      "ground_truth_facts": {
+        "competitor_outside_corpus": true
+      },
+      "expected_outcome": "hen_goi_lai",
+      "channel_identity": "fb.oanh.test_118"
+    }
+  }
+}

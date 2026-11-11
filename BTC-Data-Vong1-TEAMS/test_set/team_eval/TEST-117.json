@@ -1,0 +1,39 @@
+{
+  "scenario_id": "TEST-117",
+  "level": "M1",
+  "industry": "gia-dung",
+  "region": "nam",
+  "south": true,
+  "persona": "khach_thich_khuyen_mai",
+  "hard_case": "mac_ca_khong_thanh",
+  "customer_phone": "0910926594",
+  "customer_name": "Kiên",
+  "honorific": "anh",
+  "notes": "[gia-dung] (mac_ca_giu_gia_tu_choi) Máy lọc không khí AirPure Mini (SKU-AP-MINI) tại Đồng Nai.",
+  "calls": {
+    "call_1": {
+      "channel": "hotline",
+      "call_date": "2026-10-15",
+      "customer_goal": "mặc cả Máy lọc không khí AirPure Mini xuống 1.570.000đ không thành công -> từ chối",
+      "customer_turns": [
+        "Thấy bạn bè ở Đồng Nai khen Máy lọc không khí AirPure Mini khá hợp bàn làm việc cá nhân hoặc phòng trọ 12m² nên Kiên gọi hỏi thử thông tin chi tiết.",
+        "Chiết khấu nội bộ kịch trần chiếc Máy lọc không khí AirPure Mini về mức 1.570.000đ cho Kiên được không em để chuyển khoản luôn?",
+        "Không bớt được chút lộc nào cho Máy lọc không khí AirPure Mini hả em? Đắt hơn dự tính nên Kiên xin phép không mua nhé."
+      ],
+      "facts_established": {
+        "product_advised": "SKU-AP-MINI",
+        "price_quoted_vnd": 2190000
+      },
+      "success_if": {
+        "tool_called": null,
+        "must_not_call_tools": [
+          "order.create"
+        ]
+      },
+      "ground_truth_facts": {
+        "price_vnd": 2190000
+      },
+      "expected_outcome": "tu_choi"
+    }
+  }
+}

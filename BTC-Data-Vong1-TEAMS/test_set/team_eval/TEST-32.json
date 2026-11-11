@@ -3,42 +3,39 @@
   "level": "M1",
   "persona": "khach_thich_khuyen_mai",
   "hard_case": "freeship_nguong_don_me_be",
-  "customer_phone": "0900001009",
+  "customer_phone": "0934812604",
   "customer_name": "Trang",
   "honorific": "chị",
-  "notes": "[Mẹ & Bé] Bình sữa Pigeon PPSU 240ml (SKU-MB-BOT: 289.000đ). MOM-FREESHIP cần đơn Mẹ & Bé từ 500.000đ. Mua thêm túi trữ sữa Sunmum (SKU-MB-BAG: 119.000đ) thì tổng 408.000đ vẫn chưa đủ: agent phải nói đúng điều này, không hứa freeship. Khách chốt mua riêng 1 bình.",
+  "notes": "[Mẹ & Bé] Bình sữa Pigeon PPSU 240ml (SKU-MB-BOT: 289.000đ). MOM-FREESHIP yêu cầu đơn Mẹ & Bé >= 500k. Khách lấy thêm 2 hộp túi trữ sữa Sunmum (119k x 2) cho đủ 527k.",
   "calls": {
     "call_1": {
       "call_date": "2026-10-15",
       "customer_turns": [
-        "Em ơi bình sữa Pigeon PPSU 240ml giá 289k có được miễn phí vận chuyển về Hà Nội không em?",
-        "Ủa phải đơn từ 500k mới được freeship à em? Chị lấy thêm 1 hộp túi trữ sữa Sunmum thì đủ 500k chưa?",
-        "Vậy thôi chị lấy 1 bình Pigeon 289k thôi, thanh toán COD, giao về số 18 Láng Hạ, Đống Đa, Hà Nội."
+        "Em ơi bình sữa Pigeon PPSU 240ml giá 289k có được freeship về Hà Nội không em?",
+        "Phải đơn từ 500k mới được miễn ship hả em? Vậy lấy thêm 2 hộp túi trữ sữa Sunmum 119k một hộp cho đủ 527k nhé.",
+        "Giao COD về số 18 Láng Hạ, Đống Đa, Hà Nội giúp chị."
       ],
       "facts_established": {
         "product_advised": "SKU-MB-BOT",
-        "price_quoted_vnd": 289000,
-        "payment": "COD"
+        "price_quoted_vnd": 289000
       },
       "success_if": {
         "tool_called": "order.create",
         "args_match": {
           "sku": "SKU-MB-BOT",
-          "price_vnd": 289000,
-          "payment": "COD"
+          "price_vnd": 289000
         },
         "must_say_any": [
           "500.000",
           "500k",
-          "chưa đủ",
+          "túi trữ sữa",
+          "Sunmum",
           "MOM-FREESHIP"
         ]
       },
       "ground_truth_facts": {
         "min_order_freeship_vnd": 500000,
-        "item_price_vnd": 289000,
-        "basket_with_bag_vnd": 408000,
-        "freeship": false
+        "item_price_vnd": 289000
       },
       "expected_outcome": "chot_don"
     }

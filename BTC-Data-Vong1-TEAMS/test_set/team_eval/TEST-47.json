@@ -1,0 +1,67 @@
+{
+  "scenario_id": "TEST-47",
+  "level": "M1",
+  "industry": "thoi-trang",
+  "region": "bac",
+  "south": false,
+  "persona": "khach_hoi_nhieu_khong_mua",
+  "hard_case": "doi_size_phu_thu_bien_the",
+  "customer_phone": "0910372194",
+  "customer_name": "Thành",
+  "honorific": "anh",
+  "notes": "[thoi-trang] (doi_size_phu_thu_cao) Giày chạy bộ RunLite 1 (SKU-SN-RUN1-42-XAM) tại Bắc Ninh.",
+  "calls": {
+    "call_1": {
+      "channel": "hotline",
+      "call_date": "2026-10-08",
+      "customer_goal": "mua Giày chạy bộ RunLite 1 biến thể 42 xam",
+      "customer_turns": [
+        "Đặt cho anh Thành mẫu Giày chạy bộ RunLite 1 cỡ 42 màu xam nhé, nhận hàng trả tiền tại số 254 khu đô thị Vườn Sen, Từ Sơn, Bắc Ninh."
+      ],
+      "facts_established": {
+        "order_id": "OD900047",
+        "product_advised": "SKU-SN-RUN1",
+        "variant_sku": "SKU-SN-RUN1-42-XAM",
+        "size": 42,
+        "color": "xam",
+        "price_quoted_vnd": 1290000
+      },
+      "success_if": {
+        "tool_called": "order.create",
+        "args_match": {
+          "sku": "SKU-SN-RUN1-42-XAM",
+          "price_vnd": 1290000,
+          "payment": "COD"
+        }
+      },
+      "expected_outcome": "chot_don"
+    },
+    "call_2": {
+      "channel": "hotline",
+      "days_later": 2,
+      "customer_goal": "đổi lên size lớn 43 có phụ thu biến thể +50000đ",
+      "customer_turns": [
+        "Chật quá nên Thành muốn đổi Giày chạy bộ RunLite 1 từ size 42 lên cỡ lớn 43 màu xam, phần chênh giá biến thể 50.000đ mình bù thêm nha."
+      ],
+      "must_carry_over": [
+        "order_id",
+        "variant_sku"
+      ],
+      "must_not_ask": [
+        "product_advised"
+      ],
+      "success_if": {
+        "tool_called": "order.update",
+        "args_match": {
+          "action": "exchange_size",
+          "new_variant_sku": "SKU-SN-RUN1-43-XAM"
+        }
+      },
+      "ground_truth_facts": {
+        "extra_payment_vnd": 50000,
+        "exchange_fee_vnd": 0
+      },
+      "expected_outcome": "chot_don"
+    }
+  }
+}

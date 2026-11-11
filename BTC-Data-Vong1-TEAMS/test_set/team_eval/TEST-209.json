@@ -1,0 +1,61 @@
+{
+  "scenario_id": "TEST-209",
+  "level": "M1",
+  "industry": "me-be",
+  "region": "bac",
+  "south": false,
+  "persona": "khach_hoi_nhieu_khong_mua",
+  "hard_case": "khuyen_mai_het_han",
+  "customer_phone": "0911655234",
+  "customer_name": "Thành",
+  "honorific": "anh",
+  "notes": "[me-be] (km_het_han_chap_nhan) Máy hút sữa điện đôi Spectra S1 (SKU-MB-PUMP1) tại Quảng Ninh.",
+  "calls": {
+    "call_1": {
+      "channel": "chat_fanpage",
+      "call_date": "2026-10-10",
+      "customer_goal": "hỏi Máy hút sữa điện đôi Spectra S1 lúc còn hạn mã PUMP-GIFT (tặng túi trữ sữa)",
+      "customer_turns": [
+        "Thấy bạn bè ở Quảng Ninh khen Máy hút sữa điện đôi Spectra S1 khá hợp mẹ bỉm quay lại công sở cần hút sữa linh hoạt nên Thành gọi hỏi thử thông tin chi tiết. Mã ưu đãi PUMP-GIFT đang áp dụng tặng túi trữ sữa đúng không, để vài bữa nữa Thành sắp xếp đặt hàng nha. Thành để số 0911655234 ở đây giùm shop nghen, vài bữa nữa thu xếp được mình gọi mua."
+      ],
+      "facts_established": {
+        "product_advised": "SKU-MB-PUMP1",
+        "promo_code": "PUMP-GIFT",
+        "phone_provided": "0911655234"
+      },
+      "expected_outcome": "hen_goi_lai",
+      "channel_identity": "fb.thanh.test_209"
+    },
+    "call_2": {
+      "channel": "hotline",
+      "call_date": "2026-10-18",
+      "days_later": 8,
+      "customer_goal": "gọi lại khi PUMP-GIFT đã hết hạn và vẫn đồng ý chốt giá 4.290.000đ",
+      "customer_turns": [
+        "Alo em ơi, bữa hỏi Máy hút sữa điện đôi Spectra S1 mã PUMP-GIFT nay Thành gọi chốt nha.",
+        "Đành chịu không kịp PUMP-GIFT vậy, lấy Thành chiếc Máy hút sữa điện đôi Spectra S1 giá 4.290.000đ thanh toán lúc nhận hàng nha. Địa chỉ nhận là số 178 phố Kênh Liêm, Hồng Hải, Quảng Ninh, nhờ shop ghi chú giao cho Thành nha."
+      ],
+      "must_carry_over": [
+        "product_advised"
+      ],
+      "must_not_ask": [
+        "product_advised"
+      ],
+      "success_if": {
+        "tool_called": "order.create",
+        "args_match": {
+          "sku": "SKU-MB-PUMP1",
+          "price_vnd": 4290000,
+          "payment": "COD"
+        },
+        "forbidden_claims": [
+          {
+            "field": "promo_active",
+            "value": true
+          }
+        ]
+      },
+      "expected_outcome": "chot_don"
+    }
+  }
+}

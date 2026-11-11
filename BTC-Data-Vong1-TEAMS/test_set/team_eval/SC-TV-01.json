@@ -1,0 +1,70 @@
+{
+  "scenario_id": "SC-TV-01",
+  "level": "M1",
+  "industry": "gia-dung",
+  "region": "bac",
+  "south": false,
+  "persona": "khach_so_gia",
+  "hard_case": "tv_11_11_sale_chot",
+  "customer_phone": "0900030088",
+  "customer_name": "Hoàng",
+  "honorific": "anh",
+  "notes": "Kịch bản TV 3 cuộc gọi mở rộng: Hỏi KM tháng 9 -> Hết hạn hủy -> Xem TV 11/11 giảm 15% gia dụng chốt 4.156.500đ.",
+  "calls": {
+    "call_1": {
+      "channel": "hotline",
+      "call_date": "2026-09-25",
+      "customer_goal": "tìm hiểu sản phẩm và ưu đãi rồi hẹn suy nghĩ (SKU-AP-X)",
+      "customer_turns": [
+        "Nghe nói bên em đang giảm năm trăm ngàn cho máy lọc không khí AirPure X dịp cuối tháng 9 hả?",
+        "Phòng ngủ nhà anh khoảng 24 mét vuông đặt máy này lọc bụi mịn ổn không, mà để anh bàn vợ mấy hôm nữa chốt."
+      ],
+      "facts_established": {
+        "product_advised": "SKU-AP-X"
+      },
+      "expected_outcome": "hen_goi_lai"
+    },
+    "call_2": {
+      "channel": "hotline",
+      "call_date": "2026-10-05",
+      "days_later": 10,
+      "customer_goal": "gọi lại sau vài ngày nhưng hết KM hoặc không khớp điều kiện nên từ chối mua",
+      "customer_turns": [
+        "Hôm trước anh Hoàng hỏi chiếc AirPure X bốn triệu ba chín chục đấy, giờ vợ gật đầu rồi chốt luôn nhé.",
+        "Hết tháng 9 cắt khuyến mãi rồi à? Mới vài ngày đã tăng về 4.890.000đ thế thôi anh không lấy đâu."
+      ],
+      "must_carry_over": [
+        "product_advised"
+      ],
+      "must_not_ask": [
+        "product_advised"
+      ],
+      "expected_outcome": "tu_choi"
+    },
+    "call_3": {
+      "channel": "hotline",
+      "call_date": "2026-11-11",
+      "days_later": 37,
+      "customer_goal": "khoảng 1 tháng sau xem quảng cáo TV quay lại: chot_don",
+      "customer_turns": [
+        "Tối qua mở VTV thấy bên mình quảng cáo siêu sale 11/11 giảm 15% toàn bộ hàng gia dụng phải không em?",
+        "Tính ra còn 4.156.500đ rẻ hơn cả hồi tháng 9! Giao giúp anh một chiếc về số 18 ngõ 45 phố Vọng, Hai Bà Trưng, Hà Nội, trả COD."
+      ],
+      "must_carry_over": [
+        "product_advised"
+      ],
+      "must_not_ask": [
+        "product_advised"
+      ],
+      "success_if": {
+        "tool_called": "order.create",
+        "args_match": {
+          "sku": "SKU-AP-X",
+          "price_vnd": 4156500,
+          "payment": "COD"
+        }
+      },
+      "expected_outcome": "chot_don"
+    }
+  }
+}

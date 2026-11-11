@@ -1,0 +1,68 @@
+{
+  "scenario_id": "TEST-57",
+  "level": "M1",
+  "industry": "thoi-trang",
+  "region": "nam",
+  "south": true,
+  "persona": "khach_thich_khuyen_mai",
+  "hard_case": "qua_han_doi_tra_7_ngay",
+  "customer_phone": "0910451394",
+  "customer_name": "Tiến",
+  "honorific": "anh",
+  "notes": "[thoi-trang] (qua_han_doi_tra_7d) Áo khoác gió Windbreak (SKU-JK-WND-M-DEN) tại Đồng Nai.",
+  "calls": {
+    "call_1": {
+      "channel": "hotline",
+      "call_date": "2026-10-08",
+      "customer_goal": "mua Áo khoác gió Windbreak biến thể M den",
+      "customer_turns": [
+        "Anh Tiến đặt luôn Áo khoác gió Windbreak size M màu den, ship COD thẳng về số 194 khu công nghiệp Amata, Long Bình, Đồng Nai."
+      ],
+      "facts_established": {
+        "order_id": "OD900057",
+        "product_advised": "SKU-JK-WND",
+        "variant_sku": "SKU-JK-WND-M-DEN",
+        "size": "M",
+        "color": "den",
+        "price_quoted_vnd": 690000
+      },
+      "success_if": {
+        "tool_called": "order.create",
+        "args_match": {
+          "sku": "SKU-JK-WND-M-DEN",
+          "price_vnd": 690000,
+          "payment": "COD"
+        }
+      },
+      "expected_outcome": "chot_don"
+    },
+    "call_2": {
+      "channel": "hotline",
+      "days_later": 12,
+      "customer_goal": "gọi đòi trả/đổi size khi đã quá 7 ngày (ngày thứ 12)",
+      "customer_turns": [
+        "Tiến mua Áo khoác gió Windbreak gần hai tuần (12 ngày) rồi nhưng cất tủ nay mang ra thử không hợp muốn đổi trả hoàn tiền được không em?"
+      ],
+      "must_carry_over": [
+        "order_id",
+        "product_advised"
+      ],
+      "must_not_ask": [
+        "product_advised"
+      ],
+      "success_if": {
+        "tool_called": null,
+        "must_say_any": [
+          "7 ngày",
+          "bảy ngày",
+          "quá hạn",
+          "DT-01"
+        ]
+      },
+      "ground_truth_facts": {
+        "within_return_window": false
+      },
+      "expected_outcome": "tu_choi"
+    }
+  }
+}

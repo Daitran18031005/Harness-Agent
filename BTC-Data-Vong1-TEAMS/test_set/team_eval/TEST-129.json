@@ -1,0 +1,47 @@
+{
+  "scenario_id": "TEST-129",
+  "level": "M1",
+  "industry": "me-be",
+  "region": "nam",
+  "south": true,
+  "persona": "khach_thich_khuyen_mai",
+  "hard_case": "cod_can_xac_nhan",
+  "customer_phone": "0911021634",
+  "customer_name": "Tiến",
+  "honorific": "anh",
+  "notes": "[me-be] (cod_xac_nhan_chot) Xe đẩy gấp gọn Joie Pact (SKU-MB-STR1) tại Cần Thơ.",
+  "calls": {
+    "call_1": {
+      "channel": "hotline",
+      "call_date": "2026-10-15",
+      "customer_goal": "đặt COD Xe đẩy gấp gọn Joie Pact trên 2tr có xác nhận",
+      "customer_turns": [
+        "Thấy bạn bè ở Cần Thơ khen Xe đẩy gấp gọn Joie Pact khá hợp gia đình hay đi du lịch máy bay muốn xe gọn nhẹ nên Tiến gọi hỏi thử thông tin chi tiết.",
+        "Đặt Xe đẩy gấp gọn Joie Pact mức 3.490.000đ nha em, lát nhớ báo tổng đài điện thoại rà lại lịch giao về Cần Thơ giùm Tiến.",
+        "Cứ tiến hành đặt Xe đẩy gấp gọn Joie Pact theo COD nhé. Nhận tại số 98 đường Trần Hưng Đạo, An Phú, Cần Thơ nha em, tên Tiến, có gì bưu tá alo trước 15 phút."
+      ],
+      "facts_established": {
+        "product_advised": "SKU-MB-STR1",
+        "price_quoted_vnd": 3490000,
+        "payment": "COD"
+      },
+      "success_if": {
+        "tool_called": "order.create",
+        "args_match": {
+          "sku": "SKU-MB-STR1",
+          "price_vnd": 3490000,
+          "payment": "COD"
+        },
+        "must_say_any": [
+          "xác nhận",
+          "gọi"
+        ]
+      },
+      "ground_truth_facts": {
+        "price_vnd": 3490000,
+        "needs_confirmation_call": true
+      },
+      "expected_outcome": "chot_don"
+    }
+  }
+}

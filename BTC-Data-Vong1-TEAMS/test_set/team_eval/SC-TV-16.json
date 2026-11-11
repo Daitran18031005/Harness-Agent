@@ -1,0 +1,70 @@
+{
+  "scenario_id": "SC-TV-16",
+  "level": "M1",
+  "industry": "me-be",
+  "region": "bac",
+  "south": false,
+  "persona": "khach_so_gia",
+  "hard_case": "tv_du_lich_doi_sang_combi",
+  "customer_phone": "0900030103",
+  "customer_name": "Thủy",
+  "honorific": "chị",
+  "notes": "Kịch bản TV 3 cuộc gọi mở rộng: Hỏi Joie Pact -> Hết hàng 27/10 hủy -> Xem TV Du lịch quay lại, vẫn hết Joie Pact nên đổi sang Combi Sugocal 6.790k.",
+  "calls": {
+    "call_1": {
+      "channel": "hotline",
+      "call_date": "2026-09-29",
+      "customer_goal": "tìm hiểu sản phẩm và ưu đãi rồi hẹn suy nghĩ (SKU-MB-STR1)",
+      "customer_turns": [
+        "Xe đẩy Joie Pact nặng khoảng bao nhiêu cân mà gập vào xách tay máy bay được em?",
+        "Để tháng 10 ông xã chốt ngày bay đi Phú Quốc rồi chị gọi lấy sau nha."
+      ],
+      "facts_established": {
+        "product_advised": "SKU-MB-STR1"
+      },
+      "expected_outcome": "hen_goi_lai"
+    },
+    "call_2": {
+      "channel": "hotline",
+      "call_date": "2026-10-27",
+      "days_later": 28,
+      "customer_goal": "gọi lại sau vài ngày nhưng hết KM hoặc không khớp điều kiện nên từ chối mua",
+      "customer_turns": [
+        "Chị Thủy đặt xe Joie Pact gấp gọn đi du lịch nè em, giao ngay tuần này giúp chị nhé.",
+        "Hết sạch hàng tồn kho từ hôm 25/10 rồi à em? Lỡ hết kế hoạch đi chơi mất rồi thôi chị hủy."
+      ],
+      "must_carry_over": [
+        "product_advised"
+      ],
+      "must_not_ask": [
+        "product_advised"
+      ],
+      "expected_outcome": "tu_choi"
+    },
+    "call_3": {
+      "channel": "hotline",
+      "call_date": "2026-11-20",
+      "days_later": 24,
+      "customer_goal": "khoảng 1 tháng sau xem quảng cáo TV quay lại: chot_don",
+      "customer_turns": [
+        "Chiều nay thấy chuyên mục Du lịch gia đình trên TV vừa quay cảnh đẩy em bé đi sân bay gọn ghẽ quá, Joie Pact đã nhập lại chưa em?",
+        "Joie Pact vẫn hết mà nhà sắp bay rồi hả? Thế chị chuyển luôn sang chiếc Combi Sugocal đẩy hai chiều giá 6.790.000đ thay thế nhé, gửi về số 14 Kim Mã, Ba Đình, thanh toán COD."
+      ],
+      "must_carry_over": [
+        "product_advised"
+      ],
+      "must_not_ask": [
+        "product_advised"
+      ],
+      "success_if": {
+        "tool_called": "order.create",
+        "args_match": {
+          "sku": "SKU-MB-STR2",
+          "price_vnd": 6790000,
+          "payment": "COD"
+        }
+      },
+      "expected_outcome": "chot_don"
+    }
+  }
+}

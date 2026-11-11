@@ -1,0 +1,72 @@
+{
+  "scenario_id": "TEST-03",
+  "level": "M1",
+  "persona": "khach_da_mua_doi_size",
+  "hard_case": null,
+  "customer_phone": "0922264686",
+  "customer_name": "Khoa",
+  "honorific": "anh",
+  "notes": "Đổi size lần đầu miễn phí (DT-03: phí 0đ, thời hạn trong 7 ngày). Hệ thống phải mang order_id và thông tin sản phẩm sang cuộc 2 để gọi order.update.",
+  "calls": {
+    "call_1": {
+      "call_date": "2026-10-10",
+      "customer_turns": [
+        "Em ơi giày sneaker Urban Classic màu đen size 39 giá bao nhiêu?",
+        "Ok lên đơn cho anh size 39 màu đen nhé, thanh toán COD về 12 Hai Bà Trưng, Hà Nội."
+      ],
+      "facts_established": {
+        "product_advised": "SKU-SN-CAS",
+        "variant_sku": "SKU-SN-CAS-39-DEN",
+        "size": 39,
+        "color": "den",
+        "price_quoted_vnd": 890000,
+        "order_id": "OD682761",
+        "payment": "COD"
+      },
+      "expected_outcome": "chot_don",
+      "success_if": {
+        "tool_called": "order.create",
+        "args_match": {
+          "sku": "SKU-SN-CAS-39-DEN",
+          "price_vnd": 890000,
+          "payment": "COD"
+        }
+      }
+    },
+    "call_2": {
+      "days_later": 4,
+      "customer_turns": [
+        "Alo, anh mới nhận đôi giày Urban Classic hôm qua mà size 39 đi hơi kích chân.",
+        "Anh muốn đổi lên size 40 màu đen được không em, có mất phí gì không?",
+        "Ok em làm thủ tục đổi size cho anh nhé."
+      ],
+      "must_carry_over": [
+        "order_id",
+        "variant_sku",
+        "size",
+        "color"
+      ],
+      "must_not_ask": [
+        "product_advised",
+        "order_id",
+        "color",
+        "payment"
+      ],
+      "success_if": {
+        "tool_called": "order.update",
+        "args_match": {
+          "order_id": "OD682761",
+          "new_variant_sku": "SKU-SN-CAS-40-DEN",
+          "action": "exchange_size"
+        }
+      },
+      "ground_truth_facts": {
+        "return_days": 7,
+        "exchange_fee_vnd": 0,
+        "new_size_in_stock": true,
+        "price_vnd": 890000
+      },
+      "expected_outcome": "chot_don"
+    }
+  }
+}

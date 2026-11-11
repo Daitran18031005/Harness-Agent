@@ -1,0 +1,41 @@
+{
+  "scenario_id": "TEST-142",
+  "level": "M1",
+  "industry": "me-be",
+  "region": "bac",
+  "south": false,
+  "persona": "khach_mua_nhieu_mon",
+  "hard_case": "pham_vi_bao_hanh",
+  "customer_phone": "0911124594",
+  "customer_name": "Trung",
+  "honorific": "anh",
+  "notes": "[me-be] (bao_hanh_phu_kien) Máy hút sữa điện đôi Medela Swing Maxi (SKU-MB-PUMP2) tại Nghệ An.",
+  "calls": {
+    "call_1": {
+      "channel": "zalo_oa",
+      "call_date": "2026-10-15",
+      "customer_goal": "hỏi phạm vi bảo hành phụ kiện tiêu hao của Máy hút sữa điện đôi Medela Swing Maxi",
+      "customer_turns": [
+        "Trung dùng Máy hút sữa điện đôi Medela Swing Maxi ở Nghệ An được vài tháng rồi, muốn hỏi van mỏ vịt silicone, màng chặn sữa và dây hơi bị mòn theo thời gian có nằm trong danh mục bảo hành miễn phí không?",
+        "Vậy là chỉ động cơ và bo mạch chính của Máy hút sữa điện đôi Medela Swing Maxi mới hưởng bảo hành, còn van mỏ vịt silicone, màng chặn sữa và dây hơi bên ngoài thì Trung tự đặt mua thay thế đúng không em?"
+      ],
+      "facts_established": {
+        "product_advised": "SKU-MB-PUMP2"
+      },
+      "success_if": {
+        "tool_called": null,
+        "must_say_any": [
+          "tiêu hao",
+          "phụ kiện",
+          "không thuộc",
+          "BH-01"
+        ]
+      },
+      "ground_truth_facts": {
+        "consumables_covered": false
+      },
+      "expected_outcome": "hen_goi_lai",
+      "channel_identity": "zalo.trung.test_142"
+    }
+  }
+}

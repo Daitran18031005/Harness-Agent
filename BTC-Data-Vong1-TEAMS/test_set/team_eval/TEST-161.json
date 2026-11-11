@@ -1,0 +1,53 @@
+{
+  "scenario_id": "TEST-161",
+  "level": "M1",
+  "industry": "gia-dung",
+  "region": "bac",
+  "south": false,
+  "persona": "khach_hoi_nhieu_khong_mua",
+  "hard_case": "phien_ban_chinh_sach_cu",
+  "customer_phone": "0911275074",
+  "customer_name": "Duy",
+  "honorific": "anh",
+  "notes": "[gia-dung] (chinh_sach_cu_2026_06) Nồi chiên không dầu Lock&Lock 4L (SKU-AF-4L) tại Hải Phòng.",
+  "calls": {
+    "call_1": {
+      "channel": "chat_fanpage",
+      "call_date": "2026-10-15",
+      "customer_goal": "trích chính sách cũ 2026-06 (14 ngày/20k) cho Nồi chiên không dầu Lock&Lock 4L -> agent đính chính",
+      "customer_turns": [
+        "Bữa tháng 6 Duy đọc ảnh chụp chính sách của shop bảo Nồi chiên không dầu Lock&Lock 4L đổi trả thoải mái tới 14 ngày, phí đổi cỡ có 20 nghìn à?",
+        "À quy định tháng 10 cho Nồi chiên không dầu Lock&Lock 4L rút lại thành 7 ngày với đổi size lần đầu miễn phí hả, Duy cảm ơn em đã cập nhật đúng."
+      ],
+      "facts_established": {
+        "product_advised": "SKU-AF-4L"
+      },
+      "success_if": {
+        "tool_called": null,
+        "must_say_any": [
+          "7 ngày",
+          "bảy ngày",
+          "0đ",
+          "miễn phí"
+        ],
+        "forbidden_claims": [
+          {
+            "field": "return_days",
+            "value": 14
+          },
+          {
+            "field": "exchange_fee_vnd",
+            "value": 20000
+          }
+        ]
+      },
+      "ground_truth_facts": {
+        "return_days": 7,
+        "exchange_fee_vnd": 0,
+        "policy_version": "2026-10"
+      },
+      "expected_outcome": "hen_goi_lai",
+      "channel_identity": "fb.duy.test_161"
+    }
+  }
+}

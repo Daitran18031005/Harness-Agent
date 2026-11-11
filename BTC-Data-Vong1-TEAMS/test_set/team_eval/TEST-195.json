@@ -1,0 +1,57 @@
+{
+  "scenario_id": "TEST-195",
+  "level": "M1",
+  "industry": "me-be",
+  "region": "nam",
+  "south": true,
+  "persona": "khach_thich_khuyen_mai",
+  "hard_case": null,
+  "customer_phone": "0911544354",
+  "customer_name": "Hùng",
+  "honorific": "anh",
+  "notes": "[me-be] (da_kenh_fb_doi_sl_dc) Máy hâm sữa Fatz 4 chức năng (SKU-MB-MON) tại Vũng Tàu.",
+  "calls": {
+    "call_1": {
+      "channel": "chat_fanpage",
+      "channel_identity": "fb.hùng.195",
+      "call_date": "2026-10-15",
+      "customer_goal": "chat Fanpage hỏi 1 bộ Máy hâm sữa Fatz 4 chức năng kèm số 0911544354",
+      "customer_turns": [
+        "Shop báo giúp Hùng giá lăn bánh về Vũng Tàu của Máy hâm sữa Fatz 4 chức năng kèm khuyến mãi hiện hành nha.",
+        "Tạm thời giữ liên hệ 0911544354 của Hùng nhé, cuối tuần rảnh mình alo chốt Máy hâm sữa Fatz 4 chức năng."
+      ],
+      "facts_established": {
+        "product_advised": "SKU-MB-MON",
+        "price_quoted_vnd": 490000,
+        "phone_provided": "0911544354"
+      },
+      "expected_outcome": "hen_goi_lai"
+    },
+    "call_2": {
+      "channel": "hotline",
+      "days_later": 3,
+      "customer_goal": "gọi hotline đổi số lượng thành 2 bộ và chốt đơn",
+      "customer_turns": [
+        "Anh Hùng vừa hỏi Máy hâm sữa Fatz 4 chức năng trên Facebook hôm kia đây, nhà cô ruột muốn lấy thêm nên nâng lên 2 bộ giao cùng chuyến nha.",
+        "Nhận tại số 150 đường Lê Hồng Phong, Phường 7, Vũng Tàu nha em, tên Hùng, có gì bưu tá alo trước 15 phút. Hùng sẽ chuyển tiền qua ngân hàng thanh toán hết trước khi shop xuất kho Vũng Tàu nhé."
+      ],
+      "must_carry_over": [
+        "product_advised"
+      ],
+      "must_not_ask": [
+        "product_advised"
+      ],
+      "success_if": {
+        "tool_called": "order.create",
+        "args_match": {
+          "sku": "SKU-MB-MON",
+          "qty": 2,
+          "price_vnd": 490000,
+          "payment": "bank"
+        },
+        "total_match_vnd": 980000
+      },
+      "expected_outcome": "chot_don"
+    }
+  }
+}

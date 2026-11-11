@@ -1,0 +1,98 @@
+{
+  "scenario_id": "SC-ULTRA-13",
+  "level": "M1",
+  "industry": "thoi-trang",
+  "region": "nam",
+  "south": true,
+  "persona": "khach_mua_nhieu_mon",
+  "hard_case": "ultra_4c_me_mua_giay_cho_hai_con",
+  "customer_phone": "0900040013",
+  "customer_name": "Hạnh",
+  "honorific": "chị",
+  "notes": "Kịch bản siêu khó trên 3 cuộc gọi: 4 cuộc: Hỏi Urban Classic cho con trai -> Chốt 39 trắng -> Đổi 40 trắng -> Quay lại mua thêm size 38 trắng cho con gái.",
+  "calls": {
+    "call_1": {
+      "channel": "hotline",
+      "call_date": "2026-10-02",
+      "customer_goal": "tư vấn Urban Classic cho học sinh",
+      "customer_turns": [
+        "Con trai chị học lớp 9 mang giày Urban Classic màu trắng đi học có dễ vệ sinh không em?"
+      ],
+      "expected_outcome": "hen_goi_lai",
+      "facts_established": {
+        "product_advised": "SKU-SN-CAS"
+      }
+    },
+    "call_2": {
+      "channel": "hotline",
+      "call_date": "2026-10-04",
+      "customer_goal": "chốt size 39 trắng",
+      "customer_turns": [
+        "Đặt cho chị đôi Urban Classic size 39 màu trắng 890.000đ nhé, giao 55 Hai Bà Trưng, Quận 1, trả COD."
+      ],
+      "expected_outcome": "chot_don",
+      "days_later": 2,
+      "must_carry_over": [
+        "product_advised"
+      ],
+      "must_not_ask": [
+        "product_advised"
+      ],
+      "success_if": {
+        "tool_called": "order.create",
+        "args_match": {
+          "sku": "SKU-SN-CAS-39-TRANG",
+          "price_vnd": 890000,
+          "payment": "COD"
+        }
+      }
+    },
+    "call_3": {
+      "channel": "hotline",
+      "call_date": "2026-10-07",
+      "customer_goal": "đổi lên size 40 trắng",
+      "customer_turns": [
+        "Nhận giày rồi mà chân thằng bé đi tất đá bóng hơi kích, đổi lên 40 trắng trong hạn 7 ngày nha em."
+      ],
+      "expected_outcome": "chot_don",
+      "days_later": 3,
+      "must_carry_over": [
+        "product_advised"
+      ],
+      "must_not_ask": [
+        "product_advised"
+      ],
+      "success_if": {
+        "tool_called": "order.update",
+        "args_match": {
+          "action": "exchange_size",
+          "new_variant_sku": "SKU-SN-CAS-40-TRANG"
+        }
+      }
+    },
+    "call_4": {
+      "channel": "hotline",
+      "call_date": "2026-10-16",
+      "customer_goal": "mua thêm đôi 38 trắng cho bé gái",
+      "customer_turns": [
+        "Đôi 40 con trai mang vừa in rồi, đặt thêm một đôi Urban Classic size 38 trắng cho bé gái út nhà chị nghen."
+      ],
+      "expected_outcome": "chot_don",
+      "days_later": 9,
+      "must_carry_over": [
+        "product_advised"
+      ],
+      "must_not_ask": [
+        "product_advised"
+      ],
+      "success_if": {
+        "tool_called": "order.create",
+        "args_match": {
+          "sku": "SKU-SN-CAS-38-TRANG",
+          "price_vnd": 890000,
+          "payment": "COD"
+        }
+      }
+    }
+  }
+}

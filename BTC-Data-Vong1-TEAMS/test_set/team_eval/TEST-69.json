@@ -1,0 +1,41 @@
+{
+  "scenario_id": "TEST-69",
+  "level": "M1",
+  "industry": "me-be",
+  "region": "nam",
+  "south": true,
+  "persona": "khach_thich_khuyen_mai",
+  "hard_case": "mua_kem_phu_kien",
+  "customer_phone": "0910546434",
+  "customer_name": "Hùng",
+  "honorific": "anh",
+  "notes": "[me-be] (mua_them_phu_kien_kem) Máy hút sữa điện đôi Medela Swing Maxi (SKU-MB-PUMP2) tại Cần Thơ.",
+  "calls": {
+    "call_1": {
+      "channel": "hotline",
+      "call_date": "2026-10-15",
+      "customer_goal": "mua Máy hút sữa điện đôi Medela Swing Maxi kèm phụ kiện Túi trữ sữa Sunmum 50 túi trong cùng đơn",
+      "customer_turns": [
+        "Thấy bạn bè ở Cần Thơ khen Máy hút sữa điện đôi Medela Swing Maxi khá hợp mẹ kích sữa chuyên sâu sau sinh cần hút kiệt nên Hùng gọi hỏi thử thông tin chi tiết.",
+        "Chốt cả cặp gồm Máy hút sữa điện đôi Medela Swing Maxi lẫn Túi trữ sữa Sunmum 50 túi (119.000đ) chuyển một chuyến về Cần Thơ cho Hùng.",
+        "Nhận tại số 178 đường Trần Hưng Đạo, An Phú, Cần Thơ nha em, tên Hùng, có gì bưu tá alo trước 15 phút. Gửi COD chiếc Máy hút sữa điện đôi Medela Swing Maxi cùng phụ kiện tổng 6.109.000đ nha em."
+      ],
+      "facts_established": {
+        "product_advised": "SKU-MB-PUMP2",
+        "accessory_sku": "SKU-MB-BAG"
+      },
+      "success_if": {
+        "tool_called": "order.create",
+        "args_match": {
+          "sku": "SKU-MB-PUMP2",
+          "price_vnd": 5990000,
+          "payment": "COD"
+        },
+        "also_ordered": [
+          "SKU-MB-BAG"
+        ]
+      },
+      "expected_outcome": "chot_don"
+    }
+  }
+}

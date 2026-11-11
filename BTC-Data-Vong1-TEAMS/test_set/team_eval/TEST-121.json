@@ -1,0 +1,41 @@
+{
+  "scenario_id": "TEST-121",
+  "level": "M1",
+  "industry": "me-be",
+  "region": "trung",
+  "south": false,
+  "persona": "khach_do_du_hoi_nguoi_nha",
+  "hard_case": "lich_nghi_hen_goi_lai",
+  "customer_phone": "0910958274",
+  "customer_name": "Sơn",
+  "honorific": "anh",
+  "notes": "[me-be] (lich_nghi_le_callback) Máy tiệt trùng sấy khô Moaz Bebe (SKU-MB-STER) tại Huế.",
+  "calls": {
+    "call_1": {
+      "channel": "hotline",
+      "call_date": "2026-10-15",
+      "customer_goal": "hẹn gọi lại rơi vào ngày nghỉ lễ công ty (2027-01-01)",
+      "customer_turns": [
+        "Thấy bạn bè ở Huế khen Máy tiệt trùng sấy khô Moaz Bebe khá hợp tiệt trùng và sấy khô bình sữa chống ẩm mốc nên Sơn gọi hỏi thử thông tin chi tiết.",
+        "Tạm thời gác lại đã, nhớ note gọi lại cho anh Sơn tại Huế khung 9 giờ sáng hôm sáng Tết Dương lịch 01/01 để bàn tiếp Máy tiệt trùng sấy khô Moaz Bebe nhé."
+      ],
+      "facts_established": {
+        "product_advised": "SKU-MB-STER",
+        "requested_callback": "2027-01-01T09:00"
+      },
+      "success_if": {
+        "tool_called": "schedule.callback",
+        "must_say_any": [
+          "nghỉ",
+          "27/10",
+          "02/01",
+          "làm việc"
+        ]
+      },
+      "ground_truth_facts": {
+        "holiday_date": "2027-01-01"
+      },
+      "expected_outcome": "hen_goi_lai"
+    }
+  }
+}

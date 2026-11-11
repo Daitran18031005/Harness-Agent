@@ -1,0 +1,45 @@
+{
+  "scenario_id": "TEST-196",
+  "level": "M1",
+  "industry": "gia-dung",
+  "region": "trung",
+  "south": false,
+  "persona": "khach_mua_nhieu_mon",
+  "hard_case": "chat_teencode_khong_dau",
+  "customer_phone": "0911552274",
+  "customer_name": "Trung",
+  "honorific": "anh",
+  "notes": "[gia-dung] (teencode_chat_khong_dau) Quạt đứng Senko TS16 (SKU-FAN-SEN) tại Huế.",
+  "calls": {
+    "call_1": {
+      "channel": "zalo_oa",
+      "call_date": "2026-10-15",
+      "input_mode": "chat_teencode",
+      "customer_goal": "chuẩn hóa teencode không dấu chốt Quạt đứng Senko TS16",
+      "customer_turns": [
+        "Bên mình vẫn còn tồn Quạt đứng Senko TS16 phải không em, Trung đang muốn lấy ngay?",
+        "Thống nhất lấy luôn Quạt đứng Senko TS16 nhé nhận hàng trả tiền mặt ở số 172 đường Lê Lợi, Phú Hội, Huế tên Trung. Gắn số 0911552274 tên Trung cho đơn giao về Phú Hội giúp anh."
+      ],
+      "customer_turns_asr": [
+        "ben m van con ton quat dung senko ts16 phai k em trung dg mun lay ngay",
+        "thong nhat lay lun quat dung senko ts16 nhe nhan hang tt tien mat o so 172 duong le loi phu hoi hue ten trung"
+      ],
+      "facts_established": {
+        "product_advised": "SKU-FAN-SEN",
+        "price_quoted_vnd": 590000,
+        "payment": "COD",
+        "phone_provided": "0911552274"
+      },
+      "success_if": {
+        "tool_called": "order.create",
+        "args_match": {
+          "sku": "SKU-FAN-SEN",
+          "price_vnd": 590000,
+          "payment": "COD"
+        }
+      },
+      "expected_outcome": "chot_don",
+      "channel_identity": "zalo.trung.test_196"
+    }
+  }
+}

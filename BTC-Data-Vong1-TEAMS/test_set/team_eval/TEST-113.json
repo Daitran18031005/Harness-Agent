@@ -1,0 +1,44 @@
+{
+  "scenario_id": "TEST-113",
+  "level": "M1",
+  "industry": "me-be",
+  "region": "bac",
+  "south": false,
+  "persona": "khach_hoi_nhieu_khong_mua",
+  "hard_case": "cod_vuot_han_muc",
+  "customer_phone": "0910894914",
+  "customer_name": "Khải",
+  "honorific": "anh",
+  "notes": "[me-be] (cod_vuot_tran_giam_sl) Combo Spectra S1 + máy hâm sữa Fatz + 50 túi trữ sữa (SKU-BDL-MOM) tại Hà Nội.",
+  "calls": {
+    "call_1": {
+      "channel": "hotline",
+      "call_date": "2026-10-15",
+      "customer_goal": "định đặt 3x vượt COD 10tr nên rút xuống 1x COD",
+      "customer_turns": [
+        "Lên giúp anh Khải đơn 3 cái Combo Spectra S1 + máy hâm sữa Fatz + 50 túi trữ sữa về Hà Nội, nhà quen thanh toán COD khi nhận đủ hàng nhé.",
+        "Đơn Combo Spectra S1 + máy hâm sữa Fatz + 50 túi trữ sữa hơn 10 triệu (14.370.000đ) bị chặn COD bắt chuyển khoản trước hả? Khải ngại chuyển khoản lắm, giảm xuống lấy 1 chiếc trả COD (4.790.000đ) thôi.",
+        "Địa chỉ nhận là số 26 ngách 62 Đặng Văn Ngữ, Đống Đa, Hà Nội, nhờ shop ghi chú giao cho Khải nha."
+      ],
+      "facts_established": {
+        "product_advised": "SKU-BDL-MOM",
+        "price_quoted_vnd": 4790000,
+        "payment": "COD"
+      },
+      "success_if": {
+        "tool_called": "order.create",
+        "args_match": {
+          "sku": "SKU-BDL-MOM",
+          "qty": 1,
+          "price_vnd": 4790000,
+          "payment": "COD"
+        }
+      },
+      "ground_truth_facts": {
+        "cod_limit_vnd": 10000000,
+        "price_vnd": 4790000
+      },
+      "expected_outcome": "chot_don"
+    }
+  }
+}

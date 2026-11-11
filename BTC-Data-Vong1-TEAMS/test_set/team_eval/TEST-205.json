@@ -1,0 +1,50 @@
+{
+  "scenario_id": "TEST-205",
+  "level": "M1",
+  "industry": "gia-dung",
+  "region": "trung",
+  "south": false,
+  "persona": "khach_thich_khuyen_mai",
+  "hard_case": "doi_y_giua_cuoc",
+  "customer_phone": "0911623554",
+  "customer_name": "Duy",
+  "honorific": "anh",
+  "notes": "[gia-dung] (doi_y_ha_cap) Máy lọc không khí Samsung AX40 (SKU-SS-AX40) tại Huế.",
+  "calls": {
+    "call_1": {
+      "channel": "hotline",
+      "call_date": "2026-10-15",
+      "customer_goal": "ban đầu hỏi Máy lọc không khí Samsung AX40, giữa cuộc đổi sang Máy lọc không khí Xiaomi Smart 4 Lite",
+      "customer_turns": [
+        "Chỗ anh Duy ở Huế đang tìm mua Máy lọc không khí Samsung AX40, điểm mạnh về cảm biến bụi và khử mùi hôi mạnh thực tế thế nào hả em?",
+        "Em gạch Máy lọc không khí Samsung AX40 đầu tiên đi giùm Duy, đặt cuối cùng đúng chiếc Máy lọc không khí Xiaomi Smart 4 Lite niêm yết 2.990.000đ về Huế thôi.",
+        "Lên đơn cho Duy chính xác mẫu Máy lọc không khí Xiaomi Smart 4 Lite sau cùng này nha. Địa chỉ nhận là số 108 đường Nguyễn Huệ, Vĩnh Ninh, Huế, nhờ shop ghi chú giao cho Duy nha em. Thanh toán COD."
+      ],
+      "facts_established": {
+        "initial_product": "SKU-SS-AX40",
+        "product_advised": "SKU-XM-4L",
+        "price_quoted_vnd": 2990000,
+        "payment": "COD"
+      },
+      "success_if": {
+        "tool_called": "order.create",
+        "args_match": {
+          "sku": "SKU-XM-4L",
+          "price_vnd": 2990000,
+          "payment": "COD"
+        }
+      },
+      "memory_expectation": {
+        "product_advised": "SKU-XM-4L",
+        "superseded": [
+          "SKU-SS-AX40"
+        ]
+      },
+      "ground_truth_facts": {
+        "final_sku": "SKU-XM-4L",
+        "price_vnd": 2990000
+      },
+      "expected_outcome": "chot_don"
+    }
+  }
+}

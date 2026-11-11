@@ -1,0 +1,41 @@
+{
+  "scenario_id": "TEST-138",
+  "level": "M1",
+  "industry": "me-be",
+  "region": "nam",
+  "south": true,
+  "persona": "khach_so_gia",
+  "hard_case": "mua_kem_phu_kien",
+  "customer_phone": "0911092914",
+  "customer_name": "Tiến",
+  "honorific": "anh",
+  "notes": "[me-be] (mua_them_phu_kien_kem) Bình sữa Pigeon PPSU 240ml (SKU-MB-BOT) tại TP.HCM.",
+  "calls": {
+    "call_1": {
+      "channel": "hotline",
+      "call_date": "2026-10-15",
+      "customer_goal": "mua Bình sữa Pigeon PPSU 240ml kèm phụ kiện Túi trữ sữa Sunmum 50 túi trong cùng đơn",
+      "customer_turns": [
+        "Tiến tham khảo Bình sữa Pigeon PPSU 240ml nãy giờ, phân vân nhất đoạn nhựa PPSU chịu nhiệt 240ml an toàn cho trẻ khi đặt tại TP.HCM.",
+        "Đóng giúp anh Tiến cả bộ gồm Bình sữa Pigeon PPSU 240ml và kèm theo Túi trữ sữa Sunmum 50 túi (119.000đ) giao chung chuyến nha.",
+        "Xuất giúp Tiến đủ bộ Bình sữa Pigeon PPSU 240ml kèm Túi trữ sữa Sunmum 50 túi tổng 408.000đ thanh toán lúc nhận. Chuyển hàng tới số 16 đường Sư Vạn Hạnh, Quận 10, TP.HCM giúp anh, đến nơi gọi số này cho Tiến."
+      ],
+      "facts_established": {
+        "product_advised": "SKU-MB-BOT",
+        "accessory_sku": "SKU-MB-BAG"
+      },
+      "success_if": {
+        "tool_called": "order.create",
+        "args_match": {
+          "sku": "SKU-MB-BOT",
+          "price_vnd": 289000,
+          "payment": "COD"
+        },
+        "also_ordered": [
+          "SKU-MB-BAG"
+        ]
+      },
+      "expected_outcome": "chot_don"
+    }
+  }
+}

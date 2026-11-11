@@ -1,0 +1,43 @@
+{
+  "scenario_id": "TEST-139",
+  "level": "M1",
+  "industry": "gia-dung",
+  "region": "nam",
+  "south": true,
+  "persona": "khach_do_du_hoi_nguoi_nha",
+  "hard_case": "nam_freeship_promo",
+  "customer_phone": "0911100834",
+  "customer_name": "Sơn",
+  "honorific": "anh",
+  "notes": "[gia-dung] (nam_freeship_gia_dung) Máy lọc không khí Xiaomi Smart 4 Lite (SKU-XM-4L) tại Vũng Tàu.",
+  "calls": {
+    "call_1": {
+      "channel": "hotline",
+      "call_date": "2026-10-15",
+      "customer_goal": "đặt gia dụng miền Nam (Vũng Tàu) áp NAM-SHIP0 cho Máy lọc không khí Xiaomi Smart 4 Lite",
+      "customer_turns": [
+        "Shop ơi, anh Sơn tại Vũng Tàu muốn mua Máy lọc không khí Xiaomi Smart 4 Lite giá 2.990.000đ, đơn giao miền Nam không mất tiền ship phải không em?",
+        "Được freeship luôn thì lên đơn Máy lọc không khí Xiaomi Smart 4 Lite giao COD về số 38 phố Trương Công Định, Phường 3, Vũng Tàu giùm Sơn nha."
+      ],
+      "facts_established": {
+        "product_advised": "SKU-XM-4L",
+        "price_quoted_vnd": 2990000,
+        "payment": "COD",
+        "region": "nam"
+      },
+      "success_if": {
+        "tool_called": "order.create",
+        "args_match": {
+          "sku": "SKU-XM-4L",
+          "price_vnd": 2990000,
+          "payment": "COD"
+        }
+      },
+      "ground_truth_facts": {
+        "freeship": true,
+        "price_vnd": 2990000
+      },
+      "expected_outcome": "chot_don"
+    }
+  }
+}

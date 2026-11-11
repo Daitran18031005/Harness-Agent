@@ -3,15 +3,15 @@
   "level": "M1",
   "persona": "khach_thich_khuyen_mai",
   "hard_case": null,
-  "customer_phone": "0982141621",
-  "customer_name": "Quân",
+  "customer_phone": "0911223344",
+  "customer_name": "Bình",
   "honorific": "anh",
-  "notes": "[Gia dụng] Bộ lõi lọc thay thế RO 1-2-3 (SKU-WF-CORE: 390.000đ). Khách C018 gọi mua bộ lõi thay định kỳ cho máy Karofi 9 lõi đã mua trước đó. Agent xác nhận đúng model và tạo đơn.",
+  "notes": "[Gia dụng] Bộ lõi lọc thay thế RO 1-2-3 (SKU-WF-CORE: 390.000đ).",
   "calls": {
     "call_1": {
       "call_date": "2026-10-15",
       "customer_turns": [
-        "Em ơi anh Quân đây, máy lọc nước Karofi anh dùng được 6 tháng rồi, giờ cần thay bộ 3 lõi lọc thô 1 2 3.",
+        "Em ơi anh Bình đây, máy lọc nước Karofi anh dùng được 6 tháng rồi, giờ cần thay bộ 3 lõi lọc thô 1 2 3.",
         "Bộ lõi thay thế RO 1-2-3 giá bao nhiêu vậy em?",
         "Ok lên đơn bộ lõi 390k giúp anh nhé, giao COD về số 5 Nguyễn Chí Thanh, Ba Đình, Hà Nội."
       ],

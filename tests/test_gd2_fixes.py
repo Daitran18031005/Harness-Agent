@@ -60,8 +60,15 @@ class QtyCarryTest(GateBase):
         self.llm.reader = lambda t: COMMIT
         _, tc, meta = self.turn(NEW_PHONE, "ok lấy luôn", [])
         self.assertTrue(meta["gate_open"]["opened"], meta["gate_open"])
-        quote = phone_args(tc, "pricing.get_quote")[-1]
-        self.assertEqual(quote["qty"], 2)
+        quote = phone_args(tc, "pricing.quote_order")[-1]            # từ 2 máy: giá từng máy lấy bằng pricing.quote_order (BTC 11/2026)
+        self.assertEqual(quote["lines"], [{"sku": "SKU-AP-X", "qty": 2}])
+
+    def test_basket_comes_from_latest_quote_order(self):
+        sid = "SESS-B"
+        self.orch._call_log[sid] = [{"name": "pricing.get_quote", "args": {"sku": "SKU-AP-X"}, "result": {}},
+                                    {"name": "pricing.quote_order", "args": {"lines": [{"sku": "SKU-AP-MINI", "qty": 1}, {"sku": "SKU-AP-X", "qty": 2}]}, "result": {"units": []}}]
+        self.assertEqual(self.orch._basket_in_play(sid, "SKU-AP-X"), [{"sku": "SKU-AP-X", "qty": 2}, {"sku": "SKU-AP-MINI", "qty": 1}])
+        self.assertEqual(self.orch._qty_in_play(sid, "SKU-AP-X"), 2)
 
     def test_default_is_one(self):
         sid = "SESS-X"

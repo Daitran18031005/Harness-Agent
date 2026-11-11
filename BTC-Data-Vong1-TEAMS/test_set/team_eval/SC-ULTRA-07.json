@@ -1,0 +1,95 @@
+{
+  "scenario_id": "SC-ULTRA-07",
+  "level": "M1",
+  "industry": "me-be",
+  "region": "nam",
+  "south": true,
+  "persona": "khach_mua_nhieu_mon",
+  "hard_case": "ultra_4c_xe_day_2_chieu_gập_1_tay",
+  "customer_phone": "0900040007",
+  "customer_name": "Đạt",
+  "honorific": "anh",
+  "notes": "Kịch bản siêu khó trên 3 cuộc gọi: 4 cuộc: Hỏi xe đẩy sơ sinh Combi Sugocal -> So sánh Joie Pact -> Chốt Combi 6.790k + kiểm tra freeship -> Hỏi cách đảo tay cầm và giặt đệm.",
+  "calls": {
+    "call_1": {
+      "channel": "hotline",
+      "call_date": "2026-10-01",
+      "customer_goal": "hỏi xe đẩy 2 chiều cho trẻ sơ sinh",
+      "customer_turns": [
+        "Vợ anh chuẩn bị sinh, tìm xe đẩy đẩy được hai chiều cho bé sơ sinh dưới 6 tháng."
+      ],
+      "expected_outcome": "hen_goi_lai",
+      "facts_established": {
+        "product_advised": "SKU-MB-STR2"
+      }
+    },
+    "call_2": {
+      "channel": "hotline",
+      "call_date": "2026-10-03",
+      "customer_goal": "phân vân tải trọng Combi vs Joie",
+      "customer_turns": [
+        "Combi Sugocal 15kg với Joie Pact 22kg thì xe nào êm cho bé sơ sinh hơn em?"
+      ],
+      "expected_outcome": "hen_goi_lai",
+      "days_later": 2,
+      "must_carry_over": [
+        "product_advised"
+      ],
+      "must_not_ask": [
+        "product_advised"
+      ],
+      "success_if": {
+        "tool_called": null
+      }
+    },
+    "call_3": {
+      "channel": "hotline",
+      "call_date": "2026-10-05",
+      "customer_goal": "chốt mua Combi Sugocal COD",
+      "customer_turns": [
+        "Thống nhất lấy Combi Sugocal 6.790.000đ nhé, gửi 45 đường 30/4 Cần Thơ, COD được freeship đơn Mẹ & Bé đúng không em?"
+      ],
+      "expected_outcome": "chot_don",
+      "days_later": 2,
+      "must_carry_over": [
+        "product_advised"
+      ],
+      "must_not_ask": [
+        "product_advised"
+      ],
+      "success_if": {
+        "tool_called": "order.create",
+        "args_match": {
+          "sku": "SKU-MB-STR2",
+          "price_vnd": 6790000,
+          "payment": "COD"
+        }
+      }
+    },
+    "call_4": {
+      "channel": "hotline",
+      "call_date": "2026-10-08",
+      "customer_goal": "hỏi cách gập xe và tháo đệm",
+      "customer_turns": [
+        "Nhận xe rồi mà chỗ lẫy khóa đẩy 2 chiều với tháo đệm Dacco giặt máy sao em chỉ anh với."
+      ],
+      "expected_outcome": "hen_goi_lai",
+      "days_later": 3,
+      "must_carry_over": [
+        "product_advised"
+      ],
+      "must_not_ask": [
+        "product_advised"
+      ],
+      "success_if": {
+        "tool_called": null,
+        "must_say_any": [
+          "đệm",
+          "khóa",
+          "giặt",
+          "gập"
+        ]
+      }
+    }
+  }
+}

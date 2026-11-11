@@ -1,0 +1,44 @@
+{
+  "scenario_id": "TEST-176",
+  "level": "M1",
+  "industry": "gia-dung",
+  "region": "bac",
+  "south": false,
+  "persona": "khach_can_ship_gap",
+  "hard_case": "cod_vuot_han_muc",
+  "customer_phone": "0911393874",
+  "customer_name": "Khải",
+  "honorific": "anh",
+  "notes": "[gia-dung] (cod_vuot_tran_giam_sl) Máy lọc không khí AirPure Y (SKU-AP-Y) tại Hải Phòng.",
+  "calls": {
+    "call_1": {
+      "channel": "hotline",
+      "call_date": "2026-10-15",
+      "customer_goal": "định đặt 2x vượt COD 10tr nên rút xuống 1x COD",
+      "customer_turns": [
+        "Anh Khải định gom 2 máy Máy lọc không khí AirPure Y về Hải Phòng trong một đơn COD cho đỡ lắt nhắt nhiều lần.",
+        "Thế Khải rút bớt Máy lọc không khí AirPure Y lại đúng 1 cái 5.200.000đ để nằm dưới hạn mức 10 triệu thanh toán COD ở Hải Phòng cho an tâm.",
+        "Lên đơn giao về số 12 khu dân cư Anh Dũng, Dương Kinh, Hải Phòng cho anh Khải, kiểm tra kỹ hàng trước khi xuất kho nha."
+      ],
+      "facts_established": {
+        "product_advised": "SKU-AP-Y",
+        "price_quoted_vnd": 5200000,
+        "payment": "COD"
+      },
+      "success_if": {
+        "tool_called": "order.create",
+        "args_match": {
+          "sku": "SKU-AP-Y",
+          "qty": 1,
+          "price_vnd": 5200000,
+          "payment": "COD"
+        }
+      },
+      "ground_truth_facts": {
+        "cod_limit_vnd": 10000000,
+        "price_vnd": 5200000
+      },
+      "expected_outcome": "chot_don"
+    }
+  }
+}

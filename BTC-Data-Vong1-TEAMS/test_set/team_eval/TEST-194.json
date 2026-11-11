@@ -1,0 +1,58 @@
+{
+  "scenario_id": "TEST-194",
+  "level": "M1",
+  "industry": "me-be",
+  "region": "bac",
+  "south": false,
+  "persona": "khach_can_ship_gap",
+  "hard_case": null,
+  "customer_phone": "0911536434",
+  "customer_name": "Khải",
+  "honorific": "anh",
+  "notes": "[me-be] (da_kenh_zalo_hotline) Túi trữ sữa Sunmum 50 túi (SKU-MB-BAG) tại Quảng Ninh.",
+  "calls": {
+    "call_1": {
+      "channel": "zalo_oa",
+      "channel_identity": "zalo.khải.194",
+      "call_date": "2026-10-15",
+      "customer_goal": "nhắn Zalo hỏi Túi trữ sữa Sunmum 50 túi để lại SĐT 0911536434",
+      "customer_turns": [
+        "Khải tham khảo Túi trữ sữa Sunmum 50 túi nãy giờ, phân vân nhất đoạn hộp năm mươi túi Sunmum tiệt trùng sẵn khóa kéo đôi khi đặt tại Quảng Ninh.",
+        "Nhớ lưu SĐT 0911536434 của Khải gắn với mẫu Túi trữ sữa Sunmum 50 túi, qua tuần rảnh gọi tổng đài đặt giao Quảng Ninh."
+      ],
+      "facts_established": {
+        "product_advised": "SKU-MB-BAG",
+        "price_quoted_vnd": 119000,
+        "phone_provided": "0911536434"
+      },
+      "expected_outcome": "hen_goi_lai"
+    },
+    "call_2": {
+      "channel": "hotline",
+      "days_later": 2,
+      "customer_goal": "gọi hotline nhắc lại đơn đang xem bên Zalo để chốt luôn",
+      "customer_turns": [
+        "Chào em, Khải vừa chat Zalo hai ngày trước về Túi trữ sữa Sunmum 50 túi đây, nay gọi qua tổng đài chốt nhanh món đó về Quảng Ninh nhé.",
+        "Lên đơn giao về số 128 phố Kênh Liêm, Hồng Hải, Quảng Ninh cho anh Khải, kiểm tra kỹ hàng trước khi xuất kho nha. Thanh toán COD."
+      ],
+      "must_carry_over": [
+        "product_advised"
+      ],
+      "must_not_ask": [
+        "product_advised"
+      ],
+      "success_if": {
+        "tool_called": "order.create",
+        "args_match": {
+          "sku": "SKU-MB-BAG",
+          "price_vnd": 119000,
+          "payment": "COD"
+        }
+      },
+      "ground_truth_facts": {
+        "price_vnd": 119000
+      },
+      "expected_outcome": "chot_don"
+    }
+  }
+}

@@ -1,0 +1,91 @@
+{
+  "scenario_id": "TEST-101",
+  "level": "M1",
+  "industry": "thoi-trang",
+  "region": "bac",
+  "south": false,
+  "persona": "khach_hoi_nhieu_khong_mua",
+  "hard_case": "doi_size_lan_hai",
+  "customer_phone": "0910799874",
+  "customer_name": "Thành",
+  "honorific": "anh",
+  "notes": "[thoi-trang] (doi_size_lan_hai_60k) Áo phao lông vũ Warmly (SKU-JK-DWN-L-BE) tại Hải Phòng.",
+  "calls": {
+    "call_1": {
+      "channel": "hotline",
+      "call_date": "2026-10-27",
+      "customer_goal": "mua Áo phao lông vũ Warmly biến thể L be",
+      "customer_turns": [
+        "Đặt cho anh Thành mẫu Áo phao lông vũ Warmly cỡ L màu be nhé, nhận hàng trả tiền tại số 42 khu dân cư Anh Dũng, Dương Kinh, Hải Phòng."
+      ],
+      "facts_established": {
+        "order_id": "OD900101",
+        "product_advised": "SKU-JK-DWN",
+        "variant_sku": "SKU-JK-DWN-L-BE",
+        "size": "L",
+        "color": "be",
+        "price_quoted_vnd": 1490000
+      },
+      "success_if": {
+        "tool_called": "order.create",
+        "args_match": {
+          "sku": "SKU-JK-DWN-L-BE",
+          "price_vnd": 1490000,
+          "payment": "COD"
+        }
+      },
+      "expected_outcome": "chot_don"
+    },
+    "call_2": {
+      "channel": "hotline",
+      "days_later": 2,
+      "customer_goal": "đổi lần 1 sang M miễn phí",
+      "customer_turns": [
+        "Cho Thành đổi đơn Áo phao lông vũ Warmly từ size L xuống cỡ M màu be nhé."
+      ],
+      "must_carry_over": [
+        "order_id"
+      ],
+      "must_not_ask": [
+        "product_advised"
+      ],
+      "success_if": {
+        "tool_called": "order.update",
+        "args_match": {
+          "action": "exchange_size",
+          "new_variant_sku": "SKU-JK-DWN-M-BE"
+        }
+      },
+      "expected_outcome": "chot_don"
+    },
+    "call_3": {
+      "channel": "hotline",
+      "days_later": 2,
+      "customer_goal": "đổi lần 2 trên cùng đơn phải chịu phí ship 60k (DT-03)",
+      "customer_turns": [
+        "Thử áo Warmly cỡ M rồi mà Thành thấy vẫn hơi rộng vai, xin đổi tiếp lần 2 xuống size S màu navy và chịu phí 60k nha em."
+      ],
+      "must_carry_over": [
+        "order_id"
+      ],
+      "must_not_ask": [
+        "product_advised"
+      ],
+      "success_if": {
+        "tool_called": "order.update",
+        "args_match": {
+          "action": "exchange_size",
+          "new_variant_sku": "SKU-JK-DWN-S-NAVY"
+        },
+        "must_say_any": [
+          "60.000",
+          "60k"
+        ]
+      },
+      "ground_truth_facts": {
+        "exchange_fee_vnd": 60000
+      },
+      "expected_outcome": "chot_don"
+    }
+  }
+}

@@ -3,7 +3,7 @@
   "level": "M1",
   "persona": "khach_do_du_hoi_nguoi_nha",
   "hard_case": "lich_nghi_hen_goi_lai",
-  "customer_phone": "0900001006",
+  "customer_phone": "0919887766",
   "customer_name": "Triết",
   "honorific": "anh",
   "notes": "Khách hẹn gọi lại vào ngày nghỉ lễ công ty 2026-10-26 (thong-bao-lich-nghi.md LN-02). Tool schedule_callback tự động dời lịch sang ngày làm việc kế tiếp 2026-10-27 lúc 08:00. Agent phải thông báo lịch nghỉ và hẹn ngày làm việc tiếp theo.",
@@ -22,7 +22,7 @@
       "success_if": {
         "tool_called": "schedule.callback",
         "args_match": {
-          "customer_phone": "0900001006"
+          "customer_phone": "0919887766"
         },
         "must_say_any": [
           "nghỉ lễ",

@@ -1,0 +1,43 @@
+{
+  "scenario_id": "TEST-84",
+  "level": "M1",
+  "industry": "gia-dung",
+  "region": "nam",
+  "south": true,
+  "persona": "khach_so_gia",
+  "hard_case": "nam_freeship_promo",
+  "customer_phone": "0910665234",
+  "customer_name": "Tiến",
+  "honorific": "anh",
+  "notes": "[gia-dung] (nam_freeship_gia_dung) Bộ lõi lọc thay thế RO 1-2-3 (SKU-WF-CORE) tại Vũng Tàu.",
+  "calls": {
+    "call_1": {
+      "channel": "hotline",
+      "call_date": "2026-10-15",
+      "customer_goal": "đặt gia dụng miền Nam (Vũng Tàu) áp NAM-SHIP0 cho Bộ lõi lọc thay thế RO 1-2-3",
+      "customer_turns": [
+        "Shop check giùm Tiến xem giao Bộ lõi lọc thay thế RO 1-2-3 (390.000đ) về Vũng Tàu có miễn cước vận chuyển theo ưu đãi khu vực phía Nam không?",
+        "Vậy quá tiện rồi Tiến lấy ngay Bộ lõi lọc thay thế RO 1-2-3, địa chỉ nhận tại số 228 đường Thùy Vân, Thắng Tam, Vũng Tàu, thu tiền COD."
+      ],
+      "facts_established": {
+        "product_advised": "SKU-WF-CORE",
+        "price_quoted_vnd": 390000,
+        "payment": "COD",
+        "region": "nam"
+      },
+      "success_if": {
+        "tool_called": "order.create",
+        "args_match": {
+          "sku": "SKU-WF-CORE",
+          "price_vnd": 390000,
+          "payment": "COD"
+        }
+      },
+      "ground_truth_facts": {
+        "freeship": true,
+        "price_vnd": 390000
+      },
+      "expected_outcome": "chot_don"
+    }
+  }
+}

@@ -1,0 +1,57 @@
+{
+  "scenario_id": "TEST-54",
+  "level": "M1",
+  "industry": "gia-dung",
+  "region": "nam",
+  "south": true,
+  "persona": "khach_so_gia",
+  "hard_case": null,
+  "customer_phone": "0910427634",
+  "customer_name": "Kiên",
+  "honorific": "anh",
+  "notes": "[gia-dung] (da_kenh_fb_doi_sl_dc) Màng lọc thay thế AirPure Pro (SKU-AP-FLT-P) tại Cần Thơ.",
+  "calls": {
+    "call_1": {
+      "channel": "chat_fanpage",
+      "channel_identity": "fb.kiên.54",
+      "call_date": "2026-10-15",
+      "customer_goal": "chat Fanpage hỏi 1 bộ Màng lọc thay thế AirPure Pro kèm số 0910427634",
+      "customer_turns": [
+        "Kiên tham khảo Màng lọc thay thế AirPure Pro nãy giờ, phân vân nhất đoạn mã linh kiện chuẩn hãng giữ hiệu suất diệt khuẩn khi đặt tại Cần Thơ.",
+        "Đây là số liên lạc của Kiên: 0910427634, hỏi trước Màng lọc thay thế AirPure Pro trên Fanpage rồi ít hôm gọi hotline sau."
+      ],
+      "facts_established": {
+        "product_advised": "SKU-AP-FLT-P",
+        "price_quoted_vnd": 990000,
+        "phone_provided": "0910427634"
+      },
+      "expected_outcome": "hen_goi_lai"
+    },
+    "call_2": {
+      "channel": "hotline",
+      "days_later": 3,
+      "customer_goal": "gọi hotline đổi số lượng thành 2 bộ và chốt đơn",
+      "customer_turns": [
+        "Bên Fanpage có lưu tên Kiên hỏi Màng lọc thay thế AirPure Pro hôm kia đấy, hôm nay gộp thêm một suất nữa thành 2 bộ gửi về Cần Thơ nhé.",
+        "Chuyển hàng tới số 128 đường Trần Hưng Đạo, An Phú, Cần Thơ giúp anh, đến nơi gọi số này cho Kiên. Thanh toán chuyển khoản cho gọn."
+      ],
+      "must_carry_over": [
+        "product_advised"
+      ],
+      "must_not_ask": [
+        "product_advised"
+      ],
+      "success_if": {
+        "tool_called": "order.create",
+        "args_match": {
+          "sku": "SKU-AP-FLT-P",
+          "qty": 2,
+          "price_vnd": 990000,
+          "payment": "bank"
+        },
+        "total_match_vnd": 1980000
+      },
+      "expected_outcome": "chot_don"
+    }
+  }
+}

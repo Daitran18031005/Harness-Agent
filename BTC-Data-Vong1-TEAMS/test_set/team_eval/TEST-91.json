@@ -1,0 +1,57 @@
+{
+  "scenario_id": "TEST-91",
+  "level": "M1",
+  "industry": "gia-dung",
+  "region": "trung",
+  "south": false,
+  "persona": "khach_do_du_hoi_nguoi_nha",
+  "hard_case": null,
+  "customer_phone": "0910720674",
+  "customer_name": "Minh",
+  "honorific": "anh",
+  "notes": "[gia-dung] (da_kenh_fb_doi_sl_dc) Bộ lõi lọc thay thế RO 1-2-3 (SKU-WF-CORE) tại Huế.",
+  "calls": {
+    "call_1": {
+      "channel": "chat_fanpage",
+      "channel_identity": "fb.minh.91",
+      "call_date": "2026-10-15",
+      "customer_goal": "chat Fanpage hỏi 1 bộ Bộ lõi lọc thay thế RO 1-2-3 kèm số 0910720674",
+      "customer_turns": [
+        "Shop báo giúp Minh giá lăn bánh về Huế của Bộ lõi lọc thay thế RO 1-2-3 kèm khuyến mãi hiện hành nha.",
+        "Lưu số 0910720674 giúp anh Minh tại Huế, lúc nào gia đình chốt lấy Bộ lõi lọc thay thế RO 1-2-3 thì gọi tổng đài."
+      ],
+      "facts_established": {
+        "product_advised": "SKU-WF-CORE",
+        "price_quoted_vnd": 390000,
+        "phone_provided": "0910720674"
+      },
+      "expected_outcome": "hen_goi_lai"
+    },
+    "call_2": {
+      "channel": "hotline",
+      "days_later": 3,
+      "customer_goal": "gọi hotline đổi số lượng thành 2 bộ và chốt đơn",
+      "customer_turns": [
+        "Anh Minh vừa hỏi Bộ lõi lọc thay thế RO 1-2-3 trên Facebook hôm kia đây, nhà cô ruột muốn lấy thêm nên nâng lên 2 bộ giao cùng chuyến nha.",
+        "Ship về tận nơi tại số 102 đường Lê Lợi, Phú Hội, Huế, người nhận ghi tên Minh nhé. Anh Minh chọn quét chuyển khoản ngân hàng thanh toán trước toàn bộ đơn này nhé."
+      ],
+      "must_carry_over": [
+        "product_advised"
+      ],
+      "must_not_ask": [
+        "product_advised"
+      ],
+      "success_if": {
+        "tool_called": "order.create",
+        "args_match": {
+          "sku": "SKU-WF-CORE",
+          "qty": 2,
+          "price_vnd": 390000,
+          "payment": "bank"
+        },
+        "total_match_vnd": 780000
+      },
+      "expected_outcome": "chot_don"
+    }
+  }
+}

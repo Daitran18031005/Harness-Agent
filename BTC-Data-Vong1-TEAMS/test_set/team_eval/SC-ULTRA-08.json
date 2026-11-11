@@ -1,0 +1,114 @@
+{
+  "scenario_id": "SC-ULTRA-08",
+  "level": "M1",
+  "industry": "gia-dung",
+  "region": "trung",
+  "south": false,
+  "persona": "khach_goi_lan_3_het_kien_nhan",
+  "hard_case": "ultra_5c_bao_lu_tre_hang_bao_hanh",
+  "customer_phone": "0900040008",
+  "customer_name": "Long",
+  "honorific": "anh",
+  "notes": "Kịch bản siêu khó trên 3 cuộc gọi: 5 cuộc: Hỏi nướng gà -> Chốt Philips 6.2L -> Check kẹt bão đèo Hải Vân -> Hối hỏa tốc -> Kích hoạt bảo hành.",
+  "calls": {
+    "call_1": {
+      "channel": "hotline",
+      "call_date": "2026-10-01",
+      "customer_goal": "hỏi dung tích nồi Philips 6.2L",
+      "customer_turns": [
+        "Nồi chiên Philips 6.2L nướng nguyên con gà hai ký không cần chặt có vừa không em?"
+      ],
+      "expected_outcome": "hen_goi_lai",
+      "facts_established": {
+        "product_advised": "SKU-AF-6L"
+      }
+    },
+    "call_2": {
+      "channel": "hotline",
+      "call_date": "2026-10-03",
+      "customer_goal": "chốt giao Tam Kỳ Quảng Nam",
+      "customer_turns": [
+        "Đặt cho anh nồi Philips 6.2L nhé, giao 62 Phan Châu Trinh, Tam Kỳ, trả tiền mặt lúc nhận."
+      ],
+      "expected_outcome": "chot_don",
+      "days_later": 2,
+      "must_carry_over": [
+        "product_advised"
+      ],
+      "must_not_ask": [
+        "product_advised"
+      ],
+      "success_if": {
+        "tool_called": "order.create",
+        "args_match": {
+          "sku": "SKU-AF-6L",
+          "price_vnd": 3990000,
+          "payment": "COD"
+        }
+      }
+    },
+    "call_3": {
+      "channel": "hotline",
+      "call_date": "2026-10-06",
+      "customer_goal": "hỏi tiến độ giao hàng vùng bão",
+      "customer_turns": [
+        "Đơn nồi chiên của anh Long sao tới hôm nay chưa thấy bưu tá gọi phát hàng vậy em?"
+      ],
+      "expected_outcome": "hen_goi_lai",
+      "days_later": 3,
+      "must_carry_over": [
+        "product_advised"
+      ],
+      "must_not_ask": [
+        "product_advised"
+      ],
+      "success_if": {
+        "tool_called": "order.status"
+      }
+    },
+    "call_4": {
+      "channel": "hotline",
+      "call_date": "2026-10-09",
+      "customer_goal": "hối giao gấp đám giỗ cuối tuần",
+      "customer_turns": [
+        "Trễ bốn ngày rồi em ơi, cuối tuần nhà anh làm cỗ rồi có cách nào thúc giao trong sáng mai không?"
+      ],
+      "expected_outcome": "hen_goi_lai",
+      "days_later": 3,
+      "must_carry_over": [
+        "product_advised"
+      ],
+      "must_not_ask": [
+        "product_advised"
+      ],
+      "success_if": {
+        "tool_called": "order.status"
+      }
+    },
+    "call_5": {
+      "channel": "hotline",
+      "call_date": "2026-10-11",
+      "customer_goal": "hỏi đăng ký bảo hành điện tử",
+      "customer_turns": [
+        "Kịp nấu cỗ mừng quá em, chỉ anh cách kích hoạt bảo hành 12 tháng điện tử của Philips luôn với."
+      ],
+      "expected_outcome": "hen_goi_lai",
+      "days_later": 2,
+      "must_carry_over": [
+        "product_advised"
+      ],
+      "must_not_ask": [
+        "product_advised"
+      ],
+      "success_if": {
+        "tool_called": null,
+        "must_say_any": [
+          "12 tháng",
+          "mười hai tháng",
+          "bảo hành",
+          "QR"
+        ]
+      }
+    }
+  }
+}

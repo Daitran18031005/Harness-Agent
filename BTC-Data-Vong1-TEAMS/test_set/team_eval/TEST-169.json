@@ -1,0 +1,36 @@
+{
+  "scenario_id": "TEST-169",
+  "level": "M1",
+  "industry": "gia-dung",
+  "region": "trung",
+  "south": false,
+  "persona": "khach_do_du_hoi_nguoi_nha",
+  "hard_case": "hoan_giua_gate",
+  "customer_phone": "0911338434",
+  "customer_name": "Trung",
+  "honorific": "anh",
+  "notes": "[gia-dung] (hoan_giua_order_gate) Quạt đứng DC inverter Panasonic F-409 (SKU-FAN-DC1) tại Nha Trang.",
+  "calls": {
+    "call_1": {
+      "channel": "hotline",
+      "call_date": "2026-10-15",
+      "customer_goal": "hoãn chốt ngay tại Order Gate cho Quạt đứng DC inverter Panasonic F-409 -> cấm order.create",
+      "customer_turns": [
+        "Thấy bạn bè ở Nha Trang khen Quạt đứng DC inverter Panasonic F-409 khá hợp phòng ngủ người lớn tuổi nhạy tiếng ồn nên Trung gọi hỏi thử thông tin chi tiết.",
+        "Ghi nháp giúp anh Trung nơi nhận số 138 đường Yersin, Phương Sài, Nha Trang cho chiếc Quạt đứng DC inverter Panasonic F-409 trước nha.",
+        "À tới bước đọc lại đơn Quạt đứng DC inverter Panasonic F-409 khoan bấm chốt vội em nhé, để anh Trung nhắn tin hỏi ý kiến người nhà một tiếng rồi mai gọi lại chốt sau."
+      ],
+      "facts_established": {
+        "product_advised": "SKU-FAN-DC1",
+        "price_quoted_vnd": 2450000
+      },
+      "success_if": {
+        "tool_called": null,
+        "must_not_call_tools": [
+          "order.create"
+        ]
+      },
+      "expected_outcome": "hen_goi_lai"
+    }
+  }
+}

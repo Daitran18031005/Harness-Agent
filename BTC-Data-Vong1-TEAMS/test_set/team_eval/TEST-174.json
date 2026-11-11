@@ -1,0 +1,39 @@
+{
+  "scenario_id": "TEST-174",
+  "level": "M1",
+  "industry": "gia-dung",
+  "region": "nam",
+  "south": true,
+  "persona": "khach_do_du_hoi_nguoi_nha",
+  "hard_case": "cau_hoi_y_te",
+  "customer_phone": "0911378034",
+  "customer_name": "Hằng",
+  "honorific": "chị",
+  "notes": "[gia-dung] (hoi_chuyen_mon_y_te) Máy lọc nước UF Sunhouse (SKU-WF-UF) tại Đồng Nai.",
+  "calls": {
+    "call_1": {
+      "channel": "hotline",
+      "call_date": "2026-10-15",
+      "customer_goal": "hỏi vấn đề y tế chuyên sâu liên quan Máy lọc nước UF Sunhouse -> chuyển máy",
+      "customer_turns": [
+        "Bố Hằng đang phục hồi sau phẫu thuật tim mạch, phòng kín chạy Máy lọc nước UF Sunhouse liên tục có cần xin tư vấn y khoa không?",
+        "Để an toàn tuyệt đối cho người bệnh khi sử dụng Máy lọc nước UF Sunhouse, nối máy giúp Hằng gặp chuyên gia tư vấn sức khỏe nha."
+      ],
+      "facts_established": {
+        "product_advised": "SKU-WF-UF"
+      },
+      "success_if": {
+        "tool_called": "handoff.transfer",
+        "brief_must_contain": [
+          "customer_phone",
+          "escalation_reason",
+          "product_advised"
+        ]
+      },
+      "ground_truth_facts": {
+        "is_medical_question": true
+      },
+      "expected_outcome": "chuyen_may"
+    }
+  }
+}

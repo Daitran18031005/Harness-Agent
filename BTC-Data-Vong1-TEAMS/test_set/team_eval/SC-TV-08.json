@@ -1,0 +1,70 @@
+{
+  "scenario_id": "SC-TV-08",
+  "level": "M1",
+  "industry": "thoi-trang",
+  "region": "nam",
+  "south": true,
+  "persona": "khach_so_gia",
+  "hard_case": "tv_marathon_chot_chinh_hang",
+  "customer_phone": "0900030095",
+  "customer_name": "Khải",
+  "honorific": "anh",
+  "notes": "Kịch bản TV 3 cuộc gọi mở rộng: Hỏi RUN-10 -> Trễ hạn 27/10 bực mình hủy -> Xem TV giải Marathon chốt luôn giá niêm yết 1.690k.",
+  "calls": {
+    "call_1": {
+      "channel": "hotline",
+      "call_date": "2026-10-13",
+      "customer_goal": "tìm hiểu sản phẩm và ưu đãi rồi hẹn suy nghĩ (SKU-SN-RUN2)",
+      "customer_turns": [
+        "Đôi RunLite 2 Pro đang chạy chương trình RUN-10 giảm 10% còn tầm triệu rưỡi đúng hông em?",
+        "Để chủ nhật anh đo kỹ lại bàn chân xem 41 hay 42 rồi đặt sau nha."
+      ],
+      "facts_established": {
+        "product_advised": "SKU-SN-RUN2"
+      },
+      "expected_outcome": "hen_goi_lai"
+    },
+    "call_2": {
+      "channel": "hotline",
+      "call_date": "2026-10-27",
+      "days_later": 14,
+      "customer_goal": "gọi lại sau vài ngày nhưng hết KM hoặc không khớp điều kiện nên từ chối mua",
+      "customer_turns": [
+        "Alo, anh Khải bữa hỏi RunLite 2 Pro giảm 10% nè, chốt giùm anh đôi 42 màu đen nghen.",
+        "Mã RUN-10 hết hạn hôm 25/10 rồi sao? Trễ có hai ngày mà không linh động giữ giá giảm thì anh hông lấy đâu."
+      ],
+      "must_carry_over": [
+        "product_advised"
+      ],
+      "must_not_ask": [
+        "product_advised"
+      ],
+      "expected_outcome": "tu_choi"
+    },
+    "call_3": {
+      "channel": "hotline",
+      "call_date": "2026-11-18",
+      "days_later": 22,
+      "customer_goal": "khoảng 1 tháng sau xem quảng cáo TV quay lại: chot_don",
+      "customer_turns": [
+        "Hồi tối coi thời sự thể thao trên truyền hình thấy giải chạy bán marathon TP.HCM tài trợ bằng mẫu RunLite 2 Pro này làm anh mê lại rồi.",
+        "Thôi chấp nhận luôn giá gốc 1.690.000đ miễn hàng chuẩn êm chân chạy giải tới, gửi đôi 42 đen về 92 Cách Mạng Tháng 8, Quận 10, COD giúp anh nha."
+      ],
+      "must_carry_over": [
+        "product_advised"
+      ],
+      "must_not_ask": [
+        "product_advised"
+      ],
+      "success_if": {
+        "tool_called": "order.create",
+        "args_match": {
+          "sku": "SKU-SN-RUN2-42-DEN",
+          "price_vnd": 1690000,
+          "payment": "COD"
+        }
+      },
+      "expected_outcome": "chot_don"
+    }
+  }
+}

@@ -1,0 +1,41 @@
+{
+  "scenario_id": "TEST-149",
+  "level": "M1",
+  "industry": "gia-dung",
+  "region": "bac",
+  "south": false,
+  "persona": "khach_hoi_nhieu_khong_mua",
+  "hard_case": "pham_vi_bao_hanh",
+  "customer_phone": "0911180034",
+  "customer_name": "Khải",
+  "honorific": "anh",
+  "notes": "[gia-dung] (bao_hanh_phu_kien) Nồi chiên không dầu Philips 6.2L (SKU-AF-6L) tại Quảng Ninh.",
+  "calls": {
+    "call_1": {
+      "channel": "chat_fanpage",
+      "call_date": "2026-10-15",
+      "customer_goal": "hỏi phạm vi bảo hành phụ kiện tiêu hao của Nồi chiên không dầu Philips 6.2L",
+      "customer_turns": [
+        "Cho anh Khải thắc mắc chút về Nồi chiên không dầu Philips 6.2L: phần giỏ chiên phụ, ron cao su nắp và núm xoay xài lâu bị xuống cấp thì có được hãng đổi bảo hành free không em?",
+        "À phụ kiện tiêu hao như khay chiên chống dính, vỉ tách dầu và dây nguồn trên Nồi chiên không dầu Philips 6.2L không thuộc phạm vi bảo hành phần thân máy chính đúng không em, Khải cảm ơn giải thích rõ nha."
+      ],
+      "facts_established": {
+        "product_advised": "SKU-AF-6L"
+      },
+      "success_if": {
+        "tool_called": null,
+        "must_say_any": [
+          "tiêu hao",
+          "phụ kiện",
+          "không thuộc",
+          "BH-01"
+        ]
+      },
+      "ground_truth_facts": {
+        "consumables_covered": false
+      },
+      "expected_outcome": "hen_goi_lai",
+      "channel_identity": "fb.khai.test_149"
+    }
+  }
+}

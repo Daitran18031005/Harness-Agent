@@ -1,0 +1,61 @@
+{
+  "scenario_id": "TEST-150",
+  "level": "M1",
+  "industry": "gia-dung",
+  "region": "nam",
+  "south": true,
+  "persona": "khach_do_du_hoi_nguoi_nha",
+  "hard_case": "khuyen_mai_het_han",
+  "customer_phone": "0911187954",
+  "customer_name": "Ánh",
+  "honorific": "chị",
+  "notes": "[gia-dung] (km_het_han_chap_nhan) Máy lọc không khí AirPure X (SKU-AP-X) tại TP.HCM.",
+  "calls": {
+    "call_1": {
+      "channel": "zalo_oa",
+      "call_date": "2026-09-28",
+      "customer_goal": "hỏi Máy lọc không khí AirPure X lúc còn hạn mã AP-SEP (giảm 500k)",
+      "customer_turns": [
+        "Cho Ánh xác nhận Máy lọc không khí AirPure X hiện hưởng AP-SEP (giảm 500k) tới hôm nào vậy em, ít bữa đặt về TP.HCM. Ánh bổ sung SĐT 0911187954 ở Thủ Đức để shop lưu tạm, có gì chị gọi điện hỏi tiếp."
+      ],
+      "facts_established": {
+        "product_advised": "SKU-AP-X",
+        "promo_code": "AP-SEP",
+        "phone_provided": "0911187954"
+      },
+      "expected_outcome": "hen_goi_lai",
+      "channel_identity": "zalo.anh.test_150"
+    },
+    "call_2": {
+      "channel": "hotline",
+      "call_date": "2026-10-08",
+      "days_later": 10,
+      "customer_goal": "gọi lại khi AP-SEP đã hết hạn và vẫn đồng ý chốt giá 4.890.000đ",
+      "customer_turns": [
+        "Nhớ đơn Máy lọc không khí AirPure X bữa trước Ánh xem chương trình AP-SEP không em, nay gọi chốt lấy nè.",
+        "Đành chịu không kịp AP-SEP vậy, lấy Ánh chiếc Máy lọc không khí AirPure X giá 4.890.000đ thanh toán lúc nhận hàng nha. Địa chỉ nhận là số 289 khu Sala Đại Quang Minh, Thủ Đức, TP.HCM, nhờ shop ghi chú giao cho Ánh nghen."
+      ],
+      "must_carry_over": [
+        "product_advised"
+      ],
+      "must_not_ask": [
+        "product_advised"
+      ],
+      "success_if": {
+        "tool_called": "order.create",
+        "args_match": {
+          "sku": "SKU-AP-X",
+          "price_vnd": 4890000,
+          "payment": "COD"
+        },
+        "forbidden_claims": [
+          {
+            "field": "promo_active",
+            "value": true
+          }
+        ]
+      },
+      "expected_outcome": "chot_don"
+    }
+  }
+}

@@ -3,10 +3,10 @@
   "level": "M1",
   "persona": "khach_so_gia",
   "hard_case": "doi_khuyen_mai_het_han",
-  "customer_phone": "0900001008",
+  "customer_phone": "0930048764",
   "customer_name": "Hà",
   "honorific": "chị",
-  "notes": "[Mẹ & Bé] Máy hút sữa Spectra S1 (SKU-MB-PUMP1: 4.290.000đ). Khách hỏi quà 50 túi trữ sữa Sunmum theo mã PUMP-GIFT. Mã này đã hết hạn ngày 2026-10-13 (trước ngày tham chiếu 15/10), agent phải báo hết hạn nhưng vẫn báo đúng freeship MOM-FREESHIP.",
+  "notes": "[Mẹ & Bé] Máy hút sữa Spectra S1 (SKU-MB-PUMP1: 4.290.000đ). Khách đòi tặng 50 túi trữ sữa Sunmum theo mã PUMP-GIFT. Mã này đã hết hạn ngày 2026-10-13 (sau ngày tham chiếu 15/10), agent phải báo hết hạn.",
   "calls": {
     "call_1": {
       "call_date": "2026-10-15",

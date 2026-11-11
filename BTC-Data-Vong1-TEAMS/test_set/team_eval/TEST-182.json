@@ -1,0 +1,51 @@
+{
+  "scenario_id": "TEST-182",
+  "level": "M1",
+  "industry": "thoi-trang",
+  "region": "bac",
+  "south": false,
+  "persona": "khach_thich_khuyen_mai",
+  "hard_case": "khuyen_mai_het_han",
+  "customer_phone": "0911441394",
+  "customer_name": "Hà",
+  "honorific": "chị",
+  "notes": "[thoi-trang] (km_het_han_tu_choi) Giày chạy bộ RunLite 1 (SKU-SN-RUN1) tại Nam Định.",
+  "calls": {
+    "call_1": {
+      "channel": "hotline",
+      "call_date": "2026-10-16",
+      "customer_goal": "hỏi Giày chạy bộ RunLite 1 lúc còn hạn mã RUN-10 (giảm 10%)",
+      "customer_turns": [
+        "Hà tham khảo trước Giày chạy bộ RunLite 1 đang có gói RUN-10 (giảm 10%), ít hôm bàn gia đình xong chốt ở Nam Định."
+      ],
+      "facts_established": {
+        "product_advised": "SKU-SN-RUN1",
+        "promo_code": "RUN-10"
+      },
+      "expected_outcome": "hen_goi_lai"
+    },
+    "call_2": {
+      "channel": "hotline",
+      "call_date": "2026-10-28",
+      "days_later": 12,
+      "customer_goal": "gọi lại khi RUN-10 hết hạn nên từ chối không mua",
+      "customer_turns": [
+        "Hà ở Nam Định định lấy chiếc Giày chạy bộ RunLite 1 giá ưu đãi RUN-10 lần trước, áp mã giúp nhé em.",
+        "Trễ hạn RUN-10 không linh động được thì Hà ở Nam Định xin hoãn vụ Giày chạy bộ RunLite 1 sang đợt khuyến mãi sau nha em."
+      ],
+      "must_carry_over": [
+        "product_advised"
+      ],
+      "must_not_ask": [
+        "product_advised"
+      ],
+      "success_if": {
+        "tool_called": null,
+        "must_not_call_tools": [
+          "order.create"
+        ]
+      },
+      "expected_outcome": "tu_choi"
+    }
+  }
+}

@@ -1,0 +1,72 @@
+{
+  "scenario_id": "SC-TV-05",
+  "level": "M1",
+  "industry": "gia-dung",
+  "region": "nam",
+  "south": true,
+  "persona": "khach_so_gia",
+  "hard_case": "tv_11_11_noi_chien_chot",
+  "customer_phone": "0900030092",
+  "customer_name": "Hương",
+  "honorific": "chị",
+  "notes": "Kịch bản TV 3 cuộc gọi mở rộng: Hỏi Zalo tháng 9 -> Lệch điều kiện ship miền từ chối -> Xem TV 11/11 quay lại chốt 3.391.500đ.",
+  "calls": {
+    "call_1": {
+      "channel": "zalo_oa",
+      "call_date": "2026-09-22",
+      "customer_goal": "tìm hiểu sản phẩm và ưu đãi rồi hẹn suy nghĩ (SKU-AF-6L)",
+      "customer_turns": [
+        "Chị ở Phú Nhuận muốn tìm nồi chiên không dầu Philips 6.2L, tháng 9 có freeship với giảm gì không em?",
+        "Nghe cũng hợp lý đó mà tuần sau chị mới nhận lương, hẹn đầu tháng sau tính tiếp nha. Chị Hương gửi trước số di động 0900030092 nha, sang tháng lãnh lương chị gọi chốt."
+      ],
+      "facts_established": {
+        "product_advised": "SKU-AF-6L",
+        "phone_provided": "0900030092"
+      },
+      "expected_outcome": "hen_goi_lai",
+      "channel_identity": "zalo.huong.sc_tv_05"
+    },
+    "call_2": {
+      "channel": "hotline",
+      "call_date": "2026-10-06",
+      "days_later": 14,
+      "customer_goal": "gọi lại sau vài ngày nhưng hết KM hoặc không khớp điều kiện nên từ chối mua",
+      "customer_turns": [
+        "Chị Hương hỏi nồi chiên Philips bữa 22 tháng 9 nè, giờ chị chốt nhưng áp cho chị freeship như tháng trước được không?",
+        "Bà chị ngoài Bắc đặt hộ mà ship vẫn tính phí chứ chưa được NAM-SHIP0 hả? Thôi phiền phức quá không đặt nữa đâu."
+      ],
+      "must_carry_over": [
+        "product_advised"
+      ],
+      "must_not_ask": [
+        "product_advised"
+      ],
+      "expected_outcome": "tu_choi"
+    },
+    "call_3": {
+      "channel": "hotline",
+      "call_date": "2026-11-11",
+      "days_later": 36,
+      "customer_goal": "khoảng 1 tháng sau xem quảng cáo TV quay lại: chot_don",
+      "customer_turns": [
+        "Tối qua thấy trên truyền hình chạy quảng cáo giảm 15% toàn ngành gia dụng nhân ngày 11/11 áp dụng luôn cho nồi Philips 6.2L còn 3.391.500đ đúng hông?",
+        "Rẻ hơn gần sáu trăm ngàn luôn á! Giao về 34 Lê Văn Sỹ, Phú Nhuận giúp chị nha, trả tiền mặt khi nhận."
+      ],
+      "must_carry_over": [
+        "product_advised"
+      ],
+      "must_not_ask": [
+        "product_advised"
+      ],
+      "success_if": {
+        "tool_called": "order.create",
+        "args_match": {
+          "sku": "SKU-AF-6L",
+          "price_vnd": 3391500,
+          "payment": "COD"
+        }
+      },
+      "expected_outcome": "chot_don"
+    }
+  }
+}

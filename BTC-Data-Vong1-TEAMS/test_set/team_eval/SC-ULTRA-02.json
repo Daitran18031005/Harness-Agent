@@ -1,0 +1,125 @@
+{
+  "scenario_id": "SC-ULTRA-02",
+  "level": "M1",
+  "industry": "gia-dung",
+  "region": "nam",
+  "south": true,
+  "persona": "khach_goi_lan_3_het_kien_nhan",
+  "hard_case": "ultra_5c_tv_1111_doi_moi",
+  "customer_phone": "0900040002",
+  "customer_name": "Đăng",
+  "honorific": "anh",
+  "notes": "Kịch bản siêu khó trên 3 cuộc gọi: 5 cuộc gọi trong 2 tháng: Hỏi KM tháng 9 -> Hết KM hủy -> Xem TV 11/11 mua lại -> Máy kêu rè -> Chuyển quản lý đổi 1-1.",
+  "calls": {
+    "call_1": {
+      "channel": "hotline",
+      "call_date": "2026-09-25",
+      "customer_goal": "hỏi KM tháng 9 AirPure X",
+      "customer_turns": [
+        "Shop ơi AirPure X tháng 9 này giảm 500k hả em?",
+        "Để tui bàn thêm với bà xã rồi mai mốt gọi lại nghen."
+      ],
+      "expected_outcome": "hen_goi_lai",
+      "facts_established": {
+        "product_advised": "SKU-AP-X",
+        "price_quoted_vnd": 4390000
+      }
+    },
+    "call_2": {
+      "channel": "hotline",
+      "call_date": "2026-10-05",
+      "customer_goal": "hết KM từ chối",
+      "customer_turns": [
+        "Alo, anh Đăng bữa trước hỏi AirPure X bốn triệu ba chín chục nè, nay lấy luôn.",
+        "Ủa tăng lại bốn triệu tám chín rồi hả? Cứng nhắc vậy tui hông mua nữa."
+      ],
+      "expected_outcome": "tu_choi",
+      "days_later": 10,
+      "must_carry_over": [
+        "product_advised"
+      ],
+      "must_not_ask": [
+        "product_advised"
+      ],
+      "success_if": {
+        "tool_called": null,
+        "must_not_call_tools": [
+          "order.create"
+        ]
+      }
+    },
+    "call_3": {
+      "channel": "hotline",
+      "call_date": "2026-11-11",
+      "customer_goal": "xem TV 11/11 quay lại chốt",
+      "customer_turns": [
+        "Hôm qua coi tivi thấy sale 11/11 giảm 15% hàng gia dụng đúng hông em?",
+        "Giá còn 4.156.500đ thì chốt giao về 88 Võ Văn Ngân, Thủ Đức, COD nghen."
+      ],
+      "expected_outcome": "chot_don",
+      "days_later": 37,
+      "must_carry_over": [
+        "product_advised"
+      ],
+      "must_not_ask": [
+        "product_advised"
+      ],
+      "success_if": {
+        "tool_called": "order.create",
+        "args_match": {
+          "sku": "SKU-AP-X",
+          "price_vnd": 4156500,
+          "payment": "COD"
+        }
+      }
+    },
+    "call_4": {
+      "channel": "hotline",
+      "call_date": "2026-11-14",
+      "customer_goal": "báo quạt máy kêu rè",
+      "customer_turns": [
+        "Em ơi máy AirPure X mới nhận hôm qua mà bật số 3 quạt kêu rè rè bất thường quá, cho kỹ thuật check giùm tui."
+      ],
+      "expected_outcome": "hen_goi_lai",
+      "days_later": 3,
+      "must_carry_over": [
+        "product_advised"
+      ],
+      "must_not_ask": [
+        "product_advised"
+      ],
+      "success_if": {
+        "tool_called": null,
+        "must_say_any": [
+          "kỹ thuật",
+          "30 ngày",
+          "đổi mới"
+        ]
+      }
+    },
+    "call_5": {
+      "channel": "hotline",
+      "call_date": "2026-11-16",
+      "customer_goal": "cạn kiên nhẫn đòi gặp quản lý",
+      "customer_turns": [
+        "Hẹn 24 tiếng mà 2 ngày chưa thấy thợ đâu! Chuyển ngay máy cho quản lý giải quyết đổi mới cho tui liền!"
+      ],
+      "expected_outcome": "chuyen_may",
+      "days_later": 2,
+      "must_carry_over": [
+        "product_advised"
+      ],
+      "must_not_ask": [
+        "product_advised"
+      ],
+      "success_if": {
+        "tool_called": "handoff.transfer",
+        "brief_must_contain": [
+          "customer_phone",
+          "escalation_reason",
+          "product_advised"
+        ]
+      }
+    }
+  }
+}

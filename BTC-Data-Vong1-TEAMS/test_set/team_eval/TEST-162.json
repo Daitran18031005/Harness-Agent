@@ -1,0 +1,79 @@
+{
+  "scenario_id": "TEST-162",
+  "level": "M1",
+  "industry": "thoi-trang",
+  "region": "nam",
+  "south": true,
+  "persona": "khach_so_gia",
+  "hard_case": "da_phien_3_cuoc",
+  "customer_phone": "0911282994",
+  "customer_name": "Kiên",
+  "honorific": "anh",
+  "notes": "[thoi-trang] (da_phien_3_cuoc_doi_tt) Tất thể thao RunLite (3 đôi) (SKU-SN-SOCK) tại Đồng Nai.",
+  "calls": {
+    "call_1": {
+      "channel": "hotline",
+      "call_date": "2026-10-15",
+      "customer_goal": "3 phiên: phiên 1 tư vấn Tất thể thao RunLite (3 đôi)",
+      "customer_turns": [
+        "Kiên tham khảo Tất thể thao RunLite (3 đôi) nãy giờ, phân vân nhất đoạn set ba đôi thấm hút mồ hôi RunLite khi đặt tại Đồng Nai.",
+        "Cảm ơn tư vấn chiếc Tất thể thao RunLite (3 đôi) nhé, lưu tên Kiên lại giúp mai kia tiện chốt đơn."
+      ],
+      "facts_established": {
+        "product_advised": "SKU-SN-SOCK",
+        "price_quoted_vnd": 149000
+      },
+      "expected_outcome": "hen_goi_lai"
+    },
+    "call_2": {
+      "channel": "hotline",
+      "days_later": 2,
+      "customer_goal": "phiên 2 đặt đơn về địa chỉ ban đầu",
+      "customer_turns": [
+        "Gia đình Kiên thống nhất xong rồi, em đặt luôn Tất thể thao RunLite (3 đôi) hôm trước xem nhé.",
+        "Chuyển hàng tới số 264 khu công nghiệp Amata, Long Bình, Đồng Nai giúp anh, đến nơi gọi số này cho Kiên. Thanh toán COD."
+      ],
+      "must_carry_over": [
+        "product_advised"
+      ],
+      "must_not_ask": [
+        "product_advised"
+      ],
+      "facts_established": {
+        "order_id": "OD700162",
+        "price_quoted_vnd": 149000
+      },
+      "success_if": {
+        "tool_called": "order.create",
+        "args_match": {
+          "sku": "SKU-SN-SOCK",
+          "price_vnd": 149000,
+          "payment": "COD"
+        }
+      },
+      "expected_outcome": "chot_don"
+    },
+    "call_3": {
+      "channel": "hotline",
+      "days_later": 2,
+      "customer_goal": "phiên 3 kiểm tra trạng thái đơn hoặc đổi địa chỉ sang cơ quan",
+      "customer_turns": [
+        "Kiểm tra hành trình Tất thể thao RunLite (3 đôi) cho Kiên với đổi lại chỗ giao sang trụ sở làm việc tại trung tâm Đồng Nai giùm anh."
+      ],
+      "must_carry_over": [
+        "order_id",
+        "product_advised"
+      ],
+      "must_not_ask": [
+        "product_advised"
+      ],
+      "success_if": {
+        "tool_called": "order.update",
+        "args_match": {
+          "action": "update_address"
+        }
+      },
+      "expected_outcome": "chot_don"
+    }
+  }
+}

@@ -1,0 +1,66 @@
+{
+  "scenario_id": "TEST-77",
+  "level": "M1",
+  "industry": "thoi-trang",
+  "region": "bac",
+  "south": false,
+  "persona": "khach_so_gia",
+  "hard_case": "doi_size_7_ngay",
+  "customer_phone": "0910609794",
+  "customer_name": "Trâm",
+  "honorific": "chị",
+  "notes": "[thoi-trang] (doi_size_mien_phi_7d) Giày chạy bộ RunLite 2 Pro (SKU-SN-RUN2-38-DEN) tại Nam Định.",
+  "calls": {
+    "call_1": {
+      "channel": "hotline",
+      "call_date": "2026-10-08",
+      "customer_goal": "mua Giày chạy bộ RunLite 2 Pro biến thể 38 den",
+      "customer_turns": [
+        "Trâm chốt mua Giày chạy bộ RunLite 2 Pro bản 38 den, đóng gói ship COD về số 83 đường Giải Phóng, Cửa Bắc, Nam Định giùm em."
+      ],
+      "facts_established": {
+        "order_id": "OD900077",
+        "product_advised": "SKU-SN-RUN2",
+        "variant_sku": "SKU-SN-RUN2-38-DEN",
+        "size": 38,
+        "color": "den",
+        "price_quoted_vnd": 1690000
+      },
+      "success_if": {
+        "tool_called": "order.create",
+        "args_match": {
+          "sku": "SKU-SN-RUN2-38-DEN",
+          "price_vnd": 1690000,
+          "payment": "COD"
+        }
+      },
+      "expected_outcome": "chot_don"
+    },
+    "call_2": {
+      "channel": "hotline",
+      "days_later": 2,
+      "customer_goal": "đổi lần đầu sang size 39 màu den miễn phí trong 7 ngày",
+      "customer_turns": [
+        "Đôi Giày chạy bộ RunLite 2 Pro size 38 Trâm thử thấy hơi kích mũi chút, hỗ trợ đổi lần đầu miễn phí lên cỡ 39 den trong 7 ngày nha."
+      ],
+      "must_carry_over": [
+        "order_id",
+        "variant_sku"
+      ],
+      "must_not_ask": [
+        "product_advised"
+      ],
+      "success_if": {
+        "tool_called": "order.update",
+        "args_match": {
+          "action": "exchange_size",
+          "new_variant_sku": "SKU-SN-RUN2-39-DEN"
+        }
+      },
+      "ground_truth_facts": {
+        "exchange_fee_vnd": 0
+      },
+      "expected_outcome": "chot_don"
+    }
+  }
+}

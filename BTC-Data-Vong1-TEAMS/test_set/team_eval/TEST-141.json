@@ -1,0 +1,59 @@
+{
+  "scenario_id": "TEST-141",
+  "level": "M1",
+  "industry": "gia-dung",
+  "region": "nam",
+  "south": true,
+  "persona": "khach_thich_khuyen_mai",
+  "hard_case": "khuyen_mai_het_han",
+  "customer_phone": "0911116674",
+  "customer_name": "Hùng",
+  "honorific": "anh",
+  "notes": "[gia-dung] (km_het_han_chap_nhan) Máy lọc không khí Xiaomi Smart 4 Pro (SKU-XM-4P) tại Bình Dương.",
+  "calls": {
+    "call_1": {
+      "channel": "hotline",
+      "call_date": "2026-10-22",
+      "customer_goal": "hỏi Máy lọc không khí Xiaomi Smart 4 Pro lúc còn hạn mã XM-COMBO (tặng màng lọc)",
+      "customer_turns": [
+        "Hùng tham khảo trước Máy lọc không khí Xiaomi Smart 4 Pro đang có gói XM-COMBO (tặng màng lọc), ít hôm bàn gia đình xong chốt ở Bình Dương."
+      ],
+      "facts_established": {
+        "product_advised": "SKU-XM-4P",
+        "promo_code": "XM-COMBO"
+      },
+      "expected_outcome": "hen_goi_lai"
+    },
+    "call_2": {
+      "channel": "hotline",
+      "call_date": "2026-11-16",
+      "days_later": 25,
+      "customer_goal": "gọi lại khi XM-COMBO đã hết hạn và vẫn đồng ý chốt giá 5.490.000đ",
+      "customer_turns": [
+        "Alo em ơi, bữa hỏi Máy lọc không khí Xiaomi Smart 4 Pro mã XM-COMBO nay Hùng gọi chốt nha.",
+        "Qua mất ngày ưu đãi XM-COMBO của Máy lọc không khí Xiaomi Smart 4 Pro cũng đành chịu vậy vì Hùng đang cần, tính giá 5.490.000đ nhé. Nhận tại số 82 phường Thuận Giao, Thuận An, Bình Dương nha em, tên Hùng, có gì bưu tá alo trước 15 phút. Thu COD nha."
+      ],
+      "must_carry_over": [
+        "product_advised"
+      ],
+      "must_not_ask": [
+        "product_advised"
+      ],
+      "success_if": {
+        "tool_called": "order.create",
+        "args_match": {
+          "sku": "SKU-XM-4P",
+          "price_vnd": 5490000,
+          "payment": "COD"
+        },
+        "forbidden_claims": [
+          {
+            "field": "promo_active",
+            "value": true
+          }
+        ]
+      },
+      "expected_outcome": "chot_don"
+    }
+  }
+}

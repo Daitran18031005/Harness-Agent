@@ -1,0 +1,50 @@
+{
+  "scenario_id": "TEST-147",
+  "level": "M1",
+  "industry": "gia-dung",
+  "region": "nam",
+  "south": true,
+  "persona": "khach_thich_khuyen_mai",
+  "hard_case": "doi_y_giua_cuoc",
+  "customer_phone": "0911164194",
+  "customer_name": "Tiến",
+  "honorific": "anh",
+  "notes": "[gia-dung] (doi_y_nang_cap) Máy lọc nước UF Sunhouse (SKU-WF-UF) tại Đồng Nai.",
+  "calls": {
+    "call_1": {
+      "channel": "hotline",
+      "call_date": "2026-10-15",
+      "customer_goal": "ban đầu hỏi Máy lọc nước UF Sunhouse, giữa cuộc đổi sang Máy lọc nước RO Karofi 9 lõi",
+      "customer_turns": [
+        "Shop báo giúp Tiến giá lăn bánh về Đồng Nai của Máy lọc nước UF Sunhouse kèm khuyến mãi hiện hành nha.",
+        "Em gạch Máy lọc nước UF Sunhouse đầu tiên đi giùm Tiến, đặt cuối cùng đúng chiếc Máy lọc nước RO Karofi 9 lõi niêm yết 5.990.000đ về Đồng Nai thôi.",
+        "Lên đơn cho Tiến chính xác mẫu Máy lọc nước RO Karofi 9 lõi sau cùng này nha. Nhận tại số 214 khu công nghiệp Amata, Long Bình, Đồng Nai nha em, tên Tiến, có gì bưu tá alo trước 15 phút. Thanh toán COD."
+      ],
+      "facts_established": {
+        "initial_product": "SKU-WF-UF",
+        "product_advised": "SKU-WF-RO9",
+        "price_quoted_vnd": 5990000,
+        "payment": "COD"
+      },
+      "success_if": {
+        "tool_called": "order.create",
+        "args_match": {
+          "sku": "SKU-WF-RO9",
+          "price_vnd": 5990000,
+          "payment": "COD"
+        }
+      },
+      "memory_expectation": {
+        "product_advised": "SKU-WF-RO9",
+        "superseded": [
+          "SKU-WF-UF"
+        ]
+      },
+      "ground_truth_facts": {
+        "final_sku": "SKU-WF-RO9",
+        "price_vnd": 5990000
+      },
+      "expected_outcome": "chot_don"
+    }
+  }
+}

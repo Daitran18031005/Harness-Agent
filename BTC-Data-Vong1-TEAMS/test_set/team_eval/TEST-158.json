@@ -1,0 +1,47 @@
+{
+  "scenario_id": "TEST-158",
+  "level": "M1",
+  "industry": "me-be",
+  "region": "bac",
+  "south": false,
+  "persona": "khach_can_ship_gap",
+  "hard_case": "cod_can_xac_nhan",
+  "customer_phone": "0911251314",
+  "customer_name": "Khải",
+  "honorific": "anh",
+  "notes": "[me-be] (cod_xac_nhan_chot) Máy hút sữa điện đôi Spectra S1 (SKU-MB-PUMP1) tại Hà Nội.",
+  "calls": {
+    "call_1": {
+      "channel": "hotline",
+      "call_date": "2026-10-15",
+      "customer_goal": "đặt COD Máy hút sữa điện đôi Spectra S1 trên 2tr có xác nhận",
+      "customer_turns": [
+        "Khải tham khảo Máy hút sữa điện đôi Spectra S1 nãy giờ, phân vân nhất đoạn pin tích điện đôi tiện mang đi làm khi đặt tại Hà Nội.",
+        "Ok mức 4.290.000đ cho Máy hút sữa điện đôi Spectra S1, hàng giá trị cao cứ gọi điện xác nhận lại cho Khải trước lúc bưu tá tới Hà Nội đúng không?",
+        "Cứ tiến hành đặt Máy hút sữa điện đôi Spectra S1 theo COD nhé. Lên đơn giao về số 176 ngách 62 Đặng Văn Ngữ, Đống Đa, Hà Nội cho anh Khải, kiểm tra kỹ hàng trước khi xuất kho nha."
+      ],
+      "facts_established": {
+        "product_advised": "SKU-MB-PUMP1",
+        "price_quoted_vnd": 4290000,
+        "payment": "COD"
+      },
+      "success_if": {
+        "tool_called": "order.create",
+        "args_match": {
+          "sku": "SKU-MB-PUMP1",
+          "price_vnd": 4290000,
+          "payment": "COD"
+        },
+        "must_say_any": [
+          "xác nhận",
+          "gọi"
+        ]
+      },
+      "ground_truth_facts": {
+        "price_vnd": 4290000,
+        "needs_confirmation_call": true
+      },
+      "expected_outcome": "chot_don"
+    }
+  }
+}

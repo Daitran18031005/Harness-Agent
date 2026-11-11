@@ -1,0 +1,57 @@
+{
+  "scenario_id": "TEST-159",
+  "level": "M1",
+  "industry": "gia-dung",
+  "region": "nam",
+  "south": true,
+  "persona": "khach_mua_nhieu_mon",
+  "hard_case": null,
+  "customer_phone": "0911259234",
+  "customer_name": "Ánh",
+  "honorific": "chị",
+  "notes": "[gia-dung] (da_kenh_fb_doi_sl_dc) Màng lọc thay thế Xiaomi Smart 4 (SKU-XM-FLT) tại Đồng Nai.",
+  "calls": {
+    "call_1": {
+      "channel": "chat_fanpage",
+      "channel_identity": "fb.ánh.159",
+      "call_date": "2026-10-15",
+      "customer_goal": "chat Fanpage hỏi 1 bộ Màng lọc thay thế Xiaomi Smart 4 kèm số 0911259234",
+      "customer_turns": [
+        "Đang ngắm Màng lọc thay thế Xiaomi Smart 4 cho thay màng lọc trụ cho máy Xiaomi Smart 4, shop kiểm tra hộ Ánh kho còn sẵn hàng xuất đi Đồng Nai không nghen?",
+        "Ghi nhận số 0911259234 của Ánh lại nhé, mai mốt chốt xong Màng lọc thay thế Xiaomi Smart 4 mình gọi trực tiếp hotline."
+      ],
+      "facts_established": {
+        "product_advised": "SKU-XM-FLT",
+        "price_quoted_vnd": 590000,
+        "phone_provided": "0911259234"
+      },
+      "expected_outcome": "hen_goi_lai"
+    },
+    "call_2": {
+      "channel": "hotline",
+      "days_later": 3,
+      "customer_goal": "gọi hotline đổi số lượng thành 2 bộ và chốt đơn",
+      "customer_turns": [
+        "Bữa trước Ánh nhắn Fanpage hỏi một chiếc Màng lọc thay thế Xiaomi Smart 4 nhưng giờ dì ruột ở Đồng Nai rủ mua chung nên tổng cộng đặt thành 2 chiếc luôn nhé.",
+        "Lên đơn giao về số 207 đường Võ Thị Sáu, Thống Nhất, Biên Hòa, Đồng Nai cho chị Ánh, kiểm tra kỹ hàng trước khi xuất kho nghen. Em gửi số tài khoản để chị Ánh chuyển khoản thanh toán trước cho đơn Đồng Nai nghen."
+      ],
+      "must_carry_over": [
+        "product_advised"
+      ],
+      "must_not_ask": [
+        "product_advised"
+      ],
+      "success_if": {
+        "tool_called": "order.create",
+        "args_match": {
+          "sku": "SKU-XM-FLT",
+          "qty": 2,
+          "price_vnd": 590000,
+          "payment": "bank"
+        },
+        "total_match_vnd": 1180000
+      },
+      "expected_outcome": "chot_don"
+    }
+  }
+}

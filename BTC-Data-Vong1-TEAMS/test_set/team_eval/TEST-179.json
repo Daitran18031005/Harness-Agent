@@ -1,0 +1,68 @@
+{
+  "scenario_id": "TEST-179",
+  "level": "M1",
+  "industry": "thoi-trang",
+  "region": "bac",
+  "south": false,
+  "persona": "khach_so_gia",
+  "hard_case": "qua_han_doi_tra_7_ngay",
+  "customer_phone": "0911417634",
+  "customer_name": "Ngọc",
+  "honorific": "chị",
+  "notes": "[thoi-trang] (qua_han_doi_tra_7d) Áo phao lông vũ Warmly (SKU-JK-DWN-L-BE) tại Bắc Ninh.",
+  "calls": {
+    "call_1": {
+      "channel": "hotline",
+      "call_date": "2026-10-08",
+      "customer_goal": "mua Áo phao lông vũ Warmly biến thể L be",
+      "customer_turns": [
+        "Ngọc chốt mua Áo phao lông vũ Warmly bản L be, đóng gói ship COD về số 87 phố Nguyễn Trãi, Võ Cường, Bắc Ninh giùm em."
+      ],
+      "facts_established": {
+        "order_id": "OD900179",
+        "product_advised": "SKU-JK-DWN",
+        "variant_sku": "SKU-JK-DWN-L-BE",
+        "size": "L",
+        "color": "be",
+        "price_quoted_vnd": 1490000
+      },
+      "success_if": {
+        "tool_called": "order.create",
+        "args_match": {
+          "sku": "SKU-JK-DWN-L-BE",
+          "price_vnd": 1490000,
+          "payment": "COD"
+        }
+      },
+      "expected_outcome": "chot_don"
+    },
+    "call_2": {
+      "channel": "hotline",
+      "days_later": 12,
+      "customer_goal": "gọi đòi trả/đổi size khi đã quá 7 ngày (ngày thứ 12)",
+      "customer_turns": [
+        "Từ hôm Ngọc nhận Áo phao lông vũ Warmly ở Bắc Ninh tới giờ trôi qua 12 hôm mất rồi mới mở hộp ra thử không vừa, liệu có xin đổi sang cỡ khác được không?"
+      ],
+      "must_carry_over": [
+        "order_id",
+        "product_advised"
+      ],
+      "must_not_ask": [
+        "product_advised"
+      ],
+      "success_if": {
+        "tool_called": null,
+        "must_say_any": [
+          "7 ngày",
+          "bảy ngày",
+          "quá hạn",
+          "DT-01"
+        ]
+      },
+      "ground_truth_facts": {
+        "within_return_window": false
+      },
+      "expected_outcome": "tu_choi"
+    }
+  }
+}

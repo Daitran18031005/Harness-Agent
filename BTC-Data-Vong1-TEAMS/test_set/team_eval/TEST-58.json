@@ -1,0 +1,45 @@
+{
+  "scenario_id": "TEST-58",
+  "level": "M1",
+  "industry": "me-be",
+  "region": "trung",
+  "south": false,
+  "persona": "khach_mua_nhieu_mon",
+  "hard_case": "chat_teencode_khong_dau",
+  "customer_phone": "0910459314",
+  "customer_name": "Sơn",
+  "honorific": "anh",
+  "notes": "[me-be] (teencode_chat_khong_dau) Xe đẩy gấp gọn Joie Pact (SKU-MB-STR1) tại Đà Nẵng.",
+  "calls": {
+    "call_1": {
+      "channel": "zalo_oa",
+      "call_date": "2026-10-15",
+      "input_mode": "chat_teencode",
+      "customer_goal": "chuẩn hóa teencode không dấu chốt Xe đẩy gấp gọn Joie Pact",
+      "customer_turns": [
+        "Alo shop check giúp Sơn chiếc Xe đẩy gấp gọn Joie Pact dùng cho gia đình hay đi du lịch máy bay muốn xe gọn nhẹ hiện niêm yết giá chuẩn sao ạ?",
+        "Thống nhất lấy luôn Xe đẩy gấp gọn Joie Pact nhé nhận hàng trả tiền mặt ở số 216 đường Ông Ích Khiêm, Thanh Khê, Đà Nẵng tên Sơn. Số nhận hàng của anh Sơn là 0910459314."
+      ],
+      "customer_turns_asr": [
+        "alo shop check gium son chiec xe day gap gon joie pact h niem yet gia chuan sao a",
+        "thong nhat lay lun xe day gap gon joie pact nhe nhan hang tt tien mat o so 216 duong ong ich khiem thanh khe da nang ten son"
+      ],
+      "facts_established": {
+        "product_advised": "SKU-MB-STR1",
+        "price_quoted_vnd": 3490000,
+        "payment": "COD",
+        "phone_provided": "0910459314"
+      },
+      "success_if": {
+        "tool_called": "order.create",
+        "args_match": {
+          "sku": "SKU-MB-STR1",
+          "price_vnd": 3490000,
+          "payment": "COD"
+        }
+      },
+      "expected_outcome": "chot_don",
+      "channel_identity": "zalo.son.test_58"
+    }
+  }
+}

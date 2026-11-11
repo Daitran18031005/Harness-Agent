@@ -1,0 +1,45 @@
+{
+  "scenario_id": "TEST-143",
+  "level": "M1",
+  "industry": "gia-dung",
+  "region": "bac",
+  "south": false,
+  "persona": "khach_hoi_nhieu_khong_mua",
+  "hard_case": null,
+  "customer_phone": "0911132514",
+  "customer_name": "Duy",
+  "honorific": "anh",
+  "notes": "[gia-dung] (cod_nho_chot_ngay) Quạt đứng Senko TS16 (SKU-FAN-SEN) tại Hà Nội.",
+  "calls": {
+    "call_1": {
+      "channel": "chat_fanpage",
+      "call_date": "2026-10-15",
+      "customer_goal": "mua nhanh Quạt đứng Senko TS16 giá dưới 2tr COD",
+      "customer_turns": [
+        "Shop báo giúp Duy giá lăn bánh về Hà Nội của Quạt đứng Senko TS16 kèm khuyến mãi hiện hành nha.",
+        "Giá Quạt đứng Senko TS16 590.000đ nhẹ nhàng thế này thì xuất đơn đi Hà Nội luôn khỏi cần cuộc gọi rà soát hả em?",
+        "Địa chỉ nhận là số 126 ngách 62 Đặng Văn Ngữ, Đống Đa, Hà Nội, nhờ shop ghi chú giao cho Duy nha. SĐT giao nhận của Duy ở Đống Đa là 0911132514, mình trả tiền mặt cho shipper lúc bốc hàng."
+      ],
+      "facts_established": {
+        "product_advised": "SKU-FAN-SEN",
+        "price_quoted_vnd": 590000,
+        "payment": "COD",
+        "phone_provided": "0911132514"
+      },
+      "success_if": {
+        "tool_called": "order.create",
+        "args_match": {
+          "sku": "SKU-FAN-SEN",
+          "price_vnd": 590000,
+          "payment": "COD"
+        }
+      },
+      "ground_truth_facts": {
+        "price_vnd": 590000,
+        "needs_confirmation_call": false
+      },
+      "expected_outcome": "chot_don",
+      "channel_identity": "fb.duy.test_143"
+    }
+  }
+}

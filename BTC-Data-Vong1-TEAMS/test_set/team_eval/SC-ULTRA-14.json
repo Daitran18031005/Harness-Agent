@@ -1,0 +1,89 @@
+{
+  "scenario_id": "SC-ULTRA-14",
+  "level": "M1",
+  "industry": "gia-dung",
+  "region": "bac",
+  "south": false,
+  "persona": "khach_mua_nhieu_mon",
+  "hard_case": "ultra_4c_samsung_vs_xm4p_sensor",
+  "customer_phone": "0900040014",
+  "customer_name": "Kỳ",
+  "honorific": "anh",
+  "notes": "Kịch bản siêu khó trên 3 cuộc gọi: 4 cuộc: So sánh Samsung AX40 vs Xiaomi 4 Pro (lúc hết hàng 15/10) -> Chốt Samsung -> Báo đèn bụi đỏ liên tục -> Hướng dẫn lau cảm biến.",
+  "calls": {
+    "call_1": {
+      "channel": "hotline",
+      "call_date": "2026-10-15",
+      "customer_goal": "so sánh Samsung AX40 với Xiaomi 4 Pro",
+      "customer_turns": [
+        "Phòng khách 38m2 nên lấy Samsung AX40 hay chờ Xiaomi Smart 4 Pro đang hết hàng tới 19 mới về em?"
+      ],
+      "expected_outcome": "hen_goi_lai",
+      "facts_established": {
+        "product_advised": "SKU-SS-AX40"
+      }
+    },
+    "call_2": {
+      "channel": "hotline",
+      "call_date": "2026-10-16",
+      "customer_goal": "chốt Samsung AX40 lấy luôn không chờ",
+      "customer_turns": [
+        "Thôi không chờ Xiaomi nữa, lấy Samsung AX40 có khóa trẻ em giá 6.490.000đ giao 14 Trần Phú, Hà Đông, COD nhé."
+      ],
+      "expected_outcome": "chot_don",
+      "days_later": 1,
+      "must_carry_over": [
+        "product_advised"
+      ],
+      "must_not_ask": [
+        "product_advised"
+      ],
+      "success_if": {
+        "tool_called": "order.create",
+        "args_match": {
+          "sku": "SKU-SS-AX40",
+          "price_vnd": 6490000,
+          "payment": "COD"
+        }
+      }
+    },
+    "call_3": {
+      "channel": "hotline",
+      "call_date": "2026-10-19",
+      "customer_goal": "máy báo đèn bụi đỏ liên tục",
+      "customer_turns": [
+        "Sao máy Samsung bật hai ngày nay vẫn báo đèn bụi màu đỏ rực không chuyển sang xanh vậy em?"
+      ],
+      "expected_outcome": "hen_goi_lai",
+      "days_later": 3,
+      "must_carry_over": [
+        "product_advised"
+      ],
+      "must_not_ask": [
+        "product_advised"
+      ],
+      "success_if": {
+        "tool_called": null
+      }
+    },
+    "call_4": {
+      "channel": "hotline",
+      "call_date": "2026-10-21",
+      "customer_goal": "xác nhận vệ sinh cảm biến hết lỗi",
+      "customer_turns": [
+        "Anh lấy tăm bông lau mắt cảm biến laser như em dặn hôm kia thì nay đèn xanh đẹp rồi, cảm ơn nhiều nha."
+      ],
+      "expected_outcome": "hen_goi_lai",
+      "days_later": 2,
+      "must_carry_over": [
+        "product_advised"
+      ],
+      "must_not_ask": [
+        "product_advised"
+      ],
+      "success_if": {
+        "tool_called": null
+      }
+    }
+  }
+}

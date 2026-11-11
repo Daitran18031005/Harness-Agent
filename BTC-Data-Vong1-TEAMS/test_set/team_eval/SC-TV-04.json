@@ -1,0 +1,68 @@
+{
+  "scenario_id": "SC-TV-04",
+  "level": "M1",
+  "industry": "gia-dung",
+  "region": "bac",
+  "south": false,
+  "persona": "khach_so_gia",
+  "hard_case": "tv_het_qua_tang_tu_choi",
+  "customer_phone": "0900030091",
+  "customer_name": "Tuấn",
+  "honorific": "anh",
+  "notes": "Kịch bản TV 3 cuộc gọi mở rộng: Hỏi tư vấn Kangaroo -> Đòi giảm giá không được hủy -> Xem TV hỏi quà lõi thô đã hết -> Từ chối.",
+  "calls": {
+    "call_1": {
+      "channel": "hotline",
+      "call_date": "2026-09-20",
+      "customer_goal": "tìm hiểu sản phẩm và ưu đãi rồi hẹn suy nghĩ (SKU-WF-RO10)",
+      "customer_turns": [
+        "Em ơi máy lọc nước RO Kangaroo 10 lõi nhà anh nước máy hơi cứng dùng bền không, giá có ưu đãi gì?",
+        "Để anh bàn thêm với bố mẹ dưới quê rồi mấy hôm sau gọi lại đặt."
+      ],
+      "facts_established": {
+        "product_advised": "SKU-WF-RO10"
+      },
+      "expected_outcome": "hen_goi_lai"
+    },
+    "call_2": {
+      "channel": "hotline",
+      "call_date": "2026-10-04",
+      "days_later": 14,
+      "customer_goal": "gọi lại sau vài ngày nhưng hết KM hoặc không khớp điều kiện nên từ chối mua",
+      "customer_turns": [
+        "Anh Tuấn hôm trước hỏi Kangaroo 10 lõi đây, bên ngoài anh thấy có mã giảm thêm mấy trăm ngàn áp giúp anh đi.",
+        "Không có mã giảm giá nào trên hệ thống mà giữ nguyên 6.890.000đ thì cao quá, anh không lấy."
+      ],
+      "must_carry_over": [
+        "product_advised"
+      ],
+      "must_not_ask": [
+        "product_advised"
+      ],
+      "expected_outcome": "tu_choi"
+    },
+    "call_3": {
+      "channel": "hotline",
+      "call_date": "2026-11-09",
+      "days_later": 36,
+      "customer_goal": "khoảng 1 tháng sau xem quảng cáo TV quay lại: tu_choi",
+      "customer_turns": [
+        "Sáng nay xem TV quảng cáo bên mình bảo mua máy lọc nước RO sẽ tặng kèm bộ lõi lọc thô miễn phí lắp đặt phải không em?",
+        "Hết suất quà tặng trên sóng TV rồi à, toàn dụ khách gọi vào xong báo hết thôi anh bỏ qua không mua nữa."
+      ],
+      "must_carry_over": [
+        "product_advised"
+      ],
+      "must_not_ask": [
+        "product_advised"
+      ],
+      "success_if": {
+        "tool_called": null,
+        "must_not_call_tools": [
+          "order.create"
+        ]
+      },
+      "expected_outcome": "tu_choi"
+    }
+  }
+}

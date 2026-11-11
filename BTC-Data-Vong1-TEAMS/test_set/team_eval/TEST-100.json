@@ -1,0 +1,52 @@
+{
+  "scenario_id": "TEST-100",
+  "level": "M1",
+  "industry": "gia-dung",
+  "region": "trung",
+  "south": false,
+  "persona": "khach_mua_nhieu_mon",
+  "hard_case": "doi_y_giua_cuoc",
+  "customer_phone": "0910791954",
+  "customer_name": "Minh",
+  "honorific": "anh",
+  "notes": "[gia-dung] (doi_y_ha_cap) Quạt đứng DC inverter Panasonic F-409 (SKU-FAN-DC1) tại Quảng Nam.",
+  "calls": {
+    "call_1": {
+      "channel": "zalo_oa",
+      "call_date": "2026-10-15",
+      "customer_goal": "ban đầu hỏi Quạt đứng DC inverter Panasonic F-409, giữa cuộc đổi sang Quạt đứng Senko TS16",
+      "customer_turns": [
+        "Shop ơi, anh Minh đang tìm hiểu Quạt đứng DC inverter Panasonic F-409 dùng cho phòng ngủ người lớn tuổi nhạy tiếng ồn.",
+        "Khoan đã Minh nghĩ kỹ lại rồi, bỏ Quạt đứng DC inverter Panasonic F-409 đi chắc anh đổi xuống mẫu tiết kiệm hơn là Quạt đứng Senko TS16 (tầm 590.000đ) cho vừa vặn hơn.",
+        "Lên đơn cho Minh chính xác mẫu Quạt đứng Senko TS16 sau cùng này nha. Đóng gói gửi về số 20 đường Hùng Vương, An Mỹ, Tam Kỳ, Quảng Nam, cứ đọc tên Minh bảo vệ chung cư nhận giùm hoặc gọi trực tiếp. Thanh toán COD. Số điện thoại của anh Minh tại Tam Kỳ là 0910791954 nha shop."
+      ],
+      "facts_established": {
+        "initial_product": "SKU-FAN-DC1",
+        "product_advised": "SKU-FAN-SEN",
+        "price_quoted_vnd": 590000,
+        "payment": "COD",
+        "phone_provided": "0910791954"
+      },
+      "success_if": {
+        "tool_called": "order.create",
+        "args_match": {
+          "sku": "SKU-FAN-SEN",
+          "price_vnd": 590000,
+          "payment": "COD"
+        }
+      },
+      "memory_expectation": {
+        "product_advised": "SKU-FAN-SEN",
+        "superseded": [
+          "SKU-FAN-DC1"
+        ]
+      },
+      "ground_truth_facts": {
+        "final_sku": "SKU-FAN-SEN",
+        "price_vnd": 590000
+      },
+      "expected_outcome": "chot_don",
+      "channel_identity": "zalo.minh.test_100"
+    }
+  }
+}

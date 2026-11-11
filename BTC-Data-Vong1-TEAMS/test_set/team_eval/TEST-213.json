@@ -1,0 +1,41 @@
+{
+  "scenario_id": "TEST-213",
+  "level": "M1",
+  "industry": "gia-dung",
+  "region": "nam",
+  "south": true,
+  "persona": "khach_hoi_nhieu_khong_mua",
+  "hard_case": "mua_kem_phu_kien",
+  "customer_phone": "0911686914",
+  "customer_name": "Trung",
+  "honorific": "anh",
+  "notes": "[gia-dung] (mua_them_phu_kien_kem) Máy lọc nước RO Kangaroo 10 lõi (SKU-WF-RO10) tại Cần Thơ.",
+  "calls": {
+    "call_1": {
+      "channel": "hotline",
+      "call_date": "2026-10-15",
+      "customer_goal": "mua Máy lọc nước RO Kangaroo 10 lõi kèm phụ kiện Bộ lõi lọc thay thế RO 1-2-3 trong cùng đơn",
+      "customer_turns": [
+        "Chỗ mình Trung ở Cần Thơ đang tìm mua Máy lọc nước RO Kangaroo 10 lõi, điểm mạnh về bảo hành 3 năm chính hãng Kangaroo thực tế thế nào á?",
+        "Gộp đơn cho Trung mua Máy lọc nước RO Kangaroo 10 lõi chung với một Bộ lõi lọc thay thế RO 1-2-3 giá 390.000đ luôn đỡ tốn công đặt lẻ về Cần Thơ.",
+        "Ship toàn bộ một lượt gồm Máy lọc nước RO Kangaroo 10 lõi về chỗ Trung thu hộ 7.280.000đ. Ship về tận nơi tại số 284 khu dân cư Hưng Phú, Cái Răng, Cần Thơ, người nhận ghi tên Trung nhé."
+      ],
+      "facts_established": {
+        "product_advised": "SKU-WF-RO10",
+        "accessory_sku": "SKU-WF-CORE"
+      },
+      "success_if": {
+        "tool_called": "order.create",
+        "args_match": {
+          "sku": "SKU-WF-RO10",
+          "price_vnd": 6890000,
+          "payment": "COD"
+        },
+        "also_ordered": [
+          "SKU-WF-CORE"
+        ]
+      },
+      "expected_outcome": "chot_don"
+    }
+  }
+}

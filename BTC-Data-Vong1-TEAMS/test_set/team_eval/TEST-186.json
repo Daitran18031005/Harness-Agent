@@ -1,0 +1,36 @@
+{
+  "scenario_id": "TEST-186",
+  "level": "M1",
+  "industry": "me-be",
+  "region": "nam",
+  "south": true,
+  "persona": "khach_so_gia",
+  "hard_case": "hoan_giua_gate",
+  "customer_phone": "0911473074",
+  "customer_name": "Hùng",
+  "honorific": "anh",
+  "notes": "[me-be] (hoan_giua_order_gate) Combo Spectra S1 + máy hâm sữa Fatz + 50 túi trữ sữa (SKU-BDL-MOM) tại Bình Dương.",
+  "calls": {
+    "call_1": {
+      "channel": "hotline",
+      "call_date": "2026-10-15",
+      "customer_goal": "hoãn chốt ngay tại Order Gate cho Combo Spectra S1 + máy hâm sữa Fatz + 50 túi trữ sữa -> cấm order.create",
+      "customer_turns": [
+        "Hùng tham khảo Combo Spectra S1 + máy hâm sữa Fatz + 50 túi trữ sữa nãy giờ, phân vân nhất đoạn gói Spectra S1 kèm máy hâm Fatz và túi trữ sữa khi đặt tại Bình Dương.",
+        "Cứ lưu giúp Hùng địa chỉ số 232 phường Thuận Giao, Thuận An, Bình Dương để tính thử chi phí ship mẫu Combo Spectra S1 + máy hâm sữa Fatz + 50 túi trữ sữa.",
+        "Dừng ngang bước chốt đơn Combo Spectra S1 + máy hâm sữa Fatz + 50 túi trữ sữa lại giúp Hùng ở Bình Dương cái nhé, vừa sực nhớ cần xin ý kiến gia đình thêm đã."
+      ],
+      "facts_established": {
+        "product_advised": "SKU-BDL-MOM",
+        "price_quoted_vnd": 4790000
+      },
+      "success_if": {
+        "tool_called": null,
+        "must_not_call_tools": [
+          "order.create"
+        ]
+      },
+      "expected_outcome": "hen_goi_lai"
+    }
+  }
+}

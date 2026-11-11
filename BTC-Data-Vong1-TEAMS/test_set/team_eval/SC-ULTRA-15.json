@@ -1,0 +1,115 @@
+{
+  "scenario_id": "SC-ULTRA-15",
+  "level": "M1",
+  "industry": "me-be",
+  "region": "nam",
+  "south": true,
+  "persona": "khach_goi_lan_3_het_kien_nhan",
+  "hard_case": "ultra_5c_xe_day_cop_xe_phu_kien",
+  "customer_phone": "0900040015",
+  "customer_name": "Ngân",
+  "honorific": "chị",
+  "notes": "Kịch bản siêu khó trên 3 cuộc gọi: 5 cuộc: Hỏi gấp gọn cốp xe -> Chốt Joie Pact -> Đổi sang địa chỉ cơ quan -> Kiểm tra tiến độ -> Xác nhận đơn sau nhận.",
+  "calls": {
+    "call_1": {
+      "channel": "hotline",
+      "call_date": "2026-10-01",
+      "customer_goal": "hỏi xe Joie Pact bỏ vừa khoang hành lý",
+      "customer_turns": [
+        "Xe đẩy Joie Pact nặng mấy ký mà gấp lại xách lên máy bay với để cốp xe nhỏ gọn không em?"
+      ],
+      "expected_outcome": "hen_goi_lai",
+      "facts_established": {
+        "product_advised": "SKU-MB-STR1"
+      }
+    },
+    "call_2": {
+      "channel": "hotline",
+      "call_date": "2026-10-03",
+      "customer_goal": "chốt mua Joie Pact giao nhà",
+      "customer_turns": [
+        "Lấy chị một xe Joie Pact 3.490.000đ giao về 21 Nguyễn Văn Cừ, Quận 5, thanh toán chuyển khoản nhé."
+      ],
+      "expected_outcome": "chot_don",
+      "days_later": 2,
+      "must_carry_over": [
+        "product_advised"
+      ],
+      "must_not_ask": [
+        "product_advised"
+      ],
+      "success_if": {
+        "tool_called": "order.create",
+        "args_match": {
+          "sku": "SKU-MB-STR1",
+          "price_vnd": 3490000,
+          "payment": "bank"
+        }
+      }
+    },
+    "call_3": {
+      "channel": "hotline",
+      "call_date": "2026-10-05",
+      "customer_goal": "đổi địa chỉ giao về văn phòng",
+      "customer_turns": [
+        "Ngày mai chị trực ở văn phòng cả ngày, em chuyển địa chỉ giao về 115 Pasteur, Quận 3 giúp chị nha."
+      ],
+      "expected_outcome": "chot_don",
+      "days_later": 2,
+      "must_carry_over": [
+        "product_advised"
+      ],
+      "must_not_ask": [
+        "product_advised"
+      ],
+      "success_if": {
+        "tool_called": "order.update",
+        "args_match": {
+          "action": "update_address"
+        }
+      }
+    },
+    "call_4": {
+      "channel": "hotline",
+      "call_date": "2026-10-07",
+      "customer_goal": "check ship đã tới bưu cục quận 3 chưa",
+      "customer_turns": [
+        "Chiều nay 4 giờ chị tan làm rồi, xem giúp chị ship tới quận 3 chưa để chị ở lại đợi."
+      ],
+      "expected_outcome": "hen_goi_lai",
+      "days_later": 2,
+      "must_carry_over": [
+        "product_advised"
+      ],
+      "must_not_ask": [
+        "product_advised"
+      ],
+      "success_if": {
+        "tool_called": "order.status"
+      }
+    },
+    "call_5": {
+      "channel": "hotline",
+      "call_date": "2026-10-09",
+      "customer_goal": "xác nhận nhận hàng và hỏi bảo hành khung xe",
+      "customer_turns": [
+        "Chị nhận xe rồi gấp siêu gọn, khung xe đẩy này được bảo hành chính hãng bao nhiêu tháng vậy em?"
+      ],
+      "expected_outcome": "hen_goi_lai",
+      "days_later": 2,
+      "must_carry_over": [
+        "product_advised"
+      ],
+      "must_not_ask": [
+        "product_advised"
+      ],
+      "success_if": {
+        "tool_called": null,
+        "must_say_any": [
+          "12 tháng",
+          "mười hai tháng"
+        ]
+      }
+    }
+  }
+}

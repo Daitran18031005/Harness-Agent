@@ -35,3 +35,12 @@ runs/gd2_run*/*
 !runs/gd2_run*/gd2_report.md
 !runs/gd2_run*/gd2_report.json
 !runs/gd2_run*/failures_*.txt
+
+# Báo cáo của lần đo nộp (277 kịch bản) và bằng chứng kiểm claim giá — được tham chiếu trong submission/EVALUATION_REPORT.md
+!runs/m1_final2/
+runs/m1_final2/*
+!runs/m1_final2/report.md
+!runs/m1_final2/report.json
+!runs/m1_final/
+runs/m1_final/*
+!runs/m1_final/hr_price_check.json

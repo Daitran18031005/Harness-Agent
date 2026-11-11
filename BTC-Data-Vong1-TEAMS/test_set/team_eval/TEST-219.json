@@ -1,0 +1,43 @@
+{
+  "scenario_id": "TEST-219",
+  "level": "M1",
+  "industry": "gia-dung",
+  "region": "nam",
+  "south": true,
+  "persona": "khach_thich_khuyen_mai",
+  "hard_case": "nam_freeship_promo",
+  "customer_phone": "0911734434",
+  "customer_name": "Tiến",
+  "honorific": "anh",
+  "notes": "[gia-dung] (nam_freeship_gia_dung) Màng lọc thay thế AirPure Pro (SKU-AP-FLT-P) tại Vũng Tàu.",
+  "calls": {
+    "call_1": {
+      "channel": "hotline",
+      "call_date": "2026-10-15",
+      "customer_goal": "đặt gia dụng miền Nam (Vũng Tàu) áp NAM-SHIP0 cho Màng lọc thay thế AirPure Pro",
+      "customer_turns": [
+        "Anh Tiến ngụ ở Vũng Tàu tính mua chiếc Màng lọc thay thế AirPure Pro, đơn nội vùng miền Nam chắc được áp NAM-SHIP0 nghen?",
+        "Được freeship luôn thì lên đơn Màng lọc thay thế AirPure Pro giao COD về số 118 đường Thùy Vân, Thắng Tam, Vũng Tàu giùm Tiến nha."
+      ],
+      "facts_established": {
+        "product_advised": "SKU-AP-FLT-P",
+        "price_quoted_vnd": 990000,
+        "payment": "COD",
+        "region": "nam"
+      },
+      "success_if": {
+        "tool_called": "order.create",
+        "args_match": {
+          "sku": "SKU-AP-FLT-P",
+          "price_vnd": 990000,
+          "payment": "COD"
+        }
+      },
+      "ground_truth_facts": {
+        "freeship": true,
+        "price_vnd": 990000
+      },
+      "expected_outcome": "chot_don"
+    }
+  }
+}

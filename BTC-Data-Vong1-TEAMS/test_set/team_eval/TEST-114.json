@@ -1,0 +1,44 @@
+{
+  "scenario_id": "TEST-114",
+  "level": "M1",
+  "industry": "gia-dung",
+  "region": "nam",
+  "south": true,
+  "persona": "khach_so_gia",
+  "hard_case": "cod_vuot_han_muc",
+  "customer_phone": "0910902834",
+  "customer_name": "Hùng",
+  "honorific": "anh",
+  "notes": "[gia-dung] (cod_vuot_tran_giam_sl) Combo AirPure Y + 2 màng lọc (SKU-BDL-AIR) tại Cần Thơ.",
+  "calls": {
+    "call_1": {
+      "channel": "hotline",
+      "call_date": "2026-10-15",
+      "customer_goal": "định đặt 2x vượt COD 10tr nên rút xuống 1x COD",
+      "customer_turns": [
+        "Đặt luôn 2 bộ Combo AirPure Y + 2 màng lọc giao về Cần Thơ giúp Hùng, chuẩn bị sẵn tiền mặt ở nhà đưa shipper rồi.",
+        "Thế Hùng rút bớt Combo AirPure Y + 2 màng lọc lại đúng 1 cái 6.390.000đ để nằm dưới hạn mức 10 triệu thanh toán COD ở Cần Thơ cho an tâm.",
+        "Chuyển hàng tới số 48 đường Trần Hưng Đạo, An Phú, Cần Thơ giúp anh, đến nơi gọi số này cho Hùng."
+      ],
+      "facts_established": {
+        "product_advised": "SKU-BDL-AIR",
+        "price_quoted_vnd": 6390000,
+        "payment": "COD"
+      },
+      "success_if": {
+        "tool_called": "order.create",
+        "args_match": {
+          "sku": "SKU-BDL-AIR",
+          "qty": 1,
+          "price_vnd": 6390000,
+          "payment": "COD"
+        }
+      },
+      "ground_truth_facts": {
+        "cod_limit_vnd": 10000000,
+        "price_vnd": 6390000
+      },
+      "expected_outcome": "chot_don"
+    }
+  }
+}

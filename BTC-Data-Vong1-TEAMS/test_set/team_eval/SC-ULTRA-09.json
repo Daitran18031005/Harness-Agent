@@ -1,0 +1,94 @@
+{
+  "scenario_id": "SC-ULTRA-09",
+  "level": "M1",
+  "industry": "gia-dung",
+  "region": "bac",
+  "south": false,
+  "persona": "khach_mua_nhieu_mon",
+  "hard_case": "ultra_4c_truong_mam_non_b2b",
+  "customer_phone": "0900040009",
+  "customer_name": "Bảo",
+  "honorific": "thầy",
+  "notes": "Kịch bản siêu khó trên 3 cuộc gọi: 4 cuộc: Trường mầm non hỏi UF không nước thải -> Check 3 máy đủ hàng -> Chuyển B2B ký hợp đồng VAT -> Hỏi lịch lắp.",
+  "calls": {
+    "call_1": {
+      "channel": "hotline",
+      "call_date": "2026-10-10",
+      "customer_goal": "hỏi máy UF không nước thải cho trường",
+      "customer_turns": [
+        "Trường mầm non của thầy cần tìm máy lọc nước uống không ra nước thải cho tiết kiệm em ơi."
+      ],
+      "expected_outcome": "hen_goi_lai",
+      "facts_established": {
+        "product_advised": "SKU-WF-UF"
+      }
+    },
+    "call_2": {
+      "channel": "hotline",
+      "call_date": "2026-10-12",
+      "customer_goal": "hỏi cấu hình 5 tầng và tồn kho 3 máy",
+      "customer_turns": [
+        "Máy Sunhouse UF 5 tầng lọc có sẵn 3 bộ ở kho để tuần này hội đồng trường xét duyệt không?"
+      ],
+      "expected_outcome": "hen_goi_lai",
+      "days_later": 2,
+      "must_carry_over": [
+        "product_advised"
+      ],
+      "must_not_ask": [
+        "product_advised"
+      ],
+      "success_if": {
+        "tool_called": null,
+        "must_say_any": [
+          "3.290.000",
+          "36 tháng",
+          "UF"
+        ]
+      }
+    },
+    "call_3": {
+      "channel": "hotline",
+      "call_date": "2026-10-15",
+      "customer_goal": "chốt mua B2B cần chuyển chuyên viên hợp đồng VAT",
+      "customer_turns": [
+        "Hội đồng duyệt lấy 3 máy Sunhouse UF xuất hóa đơn đỏ kho bạc, nối máy thầy gặp bên khách hàng tổ chức B2B làm hợp đồng nhé."
+      ],
+      "expected_outcome": "chuyen_may",
+      "days_later": 3,
+      "must_carry_over": [
+        "product_advised"
+      ],
+      "must_not_ask": [
+        "product_advised"
+      ],
+      "success_if": {
+        "tool_called": "handoff.transfer",
+        "brief_must_contain": [
+          "customer_phone",
+          "escalation_reason",
+          "product_advised"
+        ]
+      }
+    },
+    "call_4": {
+      "channel": "hotline",
+      "call_date": "2026-10-16",
+      "customer_goal": "xác nhận giờ thợ qua trường khảo sát",
+      "customer_turns": [
+        "Thầy ký bên sale xong rồi, gọi hỏi lại sáng mai 9 giờ thợ kỹ thuật qua khảo sát đường ống trường Ánh Sao phải không em?"
+      ],
+      "expected_outcome": "hen_goi_lai",
+      "days_later": 1,
+      "must_carry_over": [
+        "product_advised"
+      ],
+      "must_not_ask": [
+        "product_advised"
+      ],
+      "success_if": {
+        "tool_called": null
+      }
+    }
+  }
+}

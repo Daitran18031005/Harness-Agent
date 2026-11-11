@@ -1,0 +1,70 @@
+{
+  "scenario_id": "SC-TV-17",
+  "level": "M1",
+  "industry": "me-be",
+  "region": "nam",
+  "south": true,
+  "persona": "khach_so_gia",
+  "hard_case": "tv_doi_tang_binh_khong_du_dk_tu_choi",
+  "customer_phone": "0900030104",
+  "customer_name": "Khoa",
+  "honorific": "anh",
+  "notes": "Kịch bản TV 3 cuộc gọi mở rộng: Hỏi Fatz -> Thiếu 10k không freeship hủy -> Xem TV đòi tặng bình Pigeon miễn phí -> Từ chối.",
+  "calls": {
+    "call_1": {
+      "channel": "zalo_oa",
+      "call_date": "2026-10-02",
+      "customer_goal": "tìm hiểu sản phẩm và ưu đãi rồi hẹn suy nghĩ (SKU-MB-MON)",
+      "customer_turns": [
+        "Máy hâm sữa Fatz 4 chức năng giá bốn trăm chín chục nghìn hâm được cả cháo loãng cho bé ăn dặm không shop?",
+        "Ok có gì tối vợ anh chọn thêm bình sữa rồi đặt chung một đơn. Nhắn trước SĐT 0900030104 của Khoa cho shop lưu lại, tối hai vợ chồng gọi đặt chung."
+      ],
+      "facts_established": {
+        "product_advised": "SKU-MB-MON",
+        "phone_provided": "0900030104"
+      },
+      "expected_outcome": "hen_goi_lai",
+      "channel_identity": "zalo.khoa.sc_tv_17"
+    },
+    "call_2": {
+      "channel": "hotline",
+      "call_date": "2026-10-14",
+      "days_later": 12,
+      "customer_goal": "gọi lại sau vài ngày nhưng hết KM hoặc không khớp điều kiện nên từ chối mua",
+      "customer_turns": [
+        "Anh Khoa Thủ Đức hỏi máy hâm Fatz bữa trước nè, lấy mỗi một máy thôi có được miễn phí ship miền Nam không em?",
+        "Miễn ship theo MOM-FREESHIP bắt buộc đơn Mẹ & Bé từ 500k hả? Thiếu có 10k mà bắt chịu ship thôi anh dẹp luôn."
+      ],
+      "must_carry_over": [
+        "product_advised"
+      ],
+      "must_not_ask": [
+        "product_advised"
+      ],
+      "expected_outcome": "tu_choi"
+    },
+    "call_3": {
+      "channel": "hotline",
+      "call_date": "2026-11-12",
+      "days_later": 29,
+      "customer_goal": "khoảng 1 tháng sau xem quảng cáo TV quay lại: tu_choi",
+      "customer_turns": [
+        "Mới thấy tivi chiếu clip gia đình xài máy hâm sữa Fatz kèm tặng bình Pigeon 240ml, giờ anh gọi mua máy Fatz nhớ gửi kèm bình tặng miễn phí nghen.",
+        "Không có chuyện mua máy 490k tặng bình 289k à? Quảng cáo mập mờ quá, anh không đặt bên mình đâu."
+      ],
+      "must_carry_over": [
+        "product_advised"
+      ],
+      "must_not_ask": [
+        "product_advised"
+      ],
+      "success_if": {
+        "tool_called": null,
+        "must_not_call_tools": [
+          "order.create"
+        ]
+      },
+      "expected_outcome": "tu_choi"
+    }
+  }
+}

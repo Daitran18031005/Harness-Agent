@@ -56,7 +56,7 @@ NGUYÊN TẮC (áp dụng theo ý nghĩa, không theo từ ngữ cụ thể):
 5. affirmed chỉ ghi mục khách xác nhận là ĐÚNG với thông tin đã có; thông tin khách mới đưa ra không nằm trong affirmed. Xác nhận bằng cách chỉ vào thứ đang dùng/đang nói tới (cùng đối tượng với thông tin nhân viên nêu) cũng là xác nhận.
 6. only_answers = true khi lời khách chỉ nhằm đáp lại đúng điều nhân viên đang hỏi/chờ, dù đáp nhiều điều một lúc; false khi khách đưa thêm câu hỏi, thay đổi sản phẩm/số lượng, hoặc chuyển sang chuyện khác.
 7. payment: chỉ điền khi khách đã LỰA CHỌN một hình thức; hỏi về khả năng hoặc chưa quyết thì null. Quy về hình thức phù hợp nhất theo cách trả tiền được mô tả.
-8. order_intent = commit khi khách đã quyết định lấy/đặt thứ đang bàn (kể cả khi đó là câu đáp lại đề nghị của nhân viên). Hỏi thông tin, so sánh, xem thử, cân nhắc, thương lượng chưa phải quyết định: other.
+8. order_intent = commit khi khách đã quyết định lấy/đặt thứ đang bàn (kể cả khi đó là câu đáp lại đề nghị của nhân viên). Chỉ tính quyết định MUA/ĐẶT một đơn MỚI: khách đồng ý ĐỔI size/màu, TRẢ hàng, hủy, bảo hành cho đơn ĐÃ mua, hay đồng ý hẹn gọi lại thì là other. Hỏi thông tin, so sánh, xem thử, cân nhắc, thương lượng chưa phải quyết định: other.
 9. Không chắc thì chọn kết luận thận trọng (other/null/rỗng) và hạ "confidence" — đừng đoán.
 
 Mọi *_quote PHẢI chép nguyên văn từ lời khách (không sửa, không dịch)."""
@@ -76,6 +76,31 @@ B. Mọi trường hợp khác (kể cả thương lượng giá): chỉ đượ
  Khách than phiền, hỏi, thương lượng mà chưa tự yêu cầu/chấp nhận thì CHƯA phải là cho phép.
 Mơ hồ thì chọn kết luận thận trọng (category "other", authorized false).
 Trả về DUY NHẤT JSON: {"category": "scope_safety"|"other", "category_quote": "<nguyên văn lời khách, rỗng nếu other>", "authorized": true|false, "basis": "asked"|"accepted_offer"|null, "quote": "<nguyên văn lời khách làm bằng chứng cho authorized, rỗng nếu false>"}"""
+
+
+CLOSING_PROMPT = """Bạn là chốt kiểm tra độc lập trước khi tạo đơn hàng ở CUỐI cuộc gọi, khi không còn lượt nào để hỏi lại khách. Dưới đây là TOÀN BỘ lời khách trong cuộc gọi, theo thứ tự.
+Bạn chỉ trả lời MỘT câu hỏi: khách có yêu cầu rõ ràng, chủ động MUA/ĐẶT/LÊN một đơn MỚI ngay trong cuộc gọi này, và sau đó KHÔNG hoãn hay rút lại hay không?
+Trả "orders_now": false khi khách bảo khoan/chưa/để sau/cân nhắc thêm/hỏi lại người nhà, chỉ hỏi giá hay thông tin, còn thương lượng, hoặc chỉ đồng ý ĐỔI/TRẢ/bảo hành một đơn đã mua. Mơ hồ thì false.
+Trả về DUY NHẤT JSON: {"orders_now": true|false, "quote": "<đoạn NGUYÊN VĂN trong lời khách là yêu cầu đặt đơn, rỗng nếu false>"}"""
+
+
+def authorize_closing(llm: Any, texts: List[str]) -> Dict[str, Any]:
+    """Chốt cho LƯỢT CHỐT (tạo đơn không qua bước khách xác nhận): lớp LLM độc lập đọc toàn bộ lời khách của cuộc gọi, phải có trích dẫn nguyên văn.
+    Không có LLM / lỗi / thiếu trích dẫn → không cho tạo đơn (TEST-198: khách nói "khoan chốt… vội" mà đơn vẫn bị tạo)."""
+    out: Dict[str, Any] = {"authorized": False, "quote": "", "usage": {}}
+    joined = "\n".join(f"{i}. {t}" for i, t in enumerate(texts, 1))
+    if llm is None or not hasattr(llm, "complete_json") or not joined:
+        return out
+    try:
+        raw, usage = llm.complete_json([{"role": "system", "content": CLOSING_PROMPT}, {"role": "user", "content": joined}])
+    except Exception as e:
+        logger.warning("[reply_reader] chốt lượt chốt lỗi (%s) — không tạo đơn", e)
+        return out
+    out["usage"] = usage or {}
+    quote = _quoted(raw.get("quote"), joined) if isinstance(raw, dict) else ""
+    if isinstance(raw, dict) and raw.get("orders_now") is True and quote:
+        out.update(authorized=True, quote=quote)
+    return out
 
 
 def authorize_handoff(llm: Any, text: str, last_agent: str = "", facts: str = "") -> Dict[str, Any]:

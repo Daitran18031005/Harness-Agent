@@ -1,0 +1,70 @@
+{
+  "scenario_id": "SC-TV-10",
+  "level": "M1",
+  "industry": "thoi-trang",
+  "region": "trung",
+  "south": false,
+  "persona": "khach_ngoai_pham_vi_chuyen_may",
+  "hard_case": "tv_doan_leo_nui_sll_handoff",
+  "customer_phone": "0900030097",
+  "customer_name": "Sơn",
+  "honorific": "anh",
+  "notes": "Kịch bản TV 3 cuộc gọi mở rộng: Hỏi HikePro -> Hết size hủy -> Xem phim tài liệu TV quay lại đặt sỉ 15 đôi đoàn -> Handoff.",
+  "calls": {
+    "call_1": {
+      "channel": "hotline",
+      "call_date": "2026-09-21",
+      "customer_goal": "tìm hiểu sản phẩm và ưu đãi rồi hẹn suy nghĩ (SKU-SN-TRK)",
+      "customer_turns": [
+        "Giày leo núi HikePro đi đường sỏi ướt có bám tốt và đổi size dễ không em?",
+        "Tạm thời anh mới coi trước cho cá nhân, tuần sau rảnh anh tính tiếp nha."
+      ],
+      "facts_established": {
+        "product_advised": "SKU-SN-TRK"
+      },
+      "expected_outcome": "hen_goi_lai"
+    },
+    "call_2": {
+      "channel": "hotline",
+      "call_date": "2026-10-07",
+      "days_later": 16,
+      "customer_goal": "gọi lại sau vài ngày nhưng hết KM hoặc không khớp điều kiện nên từ chối mua",
+      "customer_turns": [
+        "Anh Sơn ở Nha Trang bữa hỏi HikePro nè, nay đặt lấy đôi 42 trắng mà shop báo giá giảm gì không?",
+        "42 trắng hết hàng lại cũng không có mã giảm giá nào sao? Vậy anh chưa mua đâu."
+      ],
+      "must_carry_over": [
+        "product_advised"
+      ],
+      "must_not_ask": [
+        "product_advised"
+      ],
+      "expected_outcome": "tu_choi"
+    },
+    "call_3": {
+      "channel": "hotline",
+      "call_date": "2026-11-16",
+      "days_later": 40,
+      "customer_goal": "khoảng 1 tháng sau xem quảng cáo TV quay lại: chuyen_may",
+      "customer_turns": [
+        "Tối qua xem phim tài liệu leo núi trên TV tự dưng hội bạn phượt bên anh rủ đi cùng, cả đoàn cần đặt sỉ 15 đôi HikePro đủ size và xin in logo đội lên hộp quà tặng.",
+        "Đơn đoàn số lượng nhiều kèm yêu cầu in ấn riêng thì chuyển cho nhân viên phụ trách sỉ B2B trao đổi trực tiếp với anh nha."
+      ],
+      "must_carry_over": [
+        "product_advised"
+      ],
+      "must_not_ask": [
+        "product_advised"
+      ],
+      "success_if": {
+        "tool_called": "handoff.transfer",
+        "brief_must_contain": [
+          "customer_phone",
+          "escalation_reason",
+          "product_advised"
+        ]
+      },
+      "expected_outcome": "chuyen_may"
+    }
+  }
+}

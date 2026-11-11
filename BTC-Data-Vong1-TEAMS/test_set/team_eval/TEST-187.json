@@ -1,0 +1,37 @@
+{
+  "scenario_id": "TEST-187",
+  "level": "M1",
+  "industry": "gia-dung",
+  "region": "trung",
+  "south": false,
+  "persona": "khach_can_ship_gap",
+  "hard_case": "doanh_nghiep_vat_handoff",
+  "customer_phone": "0911480994",
+  "customer_name": "Nga",
+  "honorific": "chị",
+  "notes": "[gia-dung] (b2b_doanh_nghiep_vat) Máy lọc không khí Samsung AX40 (SKU-SS-AX40) tại Quảng Nam.",
+  "calls": {
+    "call_1": {
+      "channel": "hotline",
+      "call_date": "2026-10-15",
+      "customer_goal": "mua sỉ 15 bộ Máy lọc không khí Samsung AX40 xuất VAT -> handoff B2B",
+      "customer_turns": [
+        "Cơ quan bên Nga ngoài Quảng Nam sắp khai trương chi nhánh nên dự kiến lấy 15 máy Máy lọc không khí Samsung AX40.",
+        "Bắt buộc có hồ sơ năng lực, biên bản nghiệm thu và hóa đơn đỏ VAT cho lô Máy lọc không khí Samsung AX40 tại Quảng Nam nên chuyển giúp Nga sang bộ phận B2B ạ."
+      ],
+      "facts_established": {
+        "product_advised": "SKU-SS-AX40",
+        "quantity": 15
+      },
+      "success_if": {
+        "tool_called": "handoff.transfer",
+        "brief_must_contain": [
+          "customer_phone",
+          "escalation_reason",
+          "product_advised"
+        ]
+      },
+      "expected_outcome": "chuyen_may"
+    }
+  }
+}

@@ -1,0 +1,70 @@
+{
+  "scenario_id": "SC-TV-18",
+  "level": "M1",
+  "industry": "gia-dung",
+  "region": "bac",
+  "south": false,
+  "persona": "khach_so_gia",
+  "hard_case": "tv_doi_y_len_ban_pro_11_11",
+  "customer_phone": "0900030105",
+  "customer_name": "Hưng",
+  "honorific": "anh",
+  "notes": "Kịch bản TV 3 cuộc gọi mở rộng: Hỏi Xiaomi 4 Lite -> Không có quà màng lọc hủy -> Xem TV 11/11 đổi ý nâng lên Xiaomi 4 Pro 4.666.500đ.",
+  "calls": {
+    "call_1": {
+      "channel": "hotline",
+      "call_date": "2026-09-28",
+      "customer_goal": "tìm hiểu sản phẩm và ưu đãi rồi hẹn suy nghĩ (SKU-XM-4L)",
+      "customer_turns": [
+        "Máy lọc không khí Xiaomi Smart 4 Lite dùng app Mi Home phòng 40 mét vuông ổn không em?",
+        "Ừ để anh hỏi xem nhà có thích kiểu tròn hay vuông rồi hẹn đầu tháng sau."
+      ],
+      "facts_established": {
+        "product_advised": "SKU-XM-4L"
+      },
+      "expected_outcome": "hen_goi_lai"
+    },
+    "call_2": {
+      "channel": "hotline",
+      "call_date": "2026-10-12",
+      "days_later": 14,
+      "customer_goal": "gọi lại sau vài ngày nhưng hết KM hoặc không khớp điều kiện nên từ chối mua",
+      "customer_turns": [
+        "Anh Hưng hỏi Xiaomi 4 Lite hôm trước đây, nhớ có kèm quà màng lọc miễn phí không em?",
+        "Bản Lite không nằm trong chương trình tặng màng lọc XM-COMBO hả? Thế thôi anh bỏ qua."
+      ],
+      "must_carry_over": [
+        "product_advised"
+      ],
+      "must_not_ask": [
+        "product_advised"
+      ],
+      "expected_outcome": "tu_choi"
+    },
+    "call_3": {
+      "channel": "hotline",
+      "call_date": "2026-11-11",
+      "days_later": 30,
+      "customer_goal": "khoảng 1 tháng sau xem quảng cáo TV quay lại: chot_don",
+      "customer_turns": [
+        "Hôm qua bật truyền hình thấy chương trình công nghệ đánh giá dòng cao cấp Xiaomi Smart 4 Pro màn hình OLED mạnh hơn hẳn lại đúng hôm nay 11/11 giảm 15% toàn ngành gia dụng.",
+        "Đổi sang chốt luôn bản Xiaomi Smart 4 Pro nhé, giá sau giảm 15% còn 4.666.500đ giao về 59 Trần Phú, Hà Đông, COD giúp anh."
+      ],
+      "must_carry_over": [
+        "product_advised"
+      ],
+      "must_not_ask": [
+        "product_advised"
+      ],
+      "success_if": {
+        "tool_called": "order.create",
+        "args_match": {
+          "sku": "SKU-XM-4P",
+          "price_vnd": 4666500,
+          "payment": "COD"
+        }
+      },
+      "expected_outcome": "chot_don"
+    }
+  }
+}

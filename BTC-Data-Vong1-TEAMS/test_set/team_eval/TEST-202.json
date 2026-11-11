@@ -1,0 +1,41 @@
+{
+  "scenario_id": "TEST-202",
+  "level": "M1",
+  "industry": "me-be",
+  "region": "trung",
+  "south": false,
+  "persona": "khach_hoi_nhieu_khong_mua",
+  "hard_case": "pham_vi_bao_hanh",
+  "customer_phone": "0911599794",
+  "customer_name": "Vy",
+  "honorific": "chị",
+  "notes": "[me-be] (bao_hanh_phu_kien) Máy tiệt trùng sấy khô Moaz Bebe (SKU-MB-STER) tại Quảng Nam.",
+  "calls": {
+    "call_1": {
+      "channel": "chat_fanpage",
+      "call_date": "2026-10-15",
+      "customer_goal": "hỏi phạm vi bảo hành phụ kiện tiêu hao của Máy tiệt trùng sấy khô Moaz Bebe",
+      "customer_turns": [
+        "Cho chị Vy thắc mắc chút về Máy tiệt trùng sấy khô Moaz Bebe: phần bộ ống hút silicone, gioăng cao su và núm ti mềm xài lâu bị xuống cấp thì có được hãng đổi bảo hành free không em?",
+        "Vy nắm rõ ranh giới rồi nhé: thân máy Máy tiệt trùng sấy khô Moaz Bebe bảo hành bình thường còn bộ ống hút silicone, gioăng cao su và núm ti mềm là vật tư tiêu hao khách hàng tự chi trả."
+      ],
+      "facts_established": {
+        "product_advised": "SKU-MB-STER"
+      },
+      "success_if": {
+        "tool_called": null,
+        "must_say_any": [
+          "tiêu hao",
+          "phụ kiện",
+          "không thuộc",
+          "BH-01"
+        ]
+      },
+      "ground_truth_facts": {
+        "consumables_covered": false
+      },
+      "expected_outcome": "hen_goi_lai",
+      "channel_identity": "fb.vy.test_202"
+    }
+  }
+}

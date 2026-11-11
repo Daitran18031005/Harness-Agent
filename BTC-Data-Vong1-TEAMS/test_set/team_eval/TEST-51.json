@@ -1,0 +1,62 @@
+{
+  "scenario_id": "TEST-51",
+  "level": "M1",
+  "industry": "gia-dung",
+  "region": "nam",
+  "south": true,
+  "persona": "khach_thich_khuyen_mai",
+  "hard_case": "khieu_nai_giao_tre_handoff",
+  "customer_phone": "0910403874",
+  "customer_name": "Hùng",
+  "honorific": "anh",
+  "notes": "[gia-dung] (giao_tre_handoff_ql) Máy lọc không khí AirPure Pro (SKU-AP-PRO) tại Bình Dương.",
+  "calls": {
+    "call_1": {
+      "channel": "hotline",
+      "call_date": "2026-10-05",
+      "customer_goal": "đặt mua Máy lọc không khí AirPure Pro",
+      "customer_turns": [
+        "Shop báo giúp Hùng giá lăn bánh về Bình Dương của Máy lọc không khí AirPure Pro kèm khuyến mãi hiện hành nha.",
+        "Nhận tại số 62 phường Thuận Giao, Thuận An, Bình Dương nha em, tên Hùng, có gì bưu tá alo trước 15 phút. Thu tiền COD khi nhận hàng nhé."
+      ],
+      "facts_established": {
+        "product_advised": "SKU-AP-PRO",
+        "price_quoted_vnd": 7690000,
+        "order_id": "OD800051"
+      },
+      "success_if": {
+        "tool_called": "order.create",
+        "args_match": {
+          "sku": "SKU-AP-PRO",
+          "price_vnd": 7690000,
+          "payment": "COD"
+        }
+      },
+      "expected_outcome": "chot_don"
+    },
+    "call_2": {
+      "channel": "hotline",
+      "days_later": 8,
+      "customer_goal": "khiếu nại đơn giao chậm quá 8 ngày yêu cầu gặp quản lý",
+      "customer_turns": [
+        "Gấp dùng lắm mới đặt Máy lọc không khí AirPure Pro về Bình Dương mà để Hùng đợi quá 8 ngày chẳng thấy hàng đâu cả!",
+        "Không nghe giải thích nữa, chuyển máy gấp cho trưởng ca hoặc quản lý giải quyết hoàn tiền đơn Máy lọc không khí AirPure Pro cho Hùng!"
+      ],
+      "must_carry_over": [
+        "product_advised"
+      ],
+      "must_not_ask": [
+        "product_advised"
+      ],
+      "success_if": {
+        "tool_called": "handoff.transfer",
+        "brief_must_contain": [
+          "customer_phone",
+          "escalation_reason",
+          "product_advised"
+        ]
+      },
+      "expected_outcome": "chuyen_may"
+    }
+  }
+}

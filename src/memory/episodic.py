@@ -36,13 +36,19 @@ class EpisodicMemoryStore:
         # customer_id -> List[EpisodeRecord] (sắp theo call_date, call_index)
         self._store: Dict[str, List[EpisodeRecord]] = {}
         self.backend = backend
-        if self.backend and self.backend.available:
-            for cid, episodes in self.backend.load_all_episodes().items():
-                self._store[cid] = sorted((EpisodeRecord(**ep) for ep in episodes), key=_order_key)
+        self._loaded: set = set()             # D12: nạp theo khách khi cần
+
+    def _of(self, customer_id: str) -> List[EpisodeRecord]:
+        if customer_id not in self._loaded:
+            self._loaded.add(customer_id)
+            if self.backend and self.backend.available:
+                eps = self.backend.load_all_episodes(customer_id).get(customer_id, [])
+                self._store[customer_id] = sorted((EpisodeRecord(**ep) for ep in eps), key=_order_key)
+        return self._store.setdefault(customer_id, [])
 
     def append(self, customer_id: str, episode: EpisodeRecord):
         """Upsert theo session_id."""
-        episodes = self._store.setdefault(customer_id, [])
+        episodes = self._of(customer_id)
         for i, existing in enumerate(episodes):
             if existing.session_id == episode.session_id:
                 episodes[i] = episode
@@ -54,7 +60,7 @@ class EpisodicMemoryStore:
             self.backend.append_episode(customer_id, asdict(episode))
 
     def get_episodes(self, customer_id: str) -> List[EpisodeRecord]:
-        return list(self._store.get(customer_id, []))
+        return list(self._of(customer_id))
 
     def get_last_episode(self, customer_id: str) -> Optional[EpisodeRecord]:
         episodes = self.get_episodes(customer_id)

@@ -10,12 +10,13 @@ Bộ hồ sơ nộp (thư mục `submission/`):
 | [README.md](README.md) | file này: cài đặt, chạy, cấu trúc mã |
 | [ARCHITECTURE.md](ARCHITECTURE.md) | sơ đồ hệ thống, vòng lặp harness, vì sao MCP / không A2A |
 | [DATASET.md](DATASET.md) | dataset: cách sinh, phân bố, hạn chế, xử lý thông tin cá nhân |
-| [EVALUATION_REPORT.md](EVALUATION_REPORT.md) | bảng chỉ số, so baseline, trước/sau cải tiến, 14 ca hệ thống làm sai, chi phí, tác động kinh doanh |
+| [EVALUATION_REPORT.md](EVALUATION_REPORT.md) | bảng chỉ số, so baseline, trước/sau cải tiến, 12 ca hệ thống làm sai, chi phí, tác động kinh doanh |
 | [DEMO_SCRIPT.md](DEMO_SCRIPT.md) | kịch bản video demo 5–8 phút (2 cuộc gọi cùng một khách) |
 | [slides.html](slides.html) | 15 slide (mở bằng trình duyệt, ←/→ để chuyển, in ra PDF được) |
 
-> **Trung thực về phạm vi:** số liệu chính thức là bước 15 giai đoạn 2 (21 kịch bản, 3 seed, 1 mẫu mỗi seed). Dataset mới đạt khoảng một phần tư ngưỡng
-> bảng C.1; ASR mới đo trên 4 file TTS; chưa có LLM-judge (bước 14b); **video demo chưa quay** (chỉ có kịch bản). Mục "Chưa làm" ở cuối nêu đủ.
+> **Trung thực về phạm vi:** số liệu chính thức là lần đo 2026-11-11 trên 277 kịch bản (7 mẫu BTC + 270 của nhóm), 2 cấu hình, **1 seed**
+> (`runs/m1_final2/`). Chưa đạt: Hallucination giá ≤ 5 % (theo script), RQR giảm ≥ 40 %, TTFT p95 ≤ 3 s, guardrail. Audio/ASR mới có 4 file TTS;
+> chưa có LLM-judge; **video demo chưa quay**. Mục 6 nêu đủ.
 
 ## 1. Cài đặt
 
@@ -43,16 +44,27 @@ Cùng máy chủ cung cấp REST API (`/docs`): `POST /sessions`, `POST /chat`, 
 ## 3. Chạy đánh giá bằng một lệnh
 
 ```bash
-# mẫu BTC cố định (7 kịch bản) — baseline và hệ thống, 3 seed, trần chi phí cứng
-python run_eval.py --scenarios BTC-Data-Vong1-TEAMS/test_set/public_sample --config both --out-dir runs/my/sample --seed 42 --repeats 3 --max-cost-vnd 7000
-# bộ đánh giá chung của nhóm (42 kịch bản, gộp 2026-11-04) — khách mô phỏng trả lời order gate
-python run_eval.py --scenarios BTC-Data-Vong1-TEAMS/test_set/team_eval --config both --out-dir runs/my/gen --seed 42 --repeats 3 --gate-assist --max-cost-vnd 7500
-# báo cáo 5 chỉ số, mean ± std qua seed, đối chiếu ngưỡng
-python scripts/gd2_report.py --root runs/my
+# Lệnh chuẩn BTC — một cấu hình, một file trace (thay <dir> bằng thư mục kịch bản, kể cả bộ ẩn)
+python run_eval.py --scenarios <dir> --config full --out full.jsonl
+python run_eval.py --scenarios <dir> --config baseline_no_memory --out baseline.jsonl
+python BTC-Data-Vong1-TEAMS/eval/reference_eval.py --scenarios <dir> --trace full.jsonl --baseline baseline.jsonl
+
+# Hoặc cả hai cấu hình + in bảng A.6 bằng một lệnh
+python run_eval.py --scenarios BTC-Data-Vong1-TEAMS/test_set/public_sample --config both --out-dir runs/my/sample --seed 42
+
+# Tái lập số trong báo cáo (277 kịch bản; ≈ 63.000 VND với gpt-4o-mini): chạy public_sample và team_eval vào runs/my/{sample,s1}, rồi gộp + chấm
+python run_eval.py --scenarios BTC-Data-Vong1-TEAMS/test_set/team_eval --config both --out-dir runs/my/s1 --seed 42 --no-report --max-cost-vnd 70000
+python scripts/m1_final_report.py --root runs/my
 ```
 
-`--max-cost-vnd` là trần cứng (kiểm trước mỗi lần gọi API, gồm cả router chính sách); chạm trần thì dừng và giữ trace đã chạy.
-Chấm lại từ trace không tốn LLM: `python -m evaluation --trace runs/my/sample/full.r1.jsonl`.
+Theo hướng dẫn của BTC (11/2026), sau lượt khách cuối của mỗi cuộc gọi agent được một lượt chốt (`customer_text` rỗng trong trace) để đọc lại đơn và gọi
+`order.create`; bộ chạy tự thêm lượt này khi đơn đang chờ. `tool_calls[].result` luôn được ghi vào trace.
+
+`--max-cost-vnd` là trần cứng (mặc định 20.000 VND; kiểm trước mỗi lần gọi API, gồm cả router chính sách); chạm trần thì dừng và giữ trace đã chạy.
+Chấm lại từ trace không tốn LLM: `python -m evaluation --trace runs/my/sample/full.jsonl`.
+
+Khởi tạo dữ liệu: catalog/chính sách/CRM đọc thẳng từ `BTC-Data-Vong1-TEAMS/`; `python scripts/seed_demo_db.py` (hoặc `run_demo.py --reset`) tạo DB demo `data/demo.db`.
+Vòng cải tiến (Knowledge Gap Loop): `python scripts/knowledge_gap.py collect --trace <trace>` → người duyệt `data/knowledge_gaps.json` → `python scripts/knowledge_gap.py apply`.
 
 ## 4. Cấu trúc mã
 
@@ -79,11 +91,10 @@ python scripts/package_submission.py        # ../Code_submission.zip; loại .en
 
 ## 6. Chưa làm / hạn chế đã biết
 
-- **Dataset** 30 cuộc / 21 kịch bản so với ngưỡng ≥ 120 cuộc; audio 4 file (≈ 2,5 phút) so với ≥ 40 cuộc / ≥ 1 giờ. Chi tiết: [DATASET.md](DATASET.md).
-- **ASR**: WER chỉ đo trên 4 file TTS sạch giọng Bắc; chưa có số riêng cho số tiền/SĐT trên ≥ 20 file.
-- **Chỉ số chưa đạt ngưỡng:** TTFT p95 6,7–7,3 s ở seed sạch (ngưỡng ≤ 3 s).
-- **TSR của 7 mẫu BTC cố định** chỉ 14,3% vì order gate chặn tạo đơn khi lời khách không trả lời câu hỏi của gate (thiết kế; xem báo cáo).
-- Chưa có LLM-judge 12 tiêu chí (14b) và chưa điền file chấm tay 20 lượt (người chấm).
-- Chưa quay video demo; slide ở dạng HTML (chưa xuất `.pptx`).
-- Giao diện web dựng tay (HTML/JS thuần), **không** sinh bằng W&B OpenUI như kế hoạch ban đầu.
+- **Chỉ số chưa đạt ngưỡng** (lần đo 277 kịch bản): Hallucination giá & KM 14,6 % theo script (≤ 5 %; 25/26 claim bị tính sai là giá đúng của sản phẩm khác đáp án — xem báo cáo mục 4); RQR giảm 30 % (≥ 40 %); TTFT p95 7,5 s (≤ 3 s); Total p95 8,9 s (≤ 8 s); guardrail 10 ca so với baseline 6.
+- **Một seed**, chưa có độ lệch chuẩn. Sáu sửa lỗi sau lần đo mới kiểm trên 17 kịch bản, chưa đo lại cả bộ.
+- **Audio / ASR**: 4 file TTS giọng Bắc (≈ 2,5 phút) so với ≥ 40 cuộc / ≥ 1 giờ; WER chưa đo trên ≥ 20 file. Chi tiết: [DATASET.md](DATASET.md).
+- **Vòng cải tiến**: Knowledge Gap Loop đã có mã và 9 thiếu sót vòng 0; chưa có mục nào được người duyệt nên chưa có số vòng 1.
+- Chưa có LLM-judge 12 tiêu chí và chưa điền file chấm tay 20 lượt.
+- Chưa quay video demo; slide ở dạng HTML (in ra PDF từ trình duyệt).
 - Order gate nằm trong orchestrator, chưa ở `mcp-crm`; API chạy MỘT worker, phiên đồng thời xen kẽ theo lượt.

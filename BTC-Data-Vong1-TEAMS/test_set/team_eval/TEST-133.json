@@ -1,0 +1,37 @@
+{
+  "scenario_id": "TEST-133",
+  "level": "M1",
+  "industry": "thoi-trang",
+  "region": "trung",
+  "south": false,
+  "persona": "khach_do_du_hoi_nguoi_nha",
+  "hard_case": "doanh_nghiep_vat_handoff",
+  "customer_phone": "0911053314",
+  "customer_name": "Trung",
+  "honorific": "anh",
+  "notes": "[thoi-trang] (b2b_doanh_nghiep_vat) Giày chạy bộ RunLite 1 (SKU-SN-RUN1) tại Đà Nẵng.",
+  "calls": {
+    "call_1": {
+      "channel": "hotline",
+      "call_date": "2026-10-15",
+      "customer_goal": "mua sỉ 9 bộ Giày chạy bộ RunLite 1 xuất VAT -> handoff B2B",
+      "customer_turns": [
+        "Phòng mua sắm chỗ Trung tại Đà Nẵng liên hệ hỏi báo giá dự án cho 9 đơn vị Giày chạy bộ RunLite 1.",
+        "Công ty cần hợp đồng nguyên tắc cho 9 bộ Giày chạy bộ RunLite 1, xuất VAT 10% nên nối máy gặp chuyên viên B2B giúp Trung nhé."
+      ],
+      "facts_established": {
+        "product_advised": "SKU-SN-RUN1",
+        "quantity": 9
+      },
+      "success_if": {
+        "tool_called": "handoff.transfer",
+        "brief_must_contain": [
+          "customer_phone",
+          "escalation_reason",
+          "product_advised"
+        ]
+      },
+      "expected_outcome": "chuyen_may"
+    }
+  }
+}

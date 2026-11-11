@@ -1,0 +1,53 @@
+{
+  "scenario_id": "TEST-146",
+  "level": "M1",
+  "industry": "gia-dung",
+  "region": "bac",
+  "south": false,
+  "persona": "khach_can_ship_gap",
+  "hard_case": "khuyen_mai_het_han",
+  "customer_phone": "0911156274",
+  "customer_name": "Thành",
+  "honorific": "anh",
+  "notes": "[gia-dung] (km_het_han_tu_choi) Máy lọc không khí AirPure Y (SKU-AP-Y) tại Hải Phòng.",
+  "calls": {
+    "call_1": {
+      "channel": "chat_fanpage",
+      "call_date": "2026-10-16",
+      "customer_goal": "hỏi Máy lọc không khí AirPure Y lúc còn hạn mã GIFT-FILTER (tặng màng lọc)",
+      "customer_turns": [
+        "Lưu tạm giúp anh Thành mã GIFT-FILTER cho chiếc Máy lọc không khí AirPure Y nhé, vài ngày nữa rảnh gọi lại đặt. Nhớ gắn số 0911156274 vào hồ sơ anh Thành giùm nhé, mấy hôm nữa rảnh mình gọi đặt."
+      ],
+      "facts_established": {
+        "product_advised": "SKU-AP-Y",
+        "promo_code": "GIFT-FILTER",
+        "phone_provided": "0911156274"
+      },
+      "expected_outcome": "hen_goi_lai",
+      "channel_identity": "fb.thanh.test_146"
+    },
+    "call_2": {
+      "channel": "hotline",
+      "call_date": "2026-10-25",
+      "days_later": 9,
+      "customer_goal": "gọi lại khi GIFT-FILTER hết hạn nên từ chối không mua",
+      "customer_turns": [
+        "Shop giữ giúp Thành suất GIFT-FILTER bữa coi Máy lọc không khí AirPure Y được không, nay gọi lên đơn nha.",
+        "Thôi nếu không còn chương trình GIFT-FILTER cho Máy lọc không khí AirPure Y thì để khi nào có đợt giảm mới rồi tính, Thành không mua lúc này."
+      ],
+      "must_carry_over": [
+        "product_advised"
+      ],
+      "must_not_ask": [
+        "product_advised"
+      ],
+      "success_if": {
+        "tool_called": null,
+        "must_not_call_tools": [
+          "order.create"
+        ]
+      },
+      "expected_outcome": "tu_choi"
+    }
+  }
+}

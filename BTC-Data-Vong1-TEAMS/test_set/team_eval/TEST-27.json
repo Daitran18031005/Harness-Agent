@@ -2,8 +2,8 @@
   "scenario_id": "TEST-27",
   "level": "M1",
   "persona": "khach_hoi_nhieu_khong_mua",
-  "hard_case": "itn_so_noi_bang_chu",
-  "customer_phone": "0900001004",
+  "hard_case": "so_noi_bang_chu",
+  "customer_phone": "0924410646",
   "customer_name": "Sơn",
   "honorific": "anh",
   "notes": "Kiểm thử chuẩn hóa số nói bằng chữ qua ASR (ITN): 'ba mươi lăm mét vuông', 'năm triệu rưỡi'. Hệ thống phải nhận dạng và trích xuất đúng room_area_m2=35, budget_vnd=5500000.",
@@ -14,12 +14,12 @@
       "customer_turns_asr": [
         "a lô em ơi anh tìm máy lọc không khí cho phòng ba mươi lăm mét vuông",
         "ngân sách anh có khoảng năm triệu rưỡi đổ lại thôi em",
-        "mẫu đó giá chính xác bao nhiêu tiền vậy em"
+        "mẫu đó giá chính xác bao nhiu tiền zậy em"
       ],
       "customer_turns": [
-        "a lô em ơi anh tìm máy lọc không khí cho phòng ba mươi lăm mét vuông",
-        "ngân sách anh có khoảng năm triệu rưỡi đổ lại thôi em",
-        "mẫu đó giá chính xác bao nhiêu tiền vậy em"
+        "Alo em ơi anh tìm máy lọc không khí cho phòng 35 mét vuông.",
+        "Ngân sách anh có khoảng 5 triệu rưỡi đổ lại thôi em.",
+        "Mẫu đó giá chính xác bao nhiêu tiền vậy em?"
       ],
       "facts_established": {
         "room_area_m2": 35,

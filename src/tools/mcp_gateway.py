@@ -34,7 +34,7 @@ from src.tools.tool_impl import (CRMTool, CatalogPricingTool, OrderCallbackTool,
 CODE_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
 
 SERVER_OF = {
-    "catalog.search": "catalog", "inventory.check": "catalog", "pricing.get_quote": "catalog", "product.shortlist": "catalog",
+    "catalog.search": "catalog", "inventory.check": "catalog", "pricing.get_quote": "catalog", "pricing.quote_order": "catalog", "product.shortlist": "catalog",
     "crm.get_customer": "crm", "order.create": "crm", "order.status": "crm", "order.update": "crm",
     "schedule.callback": "crm", "handoff.transfer": "crm", "admin.reset_state": "crm", "admin.audit": "crm",
 }
@@ -91,7 +91,7 @@ class LocalToolGateway(_BaseGateway):
         entry = self._record(tool_name, args, caller, "local")
         started = time.perf_counter()
         table = {"crm.get_customer": self.crm.get_customer, "catalog.search": self.catalog.search, "inventory.check": self.catalog.inventory_check,
-                 "pricing.get_quote": self.catalog.get_quote, "order.create": self.order.create_order, "order.status": self.order.order_status,
+                 "pricing.get_quote": self.catalog.get_quote, "pricing.quote_order": self.catalog.quote_order, "order.create": self.order.create_order, "order.status": self.order.order_status,
                  "order.update": self.order.order_update, "schedule.callback": self.order.schedule_callback,
                  "handoff.transfer": self.order.handoff_transfer, "product.shortlist": self._shortlist,
                  "admin.reset_state": lambda: (reset_mock_state(), {"reset": True})[1]}

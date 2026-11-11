@@ -1,0 +1,45 @@
+{
+  "scenario_id": "TEST-189",
+  "level": "M1",
+  "industry": "gia-dung",
+  "region": "nam",
+  "south": true,
+  "persona": "khach_mua_nhieu_mon",
+  "hard_case": "cod_vuot_han_muc",
+  "customer_phone": "0911496834",
+  "customer_name": "Trang",
+  "honorific": "chị",
+  "notes": "[gia-dung] (cod_vuot_tran_ck) Máy lọc không khí AirPure Mini (SKU-AP-MINI) tại Đồng Nai.",
+  "calls": {
+    "call_1": {
+      "channel": "hotline",
+      "call_date": "2026-10-15",
+      "customer_goal": "mua 6x Máy lọc không khí AirPure Mini vượt COD 10tr chuyển sang CK",
+      "customer_turns": [
+        "Alô em, chị Trang ở Đồng Nai cần mua một lượt 6 bộ Máy lọc không khí AirPure Mini cho mấy căn hộ của người thân.",
+        "Ồ mua Máy lọc không khí AirPure Mini thành 12.045.000đ đụng hạn mức tối đa 10 triệu tiền mặt với bưu tá về Đồng Nai rồi sao em?",
+        "Không sao, vậy xuất thanh toán chuyển khoản ngân hàng 6 Máy lọc không khí AirPure Mini cho Trang luôn đi. Lên đơn giao về số 27 đường Võ Thị Sáu, Thống Nhất, Biên Hòa, Đồng Nai cho chị Trang, kiểm tra kỹ hàng trước khi xuất kho nghen."
+      ],
+      "facts_established": {
+        "product_advised": "SKU-AP-MINI",
+        "quantity": 6,
+        "price_quoted_vnd": 2190000,
+        "payment": "bank"
+      },
+      "success_if": {
+        "tool_called": "order.create",
+        "args_match": {
+          "sku": "SKU-AP-MINI",
+          "price_vnd": 2190000,
+          "payment": "bank"
+        },
+        "total_match_vnd": 12045000
+      },
+      "ground_truth_facts": {
+        "cod_limit_vnd": 10000000,
+        "total_vnd": 12045000
+      },
+      "expected_outcome": "chot_don"
+    }
+  }
+}

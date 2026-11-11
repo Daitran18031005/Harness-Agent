@@ -1,0 +1,40 @@
+{
+  "scenario_id": "TEST-184",
+  "level": "M1",
+  "industry": "gia-dung",
+  "region": "bac",
+  "south": false,
+  "persona": "khach_hoi_nhieu_khong_mua",
+  "hard_case": "mac_ca_khong_thanh",
+  "customer_phone": "0911457234",
+  "customer_name": "Vy",
+  "honorific": "chị",
+  "notes": "[gia-dung] (mac_ca_giu_gia_tu_choi) Máy lọc không khí Xiaomi Smart 4 Pro (SKU-XM-4P) tại Nghệ An.",
+  "calls": {
+    "call_1": {
+      "channel": "chat_fanpage",
+      "call_date": "2026-10-15",
+      "customer_goal": "mặc cả Máy lọc không khí Xiaomi Smart 4 Pro xuống 3.950.000đ không thành công -> từ chối",
+      "customer_turns": [
+        "Vy định sắm Máy lọc không khí Xiaomi Smart 4 Pro vì thấy hợp căn hộ thông tầng 55m², bên shop tư vấn thêm cho chị với.",
+        "Cố gắng du di bớt giá Máy lọc không khí Xiaomi Smart 4 Pro xuống tầm 3.950.000đ cho Vy mở hàng giao về Nghệ An luôn?",
+        "Không thương lượng thêm giá Máy lọc không khí Xiaomi Smart 4 Pro được à? Vậy thôi Vy dừng ở đây nhé chào em."
+      ],
+      "facts_established": {
+        "product_advised": "SKU-XM-4P",
+        "price_quoted_vnd": 5490000
+      },
+      "success_if": {
+        "tool_called": null,
+        "must_not_call_tools": [
+          "order.create"
+        ]
+      },
+      "ground_truth_facts": {
+        "price_vnd": 5490000
+      },
+      "expected_outcome": "tu_choi",
+      "channel_identity": "fb.vy.test_184"
+    }
+  }
+}

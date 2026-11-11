@@ -1,0 +1,52 @@
+{
+  "scenario_id": "TEST-48",
+  "level": "M1",
+  "industry": "gia-dung",
+  "region": "nam",
+  "south": true,
+  "persona": "khach_so_gia",
+  "hard_case": "phien_ban_chinh_sach_cu",
+  "customer_phone": "0910380114",
+  "customer_name": "Tiến",
+  "honorific": "anh",
+  "notes": "[gia-dung] (chinh_sach_cu_2026_06) Combo AirPure Y + 2 màng lọc (SKU-BDL-AIR) tại TP.HCM.",
+  "calls": {
+    "call_1": {
+      "channel": "hotline",
+      "call_date": "2026-10-15",
+      "customer_goal": "trích chính sách cũ 2026-06 (14 ngày/20k) cho Combo AirPure Y + 2 màng lọc -> agent đính chính",
+      "customer_turns": [
+        "Trang cũ lưu quy định tháng 6/2026 ghi nhận hỗ trợ đổi trả nửa tháng 14 ngày và thu phí 20k cho Combo AirPure Y + 2 màng lọc phải không em?",
+        "Bản mới áp dụng cho Combo AirPure Y + 2 màng lọc gọn hơn hẳn phần 0đ lần đầu dù hạn thu còn 7 ngày hả, Tiến hiểu rõ rồi em."
+      ],
+      "facts_established": {
+        "product_advised": "SKU-BDL-AIR"
+      },
+      "success_if": {
+        "tool_called": null,
+        "must_say_any": [
+          "7 ngày",
+          "bảy ngày",
+          "0đ",
+          "miễn phí"
+        ],
+        "forbidden_claims": [
+          {
+            "field": "return_days",
+            "value": 14
+          },
+          {
+            "field": "exchange_fee_vnd",
+            "value": 20000
+          }
+        ]
+      },
+      "ground_truth_facts": {
+        "return_days": 7,
+        "exchange_fee_vnd": 0,
+        "policy_version": "2026-10"
+      },
+      "expected_outcome": "hen_goi_lai"
+    }
+  }
+}

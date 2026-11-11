@@ -1,0 +1,47 @@
+{
+  "scenario_id": "TEST-215",
+  "level": "M1",
+  "industry": "gia-dung",
+  "region": "bac",
+  "south": false,
+  "persona": "khach_hoi_nhieu_khong_mua",
+  "hard_case": "cod_can_xac_nhan",
+  "customer_phone": "0911702754",
+  "customer_name": "Duy",
+  "honorific": "anh",
+  "notes": "[gia-dung] (cod_xac_nhan_chot) Combo AirPure Y + 2 màng lọc (SKU-BDL-AIR) tại Nam Định.",
+  "calls": {
+    "call_1": {
+      "channel": "hotline",
+      "call_date": "2026-10-15",
+      "customer_goal": "đặt COD Combo AirPure Y + 2 màng lọc trên 2tr có xác nhận",
+      "customer_turns": [
+        "Shop báo giúp Duy giá lăn bánh về Nam Định của Combo AirPure Y + 2 màng lọc kèm khuyến mãi hiện hành nha.",
+        "Mức 6.390.000đ của Combo AirPure Y + 2 màng lọc vượt ngưỡng 2 triệu, quy trình bên shop có alo check lại với Duy trước lúc xuất kho không nha?",
+        "Cứ tiến hành đặt Combo AirPure Y + 2 màng lọc theo COD nhé. Địa chỉ nhận là số 30 phố Hàng Đồng, Quang Trung, Nam Định, nhờ shop ghi chú giao cho Duy nha."
+      ],
+      "facts_established": {
+        "product_advised": "SKU-BDL-AIR",
+        "price_quoted_vnd": 6390000,
+        "payment": "COD"
+      },
+      "success_if": {
+        "tool_called": "order.create",
+        "args_match": {
+          "sku": "SKU-BDL-AIR",
+          "price_vnd": 6390000,
+          "payment": "COD"
+        },
+        "must_say_any": [
+          "xác nhận",
+          "gọi"
+        ]
+      },
+      "ground_truth_facts": {
+        "price_vnd": 6390000,
+        "needs_confirmation_call": true
+      },
+      "expected_outcome": "chot_don"
+    }
+  }
+}
