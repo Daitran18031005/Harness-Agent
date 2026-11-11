@@ -2481,3 +2481,14 @@ Lý do trượt (full, theo cuộc gọi): 24 thiếu `must_say_any` · 21 khôn
 - Đã cập nhật theo số `runs/m1_final2`: `submission/EVALUATION_REPORT.md` (bảng A.6, trước/sau, 12 ca sai), `README.md` (lệnh chuẩn BTC, hạn chế), `DATASET.md` (277 kịch bản/455 cuộc/908 lượt, phân bố), `ARCHITECTURE.md` (danh sách tool, lượt chốt, Knowledge Gap Loop).
 - Sửa thêm: phiếu chuyển máy bù trường `null` + lấy sản phẩm khách nêu từ catalog (8 ca "handoff brief thiếu trường"); 987 test xanh (`runs/_unittest_handoff.txt`); chưa đo lại bằng LLM.
 - **Chưa làm:** `DEMO_SCRIPT.md` và `slides.html` (còn số cũ); rà § 10 cơ sở dữ liệu; giao diện OpenUI; tạo repo git; video.
+
+### 13.6 Hồ sơ nộp, cơ sở dữ liệu, repo (2026-11-11, tiếp)
+
+- **`submission/` đủ 6 tài liệu theo số `runs/m1_final2`:** thêm `slides.html` (vẫn 15 slide; slide 9–15 viết lại: cách đo, bảng kết quả, bộ nhớ giúp ở đâu, trước/sau, ca sai, chi phí, hạn chế) và `DEMO_SCRIPT.md` (cảnh 3 dùng số mới + lệnh chấm lại trực tiếp). Video chưa quay.
+- **Rà § 10 (cơ sở dữ liệu).** Đã xong từ § 11.15: D1, D2, D4–D9, D13–D15. Làm thêm hôm nay:
+  - **D12** (nạp cả DB vào RAM lúc khởi tạo) → `ProfileMemoryStore` / `EpisodicMemoryStore` nạp THEO KHÁCH lần đầu chạm tới (`_of`), `SQLiteStore.load_all_*` nhận `customer_id`.
+  - **D10** (phiên làm việc không hết hạn) → khi mở DB xóa `working_sessions` cũ hơn `WORKING_RETENTION_DAYS = 30`.
+  - Test `LazyLoadAndRetentionTest` (trong `tests/test_knowledge_gap.py`); cả bộ 988 test, xanh.
+  - **Chưa làm, ghi là hạn chế:** D3 (hồ sơ vẫn là một ô/khách cho `product_advised`, `order_id`… — khách quan tâm nhiều sản phẩm/nhiều đơn chỉ giữ cái gần nhất; cần bảng `product_interests`/`order_refs`, thay đổi lớn, chưa làm trước hạn nộp), D11 phần còn lại (chưa có khóa ngoại), D16 (tên khách và SĐT lưu rõ, chưa mã hóa at-rest; giảm thiểu: file DB nằm trong `.gitignore`, không vào gói nộp).
+- **Repo:** `Code/` ĐÃ là repo git (remote `origin` trên GitHub, 3 commit trên `main`) — ghi chú "không phải repo" ở § 13 là sai (lệnh kiểm chạy nhầm thư mục cha). Đã quét 303 tệp thay đổi bằng bộ dò bí mật của `package_submission.py` (0 nghi vấn) và commit vào nhánh mới `m1-nop-2026-11-11` (chưa push, chưa gộp vào `main`). `.gitignore` giữ thêm `runs/m1_final2/report.{md,json}` và `runs/m1_final/hr_price_check.json`.
+- **OpenUI: chưa làm.** github.com/wandb/openui hiện truy cập được; cần chủ dự án cho phép tải + cài mã nguồn ngoài và duyệt chi phí LLM cho việc sinh giao diện. Giao diện dựng tay `ui/index.html` vẫn chạy.
