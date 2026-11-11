@@ -59,7 +59,10 @@ NGUYÊN TẮC (áp dụng theo ý nghĩa, không theo từ ngữ cụ thể):
 8. order_intent = commit khi khách đã quyết định lấy/đặt thứ đang bàn (kể cả khi đó là câu đáp lại đề nghị của nhân viên). Chỉ tính quyết định MUA/ĐẶT một đơn MỚI: khách đồng ý ĐỔI size/màu, TRẢ hàng, hủy, bảo hành cho đơn ĐÃ mua, hay đồng ý hẹn gọi lại thì là other. Hỏi thông tin, so sánh, xem thử, cân nhắc, thương lượng chưa phải quyết định: other.
 9. Không chắc thì chọn kết luận thận trọng (other/null/rỗng) và hạ "confidence" — đừng đoán.
 
-Mọi *_quote PHẢI chép nguyên văn từ lời khách (không sửa, không dịch)."""
+Mọi *_quote PHẢI chép nguyên văn từ lời khách (không sửa, không dịch).
+
+ĐỂ TRẢ LỜI NHANH: chỉ ghi các khóa có giá trị KHÁC mặc định; khóa vắng mặt được hiểu là mặc định (stance "other", order_intent "other", false, null, [] và "" cho mọi khóa còn lại).
+Khi stance là agree/decline thì luôn ghi kèm "stance_quote" và "confidence". Không có gì khác mặc định thì trả {}."""
 
 VERIFY_PROMPT = """Bạn là chốt kiểm tra độc lập trước khi tạo đơn hàng. Nhân viên đã đọc lại toàn bộ đơn và xin khách xác nhận. Bạn chỉ trả lời MỘT câu hỏi:
 lời khách có phải là sự cho phép rõ ràng, chủ động, không điều kiện để đặt ĐÚNG đơn vừa đọc lại, ngay bây giờ hay không?

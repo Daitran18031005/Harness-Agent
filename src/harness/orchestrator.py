@@ -10,6 +10,7 @@ Vòng lặp:
 7. Kiểm duyệt (Guardrail Check) -> Đẩy proposal sang Guardrail
 8. Ghi nhớ (Persist) -> Cập nhật Profile, Episodic, Working memory
 """
+import os
 import re
 import json
 import time
@@ -87,6 +88,8 @@ class HarnessOrchestrator:
         memory.register_delete_listener(self._forget_customer)  # xóa khách -> xóa cả trạng thái theo cuộc gọi
         # Bước 12: chọn sản phẩm bằng luật slot→thuộc tính (dữ liệu config/slot_rules.json) + chính sách hỏi lại if/else
         try:
+            if os.environ.get("PRODUCT_SHORTLIST", "").strip().lower() in ("off", "0", "false"):      # công tắc đo so sánh (bật/tắt bước lọc sản phẩm theo nhu cầu): tắt → LLM tự chọn bằng catalog.search
+                raise RuntimeError("PRODUCT_SHORTLIST=off")
             self.retriever: Optional[ProductRetriever] = ProductRetriever()
             self.clarifier: Optional[ClarificationPolicy] = ClarificationPolicy(self.retriever.rules)
         except Exception as e:      # thiếu catalog/luật → vẫn chạy được (không có product.shortlist)
@@ -470,7 +473,7 @@ class HarnessOrchestrator:
                         precomp_served.append(name)
                         return {**hit, "already_checked_this_turn": True, "note": "Đã kiểm tra THẬT đầu cuộc gọi hôm nay; dùng kết quả này."}, vault.redact_args_for_trace(exec_args)
                     if name == "inventory.check":          # biến thể này CODE đã tra ngay đầu lượt: trả lại kết quả đó, không gọi tool lần hai
-                        same = next((c for c in pre_stock if (c.get("args") or {}).get("sku") == exec_args.get("sku")), None)
+                        same = next((c for c in pre_stock if c.get("name") == "inventory.check" and (c.get("args") or {}).get("sku") == exec_args.get("sku")), None)
                         if same:
                             return {**same["result"], "already_checked_this_turn": True}, same["args"]
 
@@ -538,6 +541,22 @@ class HarnessOrchestrator:
                                     for v in variants
                                 ]}
 
+                    if name == "catalog.search" and isinstance(result, dict) and len(result.get("items") or []) == 1 and not result["items"][0].get("variants"):
+                        # Tìm ra ĐÚNG MỘT sản phẩm không có biến thể: CODE tra luôn tồn kho + giá hôm nay và gắn vào kết quả, để LLM khỏi tốn thêm một vòng gọi
+                        # inventory.check/pricing.get_quote (trace cho thấy "search > get_quote" là dạng lượt 3 vòng hay gặp nhất). Hai lời gọi này vào trace như tool thật.
+                        one = result["items"][0].get("sku")
+                        today: Dict[str, Any] = {}
+                        for extra_name, extra_args in (("inventory.check", {"sku": one, "on": current_date}),
+                                                       ("pricing.get_quote", {"sku": one, "on": current_date, "qty": 1, **({"customer_phone": caller_phone} if caller_phone and not brief.blocker else {})})):
+                            try:
+                                extra_res = self.mcp.execute_tool(extra_name, extra_args, caller="HarnessOrchestrator")
+                            except Exception:
+                                extra_res = None
+                            if isinstance(extra_res, dict) and "error" not in extra_res:
+                                pre_stock.append({"name": extra_name, "tool": extra_name, "args": vault.redact_args_for_trace(extra_args), "result": vault.mask_value(extra_res, caller_phone)})
+                                today.update({k: extra_res[k] for k in ("in_stock", "qty", "restock_expected", "final_price_vnd", "applied_promos", "expired_promos", "freeship") if k in extra_res})
+                        if today:
+                            result = {**result, "today": {**today, "note": "Tồn kho và giá HÔM NAY của sản phẩm này đã tra bằng tool — dùng luôn, KHÔNG gọi lại inventory.check/pricing.get_quote cho nó."}}
                     if name == "catalog.search" and isinstance(result, dict) and not result.get("items") and not exec_args.get("sku"):
                         result = self._empty_search_fallback(result, exec_args, turn.normalized_text, _focus(), prior_call_log + live_calls, current_date)
                     if dedup_key is not None and "error" not in result:
@@ -559,7 +578,8 @@ class HarnessOrchestrator:
                 # schema chỉ chấp nhận đúng variant_sku THẬT của sản phẩm đó cho sku/new_variant_sku.
                 def dynamic_tools():                                    # dựng lại MỖI vòng: sản phẩm khách vừa đổi sang (catalog.search ở vòng trước) vào được enum ngay vòng sau
                     parents = self._discussed_parents(brief.product_advised, prior_call_log + pre_stock + live_calls)
-                    return with_order_gate_params(self._build_dynamic_tools(llm_client, parents) or llm_client.get_base_tools())
+                    tools = with_order_gate_params(self._build_dynamic_tools(llm_client, parents) or llm_client.get_base_tools())
+                    return tools if self.retriever is not None else [t for t in tools if "shortlist" not in str((t.get("function") or {}).get("name"))]
                 llm_started_at = time.perf_counter()
                 llm_text, llm_tool_calls, llm_usage = llm_client.chat_with_tools(
                     messages=self._build_llm_messages(turn, brief, history, current_date, caller_phone, stock_calls=pre_stock, precomputed=self._precomp.get(working_session_id),
@@ -569,6 +589,8 @@ class HarnessOrchestrator:
                     timing=llm_timing,
                 )
                 llm_timing["started_at"] = llm_started_at
+                llm_timing["reader_ms"] = int(reading_trace.get("latency_ms") or 0)      # bước đọc hiểu lời khách (LLM riêng, chạy TRƯỚC LLM chính) — phần lớn "thời gian chuẩn bị" của TTFT
+                llm_timing["reader_calls"] = int(reading_trace.get("llm_calls") or 0)
                 llm_tool_calls = [c for c in llm_tool_calls if (c.get("result") or {}).get("error") not in ("order_gate_blocked", "handoff_blocked") and not (c.get("result") or {}).get("already_checked_this_turn")]    # lời gọi bị chặn/trùng với tra cứu của code KHÔNG vào tool_calls của trace
                 # Khiếu nại ĐƠN ĐÃ ĐẶT: lượt có tra order.status mà LLM không tự chuyển máy → CODE gọi chốt phân loại (có dữ kiện đơn); ca sự cố/ngoài phạm vi thì CODE chuyển máy và nối câu báo khách.
                 status_calls = [c for c in llm_tool_calls if c.get("name") == "order.status" and (c.get("result") or {}).get("orders")]
@@ -1578,7 +1600,8 @@ class HarnessOrchestrator:
         # rồi mới tới [ngữ cảnh Call Brief — đổi theo lượt] và [lời khách]. Trước đây ngữ cảnh đứng TRƯỚC lịch sử nên mỗi khi
         # nó đổi (fact mới, ngày…) thì toàn bộ lịch sử phía sau mất cache.
         return [
-            {"role": "system", "content": system_prompt},
+            {"role": "system", "content": system_prompt + ("" if self.retriever is not None else
+                " LƯU Ý: tool product.shortlist KHÔNG khả dụng — khi tư vấn theo nhu cầu, tra catalog.search rồi tự chọn MỘT sản phẩm phù hợp nhất với điều khách đã nói.")},
             *history,
             {"role": "system", "content": "\n".join(context_lines)},
             {"role": "user", "content": turn.llm_text or turn.normalized_text},

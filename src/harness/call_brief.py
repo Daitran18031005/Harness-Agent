@@ -6,6 +6,7 @@ Nhiệm vụ:
 - Thiết lập must_not_ask (những slot cấm hỏi lại bằng câu hỏi mở)
 - Tạo câu mở đầu bằng 'Xác nhận tiếp nối'
 """
+import os
 import time
 from typing import Dict, Any, List, Optional
 from dataclasses import dataclass, field, asdict
@@ -191,6 +192,8 @@ class CallBriefBuilder:
         """Tra sẵn bằng CODE (không LLM): thông tin sản phẩm/bảo hành, tồn kho, giá cuối + KM của đúng biến thể đã tư vấn (hoặc sản phẩm cha) tại ngày cuộc gọi.
         Một lần cho mỗi (khách, ngày). Trả None nếu không có cổng tool hoặc không tra được gì. `calls` cùng dạng tool_calls của trace (SĐT thay bằng token) để orchestrator ghi
         vào trace lượt đầu và làm bằng chứng cho guardrail; thời gian tra tính vào `call_brief_latency_ms` vì nằm trong `build()`."""
+        if os.environ.get("PROACTIVE_INFO", "").strip().lower() in ("off", "0", "false"):      # công tắc đo so sánh: tắt việc tra sẵn giá/tồn kho/KM lúc nhận diện khách
+            return None
         key = (cid, on)
         if key in self._pre_cache:
             return self._pre_cache[key]

@@ -2517,3 +2517,27 @@ Hai nguyên nhân, không phải lỗi dashboard: (1) máy chủ API vừa khở
 **Sửa:** (1) `CallFinalizer.finalize`: cuộc kết thúc (end/timeout) lưu episode với mã `<phiên>#<n>`; episode giữa cuộc (handoff) vẫn mã phiên trần và bị `get_episodes` ẩn khi cuộc đó đã có bản kết thúc; mở DB thì episode `SESS-…` kiểu cũ được gắn `#1`. (2) Không ép hỏi tài khoản (và không coi là khách mới) khi Call Brief đã có `product_advised` của chính liên hệ này. (3) `_persist_tool_grounded_facts`: nhánh "chỉ có shortlist" không ghi đè sản phẩm khi đang nhớ giá của sản phẩm khác (hồ sơ từng thành "RO Kangaroo 10 lõi — 3.290.000đ", giá của UF Sunhouse).
 **Kiểm:** test `test_second_call_on_the_same_day_sees_the_first_one`; cả bộ **990 xanh** (`runs/_unittest_sameday.txt`). Phát lại đúng ca trên BẢN SAO `data/demo.db` qua API (34,4 VND): "Số cuộc gọi trước: 1", agent trả lời "hôm 13/10 bên em có tư vấn Máy lọc nước RO Kangaroo 10 lõi… giá 6.890.000 VNĐ" (giá tra lại bằng tool), không xin tài khoản.
 **Còn lại:** dòng giá 3.290.000 sai đã lưu từ trước vẫn nằm trong `demo.db` (sửa (3) chỉ chặn trường hợp mới); hồ sơ vẫn một ô sản phẩm/khách (D3). Kịch bản đánh giá có hai cuộc cùng ngày (nếu có) sẽ đổi kết quả — chưa đo lại.
+
+### 13.11 Transcript `dialogs/`, đo so sánh bật/tắt, giảm độ trễ (2026-11-11, đang làm)
+
+**(1) `dialogs/ground_truth.json` — 45 transcript, chưa có audio** (`python scripts/build_dialogs.py`, không gọi LLM): lời khách từ `team_eval`, lời agent từ trace `runs/m1_final2`; đúng định dạng `asr/ground_truth.json` của BTC + `text_written`, `channel`, `persona`, `hard_case`, `expected`, `system_result`. 244 lượt, ≈ 10.600 từ (≈ 71 phút nếu đọc 150 từ/phút); 36 hotline + 9 chat; vùng miền Bắc 19 / Nam 15 / Trung 11; 12 cuộc gắn nhãn nhiễu; 30 cuộc hệ thống đạt + 15 trượt. Sửa kèm `src/dataset/spoken.py`: đơn vị tiền phải đứng trọn từ ("600.000 được" từng thành "…nghìnược"), số dính đơn vị ("240ml"). Còn 1 chỗ "…mươik" (T31) chưa xử lý.
+
+**(2) Độ trễ — đo từ trace `runs/m1_final2` (0 đồng):** 24% lượt do code xử lý (TTFT 75 ms); lượt có LLM tối thiểu 2 vòng (vòng đầu p50 1,2 s / p95 2,1 s; token đầu của vòng cuối 0,8 s); **trước LLM chính mất ≈ 2,2 s (p50)** cho bước đọc hiểu lời khách (LLM JSON, không stream); tra chính sách có router LLM thêm 1–3,4 s. Đã làm: (a) bộ đọc hiểu chỉ trả khóa khác mặc định (đầu ra ngắn → đọc hiểu TB 1,1 s); (b) `catalog.search` ra đúng một sản phẩm không biến thể thì code gắn luôn tồn kho + giá hôm nay (bớt một vòng); (c) trace thêm `reader_ms`, `reader_calls`. **Không dùng câu đệm** (quyết định của chủ dự án).
+
+**(3) Đo so sánh trên CÙNG 40 kịch bản (`runs/ab/`, cấu hình full, 1 seed, 239 lượt; `python scripts/ab_report.py`):**
+
+| Chỉ số | Bật hết (`base`) | Tắt tra sẵn | Tắt router chính sách | Tắt lọc sản phẩm |
+|---|---:|---:|---:|---:|
+| TSR | 92,5 % (37/40) | 90,0 % | 90,0 % | 85,0 % |
+| RQR | 2,6 % | 1,8 % | 1,7 % | 5,3 % |
+| CCR | 59,6 % | 53,9 % | 59,6 % | 57,3 % |
+| HR giá/KM | 0,0 % | 0,0 % | 0,0 % | **35,7 %** |
+| Guardrail (ca) | 2 | 3 | 2 | 1 |
+| TTFT p50 / p95 | 3,6 / 6,6 s | 3,5 / 6,5 s | 3,4 / 6,0 s | 3,5 / 6,7 s |
+| Total p95 | 8,0 s | 8,2 s | 7,2 s | 7,7 s |
+| Chi phí | 5.246 | 5.439 | 5.619 | 5.632 VND |
+
+Công tắc: `PROACTIVE_INFO=off`, `POLICY_ROUTER=off`, `PRODUCT_SHORTLIST=off`. Cùng 40 kịch bản ở `runs/m1_final2` (trước các sửa hôm nay): TSR 87,5 %, TTFT p50/p95 4,4 / 7,2 s, Total p95 9,5 s.
+**Router chính sách trên 60 câu có nhãn của BTC** (`scripts/eval_policy_router.py --llm`, 465 VND): Recall@3 76,3 → 81,4 %; Recall@5 81,4 → **88,1 %** (đúng thứ hệ thống trả: 86,4 %); từ chối nhầm 0 → 2,1 %; thêm ≈ 1,0 s và 7,8 VND mỗi lần tra. Lưu ý: 60 câu này cũng là bộ dùng lúc phát triển, chưa có phần giữ riêng.
+**Chấm bằng LLM riêng** (`scripts/llm_judge.py`, `gpt-6-luna`, rubric 12 tiêu chí của BTC): đang chạy; `manual_20.csv` chờ người chấm.
+Chi phí tới lúc này trong trần 60.000: 4 lượt so sánh 28.423 + router 465 + thử độ trễ 440.
