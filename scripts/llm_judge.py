@@ -18,14 +18,23 @@ RUBRIC = json.load(open(os.path.join(BTC, "eval", "llm_judge_rubric.json"), enco
 HIDE = ("customer_phone",)          # không gửi SĐT cho model chấm
 
 
+def scrub(v):
+    """Bỏ SĐT khỏi dữ liệu gửi model chấm."""
+    if isinstance(v, dict):
+        return {k: scrub(x) for k, x in v.items() if k not in ("customer_phone", "phone", "recipient_phone")}
+    return [scrub(x) for x in v] if isinstance(v, list) else v
+
+
 def transcript_of(rows, prior_note):
+    """Model chấm phải thấy KẾT QUẢ tool (giá, tồn kho, chính sách tra được) và phiếu chuyển máy: thiếu chúng thì mọi con số agent nói đều bị coi là bịa
+    (lần chấm đầu, chỉ đưa tên tool: J02 đạt 16 %, J05 đạt 0/7)."""
     lines = [prior_note] if prior_note else []
     for r in rows:
         if (r.get("customer_text") or "").strip():
             lines.append(f"KHÁCH: {r['customer_text']}")
-        tools = ", ".join(f"{tc.get('name')}({json.dumps({k: v for k, v in (tc.get('args') or {}).items() if k not in ('customer_phone', 'brief')}, ensure_ascii=False)})"
-                          for tc in r.get("tool_calls") or [])
-        lines.append(f"AGENT: {r['agent_text']}" + (f"\n  [tool đã gọi: {tools}]" if tools else ""))
+        tools = "".join(f"\n  [tool {tc.get('name')}({json.dumps(scrub(tc.get('args')), ensure_ascii=False)[:500]}) → {json.dumps(scrub(tc.get('result')), ensure_ascii=False)[:700]}]"
+                        for tc in r.get("tool_calls") or [])
+        lines.append(f"AGENT: {r['agent_text']}" + tools)
     return "\n".join(lines)
 
 
@@ -41,13 +50,18 @@ def judge(args):
     os.makedirs(args.out, exist_ok=True)
     out_path = os.path.join(args.out, "judge.json")
     done = json.load(open(out_path, encoding="utf-8")) if os.path.exists(out_path) else {}
-    for (sid, call), rows in sorted(trace.items()):
+    import threading
+    from concurrent.futures import ThreadPoolExecutor
+    lock = threading.Lock()
+
+    def one(item):
+        (sid, call), rows = item
         key = f"{sid}/{call}"
         if key in done or sid not in scenarios:
-            continue
+            return
         if llm.cost_tracker.spent_vnd() >= args.max_cost_vnd:
-            print(f"[DỪNG] chạm trần {args.max_cost_vnd} VND sau {len(done)} cuộc")
-            break
+            print(f"[DỪNG] chạm trần {args.max_cost_vnd} VND — bỏ {key}")
+            return
         s = scenarios[sid]
         spec = s["calls"][call]
         prior = {c: s["calls"][c].get("facts_established") for c in sorted(s["calls"]) if c < call and s["calls"][c].get("facts_established")}
@@ -57,16 +71,25 @@ def judge(args):
                   .replace("{transcript}", transcript_of(rows, "(Đây là cuộc gọi lại của cùng khách.)" if call != "call_1" else "")).replace("{criteria}", crit_text))
         prompt += ('\n\nTrả về DUY NHẤT JSON: {"verdicts": [{"criterion_id": "...", "verdict": "PASS"|"FAIL"|"NA", "evidence": "trích 1 câu"}]} cho ĐỦ 12 tiêu chí; '
                    'dùng "NA" khi tiêu chí không áp dụng cho cuộc gọi này.')
-        try:
-            raw, _ = llm.complete_json([{"role": "user", "content": prompt}])
-        except Exception as e:
-            print(f"{key}: lỗi model chấm ({e})")
-            continue
+        raw = None
+        for attempt in range(2):                      # model chấm hay lỗi/timeout: thử lại một lần
+            try:
+                raw, _ = llm.complete_json([{"role": "user", "content": prompt}])
+                break
+            except Exception as e:
+                print(f"{key}: lỗi model chấm lần {attempt + 1} ({str(e)[:120]})")
+        if raw is None:
+            return
         ids = {c["id"] for c in RUBRIC["criteria"]}
-        done[key] = [v for v in (raw.get("verdicts") or []) if isinstance(v, dict) and v.get("criterion_id") in ids and v.get("verdict") in ("PASS", "FAIL", "NA")]
-        with open(out_path, "w", encoding="utf-8") as f:
-            json.dump(done, f, ensure_ascii=False, indent=1)
+        with lock:
+            done[key] = [v for v in (raw.get("verdicts") or []) if isinstance(v, dict) and v.get("criterion_id") in ids and v.get("verdict") in ("PASS", "FAIL", "NA")]
+            with open(out_path, "w", encoding="utf-8") as f:
+                json.dump(done, f, ensure_ascii=False, indent=1)
+
+    with ThreadPoolExecutor(max_workers=args.workers) as pool:
+        list(pool.map(one, sorted(trace.items())))
     spent = llm.cost_tracker.spent_vnd()
+    print(f"đã chấm {len(done)}/{sum(1 for (s_, _c) in trace if s_ in scenarios)} cuộc")
 
     stats = {c["id"]: [0, 0] for c in RUBRIC["criteria"]}
     for vs in done.values():
@@ -124,5 +147,6 @@ if __name__ == "__main__":
     ap.add_argument("--out", required=True)
     ap.add_argument("--model", default="gpt-6-luna")
     ap.add_argument("--max-cost-vnd", type=float, default=5000.0)
+    ap.add_argument("--workers", type=int, default=4)
     a = ap.parse_args()
     sys.exit(judge(a) if a.cmd == "judge" else agreement(a))
