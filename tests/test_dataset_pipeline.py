@@ -129,6 +129,20 @@ class AssembleTest(unittest.TestCase):
         self.assertIn("590k", out)
         self.assertNotRegex(out, r"[àáạảãăâđêôơư]")
 
+    def test_teencode_keeps_every_piece_of_customer_info(self):
+        """Câu gốc có SĐT/giá/số lượng/size/màu/địa chỉ/tên thì bản teencode phải giữ đủ (TEST-157/196/58/89/130 từng mất câu đọc SĐT)."""
+        from src.dataset.writer import teencode_keep_info
+        s = ("Lấy 2 đôi giày size 40 màu trắng giá 1.990.000đ nhé. Gửi về số 236 đường Ông Ích Khiêm, Thanh Khê, Đà Nẵng, tên Sơn. "
+             "Số di động nhận hàng của Sơn là 0911243394 nhé.")
+        full = teencode_keep_info(s)
+        for tok in ["2", "40", "mau trang", "1.990.000", "236", "ten son", "0911243394"]:
+            self.assertIn(tok, full)
+        cut = "lay 2 doi giay size 40 mau trang gia 1990000d nhe gui ve so 236 duong ong ich khiem thanh khe da nang ten son"   # bản cũ mất câu SĐT
+        fixed = teencode_keep_info(s, cut)
+        self.assertTrue(fixed.startswith(cut))
+        self.assertIn("0911243394", fixed)
+        self.assertEqual(teencode_keep_info(s, fixed), fixed)                     # đủ rồi thì không nối thêm (sinh lại nhiều lần vẫn ra một kết quả)
+
 
 class QualityFixesTest(unittest.TestCase):
     def test_dedupe_repeated_category_phrase(self):
@@ -333,3 +347,10 @@ class ReviewTest(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class TeencodeModelCodeTest(unittest.TestCase):
+    def test_digits_inside_model_codes_are_not_lost_info(self):                  # "Senko TS16", "Spectra S1": không nối lại cả câu
+        from src.dataset.writer import teencode_keep_info
+        self.assertEqual(teencode_keep_info("Shop ơi máy hút sữa Spectra S1 giá bao nhiêu vậy?", "shop oi may hut sua spectra s1 gia bn v"),
+                         "shop oi may hut sua spectra s1 gia bn v")

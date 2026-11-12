@@ -83,8 +83,34 @@ def teencodify(text: str) -> str:
         t = re.sub(a, b, t)
     t = unicodedata.normalize("NFD", t.replace("đ", "d"))
     t = "".join(c for c in t if unicodedata.category(c) != "Mn")
-    t = re.sub(r"[.,;!]+", " ", t)
+    t = re.sub(r"[;!]+|(?<!\d)[.,]+|[.,]+(?!\d)", " ", t)       # dấu câu; "1.990.000" / "4.5" giữ nguyên (từng thành "1 990 000")
     return re.sub(r"\s+", " ", t).strip()
+
+
+def _info_tokens(text: str) -> List[str]:
+    """Thông tin khách cung cấp trong một câu, dạng đã teencode: mọi cụm số (SĐT, giá, số lượng, size, số nhà — bỏ dấu ngăn nghìn),
+    màu sau "màu", và tên sau "tên"."""
+    t = teencodify(re.sub(r"(?<=\d)[.,](?=\d{3}\b)", "", text))
+    toks = re.findall(r"(?<![\w.,])\d+(?:[.,]\d+)?", t)          # số đứng riêng; chữ số trong mã mẫu ("s1", "ts16") là tên sản phẩm
+    toks += [f"{k} {w}" for k, w in re.findall(r"\b(mau|ten)\s+(\w+)", t)]
+    toks += re.findall(r"\bsize\s+(\w+)", t)
+    return toks
+
+
+def teencode_keep_info(original: str, asr: str = "") -> str:
+    """Bản teencode GIỮ ĐỦ thông tin của câu gốc: câu nào trong `original` có thông tin (SĐT/giá/số lượng/size/màu/địa chỉ/tên) mà `asr`
+    chưa có thì nối bản teencode của câu đó vào cuối. `asr` rỗng → teencode cả câu. Xác định (không ngẫu nhiên): cùng đầu vào cho cùng kết quả.
+    (5 kịch bản TEST chat teencode từng mất câu đọc SĐT ở lượt chốt — khách chat không có số gọi đến nên không tạo được đơn.)"""
+    if not asr:
+        return teencodify(original)
+    have = " " + re.sub(r"(?<=\d)[.,](?=\d{3}\b)", "", asr) + " "
+    add = []
+    for sent in re.split(r"(?<=[.!?])\s+", original.strip()):
+        missing = [k for k in _info_tokens(sent)                         # số: biên là chữ số ("1990000d" vẫn khớp 1990000); chữ: biên là ký tự chữ
+                   if not re.search(rf"(?<![\w.,]){re.escape(k)}" + (r"(?!\d)" if k[-1].isdigit() else r"(?!\w)"), have)]
+        if missing:
+            add.append(teencodify(sent))
+    return " ".join([asr.strip()] + add)
 
 
 def dedupe_phrase(text: str) -> str:
