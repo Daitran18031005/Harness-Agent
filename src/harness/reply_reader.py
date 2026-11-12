@@ -61,12 +61,15 @@ JSON gồm các khóa:
 NGUYÊN TẮC (áp dụng theo ý nghĩa, không theo từ ngữ cụ thể):
 1. agree: người nghe không thể hiểu khác ngoài việc khách CHẤP NHẬN điều nhân viên vừa hỏi/đề nghị, một cách chủ động và không điều kiện. Âm thanh ậm ừ, tín hiệu "đang nghe/đang nghĩ", hay phản hồi chưa mang nội dung chấp nhận thì chưa phải chấp nhận.
 2. Có điều kiện, câu hỏi, đổi ý, hay kèm yêu cầu mới thì không phải chấp nhận không điều kiện.
-3. decline: khách không muốn tiếp tục mua, hoãn quyết định, hoặc thương lượng giá. Khách chỉnh/sửa/phủ nhận MỘT THÔNG TIN cụ thể (số, tên, địa chỉ, sản phẩm) là đang cung cấp thông tin chính xác hơn, không phải từ chối: stance = other.
+3. decline: khách không muốn tiếp tục mua, hoãn quyết định, hoặc thương lượng giá (theo định nghĩa mặc cả ở nguyên tắc 8). Khách chỉnh/sửa/phủ nhận MỘT THÔNG TIN cụ thể (số, tên, địa chỉ, sản phẩm) là đang cung cấp thông tin chính xác hơn, không phải từ chối: stance = other.
 4. recipient_name: khi nhân viên vừa hỏi tên người nhận, một phản hồi ngắn đóng vai trò là tên người thì là tên, bất kể cách viết hoa/dấu. Danh xưng không thuộc về tên.
 5. affirmed chỉ ghi mục khách xác nhận là ĐÚNG với thông tin đã có; thông tin khách mới đưa ra không nằm trong affirmed. Xác nhận bằng cách chỉ vào thứ đang dùng/đang nói tới (cùng đối tượng với thông tin nhân viên nêu) cũng là xác nhận.
 6. only_answers = true khi lời khách chỉ nhằm đáp lại đúng điều nhân viên đang hỏi/chờ, dù đáp nhiều điều một lúc; false khi khách đưa thêm câu hỏi, thay đổi sản phẩm/số lượng, hoặc chuyển sang chuyện khác.
 7. payment: chỉ điền khi khách đã LỰA CHỌN một hình thức; hỏi về khả năng hoặc chưa quyết thì null. Quy về hình thức phù hợp nhất theo cách trả tiền được mô tả.
 8. order_intent = commit khi khách đã quyết định lấy/đặt thứ đang bàn (kể cả khi đó là câu đáp lại đề nghị của nhân viên). Chỉ tính quyết định MUA/ĐẶT một đơn MỚI: khách đồng ý ĐỔI size/màu, TRẢ hàng, hủy, bảo hành cho đơn ĐÃ mua, hay đồng ý hẹn gọi lại thì là other. Hỏi thông tin, so sánh, xem thử, cân nhắc, thương lượng chưa phải quyết định: other.
+   Lời có động từ chốt mua (lấy, đặt, chốt, gửi cho, ship, lên đơn…) kèm sản phẩm/số lượng, hoặc kèm cách thanh toán/địa chỉ giao hàng, là commit KỂ CẢ khi khách nêu một con số giá: đó là khách nhắc lại giá; giá đúng hay sai do bước đọc lại đơn xử lý, không phải lý do hạ thành other.
+   Mặc cả = hỏi hoặc đề nghị giá thấp hơn mà KHÔNG có lời chốt (hỏi "giá X được không", xin bớt, chê giá cao): order_intent other, asks_price_promo true. Chỉ hỏi giá: other.
+   Vừa chốt vừa xin bớt trong cùng lời: order_intent commit VÀ asks_price_promo true (nhân viên trả lời chuyện giá trước, đơn chưa tạo cho tới khi khách xác nhận giá).
 9. Không chắc thì chọn kết luận thận trọng (other/null/rỗng) và hạ "confidence" — đừng đoán.
 
 Mọi *_quote PHẢI chép nguyên văn từ lời khách (không sửa, không dịch).

@@ -486,5 +486,68 @@ class CandidateRankingTest(unittest.TestCase):
         self.assertIn("SKU-BDL-AIR", got)
 
 
+
+class CommitWithPriceTest(unittest.TestCase):
+    """order_intent khi khách nêu giá. LLM ở đây là GIẢ (kịch bản JSON theo đúng nguyên tắc mới của prompt) → test kiểm đi dây: commit + giá → code mở đơn nháp
+    với GIÁ CATALOG; mặc cả/hỏi giá → không mở; vừa chốt vừa xin bớt → không mở (trả lời giá trước). LLM thật có theo prompt hay không: scripts/eval_reply_reader.py (cần duyệt)."""
+    COMMITS = [("lấy cho anh một máy AirPure Mini giá 3.290.000 nhé, COD", "SKU-AP-MINI"),                 # giá có thể đúng/sai: gate dùng giá catalog
+               ("chốt em một máy Xiaomi Smart 4 Lite 1 triệu, giao về nhà chị", "SKU-XM-4L"),              # giá sai hẳn
+               ("đặt cho tôi một máy Samsung AX40 giá 6 triệu, chuyển khoản", "SKU-SS-AX40")]
+    BARGAINS = ["máy AirPure Mini 2 triệu được không em", "bớt cho chị cái Xiaomi Smart 4 Lite đi, giá đó cao quá", "Samsung AX40 5 triệu thì anh lấy được không"]
+    ASKS = ["máy AirPure Mini giá bao nhiêu em", "Xiaomi Smart 4 Lite giờ bán nhiêu", "cho hỏi giá Samsung AX40"]
+
+    @staticmethod
+    def fake_reader(text):
+        """Mô phỏng bộ đọc làm ĐÚNG prompt mới (để kiểm phần code; không kiểm LLM thật)."""
+        t = text.split("Lời khách:")[-1].strip()
+        commit = any(v in t for v in ("lấy cho", "chốt em", "đặt cho"))
+        price = any(v in t for v in ("được không", "bớt", "bao nhiêu", "bán nhiêu", "hỏi giá"))
+        verb = next((v for v in ("lấy cho", "chốt em", "đặt cho") if v in t), "")
+        out = {"order_intent": "commit", "intent_quote": verb} if commit else {}
+        if price:
+            out.update(asks_price_promo=True, price_promo_quote=next(v for v in ("được không", "bớt", "bao nhiêu", "bán nhiêu", "hỏi giá") if v in t))
+        return out
+
+    def run_one(self, text, sku):
+        from tests.test_reply_reader import ReaderLLM, burn_early
+        from tests.test_order_gate import GateBase, NEW_PHONE
+
+        class Case(GateBase):
+            def runTest(self):
+                pass
+        case = Case()
+        case.setUp()
+        case.llm = ReaderLLM(lambda t: {})
+        case.orch.llm_client = case.llm
+        burn_early(case)
+        case.turn(NEW_PHONE, "cho xem máy lọc không khí", [("pricing.get_quote", {"sku": sku, "qty": 1})])     # agent đã báo giá: vào ngữ cảnh mua
+        case.llm.reader = self.fake_reader
+        case.turn(NEW_PHONE, text, [])
+        return case.orch, list(case.orch._gate_retry_args.values())
+
+    def test_commit_with_price_opens_draft_at_catalog_price(self):
+        for text, sku in self.COMMITS:
+            o, drafts = self.run_one(text, sku)
+            self.assertEqual([d["sku"] for d in drafts], [sku], text)
+            self.assertEqual(drafts[0]["price_vnd"], o.mcp.execute_tool("pricing.get_quote", {"sku": sku, "on": "2026-10-15", "qty": 1}, caller="HarnessOrchestrator")["final_price_vnd"], text)
+
+    def test_bargain_or_price_question_does_not_open_draft(self):
+        for text, sku in zip(self.BARGAINS + self.ASKS, ["SKU-AP-MINI", "SKU-XM-4L", "SKU-SS-AX40"] * 2):
+            _, drafts = self.run_one(text, sku)
+            self.assertEqual(drafts, [], text)
+
+    def test_commit_plus_discount_request_answers_price_first(self):
+        for text, sku in (("lấy cho anh một máy AirPure Mini, bớt anh 100 nghìn nhé", "SKU-AP-MINI"), ("chốt em một máy Xiaomi Smart 4 Lite, bớt chút đi", "SKU-XM-4L"),
+                          ("đặt cho tôi một máy Samsung AX40 nhưng bớt 200k", "SKU-SS-AX40")):
+            _, drafts = self.run_one(text, sku)
+            self.assertEqual(drafts, [], text)
+
+    def test_prompt_states_the_rules_without_scenario_specifics(self):
+        from src.harness.reply_reader import PROMPT
+        for rule in ("KỂ CẢ khi khách nêu một con số giá", "Mặc cả = hỏi hoặc đề nghị giá thấp hơn mà KHÔNG có lời chốt", "Vừa chốt vừa xin bớt"):
+            self.assertIn(rule, PROMPT)
+        self.assertNotRegex(PROMPT, r"\d\.\d{3}\.\d{3}|Spectra|AirPure|SKU-")
+
+
 if __name__ == "__main__":
     unittest.main()
