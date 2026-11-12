@@ -416,6 +416,7 @@ class HarnessOrchestrator:
         self._readings[working_session_id] = reading
         reading_trace = reading_trace_dict(reading, skipped=not (self.order_gate.enabled and buying))
         self.order_gate.begin_turn(working_session_id, working_state.current_turn, turn.normalized_text, reading)
+        self._note_reader_sku(working_session_id, reading)
         if self.order_gate.state(working_session_id).abandoned_turn == working_state.current_turn:
             self._gate_retry_args.pop(working_session_id, None)  # khách từ chối/mặc cả/hẹn gọi lại: hủy đơn nháp, KHÔNG nối câu hỏi địa chỉ/tên nữa
         self._activity[working_session_id] = {"ts": time.monotonic(), "customer_id": customer_id, "call_date": current_date,
@@ -478,6 +479,7 @@ class HarnessOrchestrator:
                 gate_sync["done"] = True
                 reading = reader_future.result()
                 self._readings[working_session_id] = reading
+                self._note_reader_sku(working_session_id, reading)
                 reading_trace = reading_trace_dict(reading)
                 if reading is None:                    # đọc hiểu lỗi/không có LLM: dự phòng regex như nhánh đọc tuần tự
                     self.order_gate.phone_ok_fallback(working_session_id, turn.normalized_text)
@@ -494,6 +496,7 @@ class HarnessOrchestrator:
                 if late_stock:
                     reading = read_reply(self.llm_client, turn.llm_text, last_agent, {"stage": None, "candidates": self._product_candidates(working_session_id, turn.normalized_text)})
                     self._readings[working_session_id] = reading
+                    self._note_reader_sku(working_session_id, reading)
                     reading_trace = {**reading_trace_dict(reading), "late": True}
                     if reading is not None and "recipient_phone" in reading.affirmed:
                         self.order_gate.state(working_session_id).phone_ok = True
@@ -1158,9 +1161,9 @@ class HarnessOrchestrator:
             # Lần nhắc chắc chắn MỚI NHẤT của khách thắng; ở lượt này → ghi đè; chỉ ở lượt cũ (chưa có đơn nháp) → không tạo đơn, hỏi khách một lần.
             named, current = self._customer_named_product(sid)
             if named and self._parent_sku(named) != self._parent_sku(sku):
-                if current:
+                if current or self._gate_retry_args.get(sid):         # đơn nháp đã mở: lời khách gọi chắc chắn mới nhất thắng (TEST-44: "combo đó" sau khi đơn nháp mở với máy lẻ)
                     sku = exec_args["sku"] = args["sku"] = named
-                elif not self._gate_retry_args.get(sid) and sid not in self.__dict__.setdefault("_product_asked", set()):
+                elif sid not in self.__dict__.setdefault("_product_asked", set()):
                     self._product_asked.add(sid)
                     hon = brief.honorific or "anh/chị"
                     return self._gate_block(sid, "product_conflict", f"Dạ em xác nhận lại giúp em: {hon} muốn đặt {self._product_info(named)['name']} "
@@ -1704,16 +1707,22 @@ class HarnessOrchestrator:
         exact = [s_ for s_ in exact_model_skus(said or "", getattr(self.retriever, "products", None) or []) if self._product_info(s_).get("name")]
         return exact[0] if len(exact) == 1 else self._reader_product(sid)
 
+    def _note_reader_sku(self, sid: str, reading: Any) -> None:
+        """SKU bộ đọc đã kiểm cho lời khách MỚI NHẤT, lưu theo vị trí lời đó — để lượt sau (vd. lượt chốt) vẫn biết khách đã gọi "combo đó"."""
+        if getattr(reading, "product_sku", None):
+            self.__dict__.setdefault("_reader_skus", {}).setdefault(sid, {})[len(self.order_gate.state(sid).texts) - 1] = reading.product_sku
+
     def _customer_named_product(self, sid: str) -> Tuple[Optional[str], bool]:
         """(SKU, có phải lượt hiện tại) của lần khách gọi sản phẩm CHẮC CHẮN gần nhất: tên đầy đủ của sản phẩm đã tra → hãng+mẫu khớp tuyệt đối đúng một SKU
-        → SKU bộ đọc đã kiểm (chỉ có cho lượt hiện tại). Không dùng "sản phẩm tra gần nhất"."""
+        → SKU bộ đọc đã kiểm của lời đó (lưu theo lượt). Không dùng "sản phẩm tra gần nhất"."""
         texts = self.order_gate.state(sid).texts or []
         catalog = getattr(self.retriever, "products", None) or []
+        by_turn = self.__dict__.get("_reader_skus", {}).get(sid, {})
         for i in range(len(texts) - 1, -1, -1):
             t, latest = texts[i] or "", i == len(texts) - 1
             full = self._named_all(sid, t)
             exact = [s_ for s_ in exact_model_skus(t, catalog) if self._product_info(s_).get("name")] if t.strip() else []
-            sku = full[0] if full else exact[0] if len(exact) == 1 else self._reader_product(sid) if latest else None
+            sku = full[0] if full else exact[0] if len(exact) == 1 else by_turn.get(i) or (self._reader_product(sid) if latest else None)
             if sku:
                 return sku, latest
         return None, False

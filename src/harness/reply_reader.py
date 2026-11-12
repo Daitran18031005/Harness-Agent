@@ -219,7 +219,7 @@ def _quoted(quote: Any, text: str) -> str:
 def product_candidates(text: str, catalog: List[Dict[str, Any]], seen: List[str] = (), limit: int = 8) -> List[Dict[str, str]]:
     """Ứng viên SKU cho bộ đọc LLM (ưu tiên ĐỦ, chấp nhận dư — LLM chọn, code chỉ kiểm): sản phẩm đã tra trong cuộc + SKU `product_mentions` khớp
     + mọi sản phẩm catalog có chung một từ tên "hiếm" (≤ 1/4 catalog, vd "airpure", "runlite") với các SKU đó → kéo theo phụ kiện/combo cùng họ.
-    Tối đa `limit` mã (prompt ngắn → bộ đọc nhanh): đã tra + đã nhắc trước, rồi cùng họ có nhiều từ trùng lời khách nhất."""
+    Tối đa `limit` mã (prompt ngắn → bộ đọc nhanh): đã tra + đã nhắc trước, rồi cùng họ trùng lời khách nhiều nhất (mỗi từ trùng nặng 1/số sản phẩm có từ đó)."""
     from src.channels.asr_entities import product_mentions
     by_sku = {p["sku"]: p for p in catalog if p.get("sku")}
     words = lambda p: {w for w in re.findall(r"\w+", fold(p.get("name") or "")) if len(w) >= 3 and not w.isdigit()}
@@ -230,7 +230,7 @@ def product_candidates(text: str, catalog: List[Dict[str, Any]], seen: List[str]
     base = [s for s in dict.fromkeys(list(seen) + [s for _, s, _ in product_mentions(text)]) if s in by_sku]
     rare = {w for s in base for w in words(by_sku[s]) if df[w] <= len(by_sku) // 4}
     said = set(re.findall(r"\w+", fold(text)))
-    family = sorted((s for s, p in by_sku.items() if s not in base and words(p) & rare), key=lambda s: -len(words(by_sku[s]) & said))   # sắp theo số từ trùng lời khách (ổn định)
+    family = sorted((s for s, p in by_sku.items() if s not in base and words(p) & rare), key=lambda s: -sum(1 / df[w] for w in words(by_sku[s]) & said))   # từ trùng lời khách, từ HIẾM nặng hơn ("combo" > "không")
     return [{"sku": s, "name": by_sku[s]["name"]} for s in (base + family)[:limit]]
 
 

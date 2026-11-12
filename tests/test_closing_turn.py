@@ -461,5 +461,30 @@ class OrderSkuFollowsCustomerTest(unittest.TestCase):
         self.assertEqual(self.case.orch.order_gate.state(sid).last_decision.get("action"), "product_conflict")
 
 
+    def test_reader_pick_from_an_earlier_turn_still_wins_over_open_draft(self):
+        self.say("cho anh lấy một máy AirPure Y", self.order("SKU-AP-Y"))
+        self.assertEqual(self.draft(), ["SKU-AP-Y"])
+        self.say("bên em có combo nào không", [("pricing.get_quote", {"sku": "SKU-BDL-AIR", "qty": 1})])
+        self.say("à thôi anh lấy cái combo đó", reader=lambda t: {"product_sku": "SKU-BDL-AIR", "product_quote": "cái combo đó"} if "combo đó" in t else {})
+        self.assertEqual(self.draft(), ["SKU-BDL-AIR"])                                        # bộ điều khiển đơn nháp chạy lại gate: lời khách mới nhất thắng
+        sid = next(iter(self.case.orch._readings))
+        self.case.orch._readings[sid] = None                                                   # lượt sau không còn kết quả bộ đọc của lượt "combo đó"
+        self.assertEqual(self.case.orch._customer_named_product(sid), ("SKU-BDL-AIR", True))
+        self.case.orch.order_gate.state(sid).texts.append("")                                 # lượt chốt (không có lời khách)
+        self.assertEqual(self.case.orch._customer_named_product(sid), ("SKU-BDL-AIR", False))   # vẫn nhớ theo lượt
+
+
+class CandidateRankingTest(unittest.TestCase):
+    def test_rare_shared_words_rank_above_common_ones(self):                    # "không" (đúng không) có ở nhiều tên → không được đẩy combo ra khỏi 8 ứng viên
+        import json
+        from src.harness.reply_reader import product_candidates
+        from src.catalog.retriever import DEFAULT_PRODUCTS_PATH
+        cat = json.load(open(DEFAULT_PRODUCTS_PATH, encoding="utf-8"))
+        cat = cat["products"] if isinstance(cat, dict) else cat
+        got = [c["sku"] for c in product_candidates("combo đó rẻ hơn đúng không, ok lên đơn combo đó cho anh nhé", cat, ["SKU-AP-Y", "SKU-AP-MINI", "SKU-AP-X"])]
+        self.assertLessEqual(len(got), 8)
+        self.assertIn("SKU-BDL-AIR", got)
+
+
 if __name__ == "__main__":
     unittest.main()
