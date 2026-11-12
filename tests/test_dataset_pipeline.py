@@ -354,3 +354,33 @@ class TeencodeModelCodeTest(unittest.TestCase):
         from src.dataset.writer import teencode_keep_info
         self.assertEqual(teencode_keep_info("Shop ơi máy hút sữa Spectra S1 giá bao nhiêu vậy?", "shop oi may hut sua spectra s1 gia bn v"),
                          "shop oi may hut sua spectra s1 gia bn v")
+
+
+class TeencodeSameAsBeforeTest(unittest.TestCase):
+    def test_keep_info_equals_teencodify_when_nothing_is_lost(self):
+        """Bộ sinh đổi sang teencode_keep_info(written): không có thông tin bị mất thì kết quả phải y hệt teencodify (dữ liệu cũ sinh lại không đổi)."""
+        import glob, json
+        from src.dataset.writer import teencode_keep_info
+        texts = [t for p in glob.glob("BTC-Data-Vong1-TEAMS/test_set/*/*.json")
+                 for c in json.load(open(p, encoding="utf-8")).get("calls", {}).values() for t in c.get("customer_turns") or []]
+        self.assertGreater(len(texts), 500)
+        for t in texts:
+            self.assertEqual(teencode_keep_info(t), teencodify(t))
+            self.assertEqual(teencode_keep_info(t, teencodify(t)), teencodify(t))
+
+
+class TeencodeInfoCheckTest(unittest.TestCase):
+    def test_team_eval_asr_turns_keep_all_info(self):                            # scripts/check_teencode_info.py
+        from scripts.check_teencode_info import scan
+        self.assertEqual(scan(), [])
+
+    def test_check_finds_a_dropped_phone_sentence(self):
+        import json, os, tempfile
+        from scripts.check_teencode_info import scan
+        d = {"scenario_id": "X", "calls": {"call_1": {"input_mode": "chat_teencode",
+             "customer_turns": ["Lấy 2 cái gửi về số 12 đường Lê Lợi. Số của Sơn là 0911243394 nhé."],
+             "customer_turns_asr": ["lay 2 cai gui ve so 12 duong le loi"]}}}
+        with tempfile.TemporaryDirectory() as tmp:
+            json.dump(d, open(os.path.join(tmp, "X.json"), "w", encoding="utf-8"), ensure_ascii=False)
+            rows = scan(tmp)
+        self.assertEqual([r[4] for r in rows], [[("SĐT", "0911243394")]])

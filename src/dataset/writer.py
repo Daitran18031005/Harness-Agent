@@ -180,7 +180,7 @@ def assemble_turns(raw_turns: List[Dict[str, Any]], call: Dict[str, Any]) -> Tup
             rec = {"idx": i, "speaker": "C", "text": written, "text_written": written, "states": t["states"],
                    "entities": _entities_for_customer(t["states"], call)}
             if call["style"] == "teencode":
-                rec["text_asr"] = teencodify(written)
+                rec["text_asr"] = teencode_keep_info(written)          # = teencodify(written); qua hàm giữ-đủ-thông-tin để mọi bản teencode sinh ra đi cùng một đường
         rec["text_spoken"] = spoken_form(written)
         out.append(rec)
     return out, errors
