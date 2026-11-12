@@ -150,7 +150,7 @@ class HarnessOrchestrator:
             return
         for store in (self._vaults, self._call_log, self._write_cache, self._activity, self._start_facts, self._asked, self._customer_texts, self._confirmed,
                       self._reask, self._prior_asked, self._identity_asked, self._policy_routes, self._precomp, self._precomp_logged, self._readings,
-                      self._gate_retry_args, self._gate_extra_calls):
+                      self._gate_retry_args, self._gate_extra_calls, self.__dict__.setdefault("_reader_skus", {})):   # SKU bộ đọc theo lượt: khóa theo vị trí lời trong gate, gate cũng đi theo
             if old in store:
                 store[sid] = store.pop(old)
         if old in self.order_gate._s:
@@ -1145,6 +1145,20 @@ class HarnessOrchestrator:
 
     def _gate_order_create(self, sid: str, args: Dict[str, Any], exec_args: Dict[str, Any], vault: PiiVault, profile: Dict[str, Any],
                            brief: CallBrief, caller_phone: Optional[str], on: str) -> Optional[Dict[str, Any]]:
+        """Như `_gate_order_body`; khi bị chặn thì ghi vào mục quyết định của gate (trace `order_gate`) tham số đơn bị chặn — sku, lines, qty, lý do —
+        để phân tích ca bị chặn trên số đo (vd. SC-GEN-13): lời gọi bị chặn không vào `tool_calls` của trace."""
+        n = len(self.order_gate.events(sid))
+        out = self._gate_order_body(sid, args, exec_args, vault, profile, brief, caller_phone, on)
+        evs = self.order_gate.state(sid).events
+        if out is not None and len(evs) > n:
+            lines = exec_args.get("lines")
+            evs[-1]["blocked_args"] = {"sku": exec_args.get("sku"), "qty": exec_args.get("qty"),
+                                       "lines": [{k: l.get(k) for k in ("sku", "qty", "price_vnd")} for l in lines if isinstance(l, dict)] if isinstance(lines, list) else None,
+                                       "price_vnd": exec_args.get("price_vnd"), "reason": evs[-1].get("action")}
+        return out
+
+    def _gate_order_body(self, sid: str, args: Dict[str, Any], exec_args: Dict[str, Any], vault: PiiVault, profile: Dict[str, Any],
+                         brief: CallBrief, caller_phone: Optional[str], on: str) -> Optional[Dict[str, Any]]:
         """Chạy order gate cho một lời gọi order.create. Trả None = được phép tạo đơn; ngược lại trả kết quả `order_gate_blocked`
         (có `say`) cho LLM. Không bao giờ gọi MCP tạo đơn khi bị chặn."""
         if not self.order_gate.enabled:                       # chỉ dùng trong test đơn vị của cơ chế khác (xem OrderGate.enabled)

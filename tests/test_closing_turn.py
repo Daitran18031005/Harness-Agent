@@ -551,3 +551,36 @@ class CommitWithPriceTest(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class SessionCarryReaderSkuTest(unittest.TestCase):
+    def test_reader_sku_of_turn_1_survives_identity_change(self):              # chat "lấy combo đó" lượt 1, đọc SĐT lượt 3, rồi lượt chốt
+        from types import SimpleNamespace
+        from tests._helpers import build_components
+        o = build_components(order_gate=True)["orchestrator"]
+        t, old, new = SimpleNamespace(contact_id="zalo.test.combo"), "SESS-ANON-2026-10-15", "SESS-C099-2026-10-15"
+        o._carry_session(t, "2026-10-15", "call_1", old)
+        g = o.order_gate
+        g.begin_turn(old, 1, "ok lấy combo đó cho anh nhé")
+        o._note_reader_sku(old, SimpleNamespace(product_sku="SKU-BDL-AIR"))
+        g.begin_turn(old, 2, "giao về 18 Nguyễn Trãi, Thanh Xuân, COD")
+        o._carry_session(t, "2026-10-15", "call_1", new)                        # lượt 3: khách đọc SĐT → customer_id đổi
+        g.begin_turn(new, 3, "số anh là 0911172114 nhé")
+        g.begin_turn(new, 4, "")                                                  # lượt chốt
+        self.assertEqual(o._customer_named_product(new)[0], "SKU-BDL-AIR")
+        self.assertNotIn(old, o.__dict__.get("_reader_skus", {}))
+
+
+class BlockedArgsTraceTest(unittest.TestCase):
+    _setup, _run, _mock, _create = ClosingTurnTest._setup, ClosingTurnTest._run, ClosingTurnTest._mock, ClosingTurnTest.__dict__["_create"]
+
+    def test_blocked_order_create_args_are_in_the_trace(self):                   # phân tích ca bị chặn (SC-GEN-13) trên số đo
+        self._setup(order_gate=True)
+        _, tc, meta = self._run([self._create("SPECTRA-S1", 1, payment=None)])
+        ev = meta["order_gate"][-1]
+        self.assertEqual(ev["action"], "unknown_product")
+        self.assertEqual((ev["blocked_args"]["sku"], ev["blocked_args"]["reason"]), ("SPECTRA-S1", "unknown_product"))
+        self.assertFalse([c for c in tc if c["name"] == "order.create"])          # lời gọi bị chặn vẫn không vào tool_calls
+        _, _, meta = self._run([self._create(AP_Y, 1, payment=None)])            # gate hỏi thông tin (chặn chờ): cũng ghi
+        self.assertEqual(meta["order_gate"][-1]["blocked_args"]["sku"], AP_Y)
+        self.assertNotIn("customer_phone", meta["order_gate"][-1]["blocked_args"])
