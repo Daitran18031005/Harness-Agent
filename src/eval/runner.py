@@ -285,6 +285,9 @@ class ScenarioRunner:
                         extra["memory_extractor"] = meta["memory_extraction"]     # chốt ở lúc chuyển máy
                     if meta.get("order_gate"):
                         extra["order_gate"] = meta["order_gate"]                   # order gate đã chặn/hỏi/đọc lại đơn ở lượt này
+                    for key in ("reply_reading", "gate_open"):             # bộ đọc lời khách (SKU, trích dẫn, ứng viên, độ trễ) + lý do code mở/không mở đơn nháp
+                        if meta.get(key):
+                            extra[key] = meta[key]
                     if injected:
                         extra["_injected"] = True                                  # lượt khách mô phỏng của --gate-assist (không phải lời kịch bản BTC)
                     extra.update(monitoring_extras(meta))                          # latency_detail (phân rã TTFT) + guardrail

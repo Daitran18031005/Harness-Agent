@@ -173,6 +173,8 @@ class ReplyReading:
     recipient_name: Optional[str] = None
     payment: Optional[str] = None
     qty: Optional[int] = None                                    # số lượng khách nói rõ (đã kiểm chứng: con số/chữ số nằm trong trích dẫn) — đơn code mở từng luôn là 1 (TEST-64/80)
+    product_raw: Optional[str] = None                            # SKU LLM trả về TRƯỚC khi kiểm (để trace thấy bị loại hay không)
+    candidates: List[str] = field(default_factory=list)          # SKU ứng viên đã đưa cho LLM
     product_sku: Optional[str] = None                            # SKU khách nói tới, ĐÚNG một mã trong danh sách ứng viên (đều lấy từ catalog), kèm trích dẫn nguyên văn — TEST-44 "combo đó"
     extra_items: List[Dict[str, Any]] = field(default_factory=list)   # món mua thêm cùng đơn [{name, qty}] (tên nằm trong trích dẫn) — TEST-153
     address: Optional[str] = None                                # địa chỉ nhận hàng khách vừa nói (đã kiểm chứng nguyên văn) — B1
@@ -202,7 +204,8 @@ def reading_trace_dict(r: Optional[ReplyReading], skipped: bool = False) -> Dict
     if r is None:
         return {"source": "regex_fallback"}
     return {"source": "llm", "stance": r.stance, "confidence": r.confidence, "only_answers": r.only_answers, "affirmed": r.affirmed,
-            "order_intent": "commit" if r.commits else "other", "asks_question": r.asks_question, "asks_price_promo": r.price_topic, "prior_contact": r.prior_contact, "recipient_name": r.recipient_name, "payment": r.payment, "product_sku": r.product_sku, "address": bool(r.address), "evidence": r.evidence, "guard": r.guard or None,
+            "order_intent": "commit" if r.commits else "other", "asks_question": r.asks_question, "asks_price_promo": r.price_topic, "prior_contact": r.prior_contact, "recipient_name": r.recipient_name, "payment": r.payment, "product_sku": r.product_sku, "product_raw": r.product_raw, "product_quote": r.evidence.get("product"),
+            "product_verified": r.product_sku is not None, "candidates": r.candidates, "address": bool(r.address), "evidence": r.evidence, "guard": r.guard or None,
             "llm_calls": len(r.usage), "vnd_cost": round(sum(float(u.get("vnd_cost", 0) or 0) for u in r.usage), 2),
             "latency_ms": sum(int(u.get("latency_ms", 0) or 0) for u in r.usage)}
 
@@ -213,9 +216,10 @@ def _quoted(quote: Any, text: str) -> str:
     return str(quote).strip() if q and q in re.sub(r"\s+", " ", fold(text)) else ""
 
 
-def product_candidates(text: str, catalog: List[Dict[str, Any]], seen: List[str] = ()) -> List[Dict[str, str]]:
+def product_candidates(text: str, catalog: List[Dict[str, Any]], seen: List[str] = (), limit: int = 8) -> List[Dict[str, str]]:
     """Ứng viên SKU cho bộ đọc LLM (ưu tiên ĐỦ, chấp nhận dư — LLM chọn, code chỉ kiểm): sản phẩm đã tra trong cuộc + SKU `product_mentions` khớp
-    + mọi sản phẩm catalog có chung một từ tên "hiếm" (≤ 1/4 catalog, vd "airpure", "runlite") với các SKU đó → kéo theo phụ kiện/combo cùng họ."""
+    + mọi sản phẩm catalog có chung một từ tên "hiếm" (≤ 1/4 catalog, vd "airpure", "runlite") với các SKU đó → kéo theo phụ kiện/combo cùng họ.
+    Tối đa `limit` mã (prompt ngắn → bộ đọc nhanh): đã tra + đã nhắc trước, rồi cùng họ có nhiều từ trùng lời khách nhất."""
     from src.channels.asr_entities import product_mentions
     by_sku = {p["sku"]: p for p in catalog if p.get("sku")}
     words = lambda p: {w for w in re.findall(r"\w+", fold(p.get("name") or "")) if len(w) >= 3 and not w.isdigit()}
@@ -225,8 +229,9 @@ def product_candidates(text: str, catalog: List[Dict[str, Any]], seen: List[str]
             df[w] = df.get(w, 0) + 1
     base = [s for s in dict.fromkeys(list(seen) + [s for _, s, _ in product_mentions(text)]) if s in by_sku]
     rare = {w for s in base for w in words(by_sku[s]) if df[w] <= len(by_sku) // 4}
-    out = base + [s for s, p in by_sku.items() if s not in base and words(p) & rare]
-    return [{"sku": s, "name": by_sku[s]["name"]} for s in out]
+    said = set(re.findall(r"\w+", fold(text)))
+    family = sorted((s for s, p in by_sku.items() if s not in base and words(p) & rare), key=lambda s: -len(words(by_sku[s]) & said))   # sắp theo số từ trùng lời khách (ổn định)
+    return [{"sku": s, "name": by_sku[s]["name"]} for s in (base + family)[:limit]]
 
 
 def exact_model_skus(text: str, catalog: List[Dict[str, Any]] = ()) -> List[str]:
@@ -344,6 +349,8 @@ def read_reply(llm: Any, text: str, last_agent: str = "", waiting: Optional[Dict
         return None
     r = verify(raw, text, (waiting or {}).get('candidates') or ())
     r.usage.append(usage or {})
+    r.product_raw = raw.get("product_sku") if isinstance(raw.get("product_sku"), str) else None
+    r.candidates = [c.get("sku") for c in (waiting or {}).get("candidates") or []]
     mode = guard or os.environ.get("CONSENT_GUARD") or DEFAULT_GUARD
     if mode not in GUARDS:
         mode = DEFAULT_GUARD

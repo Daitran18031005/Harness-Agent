@@ -1153,6 +1153,18 @@ class HarnessOrchestrator:
             guess = self._named_in_call(sid, said) or self._last_product(self._call_log.get(sid, []))
             if guess and self._product_info(guess).get("name") and not self._fetch_variants(guess):
                 sku = exec_args["sku"] = args["sku"] = guess
+        if sku and self._product_info(self._parent_sku(sku)).get("name") and not (isinstance(exec_args.get("lines"), list) and len(exec_args["lines"]) > 1):
+            # SKU có thật nhưng KHÁC sản phẩm khách gọi chắc chắn (SC-TV-13: khách "một bộ Spectra S1", LLM đưa combo; TEST-44: khách "combo đó", LLM đưa máy lẻ).
+            # Lần nhắc chắc chắn MỚI NHẤT của khách thắng; ở lượt này → ghi đè; chỉ ở lượt cũ (chưa có đơn nháp) → không tạo đơn, hỏi khách một lần.
+            named, current = self._customer_named_product(sid)
+            if named and self._parent_sku(named) != self._parent_sku(sku):
+                if current:
+                    sku = exec_args["sku"] = args["sku"] = named
+                elif not self._gate_retry_args.get(sid) and sid not in self.__dict__.setdefault("_product_asked", set()):
+                    self._product_asked.add(sid)
+                    hon = brief.honorific or "anh/chị"
+                    return self._gate_block(sid, "product_conflict", f"Dạ em xác nhận lại giúp em: {hon} muốn đặt {self._product_info(named)['name']} "
+                                                                      f"hay {self._product_info(self._parent_sku(sku))['name']} ạ?", ["hay"])
         if isinstance(exec_args.get("lines"), list):               # dòng giỏ có mã tự đặt (TEST-69 "SKU-TU-TRU-SUAMUM"): đổi sang sản phẩm đã tra mà khách gọi đúng tên; không được thì bỏ dòng đó
             said_all = " ".join(self.order_gate.state(sid).texts)
             used = {l.get("sku") for l in exec_args["lines"] if isinstance(l, dict)}
@@ -1691,6 +1703,20 @@ class HarnessOrchestrator:
             return full[0]
         exact = [s_ for s_ in exact_model_skus(said or "", getattr(self.retriever, "products", None) or []) if self._product_info(s_).get("name")]
         return exact[0] if len(exact) == 1 else self._reader_product(sid)
+
+    def _customer_named_product(self, sid: str) -> Tuple[Optional[str], bool]:
+        """(SKU, có phải lượt hiện tại) của lần khách gọi sản phẩm CHẮC CHẮN gần nhất: tên đầy đủ của sản phẩm đã tra → hãng+mẫu khớp tuyệt đối đúng một SKU
+        → SKU bộ đọc đã kiểm (chỉ có cho lượt hiện tại). Không dùng "sản phẩm tra gần nhất"."""
+        texts = self.order_gate.state(sid).texts or []
+        catalog = getattr(self.retriever, "products", None) or []
+        for i in range(len(texts) - 1, -1, -1):
+            t, latest = texts[i] or "", i == len(texts) - 1
+            full = self._named_all(sid, t)
+            exact = [s_ for s_ in exact_model_skus(t, catalog) if self._product_info(s_).get("name")] if t.strip() else []
+            sku = full[0] if full else exact[0] if len(exact) == 1 else self._reader_product(sid) if latest else None
+            if sku:
+                return sku, latest
+        return None, False
 
     def _last_product(self, calls: List[Dict[str, Any]]) -> Optional[str]:
         """SKU cha được tra/báo giá/đặt gần nhất trong cuộc gọi (C2: phiếu chuyển máy ghi sản phẩm đang bàn, không phải sản phẩm nhắc đầu tiên)."""

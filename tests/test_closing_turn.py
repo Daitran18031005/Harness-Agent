@@ -401,5 +401,65 @@ class ReaderComboEndToEndTest(unittest.TestCase):
         self.assertEqual([a["sku"] for a in case.orch._gate_retry_args.values()], ["SKU-BDL-AIR"])
 
 
+
+class OrderSkuFollowsCustomerTest(unittest.TestCase):
+    """_gate_order_create: SKU có thật của LLM chính KHÁC sản phẩm khách gọi chắc chắn → theo khách (lần nhắc mới nhất); không chắc → không ghi đè."""
+    def setUp(self):
+        from tests.test_reply_reader import ReaderLLM, burn_early
+        from tests.test_order_gate import GateBase
+
+        class Case(GateBase):
+            def runTest(self):
+                pass
+        self.case = Case()
+        self.case.setUp()
+        self.case.llm = ReaderLLM(lambda t: {})
+        self.case.orch.llm_client = self.case.llm
+        burn_early(self.case)
+
+    def say(self, text, calls=(), reader=None):
+        from tests.test_order_gate import NEW_PHONE
+        self.case.llm.reader = reader or (lambda t: {})
+        return self.case.turn(NEW_PHONE, text, list(calls))
+
+    def order(self, sku):
+        return [("order.create", {"customer_phone": "CURRENT_CUSTOMER", "sku": sku, "qty": 1})]
+
+    def draft(self):
+        return [a.get("sku") for a in self.case.orch._gate_retry_args.values()]
+
+    def test_named_single_unit_beats_llm_combo(self):
+        self.say("cho anh lấy một máy AirPure Y nhé", self.order("SKU-BDL-AIR"))
+        self.assertEqual(self.draft(), ["SKU-AP-Y"])
+
+    def test_pointing_at_combo_via_reader_beats_llm_single_unit(self):
+        self.say("bên em có những gì", [("pricing.get_quote", {"sku": "SKU-BDL-AIR", "qty": 1}), ("pricing.get_quote", {"sku": "SKU-AP-Y", "qty": 1})])
+        self.say("ok lấy cái combo đó nha", self.order("SKU-AP-Y"),
+                 reader=lambda t: {"product_sku": "SKU-BDL-AIR", "product_quote": "cái combo đó"} if "combo đó" in t else {})
+        self.assertEqual(self.draft(), ["SKU-BDL-AIR"])
+
+    def test_latest_mention_wins_when_customer_changes_mind(self):
+        self.say("cho chị hỏi máy AirPure Y giá sao", [("pricing.get_quote", {"sku": "SKU-AP-Y", "qty": 1})])
+        self.say("thôi chị lấy Samsung AX40", self.order("SKU-AP-Y"))
+        self.assertEqual(self.draft(), ["SKU-SS-AX40"])
+
+    def test_vague_reply_keeps_llm_sku(self):
+        self.say("ok lấy cái đó nhé", self.order("SKU-BDL-AIR"))
+        self.assertEqual(self.draft(), ["SKU-BDL-AIR"])
+
+    def test_made_up_reader_quote_does_not_override(self):
+        self.say("bên em có những gì", [("pricing.get_quote", {"sku": "SKU-BDL-AIR", "qty": 1}), ("pricing.get_quote", {"sku": "SKU-AP-Y", "qty": 1})])
+        self.say("ok chốt cái kia cho anh", self.order("SKU-BDL-AIR"), reader=lambda t: {"product_sku": "SKU-AP-Y", "product_quote": "máy lẻ AirPure Y"})
+        self.assertEqual(self.draft(), ["SKU-BDL-AIR"])
+
+    def test_older_conflicting_mention_asks_instead_of_creating(self):
+        self.say("cho anh lấy một máy AirPure Y")
+        reply, tool_calls, *_ = self.say("ok chốt luôn em", self.order("SKU-BDL-AIR"))
+        self.assertEqual(self.draft(), [])
+        self.assertFalse(self.case.created(tool_calls))
+        sid = next(iter(self.case.orch._readings))
+        self.assertEqual(self.case.orch.order_gate.state(sid).last_decision.get("action"), "product_conflict")
+
+
 if __name__ == "__main__":
     unittest.main()
