@@ -100,9 +100,11 @@ class ClosingTurnTest(unittest.TestCase):
         t = self.c["normalizer"].normalize("alo", self._channel(), "0911265844")
         b = self.c["brief"].build(self.c["resolver"].resolve(t, memory=self.c["memory"]), ON)
         from src.privacy.pii_vault import PiiVault
-        look = lambda text: {c["args"]["sku"] for c in self.orch._speculative_lookups(text, None, [], None, b, None, ON, PiiVault())}
+        look = lambda text, picked=None: {c["args"]["sku"] for c in self.orch._speculative_lookups(text, None, [], None, b, None, ON, PiiVault(), picked=picked)}
         self.assertEqual(look("Nhà chị có bé nhỏ, ngân sách tầm 5.000.000 thôi em."), set())          # "có bé" không phải tên sản phẩm
-        self.assertEqual(look("Em ơi Máy lọc không khí AirPure X bên em giá bao nhiêu?"), {"SKU-AP-X"})
+        self.assertEqual(look("Em ơi Máy lọc không khí AirPure X bên em giá bao nhiêu?"), {"SKU-AP-X"})   # chưa có bộ đọc (lượt khám phá): vẫn tra trước theo tên
+        self.assertEqual(look("phí phát sinh bao nhiêu"), set())                                        # `named` chặn alias "phát" → Fatz
+        self.assertEqual(look("màng lọc thay thế AirPure X giá sao em", picked="SKU-AP-FLT-X"), {"SKU-AP-FLT-X"})   # bộ đọc đã kiểm thì dùng bộ đọc
 
     def test_no_draft_means_no_closing_turn(self):
         self._setup(order_gate=True)
@@ -129,6 +131,8 @@ class ClosingTurnTest(unittest.TestCase):
 
 del OrderSyncTest       # không để unittest nạp lại các test của lớp đó từ file này
 
+
+
 if __name__ == "__main__":
     unittest.main()
 
@@ -151,10 +155,24 @@ class NamedProductTest(unittest.TestCase):
         o = H.__new__(H)
         names = {"SKU-AP-X": "Máy lọc không khí AirPure X", "SKU-AP-FLT-X": "Màng lọc thay thế AirPure X/Y"}
         o._call_log = {"S": [{"name": "catalog.search", "args": {}, "result": {"items": [{"sku": "SKU-AP-X"}, {"sku": "SKU-AP-FLT-X"}]}}]}
+        o.retriever = SimpleNamespace(products=[{"sku": k, "name": v} for k, v in names.items()])
         o._product_info = lambda s: {"name": names.get(s, "")}
         o._parent_sku = lambda s: s
+        o._readings = {}
         self.assertEqual(o._named_in_call("S", "giao Màng lọc thay thế AirPure X/Y tới Cần Thơ"), "SKU-AP-FLT-X")
         self.assertIsNone(o._named_in_call("S", "giao cái máy hôm trước"))
+        o._readings = {"S": SimpleNamespace(product_sku="SKU-AP-FLT-X")}                  # tên nói tắt/ASR méo: dùng SKU bộ đọc đã kiểm
+        self.assertEqual(o._named_in_call("S", "màng lọc thay thế AirPure X"), "SKU-AP-FLT-X")
+
+    def test_alias_sound_alike_is_no_longer_a_product(self):                     # "phí phát sinh" từng khớp alias "phát" → Fatz
+        from src.harness.orchestrator import HarnessOrchestrator as H
+        o = H.__new__(H)
+        o._call_log = {"S": [{"name": "pricing.get_quote", "args": {"sku": "SKU-MB-MON"}, "result": {}}]}
+        o.retriever = None
+        o._product_info = lambda s: {"name": "Máy hâm sữa Fatz 4 chức năng" if s == "SKU-MB-MON" else ""}
+        o._parent_sku = lambda s: s
+        o._readings = {"S": None}
+        self.assertIsNone(o._named_in_call("S", "phí phát sinh bao nhiêu"))
 
 
 class MovedCallbackTest(unittest.TestCase):
@@ -191,9 +209,43 @@ class ReaderProductTest(unittest.TestCase):
     def test_product_must_be_in_the_given_list(self):                            # TEST-44 "combo đó"
         from src.harness.reply_reader import verify
         text = "ok lên đơn combo đó cho anh nhé"
-        raw = {"product": "Combo AirPure Y + 2 màng lọc", "product_quote": "lên đơn combo đó"}
-        self.assertEqual(verify(raw, text, ["Máy lọc không khí AirPure Y", "Combo AirPure Y + 2 màng lọc"]).product, "Combo AirPure Y + 2 màng lọc")
-        self.assertIsNone(verify(raw, text, ["Máy lọc không khí AirPure Y"]).product)
+        raw = {"product_sku": "SKU-BDL-AIR", "product_quote": "lên đơn combo đó"}
+        y, combo = {"sku": "SKU-AP-Y", "name": "Máy lọc không khí AirPure Y"}, {"sku": "SKU-BDL-AIR", "name": "Combo AirPure Y + 2 màng lọc"}
+        self.assertEqual(verify(raw, text, [y, combo]).product_sku, "SKU-BDL-AIR")
+        self.assertIsNone(verify(raw, text, [y]).product_sku)                                     # mã ngoài danh sách ứng viên (catalog) → bỏ
+
+    def test_made_up_quote_is_dropped(self):
+        from src.harness.reply_reader import verify
+        c = [{"sku": "SKU-AP-FLT-X", "name": "Màng lọc thay thế AirPure X/Y"}]
+        self.assertIsNone(verify({"product_sku": "SKU-AP-FLT-X", "product_quote": "màng lọc AirPure"}, "phí phát sinh bao nhiêu", c).product_sku)
+        self.assertIsNone(verify({"product_sku": "SKU-AP-FLT-X", "product_quote": ""}, "màng lọc thay thế AirPure X", c).product_sku)
+        self.assertEqual(verify({"product_sku": "SKU-AP-FLT-X", "product_quote": "màng lọc thay thế AirPure X"}, "màng lọc thay thế AirPure X", c).product_sku, "SKU-AP-FLT-X")
+
+    def test_read_reply_shows_candidates_and_keeps_only_checked_sku(self):     # "giày hai pro": không đoán bừa; có ngữ cảnh RunLite 2 Pro thì LLM chọn mã đó
+        from src.harness.reply_reader import read_reply
+        from tests.test_reply_reader import ReaderLLM
+        cands = [{"sku": "SKU-SN-TRK", "name": "Giày trekking HikePro"}, {"sku": "SKU-SN-RUN2", "name": "Giày chạy bộ RunLite 2 Pro"}]
+        seen = []
+        llm = ReaderLLM(lambda t: seen.append(t) or {})
+        self.assertIsNone(read_reply(llm, "giày hai pro size 42", "", {"candidates": cands}).product_sku)
+        self.assertIn("SKU-SN-RUN2 — Giày chạy bộ RunLite 2 Pro", seen[0])
+        llm.reader = lambda t: {"product_sku": "SKU-SN-RUN2", "product_quote": "giày hai pro"}
+        self.assertEqual(read_reply(llm, "giày hai pro size 42", "", {"candidates": cands}).product_sku, "SKU-SN-RUN2")
+        llm.reader = lambda t: {"product_sku": "SKU-SN-RUN9", "product_quote": "giày hai pro"}
+        self.assertIsNone(read_reply(llm, "giày hai pro size 42", "", {"candidates": cands}).product_sku)
+
+    def test_candidates_cover_accessories_and_combos(self):                     # ưu tiên đủ: món phụ kiện/combo cùng họ phải có trong danh sách LLM chọn
+        import json, os
+        from src.harness.reply_reader import product_candidates
+        from src.catalog.retriever import DEFAULT_PRODUCTS_PATH
+        cat = json.load(open(DEFAULT_PRODUCTS_PATH, encoding="utf-8"))
+        cat = cat["products"] if isinstance(cat, dict) else cat
+        skus = lambda t, seen=(): {c["sku"] for c in product_candidates(t, cat, list(seen))}
+        self.assertTrue({"SKU-AP-FLT-X", "SKU-AP-X"} <= skus("màng lọc thay thế AirPure X"))
+        self.assertIn("SKU-BDL-AIR", skus("Combo AirPure Y"))
+        self.assertIn("SKU-SN-SOCK", skus("Tất RunLite"))
+        self.assertIn("SKU-SN-RUN2", skus("giày hai pro size 42", ["SKU-SN-RUN2"]))
+        self.assertTrue(all(c["name"] for c in product_candidates("phí phát sinh bao nhiêu", cat)))
 
     def test_extra_item_name_must_be_quoted(self):                               # TEST-153
         from src.harness.reply_reader import verify
@@ -273,7 +325,27 @@ class ExactNameTest(unittest.TestCase):
         from tests._helpers import build_components
         o = build_components(order_gate=True)["orchestrator"]
         o._call_log = {"S": [{"name": "pricing.get_quote", "args": {"sku": "SKU-XM-4L"}, "result": {}}]}
-        self.assertEqual(o._named_in_call("S", "Đổi sang chốt luôn bản Xiaomi Smart 4 Pro nhé"), "SKU-XM-4P")
+        o._readings = {"S": None}
+        self.assertEqual(o._named_in_call("S", "Đổi sang chốt luôn bản Xiaomi Smart 4 Pro nhé"), "SKU-XM-4P")     # hãng + mẫu khớp tuyệt đối, không cần bộ đọc
+
+    def test_named_product_rules_on_the_real_catalog(self):
+        """Thứ tự chung của `_named_in_call` trên catalog thật: tên đầy đủ → hãng+mẫu khớp tuyệt đối (một SKU, không mơ hồ) → bộ đọc."""
+        from types import SimpleNamespace
+        from tests._helpers import build_components
+        o = build_components(order_gate=True)["orchestrator"]
+        o._call_log = {"S": [{"name": "pricing.get_quote", "args": {"sku": "SKU-MB-MON"}, "result": {}}, {"name": "pricing.get_quote", "args": {"sku": "SKU-AP-X"}, "result": {}},
+                             {"name": "pricing.get_quote", "args": {"sku": "SKU-BDL-MOM"}, "result": {}}]}
+        o._readings = {"S": None}
+        self.assertIsNone(o._named_in_call("S", "phí phát sinh bao nhiêu"))                       # "phát" là alias hãng trơn của Fatz
+        self.assertIsNone(o._named_in_call("S", "giày hai pro size 42"))                          # "hai pro" là alias hãng trơn của HikePro
+        self.assertEqual(o._named_in_call("S", "Lấy cho chị một bộ Spectra S1 4.290.000đ"), "SKU-MB-PUMP1")      # SC-TV-13 cuộc 3: không phải combo
+        self.assertIsNone(o._named_in_call("S", "màng lọc thay thế AirPure X"))                   # TEST-200: không quy về máy AirPure X
+        o._readings = {"S": SimpleNamespace(product_sku="SKU-AP-FLT-X")}
+        self.assertEqual(o._named_in_call("S", "màng lọc thay thế AirPure X"), "SKU-AP-FLT-X")    # bộ đọc chọn màng lọc
+        o._readings = {"S": SimpleNamespace(product_sku="SKU-BDL-MOM")}
+        self.assertEqual(o._named_in_call("S", "Lấy cho chị một bộ Spectra S1"), "SKU-MB-PUMP1")   # tên gọi chính xác thắng bộ đọc
+        o._readings = {"S": SimpleNamespace(product_sku="SKU-SN-RUN2")}
+        self.assertEqual(o._named_in_call("S", "giày hai pro size 42"), "SKU-SN-RUN2")            # có ngữ cảnh: bộ đọc quyết
 
 
 class SessionCarryTest(unittest.TestCase):
@@ -301,6 +373,33 @@ class NamedBeatsReaderTest(unittest.TestCase):
         o = build_components(order_gate=True)["orchestrator"]
         sid = "S"
         o._call_log = {sid: [{"name": "pricing.get_quote", "args": {"sku": "SKU-BDL-MOM"}, "result": {}}]}
-        o._readings = {sid: SimpleNamespace(product="Combo Spectra S1 + máy hâm sữa Fatz + 50 túi trữ sữa")}
+        o._readings = {sid: SimpleNamespace(product_sku="SKU-BDL-MOM")}               # bộ đọc chọn sai combo: tên hãng + mẫu khách gọi đúng vẫn thắng
         o.order_gate.state(sid).texts = ["Lấy cho chị một bộ Spectra S1 4.290.000đ giao 31 đường Láng"]
         self.assertEqual(o._simple_product_in_play(sid, SimpleNamespace(product_advised=None)), "SKU-MB-PUMP1")
+
+
+class ReaderComboEndToEndTest(unittest.TestCase):
+    """Đường "bộ đọc chỉ ra sản phẩm" từ đầu tới cuối (TEST-44): khách nói "lên đơn combo đó" → đơn nháp mở ĐÚNG combo dù sản phẩm tra gần nhất là máy lẻ."""
+    def test_combo_named_by_pointing_opens_the_draft_on_the_combo(self):
+        from tests.test_reply_reader import ReaderLLM, burn_early
+        from tests.test_order_gate import GateBase, NEW_PHONE
+
+        class Case(GateBase):
+            def runTest(self):
+                pass
+        case = Case()
+        case.setUp()
+        case.llm = ReaderLLM(lambda t: {})
+        case.orch.llm_client = case.llm
+        burn_early(case)
+        case.turn(NEW_PHONE, "cho chị xem combo với máy AirPure Y", [("pricing.get_quote", {"sku": "SKU-BDL-AIR", "qty": 1}), ("pricing.get_quote", {"sku": "SKU-AP-Y", "qty": 1})])
+        prompts = []
+        case.llm.reader = lambda t: prompts.append(t) or ({"order_intent": "commit", "intent_quote": "lên đơn combo đó", "product_sku": "SKU-BDL-AIR", "product_quote": "combo đó"}
+                                                          if "combo đó" in t else {})
+        case.turn(NEW_PHONE, "ok lên đơn combo đó cho anh nhé", [])
+        self.assertTrue(any("SKU-BDL-AIR — Combo AirPure Y + 2 màng lọc" in p for p in prompts))      # ứng viên tới được LLM
+        self.assertEqual([a["sku"] for a in case.orch._gate_retry_args.values()], ["SKU-BDL-AIR"])
+
+
+if __name__ == "__main__":
+    unittest.main()

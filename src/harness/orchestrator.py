@@ -20,7 +20,6 @@ import logging
 import unicodedata
 from typing import Dict, Any, List, Tuple, Optional
 from src.channels.normalizer import NormalizedTurn
-from src.channels.asr_entities import product_mentions
 from src.harness.fact_usage import fold
 from src.harness.call_brief import CallBrief
 from src.tools.mcp_gateway import MCPToolGateway
@@ -37,7 +36,8 @@ from src.catalog import ProductRetriever, ClarificationPolicy
 from src.harness.fact_usage import fact_mentioned, used_by_agent
 from src.harness.reask import REASK_LABEL, rewrite_reasks, strip_markdown
 from concurrent.futures import ThreadPoolExecutor
-from src.harness.reply_reader import ReplyReading, authorize_closing, authorize_handoff, read_reply, reading_trace_dict
+from src.channels.asr_entities import product_mentions
+from src.harness.reply_reader import ReplyReading, authorize_closing, exact_model_skus, product_candidates, authorize_handoff, read_reply, reading_trace_dict
 from src.harness.order_gate import (OrderGate, OrderDraft, OrderKnown, ProductInfo, with_order_gate_params, detect_payment, GATE_ONLY_ARGS,
                                      extract_recipient_name, is_pure_gate_reply, money as _money)
 from src.memory.memory_extractor import extract_easy_slots, SLOT_TTL, CallFinalizer, HardSlotExtractor, detect_self_honorific, detect_bargain
@@ -402,7 +402,7 @@ class HarnessOrchestrator:
         buying = buying or new_customer_early
         want_reading = self.order_gate.enabled and buying and not closing
         waiting = {"to_confirm": (gst.last_decision or {}).get("to_confirm"), "missing": (gst.last_decision or {}).get("missing"),
-                   "stage": gst.stage if gst.last_decision else None, "products": self._seen_names(working_session_id)}
+                   "stage": gst.stage if gst.last_decision else None, "candidates": self._product_candidates(working_session_id, turn.normalized_text)}
         # GIẢM TTFT: bước đọc hiểu (một lần gọi LLM ≈ 1,1–1,4 s) chạy SONG SONG với LLM chính khi KHÔNG có đơn nháp đang mở — lúc đó kết quả đọc chỉ dùng để
         # (a) code mở order gate nếu khách chốt mua, (b) câu xin SĐT lần trước; cả hai được xử lý ở `sync_gate()` TRƯỚC khi tool đầu tiên chạy và sau khi LLM trả lời.
         # Có đơn nháp (đang hỏi/đọc lại/chờ đồng ý) thì vẫn đọc TRƯỚC như cũ: bước đó quyết định có gọi LLM hay không.
@@ -492,7 +492,7 @@ class HarnessOrchestrator:
                 # ĐỌC MUỘN khi có tín hiệu: lượt này lần đầu nhắc một biến thể cụ thể của sản phẩm đang bàn (code xác định) → bây giờ mới đáng đọc ý định/xác nhận.
                 late_stock = self._check_named_variants(customer_texts_now, brief.product_advised, self._call_log.get(working_session_id, []), [], current_date)
                 if late_stock:
-                    reading = read_reply(self.llm_client, turn.llm_text, last_agent, {"stage": None, "products": self._seen_names(working_session_id)})
+                    reading = read_reply(self.llm_client, turn.llm_text, last_agent, {"stage": None, "candidates": self._product_candidates(working_session_id, turn.normalized_text)})
                     self._readings[working_session_id] = reading
                     reading_trace = {**reading_trace_dict(reading), "late": True}
                     if reading is not None and "recipient_phone" in reading.affirmed:
@@ -591,7 +591,7 @@ class HarnessOrchestrator:
                                      "Tiếp tục trả lời khách, rồi hỏi MỘT câu khách có muốn nhờ nhân viên hỗ trợ không."},
                                     vault.redact_args_for_trace(exec_args))
                         exec_args = {**exec_args, "brief": self._complete_handoff_brief(exec_args.get("brief"), brief, handoff_check["v"]["quote"], caller_phone, vault, current_date,
-                                                                                            focus_sku=self._last_product(prior_call_log + live_calls) or next((s for _, s, _ in reversed(product_mentions(" ".join(customer_texts_now)))), None))}   # C2: sản phẩm tra/nhắc GẦN NHẤT
+                                                                                            focus_sku=self._last_product(prior_call_log + live_calls) or self._reader_product(working_session_id))}   # C2: sản phẩm tra GẦN NHẤT, không có thì sản phẩm bộ đọc LLM đã kiểm
 
                     if name == "order.create":
                         if self.order_gate.enabled:
@@ -673,7 +673,8 @@ class HarnessOrchestrator:
                     return masked, trace_args
 
                 pre_stock = self._check_named_variants(customer_texts_now, brief.product_advised, prior_call_log, [], current_date)
-                pre_stock = pre_stock + self._speculative_lookups(turn.normalized_text, self._quoted_focus(prior_call_log), pre_stock, self._precomp.get(working_session_id), brief, caller_phone, current_date, vault)
+                pre_stock = pre_stock + self._speculative_lookups(turn.normalized_text, self._quoted_focus(prior_call_log), pre_stock, self._precomp.get(working_session_id), brief, caller_phone, current_date, vault,
+                                                                  picked=self._reader_product(working_session_id))
                 history = self._trim_history(list(working_state.messages_in_session)[-20:])
                 # Tầng 1 (Dynamic Tool Enum): nếu đã biết sản phẩm cha đang tư vấn, ép tools
                 # schema chỉ chấp nhận đúng variant_sku THẬT của sản phẩm đó cho sku/new_variant_sku.
@@ -1103,9 +1104,9 @@ class HarnessOrchestrator:
         return None
 
     def _speculative_lookups(self, text: str, focus: Optional[str], stock_done: List[Dict[str, Any]], precomputed: Optional[Dict[str, Any]], brief: CallBrief,
-                             caller_phone: Optional[str], on: str, vault: PiiVault) -> List[Dict[str, Any]]:
+                             caller_phone: Optional[str], on: str, vault: PiiVault, picked: Optional[str] = None) -> List[Dict[str, Any]]:
         """CHẠY TRƯỚC tool ĐỌC mà LLM gần như chắc sẽ gọi (trace: "tìm → tồn kho → báo giá" là chuỗi lặp lại nhiều nhất và mỗi lần LLM yêu cầu tốn nguyên một vòng ≈ 1,2 s):
-        sản phẩm khách nhắc tên trong lượt này (tối đa 2), không nhắc thì sản phẩm đang bàn; với biến thể size/màu vừa được tra tồn kho thì báo giá đúng biến thể đó.
+        `picked` (SKU bộ đọc LLM đã kiểm) nếu có; không thì sản phẩm khách nhắc tên (alias, lọc bằng `named`, tối đa 2) — giữ cho lượt khám phá chưa có bộ đọc; không nữa thì sản phẩm đang bàn; với biến thể size/màu vừa được tra tồn kho thì báo giá đúng biến thể đó.
         Chỉ `inventory.check` + `pricing.get_quote` (không tool ghi). Kết quả vào prompt và trace như tool thật; LLM vẫn là bên quyết định dùng hay không.
         Tắt bằng SPECULATIVE_TOOLS=off."""
         if not SPECULATIVE_TOOLS:
@@ -1116,7 +1117,7 @@ class HarnessOrchestrator:
             """Khách gọi tên sản phẩm thật: ≥ 60% số từ của tên trong catalog có trong lời khách (bộ khớp alias của ASR khớp mờ, "có bé nhỏ" từng ra "Ghế ngồi ô tô cho bé")."""
             words = fold(self._product_info(sku).get("name") or "").split()
             return len(words) >= 2 and sum(w in said for w in words) / len(words) >= 0.6
-        targets = [s for s in dict.fromkeys(self._parent_sku(s) for _, s, _ in product_mentions(text)) if named(s)][:2] or ([focus] if focus else [])
+        targets = ([picked] if picked else [s for s in dict.fromkeys(self._parent_sku(s) for _, s, _ in product_mentions(text)) if named(s)][:2]) or ([focus] if focus else [])
         targets = [self._discontinued_named(said, t) or t for t in targets]
         skus = [c["args"]["sku"] for c in stock_done if c.get("name") == "inventory.check" and (c.get("result") or {}).get("in_stock")]      # biến thể khách nêu, còn hàng
         skus += [s for s in targets if s and not self._fetch_variants(s) and s not in skus]
@@ -1362,7 +1363,7 @@ class HarnessOrchestrator:
         """SKU của sản phẩm KHÔNG có biến thể mà cuộc gọi đang bàn (bán được ngay, không cần chọn size/màu): sản phẩm được tra/báo giá/đặt gần nhất, hoặc
         `catalog.search` ra đúng một sản phẩm, hoặc sản phẩm đã tư vấn. None nếu đang bàn sản phẩm có biến thể (phải chọn size/màu) hoặc chưa có sản phẩm."""
         said = (self.order_gate.state(sid).texts or [""])[-1]
-        named = self._named_in_call(sid, said) or self._reader_product(sid)      # tên khách gọi đúng thắng; bộ đọc cho cách gọi tắt ("combo đó")
+        named = self._named_in_call(sid, said)
         if named:                                    # SC-TV-13: khách gọi tên một sản phẩm ĐÃ tra trong cuộc → sản phẩm đó (không phải sản phẩm tra lượt trước)
             return named if not self._fetch_variants(named) else None
         sku = None
@@ -1668,14 +1669,12 @@ class HarnessOrchestrator:
             out.append({"promo_code": p.get("promo_code"), "reason": f"Mã {p.get('promo_code')} {why}"})
         return {**result, "ineligible_promos": out}
 
-    def _seen_names(self, sid: str) -> List[str]:
-        return [n for n in (self._product_info(s_).get("name") for s_ in self._seen_products(sid)) if n]
+    def _product_candidates(self, sid: str, text: str) -> List[Dict[str, str]]:
+        return product_candidates(text, getattr(self.retriever, "products", None) or [], self._seen_products(sid))
 
     def _reader_product(self, sid: str) -> Optional[str]:
-        """SKU của sản phẩm bộ đọc LLM chỉ ra (tên đúng một sản phẩm đã tra trong cuộc, kèm trích dẫn) — "combo đó" (TEST-44)."""
-        rd = self._readings.get(sid)
-        name = getattr(rd, "product", None)
-        return next((s_ for s_ in self._seen_products(sid) if name and self._product_info(s_).get("name") == name), None)
+        """SKU bộ đọc LLM chỉ ra cho lượt gần nhất (đã kiểm: trích dẫn nguyên văn + mã nằm trong ứng viên lấy từ catalog) — kể cả cách gọi tắt "combo đó" (TEST-44)."""
+        return getattr(self._readings.get(sid), "product_sku", None)
 
     def _named_all(self, sid: str, said: str) -> List[str]:
         """Mọi sản phẩm đã tra trong cuộc có TÊN ĐẦY ĐỦ nằm trong `said` (tên dài trước)."""
@@ -1684,18 +1683,14 @@ class HarnessOrchestrator:
                       key=lambda s_: -len(self._product_info(s_)["name"]))
 
     def _named_in_call(self, sid: str, said: str) -> Optional[str]:
-        """Sản phẩm khách gọi tên trong `said`, CHỈ chọn trong các sản phẩm đã tra trong cuộc: tên đầy đủ nằm trong lời khách (dài nhất thắng) trước,
-        rồi alias (`product_mentions`) nếu chỉ ra đúng một sản phẩm đã tra. Alias một mình từng khớp "Màng lọc thay thế AirPure X/Y" thành máy AirPure X (TEST-200)."""
-        seen = self._seen_products(sid)
+        """Sản phẩm khách gọi tên trong `said` — tên gọi chính xác THẮNG bộ đọc (SC-TV-13 cuộc 3): (1) tên ĐẦY ĐỦ của sản phẩm đã tra nằm nguyên văn trong lời khách
+        (dài nhất thắng); (2) cụm hãng + mẫu khớp tuyệt đối trên toàn catalog, chỉ khi ra đúng một SKU (alias chỉ có hãng không tính); (3) SKU bộ đọc LLM đã kiểm.
+        Không còn khớp alias mờ/hãng trơn (từng ra "phí phát sinh" → Fatz, "giày hai pro" → HikePro, "Màng lọc AirPure X/Y" → máy X)."""
         full = self._named_all(sid, said)
         if full:
             return full[0]
-        ment = product_mentions(said or "")
-        alias = {s_ for _, s_, _ in ment} & set(seen)
-        if len(alias) == 1:
-            return next(iter(alias))
-        exact = {self._parent_sku(s_) for _, s_, sc in ment if sc >= 0.95}      # khách gọi ĐÚNG tên (hãng + mẫu) một sản phẩm LLM chưa tra (SC-TV-18 "đổi sang bản Xiaomi Smart 4 Pro")
-        return next(iter(exact)) if not alias and len(exact) == 1 and self._product_info(next(iter(exact))).get("name") else None
+        exact = [s_ for s_ in exact_model_skus(said or "", getattr(self.retriever, "products", None) or []) if self._product_info(s_).get("name")]
+        return exact[0] if len(exact) == 1 else self._reader_product(sid)
 
     def _last_product(self, calls: List[Dict[str, Any]]) -> Optional[str]:
         """SKU cha được tra/báo giá/đặt gần nhất trong cuộc gọi (C2: phiếu chuyển máy ghi sản phẩm đang bàn, không phải sản phẩm nhắc đầu tiên)."""

@@ -213,6 +213,48 @@ def _quoted(quote: Any, text: str) -> str:
     return str(quote).strip() if q and q in re.sub(r"\s+", " ", fold(text)) else ""
 
 
+def product_candidates(text: str, catalog: List[Dict[str, Any]], seen: List[str] = ()) -> List[Dict[str, str]]:
+    """Ứng viên SKU cho bộ đọc LLM (ưu tiên ĐỦ, chấp nhận dư — LLM chọn, code chỉ kiểm): sản phẩm đã tra trong cuộc + SKU `product_mentions` khớp
+    + mọi sản phẩm catalog có chung một từ tên "hiếm" (≤ 1/4 catalog, vd "airpure", "runlite") với các SKU đó → kéo theo phụ kiện/combo cùng họ."""
+    from src.channels.asr_entities import product_mentions
+    by_sku = {p["sku"]: p for p in catalog if p.get("sku")}
+    words = lambda p: {w for w in re.findall(r"\w+", fold(p.get("name") or "")) if len(w) >= 3 and not w.isdigit()}
+    df: Dict[str, int] = {}
+    for p in by_sku.values():
+        for w in words(p):
+            df[w] = df.get(w, 0) + 1
+    base = [s for s in dict.fromkeys(list(seen) + [s for _, s, _ in product_mentions(text)]) if s in by_sku]
+    rare = {w for s in base for w in words(by_sku[s]) if df[w] <= len(by_sku) // 4}
+    out = base + [s for s, p in by_sku.items() if s not in base and words(p) & rare]
+    return [{"sku": s, "name": by_sku[s]["name"]} for s in out]
+
+
+def exact_model_skus(text: str, catalog: List[Dict[str, Any]] = ()) -> List[str]:
+    """SKU mà lời khách gọi ĐÚNG cụm hãng + mẫu (khớp tuyệt đối theo cụm từ, không khớp mờ) trong config/product_aliases.json.
+    Bỏ alias chỉ có tên hãng (`alone`, mẫu rỗng): "phát" (Fatz), "hai pro" (HikePro) đều là hãng trơn → để bộ đọc LLM quyết định.
+    Mơ hồ → bỏ: một sản phẩm KHÁC trong catalog có tên chứa cùng cụm đó và lời khách có từ riêng của tên sản phẩm kia
+    ("màng lọc thay thế AirPure X" ⊃ "airpure x", "combo AirPure Y" ⊃ "airpure y") — khi đó bộ đọc chọn."""
+    import json
+    from src.channels.asr_entities import ALIAS_PATH, _tokens
+    toks = [fold(t) for t in _tokens(text)]
+    windows = {"".join(toks[i:i + n]) for i in range(len(toks)) for n in range(1, 9) if i + n <= len(toks)}
+    with open(ALIAS_PATH, encoding="utf-8") as fh:
+        products = json.load(fh)["products"]
+    words = lambda name: {w for w in re.findall(r"\w+", fold(name or "")) if len(w) >= 3}
+    names = {p["sku"]: p.get("name") or "" for p in catalog if p.get("sku")}
+    out = []
+    for sku, spec in products.items():
+        hits = [fold(b + m).replace(" ", "") for b in spec.get("brand", []) for m in spec.get("model", []) if m.strip()]
+        hits = [h for h in hits if h in windows]
+        if not hits:
+            continue
+        own = words(names.get(sku))
+        clash = any(o != sku and any(h in re.sub(r"\W", "", fold(n)) for h in hits) and (words(n) - own) & set(toks) for o, n in names.items())
+        if not clash:
+            out.append(sku)
+    return out
+
+
 def verify(raw: Dict[str, Any], text: str, candidates: Any = ()) -> ReplyReading:
     """Chỉ giữ phần của `raw` có bằng chứng nguyên văn trong `text`."""
     r = ReplyReading()
@@ -292,7 +334,7 @@ def read_reply(llm: Any, text: str, last_agent: str = "", waiting: Optional[Dict
     `guard` (mặc định env CONSENT_GUARD, rồi DEFAULT_GUARD) chỉ áp dụng khi `waiting['stage'] == 'readback'`."""
     if llm is None or not getattr(llm, "available", False) or not hasattr(llm, "complete_json") or not (text or "").strip():
         return None
-    ctx = f"Câu cuối của nhân viên: {last_agent or '(chưa có)'}\nSản phẩm đã nhắc trong cuộc: {(waiting or {}).get('products') or []}\nĐang chờ khách xác nhận: {(waiting or {}).get('to_confirm') or []}; đang chờ khách cung cấp: {(waiting or {}).get('missing') or []}; giai đoạn đơn: {(waiting or {}).get('stage') or 'chưa có đơn'}"
+    ctx = f"Câu cuối của nhân viên: {last_agent or '(chưa có)'}\nSản phẩm ứng viên: {[f"{c['sku']} — {c['name']}" for c in (waiting or {}).get('candidates') or []]}\nĐang chờ khách xác nhận: {(waiting or {}).get('to_confirm') or []}; đang chờ khách cung cấp: {(waiting or {}).get('missing') or []}; giai đoạn đơn: {(waiting or {}).get('stage') or 'chưa có đơn'}"
     try:
         raw, usage = llm.complete_json([{"role": "system", "content": PROMPT}, {"role": "user", "content": f"{ctx}\n\nLời khách: {text}"}])
     except Exception as e:                                     # LLMUnavailable, lỗi mạng… → dự phòng regex, không làm hỏng lượt
