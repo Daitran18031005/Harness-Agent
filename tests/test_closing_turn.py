@@ -165,3 +165,112 @@ class MovedCallbackTest(unittest.TestCase):
         self.assertIn("27/10", t)
         self.assertIn("nghỉ", t)
         self.assertEqual(H._say_moved_callback("Dạ em hẹn 8:00 ngày 27/10 ạ.", calls), "Dạ em hẹn 8:00 ngày 27/10 ạ.")
+
+
+class NoBasisReplyTest(unittest.TestCase):
+    def test_known_product_is_not_asked_again(self):                             # SC-TV-11
+        from types import SimpleNamespace
+        from src.harness.orchestrator import HarnessOrchestrator as H
+        o = H.__new__(H)
+        calls = [{"name": "product.shortlist", "result": {"no_basis": True, "slots_used": {"budget_vnd": 600000}, "items": [{"name": "Áo khoác gió Windbreak", "list_price_vnd": 690000}]}}]
+        known = o._no_basis_reply(calls, SimpleNamespace(honorific="chị", product_advised="SKU-JK-WND"))
+        self.assertNotIn("sản phẩm nào", known)
+        self.assertIn("690.000", known)
+        self.assertIn("sản phẩm nào", o._no_basis_reply(calls, SimpleNamespace(honorific="chị", product_advised=None)))
+
+
+class VariantFromCustomerWordsTest(unittest.TestCase):
+    def test_whole_word_match(self):                                             # TEST-179: "L be" không được thành M-BE ("m" trong "mua")
+        from tests._helpers import build_components
+        o = build_components(order_gate=True)["orchestrator"]
+        self.assertEqual(o._resolve_variant_by_attributes("SKU-JK-DWN", "Ngọc chốt mua Áo phao lông vũ Warmly bản L be"), "SKU-JK-DWN-L-BE")
+        self.assertEqual(o._resolve_variant_by_attributes("SKU-SN-TRK", "Giày trekking HikePro size 40 màu trắng"), "SKU-SN-TRK-40-TRANG")
+
+
+class ReaderProductTest(unittest.TestCase):
+    def test_product_must_be_in_the_given_list(self):                            # TEST-44 "combo đó"
+        from src.harness.reply_reader import verify
+        text = "ok lên đơn combo đó cho anh nhé"
+        raw = {"product": "Combo AirPure Y + 2 màng lọc", "product_quote": "lên đơn combo đó"}
+        self.assertEqual(verify(raw, text, ["Máy lọc không khí AirPure Y", "Combo AirPure Y + 2 màng lọc"]).product, "Combo AirPure Y + 2 màng lọc")
+        self.assertIsNone(verify(raw, text, ["Máy lọc không khí AirPure Y"]).product)
+
+    def test_extra_item_name_must_be_quoted(self):                               # TEST-153
+        from src.harness.reply_reader import verify
+        text = "Lấy cho Trang một Máy lọc nước RO Karofi 9 lõi kèm thêm một Bộ lõi lọc thay thế RO 1-2-3 (390.000đ) dự phòng"
+        r = verify({"extra_items": [{"name": "Bộ lõi lọc thay thế RO 1-2-3", "qty": 1, "quote": "kèm thêm một Bộ lõi lọc thay thế RO 1-2-3"},
+                                    {"name": "Bình nước", "qty": 1, "quote": "dự phòng"}]}, text)
+        self.assertEqual(r.extra_items, [{"name": "Bộ lõi lọc thay thế RO 1-2-3", "qty": 1}])
+
+
+class QtyChangeKeepsDraftTest(unittest.TestCase):
+    def test_lowering_qty_is_not_walking_away(self):                             # TEST-49
+        from types import SimpleNamespace
+        from src.harness.order_gate import OrderGate, OrderDraft, OrderKnown, ProductInfo
+        g = OrderGate()
+        g.begin_turn("S", 1, "mua 2 máy", SimpleNamespace(agrees=False, declines=False, affirmed=[], qty=2, payment="COD"))
+        g.evaluate("S", OrderDraft(sku="SKU-SS-AX40", qty=2), OrderKnown(caller_phone="0910388034"), ProductInfo(name="AX40"))
+        g.begin_turn("S", 2, "ngại chuyển khoản lắm, giảm xuống lấy 1 chiếc trả COD", SimpleNamespace(agrees=False, declines=True, affirmed=[], qty=1, payment="COD"))
+        self.assertNotEqual(g.state("S").abandoned_turn, 2)
+        g.begin_turn("S", 3, "thôi không mua nữa", SimpleNamespace(agrees=False, declines=True, affirmed=[], qty=None, payment=None))
+        self.assertEqual(g.state("S").abandoned_turn, 3)
+
+
+class SkuPrefixTest(unittest.TestCase):
+    def test_code_without_prefix(self):                                           # TEST-67 "AP-Y"
+        from tests._helpers import build_components
+        o = build_components(order_gate=True)["orchestrator"]
+        self.assertEqual(o._canonical_sku("AP-Y", "", None), "SKU-AP-Y")
+        self.assertEqual(o._canonical_sku("XM-4L", "", None), "SKU-XM-4L")
+
+
+class ReturnAndPromoTest(unittest.TestCase):
+    def setUp(self):
+        from tests._helpers import build_components
+        self.o = build_components(order_gate=True)["orchestrator"]
+
+    def test_discontinued_model_is_recognised(self):                             # SC-GEN-14 / TEST-11
+        from src.harness.orchestrator import fold
+        said = lambda t: set(fold(t).split())
+        self.assertEqual(self.o._discontinued_named(said("còn bán mẫu máy lọc không khí AirPure X bản 2024 không em?"), "SKU-AP-X"), "SKU-AP-X-2024")
+        self.assertIsNone(self.o._discontinued_named(said("máy lọc không khí AirPure X còn không"), "SKU-AP-X"))
+
+    def test_ineligible_reason_is_explained(self):                               # TEST-08
+        r = self.o._explain_ineligible({"sku": "SKU-SN-RUN2-43-DEN", "ineligible_promos": [{"promo_code": "RUN-10", "reason": "exclude_variant_size"}]})
+        self.assertEqual(r["ineligible_promos"][0]["reason"], "Mã RUN-10 không áp dụng cho size 43")
+
+    def test_exchange_after_return_window_is_refused(self):                      # TEST-111/179/211 cuộc 2
+        class L:
+            def complete_json(self, msgs):
+                return {"days": 12, "quote": "trôi qua 12 hôm"}, {}
+        self.o.mcp.execute_tool = (lambda f: lambda name, args, caller="": {"orders": [{"sku": "SKU-SN-CAS-41-DEN", "created_on": "2026-10-08"}]} if name == "order.status" else f(name, args, caller=caller))(self.o.mcp.execute_tool)
+        args = {"order_id": "OD1", "action": "exchange_size", "new_variant_sku": "SKU-SN-CAS-42-DEN"}
+        late = self.o._return_window_expired(args, ["Từ hôm nhận tới giờ trôi qua 12 hôm mất rồi"], "2026-10-20", L())
+        self.assertEqual((late["error"], late["return_days"]), ("return_window_expired", 7))
+        class L2(L):
+            def complete_json(self, msgs):
+                return {"days": 3, "quote": "nhận 3 hôm"}, {}
+        self.assertIsNone(self.o._return_window_expired(args, ["nhận 3 hôm thì thấy chật"], "2026-10-20", L2()))
+
+
+class LateBasketTest(unittest.TestCase):
+    _setup, _run, _mock, _create = ClosingTurnTest._setup, ClosingTurnTest._run, ClosingTurnTest._mock, ClosingTurnTest.__dict__["_create"]
+    _close, _channel = ClosingTurnTest._close, ClosingTurnTest.__dict__["_channel"]
+
+    def test_basket_quoted_after_the_draft_is_ordered(self):                     # TEST-153: máy + bộ lõi lọc
+        self._setup(order_gate=True)
+        self._run([self._create("SKU-WF-RO9", 1, payment=None),                     # đơn nháp mở với 1 món, rồi LLM mới báo giá cả giỏ
+                   ("pricing.quote_order", {"lines": [{"sku": "SKU-WF-RO9", "qty": 1}, {"sku": "SKU-WF-CORE", "qty": 1}]})])
+        self._run([("pricing.get_quote", {"sku": "SKU-WF-RO9", "qty": 1})])         # báo giá lẻ sau đó không bỏ món kia
+        _, close = self._close()
+        _, tc, _ = close()
+        oc = [c for c in tc if c["name"] == "order.create"]
+        self.assertEqual({l["sku"] for l in oc[0]["args"]["lines"]}, {"SKU-WF-RO9", "SKU-WF-CORE"})
+
+
+class ExactNameTest(unittest.TestCase):
+    def test_exact_name_of_unlooked_product(self):                               # SC-TV-18 cuộc 3
+        from tests._helpers import build_components
+        o = build_components(order_gate=True)["orchestrator"]
+        o._call_log = {"S": [{"name": "pricing.get_quote", "args": {"sku": "SKU-XM-4L"}, "result": {}}]}
+        self.assertEqual(o._named_in_call("S", "Đổi sang chốt luôn bản Xiaomi Smart 4 Pro nhé"), "SKU-XM-4P")

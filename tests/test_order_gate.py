@@ -497,3 +497,43 @@ class FreeshipReadbackTest(unittest.TestCase):
         g.state("S").closing = True
         d = g.evaluate("S", OrderDraft(sku="SKU-X", payment="COD"), OrderKnown(caller_phone="0911265844"), ProductInfo(name="Quạt", unit_price=2450000, freeship=True), total=2450000)
         self.assertIn("miễn phí vận chuyển", d["say"])
+
+
+class NoSecondConfirmTest(unittest.TestCase):
+    def test_answering_with_other_info_confirms_the_phone(self):                   # TEST-141: không hỏi lại "xác nhận số điện thoại" ở lượt sau
+        from types import SimpleNamespace
+        from src.harness.order_gate import OrderGate, OrderDraft, OrderKnown, ProductInfo
+        g = OrderGate()
+        rd = lambda: SimpleNamespace(agrees=False, declines=False, affirmed=[])
+        k, p = OrderKnown(caller_phone="0911116674"), ProductInfo(name="Máy lọc", unit_price=5490000)
+        g.begin_turn("S", 1, "nay Hùng gọi chốt nha", rd())
+        d1 = g.evaluate("S", OrderDraft(sku="SKU-XM-4P"), k, p)
+        self.assertIn("recipient_phone", d1["to_confirm"])
+        g.begin_turn("S", 2, "Nhận tại số 82 Thuận Giao, tên Hùng, thu COD nha", rd())
+        d2 = g.evaluate("S", OrderDraft(sku="SKU-XM-4P"), k, p)
+        self.assertNotIn("recipient_phone", d2.get("to_confirm", []))
+
+
+class ExchangeNotRepeatedTest(GateBase):
+    def test_exchange_from_previous_call_is_not_made_again(self):                # SC-ULTRA-06 cuộc 4: phiếu đổi đã tạo ở cuộc 3
+        self.c["memory"].set_profile_fact("C001", "exchange_ticket", {"order_id": "OD900001", "action": "exchange_size", "new_variant_sku": SKU40, "fee_vnd": 0})
+        upd = ("order.update", {"order_id": "OD900001", "action": "exchange_size", "new_variant_sku": SKU40})
+        _, tc, _ = self.turn(KNOWN_PHONE, "shipper tới rồi, đổi không mất phí hả em?", [upd], "Dạ miễn phí ạ.")
+        res = [c["result"] for c in tc if c["name"] == "order.update"][0]
+        self.assertTrue(res.get("already_done"))
+        self.assertEqual(res.get("fee_vnd"), 0)
+
+
+class PromisedTransferTest(GateBase):
+    REPLY = "Dạ bên em có giá sỉ cho đơn số lượng lớn ạ. Em sẽ chuyển yêu cầu của anh đến bộ phận phụ trách sỉ B2B để họ liên hệ lại."
+
+    def test_out_of_scope_promise_is_carried_out_by_code(self):                  # SC-TV-10 cuộc 3
+        self.llm.complete_json = lambda msgs: ({"category": "scope_safety", "category_quote": "giá sỉ cho 50 máy"}, {})
+        txt, tc, _ = self.turn(NEW_PHONE, "Công ty anh cần giá sỉ cho 50 máy", [], self.REPLY)
+        self.assertEqual([c["name"] for c in tc if c["name"] == "handoff.transfer"], ["handoff.transfer"])
+
+    def test_unapproved_promise_is_dropped(self):
+        self.llm.complete_json = lambda msgs: ({"category": "other", "authorized": False}, {})
+        txt, tc, _ = self.turn(NEW_PHONE, "Công ty anh cần giá sỉ cho 50 máy", [], self.REPLY)
+        self.assertFalse([c for c in tc if c["name"] == "handoff.transfer"])
+        self.assertNotIn("bộ phận phụ trách", txt)

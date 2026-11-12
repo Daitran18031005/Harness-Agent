@@ -129,6 +129,7 @@ class ProductInfo:
     is_variant: bool = False
     unit_price: Optional[int] = None
     freeship: bool = False                 # báo giá có "freeship": true → câu đọc lại nói "miễn phí vận chuyển" (SC-GEN-15)
+    promo_note: str = ""                   # ", áp mã AIR-2ND-50 giảm … cho sản phẩm thứ hai" — đọc lại đơn phải nêu KM đã áp (TEST-67)
 
 
 @dataclass
@@ -206,7 +207,9 @@ class OrderGate:
             self.phone_ok_fallback(sid, text)
         open_draft = st.stage in ("collect", "readback", "consented") and (st.last_decision is not None) and not st.last_decision.get("allow", False)
         stale = open_draft and st.last_decision.get("turn") is not None and turn_no - st.last_decision["turn"] > DRAFT_TTL_TURNS    # đơn nháp không tiến triển → tự rút lui
-        if open_draft and (declined or stale):
+        # khách chỉ đổi số lượng/cách trả ("ngại chuyển khoản, giảm xuống lấy 1 chiếc trả COD" — TEST-49) vẫn đang mua: không hủy đơn nháp
+        changes_order = reading is not None and bool(getattr(reading, "qty", None) or getattr(reading, "payment", None))
+        if open_draft and ((declined and not changes_order) or stale):
             st.abandoned_turn = turn_no                            # khách không muốn tiếp tục (đắt, chưa đủ tiền, để sau…) → hủy đơn nháp, không hỏi tiếp
             st.stage, st.snapshot, st.pending_confirm, st.readback_turn = "collect", None, None, None
             st.ask_streak, st.last_ask_key, st.last_ask_turn, st.last_decision = 0, None, None, None
@@ -214,7 +217,9 @@ class OrderGate:
         if st.pending_confirm and turn_no == st.pending_confirm["turn"] + 1:
             if reading is not None:                                # LLM: chỉ các mục khách nêu là đúng, hoặc khách đồng ý chung với câu hỏi xác nhận
                 vals = st.pending_confirm["values"]
-                st.confirmed.update(vals if lenient_consent else {k: v for k, v in vals.items() if k in affirmed})
+                # khách nghe câu xác nhận mà trả lời tiếp thông tin khác, không phản đối → coi là đã xác nhận (hỏi lại = câu hỏi thừa, RQR; TEST-141).
+                # Khách đọc số/địa chỉ MỚI thì trường đó thành "stated" ở lượt này, giá trị cũ không còn được dùng; câu đọc lại đơn vẫn đọc đủ để khách sửa.
+                st.confirmed.update(vals if (lenient_consent or not declined) else {k: v for k, v in vals.items() if k in affirmed})
             elif consent or is_explicit_consent(text or "", max_words=40, lenient=True):       # xác nhận thông tin đã lưu có thể kèm thông tin mới ("đúng rồi, giao về…")
                 st.confirmed.update(st.pending_confirm["values"])
             st.pending_confirm = None
@@ -301,7 +306,7 @@ class OrderGate:
         qty = int(fields["qty"].value or 1)
         item = (p.name + (f" {p.variant_label}" if p.variant_label else "")).strip() or d.sku
         price = f", giá {money(p.unit_price)} một sản phẩm" if p.unit_price else ""
-        tot = (f", tổng {money(total)}" if total else "") + (", miễn phí vận chuyển" if p.freeship else "")
+        tot = (f", tổng {money(total)}" if total else "") + p.promo_note + (", miễn phí vận chuyển" if p.freeship else "")
         pay = PAYMENT_LABEL.get(fields["payment"].value or "", fields["payment"].value or "")
         return (f"Dạ em đọc lại đơn mình nhé: {qty} {item}{price}{tot}; giao cho {fields['recipient_name'].shown}, số điện thoại "
                 f"{fields['recipient_phone'].shown}, địa chỉ {fields['address'].shown}; {pay}. {addr[:1].upper() + addr[1:]} xác nhận đặt đơn này giúp em nhé?")
@@ -368,7 +373,7 @@ class OrderGate:
                 price = f", giá {money(product.unit_price)} một sản phẩm" if product.unit_price else ""
                 who = [f"{lbl} {fields[f].shown}" for f, lbl in (("recipient_name", "giao cho"), ("recipient_phone", "số điện thoại"), ("address", "địa chỉ"))
                        if fields[f].status != "missing" and fields[f].shown]
-                say = (f"Dạ em đọc lại đơn mình nhé: {qty} {item}{price}" + (f", tổng {money(total)}" if total else "")
+                say = (f"Dạ em đọc lại đơn mình nhé: {qty} {item}{price}" + (f", tổng {money(total)}" if total else "") + product.promo_note
                        + (", miễn phí vận chuyển" if product.freeship else "") + (f"; {', '.join(who)}" if who else "") + f"; {pay}."
                        + (f" Em chưa có {' và '.join(later)} nên nhân viên sẽ gọi lại {addressing} để xác nhận trước khi giao ạ." if later else ""))
                 st.stage, st.snapshot, st.created = "done", snap, {"snapshot": snap, "turn": st.turn, "real": {k: v.value for k, v in fields.items()}}

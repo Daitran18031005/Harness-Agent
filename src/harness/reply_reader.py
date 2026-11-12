@@ -43,6 +43,9 @@ JSON gồm các khóa:
 - "qty_quote": đoạn nguyên văn chứa số lượng đó, hoặc ""
 - "address": địa chỉ NHẬN HÀNG khách vừa nói trong lời này (số nhà, đường, khu, phường/quận, tỉnh — kể cả khi viết thiếu dấu/thiếu chữ "số", "đường"), chép đúng như khách nói; null nếu không có hoặc chỉ là token dạng <ADDR_n>
 - "address_quote": đoạn nguyên văn chứa địa chỉ đó, hoặc ""
+- "product": tên sản phẩm CHÍNH khách đang chốt mua trong lời này, CHÉP ĐÚNG MỘT tên trong danh sách "Sản phẩm đã nhắc trong cuộc" (kể cả khi khách gọi tắt: "combo đó", "cái máy hôm trước", "bản Pro"); null nếu khách không chốt mua hoặc không rõ là sản phẩm nào trong danh sách
+- "product_quote": đoạn nguyên văn trong lời khách chỉ ra sản phẩm đó, hoặc ""
+- "extra_items": danh sách món KHÁC khách muốn mua THÊM trong CÙNG đơn, mỗi món {"name": tên món chép như khách nói, "qty": số nguyên, "quote": đoạn nguyên văn}; [] nếu không có
 - "payment": "COD" | "bank" | "momo" | "zalopay" | null — hình thức thanh toán khách vừa CHỌN
 - "payment_quote": đoạn nguyên văn chứa lựa chọn đó, hoặc ""
 - "order_intent": "commit" | "other" — khách đang CAM KẾT mua/đặt thứ đang được bàn hay chưa
@@ -138,6 +141,30 @@ def authorize_handoff(llm: Any, text: str, last_agent: str = "", facts: str = ""
     return out
 
 
+RECEIVED_PROMPT = """Đọc lời khách và cho biết khách nói đã NHẬN hàng được bao nhiêu NGÀY tính tới hôm nay (đổi tuần ra ngày). Chỉ tính khi khách nói rõ số ngày/tuần;
+không nói thì days = null. Trả về DUY NHẤT JSON: {"days": số nguyên hoặc null, "quote": "đoạn NGUYÊN VĂN trong lời khách chứa con số đó"}"""
+
+
+def _num_in(n: int, quote: str) -> bool:
+    q = fold(quote)
+    return bool(re.search(rf"(?<!\d){n}(?!\d)", quote) or (1 <= n <= 10 and re.search(rf"(?<!\w){NUM_WORDS[n]}(?!\w)", q)))
+
+
+def days_since_received(llm: Any, text: str) -> Optional[int]:
+    """Số ngày khách NÓI đã nhận hàng (LLM đọc, trích dẫn phải chứa con số — hoặc số tuần nếu khách nói theo tuần). Không chắc → None."""
+    if llm is None or not hasattr(llm, "complete_json") or not (text or "").strip():
+        return None
+    try:
+        raw, _ = llm.complete_json([{"role": "system", "content": RECEIVED_PROMPT}, {"role": "user", "content": f"Lời khách: {text}"}])
+    except Exception as e:
+        logger.warning("[reply_reader] không đọc được số ngày đã nhận hàng (%s)", e)
+        return None
+    d, q = (raw.get("days"), _quoted(raw.get("quote"), text)) if isinstance(raw, dict) else (None, "")
+    if isinstance(d, int) and not isinstance(d, bool) and 0 <= d <= 400 and q and (_num_in(d, q) or (d % 7 == 0 and _num_in(d // 7, q))):
+        return d
+    return None
+
+
 @dataclass
 class ReplyReading:
     stance: str = "other"
@@ -146,6 +173,8 @@ class ReplyReading:
     recipient_name: Optional[str] = None
     payment: Optional[str] = None
     qty: Optional[int] = None                                    # số lượng khách nói rõ (đã kiểm chứng: con số/chữ số nằm trong trích dẫn) — đơn code mở từng luôn là 1 (TEST-64/80)
+    product: Optional[str] = None                                # tên sản phẩm khách chốt, ĐÚNG một tên trong danh sách sản phẩm đã nhắc của cuộc (kèm trích dẫn) — TEST-44 "combo đó"
+    extra_items: List[Dict[str, Any]] = field(default_factory=list)   # món mua thêm cùng đơn [{name, qty}] (tên nằm trong trích dẫn) — TEST-153
     address: Optional[str] = None                                # địa chỉ nhận hàng khách vừa nói (đã kiểm chứng nguyên văn) — B1
     confidence: float = 0.0
     commits: bool = False                                        # order_intent = commit KÈM trích dẫn nguyên văn đã kiểm chứng
@@ -184,7 +213,7 @@ def _quoted(quote: Any, text: str) -> str:
     return str(quote).strip() if q and q in re.sub(r"\s+", " ", fold(text)) else ""
 
 
-def verify(raw: Dict[str, Any], text: str) -> ReplyReading:
+def verify(raw: Dict[str, Any], text: str, products: Any = ()) -> ReplyReading:
     """Chỉ giữ phần của `raw` có bằng chứng nguyên văn trong `text`."""
     r = ReplyReading()
     stance = raw.get("stance")
@@ -224,6 +253,14 @@ def verify(raw: Dict[str, Any], text: str) -> ReplyReading:
     pay, q = raw.get("payment"), _quoted(raw.get("payment_quote"), text)
     if pay in PAYMENTS and q:
         r.payment, r.evidence["payment"] = pay, q
+    prod, q = raw.get("product"), _quoted(raw.get("product_quote"), text)
+    if isinstance(prod, str) and q and prod.strip() in (products or ()):       # chỉ nhận tên nằm trong danh sách đã đưa (không để LLM bịa sản phẩm)
+        r.product, r.evidence["product"] = prod.strip(), q
+    for it in raw.get("extra_items") or [] if isinstance(raw.get("extra_items"), list) else []:
+        q = _quoted(it.get("quote") if isinstance(it, dict) else None, text)
+        name, n = (it.get("name"), it.get("qty")) if isinstance(it, dict) else (None, None)
+        if isinstance(name, str) and name.strip() and q and fold(name).strip() in fold(q):
+            r.extra_items.append({"name": name.strip(), "qty": n if isinstance(n, int) and not isinstance(n, bool) and 1 <= n <= 50 else 1})
     return r
 
 
@@ -255,7 +292,7 @@ def read_reply(llm: Any, text: str, last_agent: str = "", waiting: Optional[Dict
     `guard` (mặc định env CONSENT_GUARD, rồi DEFAULT_GUARD) chỉ áp dụng khi `waiting['stage'] == 'readback'`."""
     if llm is None or not getattr(llm, "available", False) or not hasattr(llm, "complete_json") or not (text or "").strip():
         return None
-    ctx = f"Câu cuối của nhân viên: {last_agent or '(chưa có)'}\nĐang chờ khách xác nhận: {(waiting or {}).get('to_confirm') or []}; đang chờ khách cung cấp: {(waiting or {}).get('missing') or []}; giai đoạn đơn: {(waiting or {}).get('stage') or 'chưa có đơn'}"
+    ctx = f"Câu cuối của nhân viên: {last_agent or '(chưa có)'}\nSản phẩm đã nhắc trong cuộc: {(waiting or {}).get('products') or []}\nĐang chờ khách xác nhận: {(waiting or {}).get('to_confirm') or []}; đang chờ khách cung cấp: {(waiting or {}).get('missing') or []}; giai đoạn đơn: {(waiting or {}).get('stage') or 'chưa có đơn'}"
     try:
         raw, usage = llm.complete_json([{"role": "system", "content": PROMPT}, {"role": "user", "content": f"{ctx}\n\nLời khách: {text}"}])
     except Exception as e:                                     # LLMUnavailable, lỗi mạng… → dự phòng regex, không làm hỏng lượt
@@ -263,7 +300,7 @@ def read_reply(llm: Any, text: str, last_agent: str = "", waiting: Optional[Dict
         return None
     if not isinstance(raw, dict):
         return None
-    r = verify(raw, text)
+    r = verify(raw, text, (waiting or {}).get('products') or ())
     r.usage.append(usage or {})
     mode = guard or os.environ.get("CONSENT_GUARD") or DEFAULT_GUARD
     if mode not in GUARDS:
