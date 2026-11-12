@@ -24,6 +24,7 @@ AFFIRMABLE = ("recipient_name", "recipient_phone", "address", "payment")
 GUARDS = ("none", "confidence", "verify")
 DEFAULT_GUARD = "verify"             # tạm thời: chốt an toàn nhất; chọn chính thức sau khi đo (scripts/eval_consent_guard.py)
 CONFIDENCE_THRESHOLD = 0.85
+NUM_WORDS = {1: "mot", 2: "hai", 3: "ba", 4: "bon", 5: "nam", 6: "sau", 7: "bay", 8: "tam", 9: "chin", 10: "muoi"}   # chữ số đã bỏ dấu (fold)
 
 PROMPT = """Bạn là bộ ĐỌC HIỂU lời khách trong cuộc gọi bán hàng. Chỉ phân tích, không trả lời khách. Trả về DUY NHẤT một JSON object.
 
@@ -38,6 +39,10 @@ JSON gồm các khóa:
 - "affirmed_quote": đoạn nguyên văn làm bằng chứng cho affirmed (rỗng nếu affirmed rỗng)
 - "recipient_name": tên NGƯỜI NHẬN HÀNG khách vừa nói (không phải tên sản phẩm/thương hiệu), hoặc null
 - "name_quote": đoạn nguyên văn chứa tên đó, hoặc ""
+- "qty": SỐ LƯỢNG (số nguyên) của sản phẩm khách đang đặt/chốt, nếu khách NÓI RÕ trong lời này (vd. "3 bộ", "5 món", "hai cái"); null nếu không nói
+- "qty_quote": đoạn nguyên văn chứa số lượng đó, hoặc ""
+- "address": địa chỉ NHẬN HÀNG khách vừa nói trong lời này (số nhà, đường, khu, phường/quận, tỉnh — kể cả khi viết thiếu dấu/thiếu chữ "số", "đường"), chép đúng như khách nói; null nếu không có hoặc chỉ là token dạng <ADDR_n>
+- "address_quote": đoạn nguyên văn chứa địa chỉ đó, hoặc ""
 - "payment": "COD" | "bank" | "momo" | "zalopay" | null — hình thức thanh toán khách vừa CHỌN
 - "payment_quote": đoạn nguyên văn chứa lựa chọn đó, hoặc ""
 - "order_intent": "commit" | "other" — khách đang CAM KẾT mua/đặt thứ đang được bàn hay chưa
@@ -45,6 +50,8 @@ JSON gồm các khóa:
 - "asks_question": true nếu khách đang hỏi điều gì mà nhân viên chưa trả lời
 - "asks_price_promo": true nếu khách đang HỎI, chất vấn, đòi hoặc phản đối về giá/giảm giá/khuyến mãi/ưu đãi (kể cả nhắc mức giảm đã nghe trước đây) mà nhân viên chưa trả lời; chấp nhận một mức giá đã nêu thì không
 - "price_promo_quote": đoạn nguyên văn trong lời khách làm bằng chứng (rỗng nếu false)
+- "asks_transfer": true nếu khách YÊU CẦU NGAY BÂY GIỜ được nối máy/chuyển cuộc gọi/gặp nhân viên, quản lý hoặc bộ phận khác (vd. bộ phận khách hàng doanh nghiệp) xử lý thay trợ lý. Các việc sau KHÔNG phải yêu cầu chuyển máy (false): hẹn/đặt lịch GỌI LẠI sau; nhân viên gọi xác nhận đơn hay gọi báo trước khi giao; đổi địa chỉ/thông tin giao hàng; hỏi quy định thanh toán; mặc cả giá; nhờ kiểm tra sản phẩm/đơn hàng mà không đòi gặp người khác
+- "transfer_quote": đoạn nguyên văn trong lời khách làm bằng chứng (rỗng nếu false)
 - "claims_prior_contact": true nếu khách nói mình ĐÃ từng liên hệ/được tư vấn/trao đổi với cửa hàng trước thời điểm này (ở bất kỳ kênh nào)
 - "prior_contact_quote": đoạn nguyên văn trong lời khách làm bằng chứng (rỗng nếu false)
 
@@ -74,11 +81,12 @@ HANDOFF_PROMPT = """Bạn là chốt kiểm tra độc lập trước khi CHUY�
 Hai loại ca chuyển máy, kiểm tra theo tiêu chí riêng:
 A. "scope_safety" — việc khách hỏi/nêu nằm NGOÀI phạm vi tư vấn bán hàng của trợ lý và cần người có chuyên môn/thẩm quyền khác (sức khỏe, y tế, thuốc, bệnh lý; an toàn của người dùng, đặc biệt trẻ nhỏ; pháp lý; SỰ CỐ/khiếu nại về đơn đã đặt — đơn trễ so với thời gian hợp lý, sai, hỏng, mất, dựa cả vào "Dữ kiện hệ thống" nếu có, còn chỉ hỏi tình trạng đơn bình thường thì KHÔNG; yêu cầu liên quan dữ liệu cá nhân). Loại này KHÔNG cần khách yêu cầu chuyển máy; cần "category_quote" là đoạn NGUYÊN VĂN trong lời khách thể hiện việc đó. Chuyện giá, giảm giá, mặc cả, chê đắt, cân nhắc mua KHÔNG thuộc loại này.
 B. Mọi trường hợp khác (kể cả thương lượng giá): chỉ được chuyển khi khách đã cho phép, với một trong hai căn cứ:
- - "asked": chính lời khách vừa nói là yêu cầu được người/bộ phận khác (nhân viên, quản lý, bộ phận có thẩm quyền) xử lý.
+ - "asked": chính lời khách vừa nói là yêu cầu được nối máy/chuyển cuộc gọi cho người/bộ phận khác (nhân viên, quản lý, bộ phận có thẩm quyền) xử lý thay trợ lý — kể cả khi trong cùng câu khách còn nói chuyện mua hàng, số lượng, hóa đơn hay hợp đồng. Các việc sau KHÔNG phải yêu cầu chuyển máy: hẹn/đặt lịch GỌI LẠI sau; nhân viên gọi xác nhận đơn hay gọi báo trước khi giao; đổi địa chỉ/thông tin giao hàng; hỏi quy định thanh toán.
  - "accepted_offer": câu cuối của nhân viên có ĐỀ NGHỊ chuyển máy/nhờ người khác hỗ trợ, và lời khách là sự chấp nhận chủ động, không điều kiện đúng đề nghị đó.
  Khách than phiền, hỏi, thương lượng mà chưa tự yêu cầu/chấp nhận thì CHƯA phải là cho phép.
 Mơ hồ thì chọn kết luận thận trọng (category "other", authorized false).
-Trả về DUY NHẤT JSON: {"category": "scope_safety"|"other", "category_quote": "<nguyên văn lời khách, rỗng nếu other>", "authorized": true|false, "basis": "asked"|"accepted_offer"|null, "quote": "<nguyên văn lời khách làm bằng chứng cho authorized, rỗng nếu false>"}"""
+"category" và "authorized" là HAI câu hỏi độc lập: category "other" KHÔNG có nghĩa authorized false — ca loại B mà khách đã yêu cầu/chấp nhận thì authorized true.
+Trả về DUY NHẤT JSON: {"basis": "asked"|"accepted_offer"|null, "quote": "<nguyên văn lời khách làm bằng chứng cho basis, rỗng nếu null>", "authorized": true|false, "category": "scope_safety"|"other", "category_quote": "<nguyên văn lời khách, rỗng nếu other>"}"""
 
 
 CLOSING_PROMPT = """Bạn là chốt kiểm tra độc lập trước khi tạo đơn hàng ở CUỐI cuộc gọi, khi không còn lượt nào để hỏi lại khách. Dưới đây là TOÀN BỘ lời khách trong cuộc gọi, theo thứ tự.
@@ -137,10 +145,13 @@ class ReplyReading:
     affirmed: List[str] = field(default_factory=list)
     recipient_name: Optional[str] = None
     payment: Optional[str] = None
+    qty: Optional[int] = None                                    # số lượng khách nói rõ (đã kiểm chứng: con số/chữ số nằm trong trích dẫn) — đơn code mở từng luôn là 1 (TEST-64/80)
+    address: Optional[str] = None                                # địa chỉ nhận hàng khách vừa nói (đã kiểm chứng nguyên văn) — B1
     confidence: float = 0.0
     commits: bool = False                                        # order_intent = commit KÈM trích dẫn nguyên văn đã kiểm chứng
     asks_question: bool = False
     price_topic: bool = False                                    # khách đang hỏi/chất vấn về giá hoặc khuyến mãi (KÈM trích dẫn nguyên văn đã kiểm chứng)
+    asks_transfer: bool = False                                 # khách yêu cầu nối máy/gặp người khác (KÈM trích dẫn) — C3: không để order gate chiếm lượt
     prior_contact: bool = False                                 # khách nói đã từng liên hệ trước đây (KÈM trích dẫn nguyên văn đã kiểm chứng)
     evidence: Dict[str, str] = field(default_factory=dict)       # khóa → đoạn trích ĐÃ kiểm chứng (để ghi trace)
     guard: Dict[str, Any] = field(default_factory=dict)          # kết quả chốt đồng ý: {"mode","raw_stance","passed",...}
@@ -162,7 +173,7 @@ def reading_trace_dict(r: Optional[ReplyReading], skipped: bool = False) -> Dict
     if r is None:
         return {"source": "regex_fallback"}
     return {"source": "llm", "stance": r.stance, "confidence": r.confidence, "only_answers": r.only_answers, "affirmed": r.affirmed,
-            "order_intent": "commit" if r.commits else "other", "asks_question": r.asks_question, "asks_price_promo": r.price_topic, "prior_contact": r.prior_contact, "recipient_name": r.recipient_name, "payment": r.payment, "evidence": r.evidence, "guard": r.guard or None,
+            "order_intent": "commit" if r.commits else "other", "asks_question": r.asks_question, "asks_price_promo": r.price_topic, "prior_contact": r.prior_contact, "recipient_name": r.recipient_name, "payment": r.payment, "address": bool(r.address), "evidence": r.evidence, "guard": r.guard or None,
             "llm_calls": len(r.usage), "vnd_cost": round(sum(float(u.get("vnd_cost", 0) or 0) for u in r.usage), 2),
             "latency_ms": sum(int(u.get("latency_ms", 0) or 0) for u in r.usage)}
 
@@ -187,6 +198,9 @@ def verify(raw: Dict[str, Any], text: str) -> ReplyReading:
     q = _quoted(raw.get("price_promo_quote"), text)
     if raw.get("asks_price_promo") is True and q:
         r.price_topic, r.evidence["price_promo"] = True, q
+    q = _quoted(raw.get("transfer_quote"), text)
+    if raw.get("asks_transfer") is True and q:
+        r.asks_transfer, r.evidence["transfer"] = True, q
     q = _quoted(raw.get("prior_contact_quote"), text)
     if raw.get("claims_prior_contact") is True and q:
         r.prior_contact, r.evidence["prior_contact"] = True, q
@@ -200,6 +214,13 @@ def verify(raw: Dict[str, Any], text: str) -> ReplyReading:
     name, q = raw.get("recipient_name"), _quoted(raw.get("name_quote"), text)
     if isinstance(name, str) and name.strip() and q and fold(name).strip() in fold(q):
         r.recipient_name, r.evidence["name"] = name.strip(), q
+    qty, q = raw.get("qty"), _quoted(raw.get("qty_quote"), text)
+    if isinstance(qty, int) and not isinstance(qty, bool) and 1 <= qty <= 50 and q and (
+            re.search(rf"(?<!\d){qty}(?!\d)", q) or (qty <= 10 and re.search(rf"(?<!\w){NUM_WORDS[qty]}(?!\w)", fold(q)))):
+        r.qty, r.evidence["qty"] = qty, q
+    addr, q = raw.get("address"), _quoted(raw.get("address_quote"), text)
+    if isinstance(addr, str) and addr.strip() and "<" not in addr and q and fold(addr).strip() in fold(q):
+        r.address, r.evidence["address"] = addr.strip(), q
     pay, q = raw.get("payment"), _quoted(raw.get("payment_quote"), text)
     if pay in PAYMENTS and q:
         r.payment, r.evidence["payment"] = pay, q

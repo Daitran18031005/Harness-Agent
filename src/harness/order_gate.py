@@ -128,6 +128,7 @@ class ProductInfo:
     needs_variant: bool = False
     is_variant: bool = False
     unit_price: Optional[int] = None
+    freeship: bool = False                 # báo giá có "freeship": true → câu đọc lại nói "miễn phí vận chuyển" (SC-GEN-15)
 
 
 @dataclass
@@ -153,6 +154,7 @@ class GateState:
     last_ask_key: Optional[tuple] = None   # (hành động, trường hỏi, trường xác nhận) của câu hỏi gần nhất — để phát hiện câu hỏi LẶP
     last_ask_turn: Optional[int] = None
     ask_streak: int = 0                    # số lần LIÊN TIẾP hỏi đúng câu đó mà khách chưa trả lời được
+    addr_ref_turn: Optional[int] = None    # lượt khách nói "giao về địa chỉ cũ" (bộ đọc: affirmed có "address") — B2
     closing: bool = False                  # LƯỢT CHỐT của cuộc gọi (luật BTC 11/2026: sau lượt khách cuối, agent được một lượt đọc lại + tạo đơn, khách không nói gì nữa)
     phone_ok: bool = False                 # khách đã nói "đúng sdt/số này" (kể cả TRƯỚC khi gate hỏi) → số đang gọi coi như đã xác nhận
 
@@ -196,6 +198,8 @@ class OrderGate:
             declined, affirmed = reading.declines, set(reading.affirmed)
             if "recipient_phone" in affirmed:
                 st.phone_ok = True
+            if "address" in affirmed:
+                st.addr_ref_turn = turn_no
         else:
             consent, declined = is_explicit_consent(text or ""), is_decline(text or "")
             lenient_consent, affirmed = None, set()
@@ -297,7 +301,7 @@ class OrderGate:
         qty = int(fields["qty"].value or 1)
         item = (p.name + (f" {p.variant_label}" if p.variant_label else "")).strip() or d.sku
         price = f", giá {money(p.unit_price)} một sản phẩm" if p.unit_price else ""
-        tot = f", tổng {money(total)}" if total else ""
+        tot = (f", tổng {money(total)}" if total else "") + (", miễn phí vận chuyển" if p.freeship else "")
         pay = PAYMENT_LABEL.get(fields["payment"].value or "", fields["payment"].value or "")
         return (f"Dạ em đọc lại đơn mình nhé: {qty} {item}{price}{tot}; giao cho {fields['recipient_name'].shown}, số điện thoại "
                 f"{fields['recipient_phone'].shown}, địa chỉ {fields['address'].shown}; {pay}. {addr[:1].upper() + addr[1:]} xác nhận đặt đơn này giúp em nhé?")
@@ -365,7 +369,7 @@ class OrderGate:
                 who = [f"{lbl} {fields[f].shown}" for f, lbl in (("recipient_name", "giao cho"), ("recipient_phone", "số điện thoại"), ("address", "địa chỉ"))
                        if fields[f].status != "missing" and fields[f].shown]
                 say = (f"Dạ em đọc lại đơn mình nhé: {qty} {item}{price}" + (f", tổng {money(total)}" if total else "")
-                       + (f"; {', '.join(who)}" if who else "") + f"; {pay}."
+                       + (", miễn phí vận chuyển" if product.freeship else "") + (f"; {', '.join(who)}" if who else "") + f"; {pay}."
                        + (f" Em chưa có {' và '.join(later)} nên nhân viên sẽ gọi lại {addressing} để xác nhận trước khi giao ạ." if later else ""))
                 st.stage, st.snapshot, st.created = "done", snap, {"snapshot": snap, "turn": st.turn, "real": {k: v.value for k, v in fields.items()}}
                 return self._record(st, {**base, "allow": True, "action": "allow_closing", "assumed": assumed, "say": say})
@@ -391,6 +395,8 @@ class OrderGate:
                 say = self._rephrase_ask(addressing, asks)
             else:
                 say = self._confirm_and_ask(addressing, fields, to_confirm, asks)
+            if "address" in asks and st.addr_ref_turn == st.turn:    # B2: khách nhắc địa chỉ cũ mà chưa có địa chỉ lưu → nói thẳng, không bịa
+                say = "Dạ em chưa có địa chỉ đã lưu của mình ạ. " + (say[3:] if say.startswith("Dạ ") else say)
             if to_confirm:
                 st.pending_confirm = {"turn": st.turn, "values": {f: norm_value(fields[f].value) for f in to_confirm}}
             must = [MUST_WORD[a] for a in asks] + (["dung khong"] if to_confirm else [])

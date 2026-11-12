@@ -487,3 +487,13 @@ class HonorificAndCompetitorTest(GateBase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class FreeshipReadbackTest(unittest.TestCase):
+    def test_closing_readback_says_free_shipping(self):                          # SC-GEN-15
+        from src.harness.order_gate import OrderGate, OrderDraft, OrderKnown, ProductInfo
+        g = OrderGate()
+        g.begin_turn("S", 1, "lên đơn giao số 12 Nguyễn Huệ")
+        g.state("S").closing = True
+        d = g.evaluate("S", OrderDraft(sku="SKU-X", payment="COD"), OrderKnown(caller_phone="0911265844"), ProductInfo(name="Quạt", unit_price=2450000, freeship=True), total=2450000)
+        self.assertIn("miễn phí vận chuyển", d["say"])

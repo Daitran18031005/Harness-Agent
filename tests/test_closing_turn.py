@@ -131,3 +131,37 @@ del OrderSyncTest       # không để unittest nạp lại các test của lớ
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class InventedSkuRepairTest(unittest.TestCase):
+    _setup, _run, _mock, _create = ClosingTurnTest._setup, ClosingTurnTest._run, ClosingTurnTest._mock, ClosingTurnTest.__dict__["_create"]
+
+    def test_invented_code_maps_to_last_looked_up_simple_product(self):          # A3: sửa trước rồi mới chặn
+        self._setup(order_gate=True)
+        self._run([("pricing.get_quote", {"sku": AP_Y, "qty": 1})])
+        self._run([self._create("MADE-UP-1", 1, payment=None)])
+        self.assertTrue(all(a.get("sku") == AP_Y for a in self.orch._gate_retry_args.values()))
+        self.assertTrue(self.orch._gate_retry_args)                                # đơn nháp mở với SKU thật, không bị chặn
+
+
+class NamedProductTest(unittest.TestCase):
+    def test_accessory_name_is_not_read_as_the_main_unit(self):                 # TEST-200
+        from types import SimpleNamespace
+        from src.harness.orchestrator import HarnessOrchestrator as H
+        o = H.__new__(H)
+        names = {"SKU-AP-X": "Máy lọc không khí AirPure X", "SKU-AP-FLT-X": "Màng lọc thay thế AirPure X/Y"}
+        o._call_log = {"S": [{"name": "catalog.search", "args": {}, "result": {"items": [{"sku": "SKU-AP-X"}, {"sku": "SKU-AP-FLT-X"}]}}]}
+        o._product_info = lambda s: {"name": names.get(s, "")}
+        o._parent_sku = lambda s: s
+        self.assertEqual(o._named_in_call("S", "giao Màng lọc thay thế AirPure X/Y tới Cần Thơ"), "SKU-AP-FLT-X")
+        self.assertIsNone(o._named_in_call("S", "giao cái máy hôm trước"))
+
+
+class MovedCallbackTest(unittest.TestCase):
+    def test_moved_callback_date_is_told(self):                                  # TEST-29
+        from src.harness.orchestrator import HarnessOrchestrator as H
+        calls = [{"name": "schedule.callback", "result": {"callback_at": "2026-10-27T08:00", "moved_from": "2026-10-26T08:00:00"}}]
+        t = H._say_moved_callback("Dạ em đã ghi nhận lịch gọi lại thứ 2 ngày 26/10 ạ.", calls)
+        self.assertIn("27/10", t)
+        self.assertIn("nghỉ", t)
+        self.assertEqual(H._say_moved_callback("Dạ em hẹn 8:00 ngày 27/10 ạ.", calls), "Dạ em hẹn 8:00 ngày 27/10 ạ.")

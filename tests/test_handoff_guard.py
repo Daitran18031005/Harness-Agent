@@ -119,3 +119,13 @@ class BriefAfterMidCallHandoffTest(GateBase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class HandoffBriefFieldsTest(unittest.TestCase):
+    def test_placeholder_name_and_wrong_product_are_fixed(self):                 # C1, C2
+        from types import SimpleNamespace
+        from src.harness.orchestrator import HarnessOrchestrator
+        from src.privacy.pii_vault import PiiVault
+        b = SimpleNamespace(customer_name="Lan", product_advised="SKU-OLD", price_quoted_vnd=None)
+        out = HarnessOrchestrator._complete_handoff_brief({"customer_name": "Quý khách", "product_advised": "SKU-OLD"}, b, "", "0911265844", PiiVault(), "2026-10-15", focus_sku="SKU-NEW")
+        self.assertEqual((out["customer_name"], out["product_advised"]), ("Lan", "SKU-NEW"))
