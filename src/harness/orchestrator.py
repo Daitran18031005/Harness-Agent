@@ -93,6 +93,7 @@ class HarnessOrchestrator:
         self._start_facts: Dict[str, Dict[str, Any]] = {}
         self._asked: Dict[str, set] = {}
         self._customer_texts: Dict[str, List[str]] = {}
+        self._contact_sid: Dict[tuple, str] = {}          # (liên hệ, ngày, cuộc) → mã phiên: phiên đổi giữa cuộc khi khách chat đọc SĐT (TEST-148)
         self._precomp: Dict[str, Dict[str, Any]] = {}    # bước 13: giá/tồn kho/KM CODE đã tra lúc nhận diện khách (còn hiệu lực tới khi có đơn tạo/đổi)
         self._precomp_logged: Dict[str, bool] = {}       # các lời gọi tra sẵn đã ghi vào trace lượt đầu của cuộc gọi chưa
         self._policy_routes: Dict[str, List[Dict[str, Any]]] = {}    # router chính sách trong lượt này (quyết định, độ trễ, chi phí) → trace
@@ -134,6 +135,30 @@ class HarnessOrchestrator:
     LLM_PROFILE_KEYS = ("customer_name", "honorific", "room_area_m2", "has_children", "budget_vnd", "product_advised",
                         "price_quoted_vnd", "promo_code", "promo_expiry", "blocker", "size", "color", "variant_sku",
                         "order_id")
+
+    def _carry_session(self, turn: NormalizedTurn, current_date: str, call_name: str, sid: str) -> None:
+        """Khách chat đọc SĐT GIỮA cuộc gọi → bộ nhận diện nối liên hệ với hồ sơ của SĐT đó, customer_id (và mã phiên) đổi.
+        Trạng thái của cuộc gọi (lời khách, tool đã chạy, đơn nháp, bảng token PII, hội thoại) phải đi theo sang phiên mới — TEST-148 từng mất
+        "size 40 màu trắng" của lượt 1 nên không tạo được đơn. Khóa theo LIÊN HỆ (contact_id) + ngày + tên cuộc: hai khách khác nhau không bao giờ bị gộp."""
+        contact = getattr(turn, "contact_id", None)
+        if not contact:
+            return
+        key = (contact, current_date, call_name)
+        old = self._contact_sid.get(key)
+        self._contact_sid[key] = sid
+        if not old or old == sid or sid in self._call_log or sid in self._customer_texts:
+            return
+        for store in (self._vaults, self._call_log, self._write_cache, self._activity, self._start_facts, self._asked, self._customer_texts, self._confirmed,
+                      self._reask, self._prior_asked, self._identity_asked, self._policy_routes, self._precomp, self._precomp_logged, self._readings,
+                      self._gate_retry_args, self._gate_extra_calls):
+            if old in store:
+                store[sid] = store.pop(old)
+        if old in self.order_gate._s:
+            self.order_gate._s[sid] = self.order_gate._s.pop(old)
+        w = self.memory.get_working(session_id=old)
+        self.memory.set_working(sid, current_turn=w.current_turn, intent=w.intent, pending_slots=dict(w.pending_slots),
+                                waiting_for_confirmation=w.waiting_for_confirmation, last_tool_observation=w.last_tool_observation,
+                                messages_in_session=list(w.messages_in_session))
 
     def clear_session(self, session_id: str) -> None:
         """Giải phóng trạng thái theo cuộc gọi (bảng token PII, cache ghi, nhật ký tool) khi cuộc gọi kết thúc."""
@@ -349,6 +374,7 @@ class HarnessOrchestrator:
         # lại hội thoại cũ đã có thể lỗi thời (fix thật: SAMPLE-06 từng claim sai in_stock vì
         # LLM tin lại câu "hết hàng" từ call_1 trong lúc call_2 đã có hàng).
         working_session_id = f"SESS-{customer_id}-{current_date}"
+        self._carry_session(turn, current_date, call_name, working_session_id)
         working_state = self.memory.get_working(session_id=working_session_id)
 
         # Xưng hô theo cách khách TỰ xưng ("anh muốn hỏi…") — ưu tiên hơn CRM; lưu vào bộ nhớ ở cuối lượt (slot `honorific`).
@@ -1336,7 +1362,7 @@ class HarnessOrchestrator:
         """SKU của sản phẩm KHÔNG có biến thể mà cuộc gọi đang bàn (bán được ngay, không cần chọn size/màu): sản phẩm được tra/báo giá/đặt gần nhất, hoặc
         `catalog.search` ra đúng một sản phẩm, hoặc sản phẩm đã tư vấn. None nếu đang bàn sản phẩm có biến thể (phải chọn size/màu) hoặc chưa có sản phẩm."""
         said = (self.order_gate.state(sid).texts or [""])[-1]
-        named = self._reader_product(sid) or self._named_in_call(sid, said)
+        named = self._named_in_call(sid, said) or self._reader_product(sid)      # tên khách gọi đúng thắng; bộ đọc cho cách gọi tắt ("combo đó")
         if named:                                    # SC-TV-13: khách gọi tên một sản phẩm ĐÃ tra trong cuộc → sản phẩm đó (không phải sản phẩm tra lượt trước)
             return named if not self._fetch_variants(named) else None
         sku = None

@@ -43,7 +43,7 @@ JSON gồm các khóa:
 - "qty_quote": đoạn nguyên văn chứa số lượng đó, hoặc ""
 - "address": địa chỉ NHẬN HÀNG khách vừa nói trong lời này (số nhà, đường, khu, phường/quận, tỉnh — kể cả khi viết thiếu dấu/thiếu chữ "số", "đường"), chép đúng như khách nói; null nếu không có hoặc chỉ là token dạng <ADDR_n>
 - "address_quote": đoạn nguyên văn chứa địa chỉ đó, hoặc ""
-- "product": tên sản phẩm CHÍNH khách đang chốt mua trong lời này, CHÉP ĐÚNG MỘT tên trong danh sách "Sản phẩm đã nhắc trong cuộc" (kể cả khi khách gọi tắt: "combo đó", "cái máy hôm trước", "bản Pro"); null nếu khách không chốt mua hoặc không rõ là sản phẩm nào trong danh sách
+- "product_sku": MÃ SKU của sản phẩm khách đang nói tới/chốt trong lời này, CHÉP ĐÚNG MỘT mã trong danh sách "Sản phẩm ứng viên" (danh sách có thể dư, gồm cả phụ kiện/combo; lời khách là ASR nên tên có thể bị nghe sai — chọn theo ý nghĩa và ngữ cảnh cuộc gọi, kể cả khi khách gọi tắt: "combo đó", "cái máy hôm trước", "bản Pro"). Phụ kiện/combo khác máy chính: "màng lọc của máy X" là màng lọc, không phải máy X. null nếu khách không nói tới sản phẩm nào, không chắc là mã nào, hay sản phẩm khách nói không có trong danh sách — đừng đoán theo âm gần giống
 - "product_quote": đoạn nguyên văn trong lời khách chỉ ra sản phẩm đó, hoặc ""
 - "extra_items": danh sách món KHÁC khách muốn mua THÊM trong CÙNG đơn, mỗi món {"name": tên món chép như khách nói, "qty": số nguyên, "quote": đoạn nguyên văn}; [] nếu không có
 - "payment": "COD" | "bank" | "momo" | "zalopay" | null — hình thức thanh toán khách vừa CHỌN
@@ -173,7 +173,7 @@ class ReplyReading:
     recipient_name: Optional[str] = None
     payment: Optional[str] = None
     qty: Optional[int] = None                                    # số lượng khách nói rõ (đã kiểm chứng: con số/chữ số nằm trong trích dẫn) — đơn code mở từng luôn là 1 (TEST-64/80)
-    product: Optional[str] = None                                # tên sản phẩm khách chốt, ĐÚNG một tên trong danh sách sản phẩm đã nhắc của cuộc (kèm trích dẫn) — TEST-44 "combo đó"
+    product_sku: Optional[str] = None                            # SKU khách nói tới, ĐÚNG một mã trong danh sách ứng viên (đều lấy từ catalog), kèm trích dẫn nguyên văn — TEST-44 "combo đó"
     extra_items: List[Dict[str, Any]] = field(default_factory=list)   # món mua thêm cùng đơn [{name, qty}] (tên nằm trong trích dẫn) — TEST-153
     address: Optional[str] = None                                # địa chỉ nhận hàng khách vừa nói (đã kiểm chứng nguyên văn) — B1
     confidence: float = 0.0
@@ -202,7 +202,7 @@ def reading_trace_dict(r: Optional[ReplyReading], skipped: bool = False) -> Dict
     if r is None:
         return {"source": "regex_fallback"}
     return {"source": "llm", "stance": r.stance, "confidence": r.confidence, "only_answers": r.only_answers, "affirmed": r.affirmed,
-            "order_intent": "commit" if r.commits else "other", "asks_question": r.asks_question, "asks_price_promo": r.price_topic, "prior_contact": r.prior_contact, "recipient_name": r.recipient_name, "payment": r.payment, "address": bool(r.address), "evidence": r.evidence, "guard": r.guard or None,
+            "order_intent": "commit" if r.commits else "other", "asks_question": r.asks_question, "asks_price_promo": r.price_topic, "prior_contact": r.prior_contact, "recipient_name": r.recipient_name, "payment": r.payment, "product_sku": r.product_sku, "address": bool(r.address), "evidence": r.evidence, "guard": r.guard or None,
             "llm_calls": len(r.usage), "vnd_cost": round(sum(float(u.get("vnd_cost", 0) or 0) for u in r.usage), 2),
             "latency_ms": sum(int(u.get("latency_ms", 0) or 0) for u in r.usage)}
 
@@ -213,7 +213,7 @@ def _quoted(quote: Any, text: str) -> str:
     return str(quote).strip() if q and q in re.sub(r"\s+", " ", fold(text)) else ""
 
 
-def verify(raw: Dict[str, Any], text: str, products: Any = ()) -> ReplyReading:
+def verify(raw: Dict[str, Any], text: str, candidates: Any = ()) -> ReplyReading:
     """Chỉ giữ phần của `raw` có bằng chứng nguyên văn trong `text`."""
     r = ReplyReading()
     stance = raw.get("stance")
@@ -253,9 +253,9 @@ def verify(raw: Dict[str, Any], text: str, products: Any = ()) -> ReplyReading:
     pay, q = raw.get("payment"), _quoted(raw.get("payment_quote"), text)
     if pay in PAYMENTS and q:
         r.payment, r.evidence["payment"] = pay, q
-    prod, q = raw.get("product"), _quoted(raw.get("product_quote"), text)
-    if isinstance(prod, str) and q and prod.strip() in (products or ()):       # chỉ nhận tên nằm trong danh sách đã đưa (không để LLM bịa sản phẩm)
-        r.product, r.evidence["product"] = prod.strip(), q
+    prod, q = raw.get("product_sku"), _quoted(raw.get("product_quote"), text)
+    if isinstance(prod, str) and q and prod.strip() in {c.get("sku") for c in candidates or ()}:     # chỉ nhận mã nằm trong danh sách ứng viên (lấy từ catalog) — không để LLM bịa sản phẩm
+        r.product_sku, r.evidence["product"] = prod.strip(), q
     for it in raw.get("extra_items") or [] if isinstance(raw.get("extra_items"), list) else []:
         q = _quoted(it.get("quote") if isinstance(it, dict) else None, text)
         name, n = (it.get("name"), it.get("qty")) if isinstance(it, dict) else (None, None)
@@ -300,7 +300,7 @@ def read_reply(llm: Any, text: str, last_agent: str = "", waiting: Optional[Dict
         return None
     if not isinstance(raw, dict):
         return None
-    r = verify(raw, text, (waiting or {}).get('products') or ())
+    r = verify(raw, text, (waiting or {}).get('candidates') or ())
     r.usage.append(usage or {})
     mode = guard or os.environ.get("CONSENT_GUARD") or DEFAULT_GUARD
     if mode not in GUARDS:

@@ -165,3 +165,12 @@ Bước này **chưa sửa mã**.
 - `TEST-211/c2`: LLM không gọi `order.update`, nói "30 ngày" (b).
 - `TEST-188`: LLM đặt lịch sai tuần (b).
 - `TEST-76`: đáp án sai (c), chờ bạn quyết.
+
+### Bổ sung: `TEST-148` (phiên đổi giữa cuộc gọi)
+
+- **Đã sửa.** `_carry_session` (orchestrator) nhớ phiên theo (liên hệ, ngày, cuộc). Khi khách chat đọc SĐT làm `customer_id` đổi giữa cuộc, toàn bộ trạng thái của cuộc được chuyển sang phiên mới: lời khách, tool đã chạy, đơn nháp, bảng token PII, hội thoại. Hai liên hệ khác nhau không bao giờ bị gộp.
+- **Kiểm chứng:** `TEST-148` đạt (`runs/fix_0113/full4.jsonl`, `full5.jsonl`).
+- **Hỏng mới phát hiện khi kiểm chứng:** ở `SC-TV-13/c3`, khách nói "một bộ Spectra S1" nhưng bộ đọc chọn combo, vì combo là tên duy nhất đã tra.
+  - **Sửa:** tên khách gọi đúng thắng, bộ đọc chỉ dùng cho cách gọi tắt; prompt dặn trả null khi khách gọi sản phẩm ngoài danh sách. Sau đó ca này đạt lại.
+- **Còn biến thiên:** `TEST-44` đạt 2 trên 3 lần chạy; lần trượt, bộ đọc không trả `product` (b).
+- **Chi phí kiểm chứng thêm:** 1.167 VND. Tổng bước 3: 4.128 VND.

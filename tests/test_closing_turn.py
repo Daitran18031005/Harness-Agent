@@ -274,3 +274,33 @@ class ExactNameTest(unittest.TestCase):
         o = build_components(order_gate=True)["orchestrator"]
         o._call_log = {"S": [{"name": "pricing.get_quote", "args": {"sku": "SKU-XM-4L"}, "result": {}}]}
         self.assertEqual(o._named_in_call("S", "Đổi sang chốt luôn bản Xiaomi Smart 4 Pro nhé"), "SKU-XM-4P")
+
+
+class SessionCarryTest(unittest.TestCase):
+    def test_state_follows_the_customer_when_identity_changes_mid_call(self):   # TEST-148: khách chat đọc SĐT ở lượt 3
+        from types import SimpleNamespace
+        from tests._helpers import build_components
+        o = build_components(order_gate=True)["orchestrator"]
+        t = SimpleNamespace(contact_id="zalo.son.test_148")
+        o._carry_session(t, "2026-10-15", "call_1", "SESS-ANON-2026-10-15")
+        o._customer_texts["SESS-ANON-2026-10-15"] = ["Giày trekking HikePro size 40 màu trắng"]
+        o._gate_retry_args["SESS-ANON-2026-10-15"] = {"sku": "SKU-SN-TRK"}
+        o.memory.set_working("SESS-ANON-2026-10-15", current_turn=3)
+        o._carry_session(t, "2026-10-15", "call_1", "SESS-C099-2026-10-15")
+        self.assertEqual(o._customer_texts.get("SESS-C099-2026-10-15"), ["Giày trekking HikePro size 40 màu trắng"])
+        self.assertEqual(o._gate_retry_args.get("SESS-C099-2026-10-15"), {"sku": "SKU-SN-TRK"})
+        self.assertEqual(o.memory.get_working("SESS-C099-2026-10-15").current_turn, 3)
+        o._carry_session(SimpleNamespace(contact_id="zalo.khac"), "2026-10-15", "call_1", "SESS-C100-2026-10-15")   # liên hệ khác: không gộp
+        self.assertNotIn("SESS-C100-2026-10-15", o._customer_texts)
+
+
+class NamedBeatsReaderTest(unittest.TestCase):
+    def test_exact_name_wins_over_reader_choice(self):                           # SC-TV-13 cuộc 3: "một bộ Spectra S1" không phải combo
+        from types import SimpleNamespace
+        from tests._helpers import build_components
+        o = build_components(order_gate=True)["orchestrator"]
+        sid = "S"
+        o._call_log = {sid: [{"name": "pricing.get_quote", "args": {"sku": "SKU-BDL-MOM"}, "result": {}}]}
+        o._readings = {sid: SimpleNamespace(product="Combo Spectra S1 + máy hâm sữa Fatz + 50 túi trữ sữa")}
+        o.order_gate.state(sid).texts = ["Lấy cho chị một bộ Spectra S1 4.290.000đ giao 31 đường Láng"]
+        self.assertEqual(o._simple_product_in_play(sid, SimpleNamespace(product_advised=None)), "SKU-MB-PUMP1")
