@@ -32,7 +32,27 @@ class ClosingTurnTest(unittest.TestCase):
         self.assertEqual(oc[0]["result"]["status"], "created")
         self.assertEqual(len(m._ORDERS), 1)
         self.assertIn("đọc lại đơn", reply)
+        self.assertIn("một sản phẩm", reply)                           # A2: đọc cả giá một sản phẩm, SĐT
+        self.assertIn("số điện thoại", reply)
         self.assertFalse(self.orch.has_open_order(b.customer_id, ON))  # không chốt lần hai
+
+    def test_no_closing_order_after_handoff(self):
+        """A1: đã chuyển máy thành công thì lượt chốt không tạo đơn."""
+        self._setup(order_gate=True)
+        self._run([self._create(AP_Y, 1, payment=None)])
+        b, close = self._close()
+        sid = f"SESS-{b.customer_id}-{ON}"
+        self.orch._call_log.setdefault(sid, []).append({"name": "handoff.transfer", "args": {}, "result": {"ticket_id": "T-1"}})
+        self.assertFalse(self.orch.has_open_order(b.customer_id, ON))
+        _, tc, _ = close()
+        self.assertFalse([c for c in tc if c["name"] == "order.create"])
+
+    def test_unknown_sku_is_not_read_back(self):
+        """A3: SKU tự đặt → không đọc lại mã thô, không tạo đơn."""
+        self._setup(order_gate=True)
+        self._run([self._create("SPECTRA-S1", 1, payment=None)])
+        self.assertEqual(len(self._mock()._ORDERS), 0)
+        self.assertFalse(self.orch.has_open_order(self._close()[0].customer_id, ON))
 
     def test_independent_check_blocks_when_customer_did_not_order(self):
         self._setup(order_gate=True)

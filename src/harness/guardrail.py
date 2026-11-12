@@ -220,6 +220,10 @@ class GuardrailAndFallback:
                 violation_type="restricted_info_leak"
             )
 
+        # 3b. Lời từ chối không nhắc lại tên loại thông tin nội bộ ("em không thể tiết lộ giá nhập" → "... thông tin nội bộ") — lọc lời AGENT
+        for term in self.COST_TERMS:
+            text = re.sub(re.escape(term), "thông tin nội bộ", text, flags=re.IGNORECASE)
+
         # 4. Chặn tự nhận là người thật
         if self.HUMAN_CLAIMS.search(text):
             return GuardrailDecision(

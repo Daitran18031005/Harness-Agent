@@ -75,3 +75,10 @@ class GatewaySanitizeTest(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class InternalTermRefusalTest(unittest.TestCase):
+    def test_refusal_does_not_repeat_internal_term(self):  # D1
+        d = check("Dạ em không thể tiết lộ Giá nhập của sản phẩm ạ")
+        self.assertNotIn("giá nhập", d.sanitized_text.lower())
+        self.assertIn("thông tin nội bộ", d.sanitized_text)

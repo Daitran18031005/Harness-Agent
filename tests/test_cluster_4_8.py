@@ -102,7 +102,7 @@ class SafeWriteTest(unittest.TestCase):  # bước 4
         self.assertNotIn("total_vnd", tc[0]["result"])           # 1 máy, không giỏ: kết quả như cũ
         self.orch.llm_client = FakeLLM({"calls": [("pricing.get_quote", {"sku": "SKU-SN-CAS-39-DEN", "qty": 2})], "text": "Dạ ạ."})
         _, tc, _ = self.orch.process_turn(t, b, current_date="2026-10-15")
-        self.assertEqual(tc[0]["result"]["total_vnd"], 2 * tc[0]["result"]["final_price_vnd"])   # không có KM 'máy thứ 2': giá × 2
+        self.assertEqual(next(c for c in tc if not c.get("speculative"))["result"]["total_vnd"], 2 * tc[-1]["result"]["final_price_vnd"])   # không có KM 'máy thứ 2': giá × 2
 
     def test_sanitize_basket_keeps_genuine_other_items(self):
         f = type(self.orch)._sanitize_basket

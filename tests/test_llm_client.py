@@ -155,7 +155,7 @@ class MultiProviderTest(unittest.TestCase):  # bước 2b
         client.available = True
         text, _, _ = client.chat_with_tools([{"role": "user", "content": "x"}], lambda n, a: ({}, a))
         self.assertEqual(text, "Dạ ok ạ.")
-        self.assertEqual(len(fake.calls), 2)  # lỗi + thử lại (câu trả lời không hứa tra cứu → không nhắc gọi tool)
+        self.assertEqual(len(fake.calls), 3)  # lỗi + thử lại + 1 lần nhắc gọi tool
         self.assertIn("temperature", fake.calls[0])
         self.assertNotIn("temperature", fake.calls[1])
         self.assertIn("temperature", client.dropped_params)
@@ -191,7 +191,7 @@ class MultiProviderTest(unittest.TestCase):  # bước 2b
         client, _ = make_client([_final_text_round(usage=usage), _final_text_round()], model="gpt-6-luna")
         _, _, cost = client.chat_with_tools([{"role": "user", "content": "x"}], lambda n, a: ({}, a))
         self.assertEqual(cost["reasoning_tokens"], 350)
-        self.assertEqual(cost["completion_tokens"], 400)  # 1 vòng: câu trả lời không hứa tra cứu nên không có lần nhắc gọi tool
+        self.assertEqual(cost["completion_tokens"], 402)  # 2 vòng (có 1 lần nhắc gọi tool)
 
     def test_judge_must_differ_from_agent(self):
         from src.llm.model_profiles import assert_distinct_judge, JudgeModelConflict
@@ -275,15 +275,19 @@ class LatencyBreakdownAndCacheTest(unittest.TestCase):
                                  [_chunk(content="Dạ chào ạ."), _chunk(with_choice=False, usage=NS(prompt_tokens=10, completion_tokens=3))]])
         timing = {}
         client.chat_with_tools([{"role": "user", "content": "x"}], lambda n, a: ({}, a), timing=timing)
-        self.assertEqual(timing["rounds_before_first_token"], 0)           # trả lời thẳng: không tốn vòng nào trước token đầu
+        self.assertEqual(timing["rounds_before_first_token"], 1)           # mặc định: 1 lần nhắc gọi tool (nudge) trước câu trả lời cuối
+        client, _ = make_client([[_chunk(content="Dạ chào ạ."), _chunk(with_choice=False, usage=NS(prompt_tokens=10, completion_tokens=3))]])
+        timing = {}
+        client.chat_with_tools([{"role": "user", "content": "x"}], lambda n, a: ({}, a), timing=timing, expect_tools=False)
+        self.assertEqual(timing["rounds_before_first_token"], 0)           # dữ liệu đã tra sẵn (expect_tools=False): trả lời thẳng, không tốn vòng nhắc
 
     def test_promise_to_look_up_without_a_tool_call_is_nudged_once(self):
-        """Agent nói "để em kiểm tra" mà không gọi tool → nhắc đúng MỘT lần (thêm một vòng); câu trả lời thường thì không."""
+        """Agent nói "để em kiểm tra" mà không gọi tool → kể cả khi dữ liệu đã tra sẵn (expect_tools=False) vẫn nhắc đúng MỘT lần."""
         promise = [_chunk(content="Dạ để em kiểm tra giúp chị ạ."), _chunk(with_choice=False, usage=NS(prompt_tokens=10, completion_tokens=3))]
         final = [_chunk(content="Dạ còn hàng ạ."), _chunk(with_choice=False, usage=NS(prompt_tokens=10, completion_tokens=3))]
         client, _ = make_client([promise, final])
         timing = {}
-        text, _, _ = client.chat_with_tools([{"role": "user", "content": "x"}], lambda n, a: ({}, a), timing=timing)
+        text, _, _ = client.chat_with_tools([{"role": "user", "content": "x"}], lambda n, a: ({}, a), timing=timing, expect_tools=False)
         self.assertEqual((text, timing["rounds_before_first_token"]), ("Dạ còn hàng ạ.", 1))
 
     def test_cached_tokens_are_priced_at_cached_rate(self):

@@ -19,10 +19,19 @@ HIDE = ("customer_phone",)          # không gửi SĐT cho model chấm
 
 
 def scrub(v):
-    """Bỏ SĐT khỏi dữ liệu gửi model chấm."""
+    """Che SĐT trong dữ liệu gửi model chấm (giữ khóa để phiếu chuyển máy không bị coi là thiếu SĐT)."""
     if isinstance(v, dict):
-        return {k: scrub(x) for k, x in v.items() if k not in ("customer_phone", "phone", "recipient_phone")}
+        return {k: ("<đã có SĐT>" if k in ("customer_phone", "phone", "recipient_phone") and x else scrub(x)) for k, x in v.items()}
     return [scrub(x) for x in v] if isinstance(v, list) else v
+
+
+def applicable(rows, call, spec):
+    """E2: CODE quyết định J01/J05/J07 có áp dụng không (model chấm từng áp J05 cho cuộc không chuyển máy)."""
+    names = [tc for r in rows for tc in r.get("tool_calls") or []]
+    handoff = any(tc.get("name") == "handoff.transfer" for tc in names) or "handoff.transfer" in json.dumps(spec, ensure_ascii=False)
+    created = any(tc.get("name") == "order.create" and "error" not in (tc.get("result") or {"error": 1}) for tc in names)
+    skip = {"J01_opening_continuity": call == "call_1", "J05_escalation_quality": not handoff, "J07_closing_summary": not created}
+    return [c for c in RUBRIC["criteria"] if not skip.get(c["id"])]
 
 
 def transcript_of(rows, prior_note):
@@ -46,7 +55,6 @@ def judge(args):
     trace = ref.load_trace(args.trace)
     llm = LLMClient(model=args.model, temperature=0.0)
     assert llm.available, "thiếu OPENAI_API_KEY"
-    crit_text = "\n".join(f"- {c['id']} (áp dụng: {c['applies_to']}): {c['pass_if']}" for c in RUBRIC["criteria"])
     os.makedirs(args.out, exist_ok=True)
     out_path = os.path.join(args.out, "judge.json")
     done = json.load(open(out_path, encoding="utf-8")) if os.path.exists(out_path) else {}
@@ -67,10 +75,12 @@ def judge(args):
         prior = {c: s["calls"][c].get("facts_established") for c in sorted(s["calls"]) if c < call and s["calls"][c].get("facts_established")}
         scen_json = {"scenario_id": sid, "call": call, "persona": s.get("persona"), "hard_case": s.get("hard_case"),
                      "su_that_tu_phien_truoc": prior, **{k: v for k, v in spec.items() if k not in ("customer_turns",) + HIDE}}
+        crits = applicable(rows, call, spec)
+        crit_text = "\n".join(f"- {c['id']} (áp dụng: {c['applies_to']}): {c['pass_if']}" for c in crits)
         prompt = (RUBRIC["judge_prompt_template"].replace("{scenario_json}", json.dumps(scen_json, ensure_ascii=False))
                   .replace("{transcript}", transcript_of(rows, "(Đây là cuộc gọi lại của cùng khách.)" if call != "call_1" else "")).replace("{criteria}", crit_text))
-        prompt += ('\n\nTrả về DUY NHẤT JSON: {"verdicts": [{"criterion_id": "...", "verdict": "PASS"|"FAIL"|"NA", "evidence": "trích 1 câu"}]} cho ĐỦ 12 tiêu chí; '
-                   'dùng "NA" khi tiêu chí không áp dụng cho cuộc gọi này.')
+        prompt += ('\n\nTrả về DUY NHẤT JSON: {"verdicts": [{"criterion_id": "...", "verdict": "PASS"|"FAIL"|"NA", "evidence": "trích 1 câu"}]} cho ĐỦ '
+                   f'{len(crits)} tiêu chí trên; tiêu chí phụ thuộc loại ca (J03/J04/J09–J12) mà cuộc gọi không thuộc loại đó thì dùng "NA".')
         raw = None
         for attempt in range(2):                      # model chấm hay lỗi/timeout: thử lại một lần
             try:

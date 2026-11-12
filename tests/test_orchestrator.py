@@ -93,7 +93,7 @@ class OrchestratorTest(unittest.TestCase):
         for _ in range(2):
             orch.llm_client = FakeLLM({"calls": [create], "text": "Dạ em đã lên đơn ạ."})
             _, tc, _ = orch.process_turn(t, b, current_date="2026-10-17")
-            ids.add(tc[0]["result"]["order_id"])
+            ids.add(next(c for c in tc if c["name"] == "order.create")["result"]["order_id"])      # lời gọi code chạy trước (đoán) có thể đứng trước trong trace
         self.assertEqual(len(ids), 1)
 
 

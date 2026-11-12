@@ -361,7 +361,11 @@ class OrderGate:
                 item = (product.name + (f" {product.variant_label}" if product.variant_label else "")).strip() or draft.sku
                 pay = PAYMENT_LABEL.get(fields["payment"].value or "COD", fields["payment"].value or "COD")
                 later = [LABEL_SHORT[f] for f in ("recipient_name", "address") if fields[f].status == "missing"]
-                say = (f"Dạ em đọc lại đơn mình nhé: {qty} {item}" + (f", tổng {money(total)}" if total else "") + f"; {pay}."
+                price = f", giá {money(product.unit_price)} một sản phẩm" if product.unit_price else ""
+                who = [f"{lbl} {fields[f].shown}" for f, lbl in (("recipient_name", "giao cho"), ("recipient_phone", "số điện thoại"), ("address", "địa chỉ"))
+                       if fields[f].status != "missing" and fields[f].shown]
+                say = (f"Dạ em đọc lại đơn mình nhé: {qty} {item}{price}" + (f", tổng {money(total)}" if total else "")
+                       + (f"; {', '.join(who)}" if who else "") + f"; {pay}."
                        + (f" Em chưa có {' và '.join(later)} nên nhân viên sẽ gọi lại {addressing} để xác nhận trước khi giao ạ." if later else ""))
                 st.stage, st.snapshot, st.created = "done", snap, {"snapshot": snap, "turn": st.turn, "real": {k: v.value for k, v in fields.items()}}
                 return self._record(st, {**base, "allow": True, "action": "allow_closing", "assumed": assumed, "say": say})

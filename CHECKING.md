@@ -2546,3 +2546,25 @@ Chi phí tới lúc này trong trần 60.000: 4 lượt so sánh 28.423 + router
 - **Đo lại sau khi thêm "tra sẵn sau `catalog.search`"** (`runs/ab/base2`, cùng 40 kịch bản, 7.025 VND): TSR 87,5 % (35/40), TTFT p50/p95 4,0 / 6,8 s, Total p95 7,8 s, 2,35 vòng LLM/lượt (trước: 92,5 %, 3,6 / 6,6 s, 8,0 s, 2,42 vòng). **Không thấy lợi ích rõ.** Quan trọng hơn: hai lượt gần như cùng cấu hình lệch nhau 5 điểm TSR và 0,4 s TTFT → **sai số của phép đo 40 kịch bản × 1 seed cỡ ±5 điểm TSR**; chênh 2,5 điểm của "tắt tra sẵn" và "tắt router" ở bảng trên nằm trong sai số. Khác biệt đáng tin: tắt lọc sản phẩm → HR giá/KM 0 → 35,7 %, RQR 2,6 → 5,3 %; router → Recall@5 81,4 → 88,1 % trên 60 câu BTC. CCR 59,6 → 77,5 % ở `base2` chưa giải thích được.
 - **TTFT ≤ 3 s chưa đạt và không đạt được bằng các hướng đã làm**: lượt có LLM tối thiểu ≈ đọc hiểu 1,1–1,4 s + vòng đầu 1,2 s + token đầu vòng cuối 0,8 s. Hướng còn lại (chạy đọc hiểu SONG SONG với LLM chính) ước giảm ≈ 1 s ở trung vị nhưng p95 vẫn > 3 s vì 1/3 lượt cần ≥ 3 vòng; chưa làm vì đụng luồng quyết định tạo đơn.
 - **LLM judge lần 1 KHÔNG dùng được** (`runs/ab/judge_v1_thieu_ket_qua_tool/`): chỉ chấm 50/105 cuộc (lỗi model không thử lại) và transcript gửi model chấm thiếu kết quả tool + phiếu chuyển máy → J02 "không bịa" chỉ 16 %, J05 0/7 (model chấm không có căn cứ để kiểm). Đã sửa `scripts/llm_judge.py` (kèm kết quả tool đã bỏ SĐT, thử lại 1 lần, 4 luồng) và đang chấm lại vào `runs/ab/judge/`.
+
+### 13.12 Giảm độ trễ: chạy trước tool đọc, đọc hiểu song song, vòng nhắc có điều kiện (2026-11-11 → 12)
+
+**Thay đổi** (công tắc: `SPECULATIVE_TOOLS=off`, `PARALLEL_READER=off`):
+1. **Chạy trước tool ĐỌC** (`_speculative_lookups`, ý tưởng PASTE/Speculative Macro Commit do chủ dự án đưa): khách gọi ĐỦ tên một sản phẩm (≥ 60 % số từ của tên trong catalog), hoặc sản phẩm đã được báo giá THẬT trong cuộc gọi, hoặc biến thể size/màu vừa nêu → code chạy `inventory.check` + `pricing.get_quote` trước LLM, đưa kết quả vào prompt; LLM gọi lại đúng lời gọi đó thì nhận ngay kết quả đã có. Không bao giờ chạy trước tool ghi. Lời gọi đoán gắn `speculative: true` trong trace, KHÔNG tính vào `facts_used` (CCR) và chỉ được ghi nhớ thành "sản phẩm/giá đã tư vấn" khi agent thật sự nêu tên hoặc đúng giá đó.
+2. **Đọc hiểu song song với LLM chính** khi không có đơn nháp đang mở (`sync_gate`): không tool nào của LLM chạy trước khi có kết quả đọc; khách chốt mua → code mở order gate và bỏ câu LLM đang viết (`_GateTakeover`). Có đơn nháp thì vẫn đọc trước như cũ.
+3. **Vòng nhắc "bạn chưa gọi tool"**: trước đây chạy ở MỌI lượt không gọi tool (không có lượt nào 1 vòng). Nay vẫn mặc định, chỉ bỏ khi dữ liệu lượt đó đã được code tra sẵn trong prompt (`expect_tools=False`) VÀ câu trả lời không hứa tra cứu/hành động (`_PROMISES_LOOKUP`, soi lời agent).
+
+**Đo trên cùng 40 kịch bản (`runs/ab/`, full, 1 seed):**
+
+| Bản | TSR | TTFT p50 | TTFT p95 | Total p95 | Vòng LLM/lượt | Chi phí |
+|---|---:|---:|---:|---:|---:|---:|
+| `base` (trước) | 92,5 % | 3,6 s | 6,6 s | 8,0 s | 2,42 | 5.246 |
+| `base3` (1 + 2) | 87,5 % | 2,9 s | 5,3 s | 6,7 s | 2,25 | 5.062 |
+| `base4` (1 + 2 + bỏ HẲN vòng nhắc) | **72,5 %** | 1,1 s | 4,4 s | 5,9 s | 1,44 | 3.314 |
+| **`base5` (bản giữ lại: 1 + 2 + 3)** | **90,0 %** | **2,2 s** | **5,3 s** | **7,2 s** | 1,78 | 4.090 |
+
+Ngưỡng BTC: **Total p95 ≤ 8 s đạt (7,2 s)**; **TTFT p95 ≤ 3 s CHƯA đạt (5,3 s)** — 69 % số lượt ≤ 3 s; lượt 1 vòng p95 2,4 s, lượt 2 vòng p50 2,9 s, lượt 3 vòng p50 4,1 s; lượt có tra chính sách p50 4,1 s (router LLM). Không dùng câu đệm theo quyết định của chủ dự án.
+**Lỗi do chính các thay đổi này gây ra, phát hiện qua đo và đã sửa:** (a) bộ khớp alias của ASR khớp "có bé nhỏ" với "Ghế ngồi ô tô cho bé" → tra nhầm + bộ nhớ ghi nhầm sản phẩm (SAMPLE-01 cuộc 2 mở đầu bằng ghế ô tô); (b) lấy "sản phẩm đang bàn" theo danh sách gợi ý → tra AirPure X khi agent tư vấn AirPure Y; (c) lời gọi đoán được tính vào CCR (59,6 → 78 % giả); (d) bỏ hẳn vòng nhắc → agent hứa "em sẽ lên đơn"/không chuyển máy mà không gọi tool (TSR −20 điểm).
+HR giá/KM ở `base5` 15,8 % (3/19): cả 3 là giá mẫu liệt kê từ `product.shortlist` bị gán `price_vnd` (giới hạn đã biết của bộ trích), không liên quan lời gọi đoán. CCR 73 % sau khi loại lời gọi đoán vẫn cao hơn 59,6 % — chưa giải thích.
+**LLM judge** (`runs/ab/judge/`, 105 cuộc, `gpt-6-luna`): xem `judge.md`; J07 đọc lại đơn 0/24 (lượt chốt thiếu địa chỉ/ngày giao), J05 chuyển máy 1/19 không đáng tin (áp cho cả cuộc không chuyển máy); `manual_20.csv` chờ người chấm.
+Test: **993 xanh** (`runs/_unittest_parallel.txt`). Chi phí trong trần 60.000: ≈ 58.600 VND (đã dùng gần hết). Tổng dự án ≈ 200.000 VND.

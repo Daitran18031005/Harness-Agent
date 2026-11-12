@@ -21,7 +21,10 @@ logger = logging.getLogger("harness.llm")
 
 
 # Lời AGENT hứa sẽ tra cứu mà chưa tra ("để em kiểm tra…", "em sẽ tìm…", "chờ em một chút"): dấu hiệu để nhắc model gọi tool. Soi lời của chính agent, không phải lời khách.
-_PROMISES_LOOKUP = re.compile(r"(?:để|xin phép|sẽ|đang|cho em|chờ em|đợi em)\s+(?:em\s+)?(?:kiểm tra|tra cứu|tra lại|tìm|xem lại|xem giúp|check)|chờ (?:em )?(?:một|1) (?:chút|lát)|vui lòng (?:chờ|đợi)", re.I)
+_PROMISES_LOOKUP = re.compile(
+    r"(?:để|xin phép|sẽ|đang|cho em|chờ em|đợi em)\s+(?:em\s+)?(?:kiểm tra|tra cứu|tra lại|tìm|xem lại|xem giúp|check)|chờ (?:em )?(?:một|1) (?:chút|lát)|vui lòng (?:chờ|đợi)"
+    r"|(?:sẽ|để em|xin phép(?: em)?)\s+(?:tiến hành|lên đơn|tạo đơn|đặt đơn|chuyển (?:máy|cuộc gọi|thông tin|tiếp)|đặt lịch|hẹn (?:lịch|gọi)|cập nhật đơn|làm thủ tục|hủy đơn)"
+    r"|đã\s+(?:lên đơn|tạo đơn|đặt đơn|chuyển (?:máy|thông tin)|đặt lịch|ghi nhận lịch|cập nhật đơn)", re.I)
 
 
 class LLMUnavailable(Exception):
@@ -376,17 +379,17 @@ class LLMClient:
 
     def chat_with_tools(self, messages: List[Dict[str, Any]], tool_executor: Callable[[str, Dict[str, Any]], Tuple[Any, Dict[str, Any]]],
                          max_rounds: int = 6, tools_override: Optional[List[Dict[str, Any]]] = None,
-                         timing: Optional[Dict[str, Any]] = None
+                         timing: Optional[Dict[str, Any]] = None, expect_tools: bool = True
                          ) -> Tuple[str, List[Dict[str, Any]], Dict[str, Any]]:
         try:
-            return self._chat_with_tools(messages, tool_executor, max_rounds, tools_override, timing)
+            return self._chat_with_tools(messages, tool_executor, max_rounds, tools_override, timing, expect_tools)
         except BaseException:               # kể cả BudgetExceeded: các vòng đã trả tiền phải nằm trong tổng chi phí
             self.cost_tracker.commit_inflight()
             raise
 
     def _chat_with_tools(self, messages: List[Dict[str, Any]], tool_executor: Callable[[str, Dict[str, Any]], Tuple[Any, Dict[str, Any]]],
-                         max_rounds: int, tools_override: Optional[List[Dict[str, Any]]], timing: Optional[Dict[str, Any]]
-                         ) -> Tuple[str, List[Dict[str, Any]], Dict[str, Any]]:
+                         max_rounds: int, tools_override: Optional[List[Dict[str, Any]]], timing: Optional[Dict[str, Any]],
+                         expect_tools: bool = True) -> Tuple[str, List[Dict[str, Any]], Dict[str, Any]]:
         """Chạy vòng lặp function-calling tới khi LLM trả lời bằng text (không còn tool_call).
         tool_executor(name, args) -> (result, executed_args): executed_args là tham số THỰC SỰ đã
         chạy (sau khi orchestrator tiêm 'on', sửa SKU...) — đó là thứ được ghi vào trace (N3).
@@ -423,9 +426,10 @@ class LLMClient:
                 usage_totals["reasoning_tokens"] += (getattr(details, "reasoning_tokens", 0) or 0) if details else 0
 
             if not tool_calls:
-                if not tool_calls_log and not nudged_once and _PROMISES_LOOKUP.search(text or ""):
-                    # (2026-11-11: chỉ nhắc khi câu trả lời CÓ lời hứa tra cứu. Trước đây nhắc ở MỌI lượt không gọi tool → mỗi câu trả lời thuần văn bản tốn
-                    # thêm nguyên một vòng LLM ≈ 1,2 s; trace không có lượt nào 1 vòng.)
+                if not tool_calls_log and not nudged_once and (expect_tools or _PROMISES_LOOKUP.search(text or "")):
+                    # (2026-11-11: vòng nhắc tốn nguyên một vòng LLM ≈ 1,2 s ở MỌI lượt không gọi tool. Bỏ hẳn thì nhanh nhưng TSR 92,5 → 72,5 %: model hứa
+                    # "em sẽ lên đơn" hoặc bỏ chuyển máy mà không gọi tool. Nên: vẫn nhắc mặc định; caller truyền expect_tools=False khi dữ liệu lượt này đã
+                    # được code tra sẵn trong prompt — khi đó chỉ nhắc nếu câu trả lời còn HỨA tra cứu/hành động.)
                     # Bug thật đã gặp: model trả lời kiểu "để em kiểm tra..." nhưng KHÔNG kèm
                     # tool_call nào trong cùng completion -> nếu chấp nhận ngay làm câu trả lời
                     # cuối thì khách không bao giờ nhận được dữ liệu thật. Nhắc model tự kiểm tra
