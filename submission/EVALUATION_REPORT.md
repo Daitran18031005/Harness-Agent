@@ -9,6 +9,24 @@ Lời khách là lời cố định của kịch bản. Theo hướng dẫn củ
 
 Số liệu thô: `runs/m1_final2/` (`full.jsonl`, `baseline.jsonl`, `report.json`, `report.md`). Lệnh tái lập: [README.md](README.md) mục 3. Nhật ký: [CHECKING.md](../CHECKING.md) § 13.
 
+## 0. Lần đo mới nhất (2026-11-12, `runs/m1_final3/`) — số nộp
+
+Cùng 277 kịch bản, cùng cách đo như mục 1, sau các sửa lỗi ở mục 5 và tối ưu độ trễ (chạy trước tool đọc, đọc hiểu song song, vòng nhắc có điều kiện — CHECKING.md § 13.12). Chi phí 54.081 VND.
+
+| Chỉ số | Baseline | Hệ thống | Ngưỡng | Kết luận |
+|---|---:|---:|---|---|
+| Repeat-Question Rate | 4,0 % | 3,8 % | giảm ≥ 40 % | **Chưa đạt** (giảm 5 %) |
+| Context Carryover Rate | 10,7 % | 66,3 % | — | hơn rõ |
+| Task Success Rate | 73,6 % (204/277) | **79,1 %** (219/277) | ≥ 70 % | **Đạt** |
+| TSR riêng ca khó | — | 77,9 % | — | — |
+| Hallucination giá & KM | 20,9 % | 14,8 % | ≤ 5 % | **Chưa đạt theo script** (xem mục 4) |
+| Vi phạm guardrail | 4 | 7 | 0 | kém baseline |
+| TTFT p50 / p95 (1.078 lượt) | — | 2,4 s / 5,8 s | p95 ≤ 3 s | **Chưa đạt** |
+| Total p95 | — | **7,0 s** | ≤ 8 s | **Đạt** |
+| Nạp Call Brief p95 | — | 50 ms | ≤ 5 s | Đạt |
+
+TSR theo nhóm (hệ thống / baseline): mẫu BTC 6/7 / 5/7 · SC-GEN 12/15 / 11/15 · SC-TV 16/20 / 20/20 · SC-ULTRA 7/15 / 5/15 · TEST 178/220 / 163/220. Một seed; sai số đo được giữa hai lần chạy cùng cấu hình ≈ ±5 điểm TSR trên 40 kịch bản. Các mục dưới đây là lần đo trước (`runs/m1_final2`).
+
 ## 1. Bảng A.6
 
 | Chỉ số | Baseline | Hệ thống | Ngưỡng đề bài | Kết luận |

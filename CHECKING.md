@@ -2568,3 +2568,7 @@ Ngưỡng BTC: **Total p95 ≤ 8 s đạt (7,2 s)**; **TTFT p95 ≤ 3 s CHƯA đ
 HR giá/KM ở `base5` 15,8 % (3/19): cả 3 là giá mẫu liệt kê từ `product.shortlist` bị gán `price_vnd` (giới hạn đã biết của bộ trích), không liên quan lời gọi đoán. CCR 73 % sau khi loại lời gọi đoán vẫn cao hơn 59,6 % — chưa giải thích.
 **LLM judge** (`runs/ab/judge/`, 105 cuộc, `gpt-6-luna`): xem `judge.md`; J07 đọc lại đơn 0/24 (lượt chốt thiếu địa chỉ/ngày giao), J05 chuyển máy 1/19 không đáng tin (áp cho cả cuộc không chuyển máy); `manual_20.csv` chờ người chấm.
 Test: **993 xanh** (`runs/_unittest_parallel.txt`). Chi phí trong trần 60.000: ≈ 58.600 VND (đã dùng gần hết). Tổng dự án ≈ 200.000 VND.
+
+### 13.13 Đo lại cả bộ 277 kịch bản sau tối ưu (2026-11-12) — `runs/m1_final3/`, số nộp mới
+
+TSR 79,1 % (219/277) vs baseline 73,6 %; RQR 3,8 vs 4,0 (chưa đạt giảm 40 %); CCR 66,3 vs 10,7; HR giá/KM 14,8 vs 20,9; guardrail 7 vs 4; TTFT p50/p95 2,4 / 5,8 s; **Total p95 7,0 s (đạt ≤ 8 s)**; TTFT p95 chưa đạt 3 s. SC-TV kém baseline (16/20 vs 20/20) — chưa xem. Chi phí 54.081 VND (trần 64.800). `submission/EVALUATION_REPORT.md` thêm mục 0; slide/README chưa cập nhật số mới.
