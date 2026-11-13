@@ -542,6 +542,30 @@ class CommitWithPriceTest(unittest.TestCase):
             _, drafts = self.run_one(text, sku)
             self.assertEqual(drafts, [], text)
 
+    def test_short_reader_prompt_keeps_every_key_and_rule(self):
+        """READER_PROMPT_SHORT: bản rút gọn giữ đủ khóa JSON, quy tắc chốt/mặc cả, không chứa chi tiết kịch bản; bật cờ thì bộ đọc gửi bản này."""
+        import re
+        from unittest import mock
+        import src.harness.reply_reader as rr
+        for key in re.findall(r'^- "([a-z_]+)"', rr.PROMPT, re.M):
+            self.assertIn(key, rr.PROMPT_SHORT)
+        for rule in ("KỂ CẢ khi khách nêu một con số giá", "Mặc cả = hỏi hoặc đề nghị giá thấp hơn mà KHÔNG có lời chốt", "Vừa chốt vừa xin bớt"):
+            self.assertIn(rule, rr.PROMPT_SHORT)
+        self.assertNotRegex(rr.PROMPT_SHORT, r"\d\.\d{3}\.\d{3}|Spectra|AirPure|SKU-")
+        self.assertLess(len(rr.PROMPT_SHORT), 0.7 * len(rr.PROMPT))
+        sent = []
+
+        class LLM:
+            available = True
+
+            def complete_json(self, msgs):
+                sent.append(msgs[0]["content"])
+                return {}, {}
+        for flag, want in ((True, rr.PROMPT_SHORT), (False, rr.PROMPT)):
+            with mock.patch.object(rr, "READER_PROMPT_SHORT", flag):
+                rr.read_reply(LLM(), "dạ")
+            self.assertEqual(sent[-1], want)
+
     def test_prompt_states_the_rules_without_scenario_specifics(self):
         from src.harness.reply_reader import PROMPT
         for rule in ("KỂ CẢ khi khách nêu một con số giá", "Mặc cả = hỏi hoặc đề nghị giá thấp hơn mà KHÔNG có lời chốt", "Vừa chốt vừa xin bớt"):

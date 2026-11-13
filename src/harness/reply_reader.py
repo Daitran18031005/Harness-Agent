@@ -92,6 +92,49 @@ Ví dụ ĐỊNH DẠNG (minh họa, không phải dữ liệu cuộc gọi):
 - "con quạt A1 đó còn bớt được nữa không em" (ứng viên có "MA-01 — Quạt A1") → {"asks_question":true,"asks_price_promo":true,"price_promo_quote":"còn bớt được nữa không","product_sku":"MA-01","product_quote":"quạt A1"}
 - "ok chốt 2 cái quạt A1 nha, hàng tới mới đưa tiền" (ứng viên có "MA-01 — Quạt A1") → {"stance":"agree","stance_quote":"ok chốt 2 cái quạt A1 nha","confidence":0.9,"order_intent":"commit","intent_quote":"ok chốt 2 cái quạt A1 nha","qty":2,"qty_quote":"2 cái","product_sku":"MA-01","product_quote":"quạt A1","payment":"COD","payment_quote":"hàng tới mới đưa tiền"}"""
 
+# Bản rút gọn của PROMPT, giữ nguyên khóa, định nghĩa và quy tắc 1–9 (READER_PROMPT_SHORT, MẶC ĐỊNH TẮT tới khi đo xong).
+PROMPT_SHORT = """Bạn là bộ ĐỌC HIỂU lời khách trong cuộc gọi bán hàng. Chỉ phân tích, không trả lời khách. Trả về DUY NHẤT một JSON object.
+Ngữ cảnh: câu cuối của nhân viên và thông tin nhân viên đang chờ khách xác nhận/cung cấp. Lời khách là văn bản gõ/ASR, có thể thiếu dấu, nói vòng.
+
+Khóa (mỗi *_quote = đoạn NGUYÊN VĂN trong lời khách làm bằng chứng):
+- stance: agree|decline|other; stance_quote; confidence 0–1 (độ chắc của stance)
+- only_answers: bool (quy tắc 6)
+- affirmed: mục khách XÁC NHẬN đúng, trong ["recipient_name","recipient_phone","address","payment"]; affirmed_quote
+- recipient_name: tên NGƯỜI NHẬN (không phải sản phẩm/thương hiệu); name_quote
+- qty: số lượng (nguyên) khách NÓI RÕ trong lời này; qty_quote
+- address: địa chỉ NHẬN HÀNG khách vừa nói, chép như khách nói (kể cả thiếu dấu/thiếu chữ "số", "đường"); null nếu chỉ là token <ADDR_n>; address_quote
+- product_sku: ĐÚNG MỘT mã trong "Sản phẩm ứng viên" mà khách đang nói tới/chốt (chọn theo ý nghĩa và ngữ cảnh, kể cả gọi tắt "combo đó", "cái máy hôm trước", "bản Pro"; ASR có thể nghe sai tên). "màng lọc của máy X" là màng lọc, không phải máy X. null nếu không nói tới, không chắc, hay không có trong danh sách — đừng đoán theo âm gần giống; product_quote
+- extra_items: món KHÁC khách mua THÊM trong cùng đơn, mỗi món {"name","qty","quote"}
+- payment: COD|bank|momo|zalopay — hình thức khách vừa CHỌN; payment_quote
+- order_intent: commit|other; intent_quote
+- asks_question: khách đang hỏi điều nhân viên chưa trả lời
+- asks_price_promo: khách HỎI, chất vấn, đòi hoặc phản đối về giá/giảm giá/khuyến mãi (kể cả nhắc mức giảm đã nghe) mà nhân viên chưa trả lời; chấp nhận một mức giá đã nêu thì không; price_promo_quote
+- asks_transfer: khách YÊU CẦU NGAY được nối máy/gặp nhân viên, quản lý, bộ phận khác. KHÔNG phải: hẹn gọi lại, nhân viên gọi xác nhận/báo trước khi giao, đổi thông tin giao hàng, hỏi quy định thanh toán, mặc cả, nhờ kiểm tra mà không đòi gặp người khác; transfer_quote
+- claims_prior_contact: khách nói ĐÃ từng liên hệ/được tư vấn trước đây (kênh bất kỳ); prior_contact_quote
+
+NGUYÊN TẮC (theo ý nghĩa, không theo từ ngữ):
+1. agree: không thể hiểu khác ngoài việc khách CHẤP NHẬN điều nhân viên vừa hỏi/đề nghị, chủ động, không điều kiện. Ậm ừ, "đang nghe/đang nghĩ" chưa phải.
+2. Có điều kiện, câu hỏi, đổi ý, hay kèm yêu cầu mới thì không phải chấp nhận không điều kiện.
+3. decline: không muốn mua tiếp, hoãn quyết định, hoặc mặc cả (quy tắc 8). Chỉnh/phủ nhận MỘT thông tin cụ thể (số, tên, địa chỉ, sản phẩm) là cung cấp thông tin: stance other.
+4. recipient_name: nhân viên vừa hỏi tên người nhận thì một phản hồi ngắn đóng vai tên người là tên, bất kể viết hoa/dấu. Danh xưng không thuộc tên.
+5. affirmed chỉ ghi mục khách xác nhận ĐÚNG với thông tin đã có (kể cả chỉ vào thứ đang dùng, cùng đối tượng nhân viên nêu); thông tin mới đưa không tính.
+6. only_answers = true khi lời khách chỉ đáp đúng điều nhân viên đang hỏi/chờ (dù nhiều điều); false khi thêm câu hỏi, đổi sản phẩm/số lượng, hoặc sang chuyện khác.
+7. payment chỉ điền khi khách đã CHỌN; hỏi khả năng hoặc chưa quyết thì null. Quy về hình thức hợp nhất với cách trả tiền được mô tả.
+8. order_intent = commit khi khách đã quyết định lấy/đặt thứ đang bàn (kể cả đáp lại đề nghị của nhân viên), chỉ cho đơn MỚI. Đổi size/màu, trả, hủy, bảo hành đơn đã mua, đồng ý hẹn gọi lại, xin chuyển máy: other. Hỏi, so sánh, xem thử, cân nhắc: other.
+   Động từ chốt (lấy, đặt, chốt, gửi cho, ship, lên đơn…) kèm sản phẩm/số lượng, hoặc kèm thanh toán/địa chỉ, là commit KỂ CẢ khi khách nêu một con số giá (giá đúng/sai do bước đọc lại đơn xử lý).
+   Mặc cả = hỏi hoặc đề nghị giá thấp hơn mà KHÔNG có lời chốt: other, asks_price_promo true. Chỉ hỏi giá: other.
+   Vừa chốt vừa xin bớt trong cùng lời: commit VÀ asks_price_promo true. Đồng ý chung chung mà còn hỏi lại giá/điều kiện: other.
+9. Không chắc thì chọn kết luận thận trọng (other/null/rỗng) và hạ confidence.
+
+ĐẦU RA THƯA, MỘT dòng JSON: chỉ ghi khóa KHÁC mặc định (mặc định: stance/order_intent "other", false, null, [], ""); không có gì thì {}. stance agree/decline luôn kèm stance_quote và confidence.
+Thưa không có nghĩa là bỏ sót hay đổi phán đoán: mọi khóa có giá trị (nhất là product_sku khi khách nhắc một ứng viên, kể cả trong lời dài có tên/địa chỉ/SĐT; asks_price_promo; asks_question; affirmed) vẫn phải ghi.
+Quote là đoạn NGẮN NHẤT đủ làm bằng chứng; address_quote / name_quote / qty_quote phải chứa trọn giá trị.
+Ví dụ ĐỊNH DẠNG (không phải dữ liệu cuộc gọi):
+- "ừ để mình nghĩ thêm đã" → {"stance":"decline","stance_quote":"để mình nghĩ thêm đã","confidence":0.8}
+- "con quạt A1 đó còn bớt được nữa không em" (ứng viên "MA-01 — Quạt A1") → {"asks_question":true,"asks_price_promo":true,"price_promo_quote":"còn bớt được nữa không","product_sku":"MA-01","product_quote":"quạt A1"}
+- "ok chốt 2 cái quạt A1 nha, hàng tới mới đưa tiền" (ứng viên "MA-01 — Quạt A1") → {"stance":"agree","stance_quote":"ok chốt 2 cái quạt A1 nha","confidence":0.9,"order_intent":"commit","intent_quote":"ok chốt 2 cái quạt A1 nha","qty":2,"qty_quote":"2 cái","product_sku":"MA-01","product_quote":"quạt A1","payment":"COD","payment_quote":"hàng tới mới đưa tiền"}"""
+READER_PROMPT_SHORT = os.environ.get("READER_PROMPT_SHORT", "").strip().lower() in ("on", "1", "true")
+
 VERIFY_PROMPT = """Bạn là chốt kiểm tra độc lập trước khi tạo đơn hàng. Nhân viên đã đọc lại toàn bộ đơn và xin khách xác nhận. Bạn chỉ trả lời MỘT câu hỏi:
 lời khách có phải là sự cho phép rõ ràng, chủ động, không điều kiện để đặt ĐÚNG đơn vừa đọc lại, ngay bây giờ hay không?
 Chỉ trả "authorizes": true khi người nghe không thể hiểu khác. Mọi trường hợp mơ hồ, điều kiện, câu hỏi, sửa/đổi nội dung đơn, hoãn, hay phản hồi chưa mang nội dung chấp nhận đều là false.
@@ -360,7 +403,7 @@ def read_reply(llm: Any, text: str, last_agent: str = "", waiting: Optional[Dict
         return None
     ctx = f"Câu cuối của nhân viên: {last_agent or '(chưa có)'}\nSản phẩm ứng viên: {[f"{c['sku']} — {c['name']}" for c in (waiting or {}).get('candidates') or []]}\nĐang chờ khách xác nhận: {(waiting or {}).get('to_confirm') or []}; đang chờ khách cung cấp: {(waiting or {}).get('missing') or []}; giai đoạn đơn: {(waiting or {}).get('stage') or 'chưa có đơn'}"
     try:
-        msgs = [{"role": "system", "content": PROMPT}, {"role": "user", "content": f"{ctx}\n\nLời khách: {text}"}]
+        msgs = [{"role": "system", "content": PROMPT_SHORT if READER_PROMPT_SHORT else PROMPT}, {"role": "user", "content": f"{ctx}\n\nLời khách: {text}"}]
         takes_cap = "max_tokens" in inspect.signature(llm.complete_json).parameters      # LLM giả trong test không có tham số này
         raw, usage = llm.complete_json(msgs, max_tokens=READER_MAX_TOKENS) if takes_cap else llm.complete_json(msgs)
     except Exception as e:                                     # LLMUnavailable, lỗi mạng… → dự phòng regex, không làm hỏng lượt
