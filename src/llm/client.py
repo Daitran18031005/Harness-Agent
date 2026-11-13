@@ -10,6 +10,7 @@ import os
 import re
 import copy
 import json
+import hashlib
 import time
 import queue
 import logging
@@ -24,6 +25,15 @@ logger = logging.getLogger("harness.llm")
 
 
 # Lời AGENT hứa sẽ tra cứu mà chưa tra ("để em kiểm tra…", "em sẽ tìm…", "chờ em một chút"): dấu hiệu để nhắc model gọi tool. Soi lời của chính agent, không phải lời khách.
+PROMPT_CACHE_ORDER = os.environ.get("PROMPT_CACHE_ORDER", "").strip().lower() in ("on", "1", "true")   # MẶC ĐỊNH TẮT: gửi prompt_cache_key theo system prompt + tính giá cache cho lời gọi JSON
+
+
+def _cache_key(messages: List[Dict[str, Any]]) -> Optional[str]:
+    """Khóa định tuyến cache của OpenAI: các lời gọi cùng system prompt (phần cố định đứng đầu) dùng chung khóa → dễ trúng cùng máy đã cache tiền tố."""
+    head = next((m.get("content") for m in messages if m.get("role") == "system"), None)
+    return "h" + hashlib.sha1(head.encode("utf-8")).hexdigest()[:16] if isinstance(head, str) else None
+
+
 _PROMISES_LOOKUP = re.compile(
     r"(?:để|xin phép|sẽ|đang|cho em|chờ em|đợi em)\s+(?:em\s+)?(?:kiểm tra|tra cứu|tra lại|tìm|xem lại|xem giúp|check)|chờ (?:em )?(?:một|1) (?:chút|lát)|vui lòng (?:chờ|đợi)"
     r"|(?:sẽ|để em|xin phép(?: em)?)\s+(?:tiến hành|lên đơn|tạo đơn|đặt đơn|chuyển (?:máy|cuộc gọi|thông tin|tiếp)|đặt lịch|hẹn (?:lịch|gọi)|cập nhật đơn|làm thủ tục|hủy đơn)"
@@ -275,6 +285,8 @@ class LLMClient:
             kwargs["seed"] = self.seed
         if self.reasoning_effort and self.profile.is_reasoning and "reasoning_effort" not in self.dropped_params:
             kwargs["reasoning_effort"] = self.reasoning_effort
+        if PROMPT_CACHE_ORDER and "prompt_cache_key" not in self.dropped_params and _cache_key(messages):
+            kwargs["prompt_cache_key"] = _cache_key(messages)
         caps = [m for m in (self.max_output_tokens, max_tokens) if m is not None]
         if caps:
             kwargs[self._token_param] = min(caps)
@@ -375,7 +387,10 @@ class LLMClient:
             prompt_t = getattr(usage, "prompt_tokens", 0) or 0
             completion_t = getattr(usage, "completion_tokens", 0) or 0
             details = getattr(usage, "completion_tokens_details", None)
-            cost = self.cost_tracker.record_turn(self.model, prompt_t, completion_t)   # đã trả tiền: ghi TRƯỚC khi phân tích (JSON hỏng vẫn tốn tiền)
+            pdet = getattr(usage, "prompt_tokens_details", None)
+            cached_t = (getattr(pdet, "cached_tokens", 0) or 0) if pdet else 0
+            cost = self.cost_tracker.record_turn(self.model, prompt_t, completion_t, cached_tokens=cached_t if PROMPT_CACHE_ORDER else 0)   # đã trả tiền: ghi TRƯỚC khi phân tích (JSON hỏng vẫn tốn tiền)
+            cost["prompt_tokens"], cost["cached_tokens"] = prompt_t, cached_t
             if getattr(response.choices[0], "finish_reason", None) == "length":      # chạm max_tokens: đầu ra bị cắt → coi như không đọc được, không đoán phần thiếu
                 raise LLMUnavailable("complete_json: đầu ra bị cắt ở max_tokens")
             content = response.choices[0].message.content or "{}"

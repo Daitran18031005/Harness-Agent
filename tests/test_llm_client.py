@@ -352,6 +352,29 @@ class CompleteJsonTest(unittest.TestCase):  # bộ trích slot khó (bước 9) 
         c.available = True
         return c, fake
 
+    def test_prompt_cache_key_and_cached_json_tokens_behind_flag(self):
+        """PROMPT_CACHE_ORDER: cùng system prompt → cùng prompt_cache_key; token cache của lời gọi JSON được ghi và tính giá cache. Tắt cờ: không gửi khóa."""
+        from unittest import mock
+        import src.llm.client as client_mod
+        resp = lambda: NS(choices=[NS(message=NS(content="{}"))],
+                          usage=NS(prompt_tokens=2000, completion_tokens=10, completion_tokens_details=None, prompt_tokens_details=NS(cached_tokens=1536)))
+        msgs = lambda sysp, user: [{"role": "system", "content": sysp}, {"role": "user", "content": user}]
+        with mock.patch.object(client_mod, "PROMPT_CACHE_ORDER", True):
+            c, fake = self._client([resp(), resp(), resp()], model="gpt-4o-mini")
+            _, cost = c.complete_json(msgs("QUY TẮC A", "lời 1"))
+            c.complete_json(msgs("QUY TẮC A", "lời 2"))
+            c.complete_json(msgs("QUY TẮC B", "lời 1"))
+            keys = [k.get("prompt_cache_key") for k in fake.calls]
+            self.assertTrue(keys[0] and keys[0] == keys[1] != keys[2])
+            self.assertEqual((cost["prompt_tokens"], cost["cached_tokens"]), (2000, 1536))
+            full = client_mod.CostTracker().record_turn("gpt-4o-mini", 2000, 10)["usd_cost"]
+            self.assertLess(cost["usd_cost"], full)
+        with mock.patch.object(client_mod, "PROMPT_CACHE_ORDER", False):
+            c, fake = self._client([resp()], model="gpt-4o-mini")
+            _, cost = c.complete_json(msgs("QUY TẮC A", "lời 1"))
+        self.assertNotIn("prompt_cache_key", fake.calls[0])
+        self.assertEqual(cost["cached_tokens"], 1536)                       # trace vẫn thấy token cache khi tắt cờ (chỉ không đổi cách tính giá)
+
     def test_returns_parsed_dict_and_cost_non_stream_json_mode(self):
         c, fake = self._client([self._response('{"blocker": "can hoi chong"}', reasoning=5)], model="gpt-6-luna", seed=1)
         data, cost = c.complete_json([{"role": "user", "content": "x"}])

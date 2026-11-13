@@ -225,7 +225,8 @@ def reading_trace_dict(r: Optional[ReplyReading], skipped: bool = False) -> Dict
             "order_intent": "commit" if r.commits else "other", "asks_question": r.asks_question, "asks_price_promo": r.price_topic, "prior_contact": r.prior_contact, "recipient_name": r.recipient_name, "payment": r.payment, "product_sku": r.product_sku, "product_raw": r.product_raw, "product_quote": r.evidence.get("product"),
             "product_verified": r.product_sku is not None, "candidates": r.candidates, "address": bool(r.address), "evidence": r.evidence, "guard": r.guard or None,
             "llm_calls": len(r.usage), "vnd_cost": round(sum(float(u.get("vnd_cost", 0) or 0) for u in r.usage), 2),
-            "latency_ms": sum(int(u.get("latency_ms", 0) or 0) for u in r.usage)}
+            "latency_ms": sum(int(u.get("latency_ms", 0) or 0) for u in r.usage),
+            "prompt_tokens": sum(int(u.get("prompt_tokens", 0) or 0) for u in r.usage), "cached_tokens": sum(int(u.get("cached_tokens", 0) or 0) for u in r.usage)}
 
 
 def _quoted(quote: Any, text: str) -> str:
