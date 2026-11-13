@@ -464,3 +464,26 @@ class ReadingNeedsNothingTest(unittest.TestCase):
         for kw in ({"asks_question": True}, {"price_topic": True}, {"commits": True}, {"asks_transfer": True}, {"stance": "agree"},
                    {"product_sku": "SKU-AP-X"}, {"qty": 2}, {"address": "12 Lê Lợi"}, {"affirmed": ["recipient_phone"]}):
             self.assertFalse(reading_needs_nothing(ReplyReading(**kw)), kw)
+
+
+class JsonHedgeTest(unittest.TestCase):
+    def test_slow_json_call_is_hedged_and_loser_is_billed(self):
+        import time as _t
+        delays = [0.5, 0.0]
+        made = []
+
+        def create(**kw):
+            d = delays[len(made)]
+            made.append(d)
+            _t.sleep(d)
+            return NS(usage=NS(prompt_tokens=1000, completion_tokens=100, completion_tokens_details=None),
+                      choices=[NS(message=NS(content='{"who": %d}' % (len(made) - 1)))])
+        c = LLMClient()
+        c._client = NS(chat=NS(completions=NS(create=create)))
+        c.available = True
+        c.json_hedge_ms = 50
+        before = c.cost_tracker.cumulative_usd_cost
+        data, cost = c.complete_json([{"role": "user", "content": "x"}])
+        self.assertEqual((data, len(made), c.json_hedged_calls), ({"who": 1}, 2, 1))     # bản sao (nhanh) thắng
+        _t.sleep(0.7)                                                                      # bản thua chạy xong → tiền được cộng
+        self.assertGreater(c.cost_tracker.cumulative_usd_cost - before, cost["usd_cost"] * 1.5)

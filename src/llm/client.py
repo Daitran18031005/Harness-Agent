@@ -223,6 +223,8 @@ class LLMClient:
         # dùng bản nào có gói đầu trước, đóng bản kia. 0 = tắt. Bản thua vẫn tính tiền prompt (ước tính bằng prompt của bản thắng).
         self.hedge_ms = _env_number("LLM_HEDGE_MS", float, 0.0)
         self._last_round_hedged = False
+        self.json_hedge_ms = _env_number("LLM_JSON_HEDGE_MS", float, 0.0)
+        self.json_hedged_calls = 0
         self.available = False
         self._client = None
         self._tools: List[Dict[str, Any]] = []
@@ -315,6 +317,49 @@ class LLMClient:
                 raise
         raise LLMUnavailable("Không gọi được API sau khi bỏ các tham số không được hỗ trợ.")
 
+    def _create_json_hedged(self, messages: List[Dict[str, Any]]):
+        """Lời gọi JSON (bộ đọc, chốt…) có hedging: chưa xong sau LLM_JSON_HEDGE_MS → gửi MỘT bản sao, lấy bản xong trước (Dean & Barroso 2013).
+        Đo 2026-11-13: một lần đọc có p50 1,8 s nhưng p95 6,2 s — đuôi do phía API, không do nội dung. Bản thua chạy nốt (lời gọi non-stream
+        không hủy được) và được cộng tiền vào tổng khi xong."""
+        if not self.json_hedge_ms or self.json_hedge_ms <= 0:
+            return self._create(messages, [], stream=False, json_mode=True)
+        results: "queue.Queue" = queue.Queue()
+        state = {"taken": False}
+        lock = threading.Lock()
+
+        def run() -> None:
+            try:
+                resp, err = self._create(messages, [], stream=False, json_mode=True), None
+            except BaseException as e:
+                resp, err = None, e
+            with lock:
+                first = not state["taken"] and err is None
+                if first:
+                    state["taken"] = True
+            if first or err is not None:
+                results.put((resp, err))
+            elif resp is not None:                   # bản thua đã xong: cộng tiền thật của nó vào tổng (trần cứng vẫn thấy)
+                u = getattr(resp, "usage", None)
+                in_p, out_p, _ = self.cost_tracker.price_for(self.model)
+                self.cost_tracker.add_external_cost(((getattr(u, "prompt_tokens", 0) or 0) * in_p + (getattr(u, "completion_tokens", 0) or 0) * out_p) / 1e6)
+
+        threading.Thread(target=run, daemon=True).start()
+        launched = 1
+        try:
+            resp, err = results.get(timeout=self.json_hedge_ms / 1000.0)
+        except queue.Empty:
+            threading.Thread(target=run, daemon=True).start()
+            launched = 2
+            resp, err = results.get()
+        if err is not None and launched == 2:         # bản đầu lỗi → chờ bản kia
+            resp, err = results.get()
+        elif err is not None:
+            raise err
+        if err is not None:
+            raise err
+        self.json_hedged_calls += launched - 1
+        return resp
+
     def complete_json(self, messages: List[Dict[str, Any]]) -> Tuple[Dict[str, Any], Dict[str, Any]]:
         """1 lần gọi KHÔNG tool, đầu ra JSON object (dùng cho bộ trích bộ nhớ). Trả về (dict đã parse, chi phí/usage).
         Lỗi mạng/JSON hỏng -> ném LLMUnavailable (caller bỏ qua phần trích LLM, không crash)."""
@@ -322,7 +367,7 @@ class LLMClient:
             raise LLMUnavailable("LLM client không khả dụng (thiếu OPENAI_API_KEY hoặc lỗi khởi tạo).")
         t0 = time.perf_counter()
         try:
-            response = self._create(messages, [], stream=False, json_mode=True)
+            response = self._create_json_hedged(messages)
             usage = getattr(response, "usage", None)
             prompt_t = getattr(usage, "prompt_tokens", 0) or 0
             completion_t = getattr(usage, "completion_tokens", 0) or 0
