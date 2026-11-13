@@ -1052,7 +1052,8 @@ class HarnessOrchestrator:
             "repeat_questions_rewritten": repeat_rewritten,
             "repeat_questions_dropped": repeat_dropped,
             "order_gate": self._gate_trace(working_session_id),
-            "reply_reading": reading_trace,
+            # lượt chốt cuối cuộc gọi (customer_text rỗng): không có lời khách để đọc — không phải LLM lỗi → nhãn riêng, không lẫn với dự phòng regex
+            "reply_reading": {"source": "empty_turn"} if reading_trace.get("source") == "regex_fallback" and not (turn.normalized_text or "").strip() else reading_trace,
             "gate_open": gate_open_trace,
             "policy_route": self._policy_routes.pop(working_session_id, []) or None,
             "precomputed": ({"sku": pre["sku"], "latency_ms": pre.get("latency_ms"), "served": precomp_served} if pre else None),
@@ -1157,7 +1158,15 @@ class HarnessOrchestrator:
         def agent_named(sku: str) -> bool:
             words = fold(self._product_info(sku).get("name") or "").split()
             return len(words) >= 2 and sum(w in agent_said for w in words) / len(words) >= 0.6
-        targets = ([picked] if picked else [s for s in dict.fromkeys(self._parent_sku(s) for _, s, _ in product_mentions(text)) if named(s)][:2]) or ([focus] if focus else [])
+        # sản phẩm khách gọi tên LUÔN được tra; SKU bộ đọc chỉ BỔ SUNG (TEST-122 13/11: bộ đọc chọn nhầm máy thay cho màng lọc khách gọi tên → gate mở đơn sai sản phẩm)
+        from src.agents.specialists import catalog_products
+        # ứng viên = khớp alias (ASR) ∪ mọi sản phẩm catalog, đều qua `named` (≥ 60% số từ của tên có trong lời khách); tên khớp nhiều từ hơn đứng trước
+        # ứng viên: sản phẩm khách nói ĐỦ MỌI TỪ của tên catalog (không cần bảng alias; TEST-122 "Màng lọc thay thế AirPure X/Y" không có alias),
+        # rồi tới khớp alias qua `named` như cũ. Không nới tỉ lệ cho tên catalog: từ chung ngành hàng ("máy lọc không khí") gây nhận nhầm.
+        full = [s for s in catalog_products() if len(w := fold(self._product_info(s).get("name") or "").split()) >= 2 and all(x in said for x in w)]
+        alias = [s for s in dict.fromkeys(self._parent_sku(s) for _, s, _ in product_mentions(text)) if named(s)]
+        said_names = list(dict.fromkeys(sorted(full, key=lambda s: -len(self._product_info(s).get("name") or "")) + alias))[:2]
+        targets = list(dict.fromkeys(said_names + ([picked] if picked else []))) or ([focus] if focus else [])
         if not targets and agent_text:                 # chưa có gì: sản phẩm agent vừa nêu tên ở câu trước (khách đang trả lời câu đó)
             targets = [s for s in dict.fromkeys(self._parent_sku(s) for _, s, _ in product_mentions(agent_text)) if agent_named(s)][:1]
         targets = [self._discontinued_named(said, t) or t for t in targets]

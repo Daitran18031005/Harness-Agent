@@ -618,3 +618,14 @@ class PrefetchHideToolsTest(GateBase):
         # địa chỉ giao (giá ship) hoặc số lượng → không ẩn
         self.assertEqual(orch._prefetch_hidden_tools("AirPure X giao về <ADDR_1> nhé", "AirPure X giao về <ADDR_1> nhé", spec_x, None), set())
         self.assertEqual(orch._prefetch_hidden_tools("lấy 2 cái AirPure X", "", spec_x, None), set())
+
+
+class PrefetchKeepsNamedProductsTest(GateBase):
+    def test_reader_sku_adds_to_named_products_instead_of_replacing_them(self):
+        """TEST-122 (13/11): khách gọi tên 'Màng lọc thay thế AirPure X/Y', bộ đọc chọn nhầm máy AirPure X → vẫn phải tra trước màng lọc khách gọi tên."""
+        from types import SimpleNamespace
+        from src.privacy.pii_vault import PiiVault
+        out = self.orch._speculative_lookups("Khải tham khảo Màng lọc thay thế AirPure X/Y nãy giờ, phân vân chuẩn màng HEPA", None, [], None,
+                                             SimpleNamespace(blocker=None), None, "2026-10-15", PiiVault(), picked="SKU-AP-X")
+        searched = {c["args"]["sku"] for c in out if c["name"] == "catalog.search"}
+        self.assertIn("SKU-AP-FLT-X", searched)
