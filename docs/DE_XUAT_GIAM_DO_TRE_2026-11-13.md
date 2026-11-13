@@ -191,3 +191,52 @@ Ghi chú: yêu cầu ghi "227 kịch bản"; tôi hiểu là 277 (bộ public_sa
 2. A — bộ đọc không chặn tool đầu và các lượt code xử lý. Đây là thay đổi lớn trong order gate.
 3. Đổi model riêng cho bộ đọc sang model sinh nhanh hơn. Đây là thay đổi model, cần duyệt.
 4. Chưa chạy 3 × 277: với mã hiện tại, đo tách cho thấy p95 vẫn khoảng 9 s, nên chạy đầy đủ (khoảng 90.000 VND) chỉ xác nhận lại việc chưa đạt ngưỡng.
+
+## 9. Bộ đọc thưa + tool chỉ đọc không chờ bộ đọc (e101c63) — đo tách 13/11 chiều
+
+**Chấm tay độ chính xác bộ đọc** (150 lời khách thật, prompt cũ chạy 2 lần để đo nhiễu). Chi tiết ở `runs/lat_ab3_0113/reader_diff_labels*.csv`.
+
+| Trường | Mới đúng hơn | Cũ đúng hơn | Không rõ |
+|---|---:|---:|---:|
+| product_sku | 25 | 12 | 3 |
+| order_intent | 5 | 2 | 6 |
+| affirmed | 9 | 1 | 1 |
+| address | 3 | 6 | 0 |
+
+- Lỗi nguy hiểm:
+  - Mất SKU khi khách gọi rõ tên: bên cũ 24 lần, bên mới 10.
+  - Chốt mua sai: chỉ còn 1 lượt (TEST-01), và cả hai bên cùng mắc.
+  - Bị cắt hỏng cả lượt ở trần 220 token: 1 lần. Đã nâng trần lên 300.
+- Token đầu ra p50 / p95: 87 / 335 → 53 / 167.
+
+**Đo tách**: 39 kịch bản, chạy song song cùng giờ; cũ = ca9d237, mới = e101c63; mỗi bên 2 lần.
+
+| Lần | TSR % | TTFT p50 | TTFT p95 | Total p95 | Bộ đọc p50 / p95 | VND |
+|---|---:|---:|---:|---:|---:|---:|
+| cũ a | 70,6 | 3297 | 10334 | 12151 | 2787 / 6661 | 4007 |
+| cũ b | 75,0 | 3324 | 10314 | 12391 | 2768 / 7279 | 3923 |
+| mới a | 72,1 | 2923 | 8890 | 10750 | 1976 / 3662 | 4121 |
+| mới b | 73,5 | 2973 | 9816 | 11291 | 2063 / 4201 | 4206 |
+
+- **Đơn hàng** (mức cuộc gọi, theo `success_if` của kịch bản):
+  - Đơn nháp mở ở cuộc không cần đơn: mỗi lần chạy 1 cuộc (TEST-96/call_2), như nhau ở cả 4 lần.
+  - Cuộc cần tạo đơn mà không tạo: mỗi lần chạy 1 cuộc (SC-ULTRA-01/call_2 hoặc TEST-141/call_2), cả hai bên đều có.
+  - Tạo đơn ở cuộc cấm tạo đơn: 0.
+- **Đuôi còn lại** (10 % lượt chậm nhất của bản mới, TTFT trung bình 10,4 s):
+
+  | Thành phần | Thời gian TB |
+  |---|---:|
+  | Các vòng LLM gọi tool trước token | 4,2 s |
+  | Chạy tool | 1,9 s |
+  | Chờ bộ đọc tuần tự | 0,9 s |
+  | TTFT vòng cuối | 2,1 s |
+
+  Prompt trung bình 10,9k token.
+- **TTFT theo số vòng LLM trước token đầu** (bản mới, cả hai lần chạy):
+
+  | Số vòng | Số lượt | TTFT p50 / p95 |
+  |---|---:|---:|
+  | 0 | 71 | 1,6 / 2,3 s (đạt ngưỡng) |
+  | 1 | 117 | 3,8 / 10,7 s |
+  | ≥ 2 | 28 | 6,4 / 12,5 s |
+  | Code xử lý | 87 | 1,8 / 6,1 s |
