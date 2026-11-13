@@ -24,7 +24,7 @@ PAYMENTS = ("COD", "bank", "momo", "zalopay")
 AFFIRMABLE = ("recipient_name", "recipient_phone", "address", "payment")
 GUARDS = ("none", "confidence", "verify")
 # Trần token đầu ra của bộ đọc: bị cắt → LLMUnavailable → coi như không đọc được (không đoán phần thiếu). Chọn theo phân bố đo 13/11 (runs/reader_replay_0113).
-READER_MAX_TOKENS = int(os.environ.get("READER_MAX_TOKENS", "") or 220)   # prompt đầu ra thưa: p50 52, p95 155, p99 188, max 205 trên 150 lời khách thật
+READER_MAX_TOKENS = int(os.environ.get("READER_MAX_TOKENS", "") or 300)   # đầu ra thưa, 150 lời khách thật: p50 53, p95 167, p99 177, max ≥ 220 (1 lượt chốt đơn dài bị cắt ở 220)
 DEFAULT_GUARD = "verify"             # tạm thời: chốt an toàn nhất; chọn chính thức sau khi đo (scripts/eval_consent_guard.py)
 CONFIDENCE_THRESHOLD = 0.85
 NUM_WORDS = {1: "mot", 2: "hai", 3: "ba", 4: "bon", 5: "nam", 6: "sau", 7: "bay", 8: "tam", 9: "chin", 10: "muoi"}   # chữ số đã bỏ dấu (fold)
@@ -80,14 +80,17 @@ Mọi *_quote PHẢI chép nguyên văn từ lời khách (không sửa, không 
 ĐẦU RA THƯA (bắt buộc, để trả lời nhanh): CHỈ ghi các khóa có giá trị KHÁC mặc định. KHÔNG BAO GIỜ ghi khóa có giá trị null, false, [], "" hay "other";
 khóa vắng mặt được hiểu là mặc định (stance "other", order_intent "other", false, null, [] và "" cho mọi khóa còn lại). Không ghi "confidence" khi stance là other.
 Khi stance là agree/decline thì luôn ghi kèm "stance_quote" và "confidence". Không có gì khác mặc định thì trả đúng {}.
-Thưa KHÔNG có nghĩa là bỏ sót: mọi khóa có giá trị (đặc biệt product_sku khi khách nhắc/chỉ tới một sản phẩm trong danh sách ứng viên, asks_price_promo, asks_question, affirmed) vẫn PHẢI ghi đủ như khi viết đầy đủ — chỉ bỏ khóa mang giá trị mặc định.
+Thưa KHÔNG có nghĩa là bỏ sót: mọi khóa có giá trị (đặc biệt product_sku khi khách nhắc/chỉ tới một sản phẩm trong danh sách ứng viên, asks_price_promo, asks_question, affirmed) vẫn PHẢI ghi đủ như khi viết đầy đủ — chỉ bỏ khóa mang giá trị mặc định. Lời dài nhiều thông tin (tên, địa chỉ, SĐT, thanh toán) mà có nêu tên
+một sản phẩm trong danh sách ứng viên thì vẫn ghi product_sku.
+Thưa cũng KHÔNG đổi cách phán đoán: áp dụng đủ quy tắc 1–9 như khi viết đầy đủ. Riêng order_intent: chỉ commit khi có lời chốt mua/đặt đơn MỚI của chính khách
+(quy tắc 8). Đổi/trả/bảo hành hàng đã mua, xin chuyển máy/gặp bộ phận khác, hay đồng ý chung chung mà còn hỏi lại giá/điều kiện chờ nhân viên trả lời đều là other.
 Viết JSON trên MỘT dòng, không xuống dòng, không thụt lề. Mỗi *_quote là đoạn nguyên văn NGẮN NHẤT đủ làm bằng chứng (thường vài từ), không chép cả câu;
 riêng address_quote / name_quote / qty_quote phải chứa trọn giá trị tương ứng.
 Ví dụ ĐỊNH DẠNG (minh họa, không phải dữ liệu cuộc gọi):
 - "ừ để mình nghĩ thêm đã" → {"stance":"decline","stance_quote":"để mình nghĩ thêm đã","confidence":0.8}
 - "cái này bảo hành mấy năm vậy" → {"asks_question":true}
 - "con quạt A1 đó còn bớt được nữa không em" (ứng viên có "MA-01 — Quạt A1") → {"asks_question":true,"asks_price_promo":true,"price_promo_quote":"còn bớt được nữa không","product_sku":"MA-01","product_quote":"quạt A1"}
-- "ok chốt 2 cái nha, hàng tới mới đưa tiền" → {"stance":"agree","stance_quote":"ok chốt 2 cái nha","confidence":0.9,"order_intent":"commit","intent_quote":"ok chốt 2 cái nha","qty":2,"qty_quote":"2 cái","payment":"COD","payment_quote":"hàng tới mới đưa tiền"}"""
+- "ok chốt 2 cái quạt A1 nha, hàng tới mới đưa tiền" (ứng viên có "MA-01 — Quạt A1") → {"stance":"agree","stance_quote":"ok chốt 2 cái quạt A1 nha","confidence":0.9,"order_intent":"commit","intent_quote":"ok chốt 2 cái quạt A1 nha","qty":2,"qty_quote":"2 cái","product_sku":"MA-01","product_quote":"quạt A1","payment":"COD","payment_quote":"hàng tới mới đưa tiền"}"""
 
 VERIFY_PROMPT = """Bạn là chốt kiểm tra độc lập trước khi tạo đơn hàng. Nhân viên đã đọc lại toàn bộ đơn và xin khách xác nhận. Bạn chỉ trả lời MỘT câu hỏi:
 lời khách có phải là sự cho phép rõ ràng, chủ động, không điều kiện để đặt ĐÚNG đơn vừa đọc lại, ngay bây giờ hay không?
