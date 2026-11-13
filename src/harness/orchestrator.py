@@ -68,6 +68,7 @@ def reading_needs_nothing(r) -> bool:
 
 
 PREFETCH_HIDE_TOOLS = os.environ.get("PREFETCH_HIDE_TOOLS", "").strip().lower() in ("on", "1", "true")   # F2, MẶC ĐỊNH TẮT tới khi đo xong
+PARALLEL_TOOLS = os.environ.get("PARALLEL_TOOLS", "").strip().lower() in ("on", "1", "true")   # MẶC ĐỊNH TẮT: các tool chỉ đọc trong cùng một vòng LLM chạy đồng thời
 READ_ONLY_TOOLS = frozenset({"inventory.check", "pricing.get_quote", "catalog.search", "search_policy"})   # không chờ bộ đọc (xem _tool_executor)
 NUDGE_BY_READER = os.environ.get("NUDGE_BY_READER", "").strip().lower() in ("on", "1", "true")   # MẶC ĐỊNH TẮT (đo tách 13/11: không thấy lợi). bộ đọc hiểu khách không yêu cầu gì cần tra/làm → bỏ vòng nhắc gọi tool (đo 2026-11-13: 119/2180 lượt mất trọn 1 vòng LLM cho vòng nhắc vô ích)
 SPECULATIVE_TOOLS = not _off("SPECULATIVE_TOOLS")     # chạy trước inventory.check/pricing.get_quote cho sản phẩm khách vừa nhắc/đang bàn
@@ -727,6 +728,7 @@ class HarnessOrchestrator:
                     # Dữ liệu lượt này đã được code tra sẵn và nằm trong prompt → câu trả lời không gọi tool là bình thường: bỏ vòng nhắc (≈ 1,2 s),
                     # trừ khi câu trả lời còn hứa tra cứu/hành động (LLMClient tự soi). Client giả trong test không có tham số này.
                     **({"expect_tools": _expect_tools} if "expect_tools" in inspect.signature(llm_client.chat_with_tools).parameters else {}),
+                    **({"parallel_tools": READ_ONLY_TOOLS} if PARALLEL_TOOLS and "parallel_tools" in inspect.signature(llm_client.chat_with_tools).parameters else {}),
                 )
                 if sync_gate():
                     raise _GateTakeover()

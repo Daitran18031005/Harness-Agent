@@ -1,3 +1,4 @@
+import time
 """Bước 2 — LLMClient stream + số đo thật (B1, N3). Dùng client OpenAI GIẢ, không gọi mạng."""
 import unittest
 from types import SimpleNamespace as NS
@@ -280,6 +281,29 @@ class LatencyBreakdownAndCacheTest(unittest.TestCase):
         timing = {}
         client.chat_with_tools([{"role": "user", "content": "x"}], lambda n, a: ({}, a), timing=timing, expect_tools=False)
         self.assertEqual(timing["rounds_before_first_token"], 0)           # dữ liệu đã tra sẵn (expect_tools=False): trả lời thẳng, không tốn vòng nhắc
+
+    def test_read_only_tools_in_one_round_run_concurrently_in_order(self):
+        """PARALLEL_TOOLS: hai tool chỉ đọc cùng vòng chạy đồng thời (tổng ≈ 1 lần chờ), log giữ thứ tự model gọi; có tool ghi thì tuần tự."""
+        import threading
+        def rounds(second):
+            return [[_chunk(tool_calls=[_tc_delta(0, id="a", name="inventory__check", arguments='{"sku": "SKU-A"}'),
+                                        _tc_delta(1, id="b", name=second, arguments='{"sku": "SKU-B"}')]),
+                     _chunk(with_choice=False, usage=NS(prompt_tokens=10, completion_tokens=3))],
+                    [_chunk(content="Dạ còn hàng ạ."), _chunk(with_choice=False, usage=NS(prompt_tokens=10, completion_tokens=3))]]
+        ro = frozenset({"inventory.check", "pricing.get_quote"})
+        for second, expect_overlap in (("pricing__get_quote", True), ("order__create", False)):
+            live, peak, lock = [0], [0], threading.Lock()
+            def slow(name, args):
+                with lock:
+                    live[0] += 1; peak[0] = max(peak[0], live[0])
+                time.sleep(0.05)
+                with lock:
+                    live[0] -= 1
+                return {"ok": name}, args
+            client, _ = make_client(rounds(second))
+            _, log, _ = client.chat_with_tools([{"role": "user", "content": "x"}], slow, parallel_tools=ro, expect_tools=False)
+            self.assertEqual([c["name"] for c in log], ["inventory.check", second.replace("__", ".")])
+            self.assertEqual(peak[0] == 2, expect_overlap)
 
     def test_promise_to_look_up_without_a_tool_call_is_nudged_once(self):
         """Agent nói "để em kiểm tra" mà không gọi tool → kể cả khi dữ liệu đã tra sẵn (expect_tools=False) vẫn nhắc đúng MỘT lần."""

@@ -14,6 +14,7 @@ import time
 import queue
 import logging
 import threading
+from concurrent.futures import ThreadPoolExecutor
 from typing import Dict, Any, List, Callable, Tuple, Optional
 
 from .cost_tracker import CostTracker
@@ -481,17 +482,17 @@ class LLMClient:
 
     def chat_with_tools(self, messages: List[Dict[str, Any]], tool_executor: Callable[[str, Dict[str, Any]], Tuple[Any, Dict[str, Any]]],
                          max_rounds: int = 6, tools_override: Optional[List[Dict[str, Any]]] = None,
-                         timing: Optional[Dict[str, Any]] = None, expect_tools: bool = True
+                         timing: Optional[Dict[str, Any]] = None, expect_tools: bool = True, parallel_tools: frozenset = frozenset()
                          ) -> Tuple[str, List[Dict[str, Any]], Dict[str, Any]]:
         try:
-            return self._chat_with_tools(messages, tool_executor, max_rounds, tools_override, timing, expect_tools)
+            return self._chat_with_tools(messages, tool_executor, max_rounds, tools_override, timing, expect_tools, parallel_tools)
         except BaseException:               # kể cả BudgetExceeded: các vòng đã trả tiền phải nằm trong tổng chi phí
             self.cost_tracker.commit_inflight()
             raise
 
     def _chat_with_tools(self, messages: List[Dict[str, Any]], tool_executor: Callable[[str, Dict[str, Any]], Tuple[Any, Dict[str, Any]]],
                          max_rounds: int, tools_override: Optional[List[Dict[str, Any]]], timing: Optional[Dict[str, Any]],
-                         expect_tools: bool = True) -> Tuple[str, List[Dict[str, Any]], Dict[str, Any]]:
+                         expect_tools: bool = True, parallel_tools: frozenset = frozenset()) -> Tuple[str, List[Dict[str, Any]], Dict[str, Any]]:
         """Chạy vòng lặp function-calling tới khi LLM trả lời bằng text (không còn tool_call).
         tool_executor(name, args) -> (result, executed_args): executed_args là tham số THỰC SỰ đã
         chạy (sau khi orchestrator tiêm 'on', sửa SKU...) — đó là thứ được ghi vào trace (N3).
@@ -589,19 +590,27 @@ class LLMClient:
                 ]
             })
 
-            for tc in tool_calls:
+            def run_one(tc: Dict[str, Any]) -> Tuple[str, Any, Any]:
                 try:
                     args = json.loads(tc["arguments"]) if tc["arguments"] else {}
                 except json.JSONDecodeError:
                     args = {}
                 real_name = _from_openai_safe_name(tc["name"])
-                executed_args = args
-                tool_started = time.perf_counter()
                 try:
                     result, executed_args = tool_executor(real_name, args)
                 except Exception as e:
-                    result = {"error": "tool_execution_failed", "details": str(e)}
-                tool_ms += (time.perf_counter() - tool_started) * 1000
+                    result, executed_args = {"error": "tool_execution_failed", "details": str(e)}, args
+                return real_name, result, executed_args
+
+            tool_started = time.perf_counter()
+            if len(tool_calls) > 1 and all(_from_openai_safe_name(tc["name"]) in parallel_tools for tc in tool_calls):
+                # Mọi tool của vòng này đều CHỈ ĐỌC (caller khai báo) → chạy đồng thời; kết quả vẫn ghi theo đúng thứ tự model gọi.
+                with ThreadPoolExecutor(max_workers=len(tool_calls)) as pool:
+                    outcomes = list(pool.map(run_one, tool_calls))
+            else:
+                outcomes = [run_one(tc) for tc in tool_calls]       # có tool ghi/chuyển máy: tuần tự như cũ (thứ tự tác dụng phụ quan trọng)
+            tool_ms += (time.perf_counter() - tool_started) * 1000
+            for tc, (real_name, result, executed_args) in zip(tool_calls, outcomes):
                 tool_calls_log.append({"name": real_name, "tool": real_name, "args": executed_args, "result": result})
                 working_messages.append({
                     "role": "tool", "tool_call_id": tc["id"], "content": self._tool_content(result)
