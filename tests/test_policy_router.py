@@ -12,6 +12,20 @@ DOI_TRA_CU = "chinh-sach-doi-tra-v2026-06-HET-HIEU-LUC.md"
 CHANGELOG = "changelog.md"
 
 
+
+_SAVED_ENV = {}
+
+
+def setUpModule():          # test của router: router phải bật, bất kể cờ đo độ trễ của môi trường chạy
+    for k in ("POLICY_NO_ROUTER", "POLICY_ROUTER"):
+        _SAVED_ENV[k] = os.environ.pop(k, None)
+
+
+def tearDownModule():
+    for k, v in _SAVED_ENV.items():
+        if v is not None:
+            os.environ[k] = v
+
 class FakeLLM:
     """complete_json trả lần lượt các kết quả đã định; Exception -> ném ra."""
     available = True
