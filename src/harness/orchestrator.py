@@ -14,6 +14,7 @@ import os
 import re
 import json
 import time
+import threading
 import inspect
 import difflib
 import logging
@@ -35,7 +36,7 @@ from src.harness.extractor import extract_claims, extract_questions
 from src.catalog import ProductRetriever, ClarificationPolicy
 from src.harness.fact_usage import fact_mentioned, used_by_agent
 from src.harness.reask import REASK_LABEL, rewrite_reasks, strip_markdown
-from concurrent.futures import ThreadPoolExecutor
+from concurrent.futures import ThreadPoolExecutor, FIRST_COMPLETED, wait as futures_wait
 from src.channels.asr_entities import product_mentions
 from src.harness.reply_reader import ReplyReading, authorize_closing, exact_model_skus, product_candidates, authorize_handoff, read_reply, reading_trace_dict
 from src.harness.order_gate import (OrderGate, OrderDraft, OrderKnown, ProductInfo, with_order_gate_params, detect_payment, GATE_ONLY_ARGS,
@@ -69,6 +70,7 @@ def reading_needs_nothing(r) -> bool:
 
 PREFETCH_HIDE_TOOLS = os.environ.get("PREFETCH_HIDE_TOOLS", "").strip().lower() in ("on", "1", "true")   # F2, MẶC ĐỊNH TẮT tới khi đo xong
 PARALLEL_TOOLS = os.environ.get("PARALLEL_TOOLS", "").strip().lower() in ("on", "1", "true")   # MẶC ĐỊNH TẮT: các tool chỉ đọc trong cùng một vòng LLM chạy đồng thời
+EARLY_GATE_TAKEOVER = os.environ.get("EARLY_GATE_TAKEOVER", "").strip().lower() in ("on", "1", "true")   # MẶC ĐỊNH TẮT: bộ đọc song song về trước và code nhận lượt → trả câu của code ngay, hủy LLM chính (không chờ LLM viết xong)
 READ_ONLY_TOOLS = frozenset({"inventory.check", "pricing.get_quote", "catalog.search", "search_policy"})   # không chờ bộ đọc (xem _tool_executor)
 NUDGE_BY_READER = os.environ.get("NUDGE_BY_READER", "").strip().lower() in ("on", "1", "true")   # MẶC ĐỊNH TẮT (đo tách 13/11: không thấy lợi). bộ đọc hiểu khách không yêu cầu gì cần tra/làm → bỏ vòng nhắc gọi tool (đo 2026-11-13: 119/2180 lượt mất trọn 1 vòng LLM cho vòng nhắc vô ích)
 SPECULATIVE_TOOLS = not _off("SPECULATIVE_TOOLS")     # chạy trước inventory.check/pricing.get_quote cho sản phẩm khách vừa nhắc/đang bàn
@@ -119,7 +121,8 @@ class HarnessOrchestrator:
 
         self._gate_extra_calls: Dict[str, List[Dict[str, Any]]] = {}   # tool cổng tự gọi trong lượt (báo giá để đọc lại đơn) — đưa vào trace
         self.order_gate = OrderGate()             # cổng đặt đơn bằng code (src/harness/order_gate.py)
-        self._pool = ThreadPoolExecutor(max_workers=2, thread_name_prefix="reader")      # bước đọc hiểu chạy song song với LLM chính
+        self._pool = ThreadPoolExecutor(max_workers=2, thread_name_prefix="reader")
+        self._llm_pool = ThreadPoolExecutor(max_workers=2, thread_name_prefix="main-llm")   # EARLY_GATE_TAKEOVER: LLM chính chạy ở luồng riêng để code nhận lượt sớm      # bước đọc hiểu chạy song song với LLM chính
         memory.register_delete_listener(self._forget_customer)  # xóa khách -> xóa cả trạng thái theo cuộc gọi
         # Bước 12: chọn sản phẩm bằng luật slot→thuộc tính (dữ liệu config/slot_rules.json) + chính sách hỏi lại if/else
         try:
@@ -483,10 +486,14 @@ class HarnessOrchestrator:
         self._gate_extra_calls[working_session_id] = []
         driver = (self._closing_driver if closing else self._order_driver)(working_session_id, turn, brief, profile, vault, caller_phone, current_date, write_cache)
         gate_open_trace: Dict[str, Any] = {"opened": False, "reason": "not_evaluated"}
-        gate_sync: Dict[str, Any] = {"done": reader_future is None}
+        gate_sync: Dict[str, Any] = {"done": reader_future is None, "lock": threading.Lock()}
 
         def sync_gate() -> bool:
-            """Lấy kết quả đọc hiểu đang chạy song song và làm phần việc của nó (luồng chính, đúng một lần). Trả True nếu CODE nhận lượt này (khách chốt mua → mở order gate)."""
+            """Lấy kết quả đọc hiểu đang chạy song song và làm phần việc của nó (đúng một lần, có khóa: luồng LLM chính và luồng xử lý lượt có thể cùng gọi). Trả True nếu CODE nhận lượt này (khách chốt mua → mở order gate)."""
+            with gate_sync["lock"]:
+                return _sync_gate_locked()
+
+        def _sync_gate_locked() -> bool:
             nonlocal reading, reading_trace, driver, gate_open_trace
             if not gate_sync["done"]:
                 gate_sync["done"] = True
@@ -719,7 +726,10 @@ class HarnessOrchestrator:
                             return False
                     return True
                 llm_started_at = time.perf_counter()
-                llm_text, llm_tool_calls, llm_usage = llm_client.chat_with_tools(
+                cancel_llm = threading.Event()
+
+                def _run_llm():
+                    return llm_client.chat_with_tools(
                     messages=self._build_llm_messages(turn, brief, history, current_date, caller_phone, stock_calls=pre_stock, precomputed=self._precomp.get(working_session_id),
                                                       focus_parent=_focus()),
                     tool_executor=_tool_executor,
@@ -729,7 +739,19 @@ class HarnessOrchestrator:
                     # trừ khi câu trả lời còn hứa tra cứu/hành động (LLMClient tự soi). Client giả trong test không có tham số này.
                     **({"expect_tools": _expect_tools} if "expect_tools" in inspect.signature(llm_client.chat_with_tools).parameters else {}),
                     **({"parallel_tools": READ_ONLY_TOOLS} if PARALLEL_TOOLS and "parallel_tools" in inspect.signature(llm_client.chat_with_tools).parameters else {}),
+                    **({"cancel": cancel_llm} if "cancel" in inspect.signature(llm_client.chat_with_tools).parameters else {}),
                 )
+                if EARLY_GATE_TAKEOVER and reader_future is not None:
+                    # Lượt có bộ đọc chạy song song: LLM chính chạy ở luồng riêng. Bộ đọc về trước và code nhận lượt (khách chốt → mở gate) thì trả câu của code
+                    # NGAY, hủy LLM chính; trước đây câu của code phải chờ LLM viết xong câu sẽ bị bỏ. Quyết định mở gate vẫn là sync_gate() như cũ.
+                    llm_future = self._llm_pool.submit(_run_llm)
+                    futures_wait([reader_future, llm_future], return_when=FIRST_COMPLETED)
+                    if not llm_future.done() and sync_gate():
+                        cancel_llm.set()
+                        raise _GateTakeover()
+                    llm_text, llm_tool_calls, llm_usage = llm_future.result()
+                else:
+                    llm_text, llm_tool_calls, llm_usage = _run_llm()
                 if sync_gate():
                     raise _GateTakeover()
                 llm_timing["started_at"] = llm_started_at

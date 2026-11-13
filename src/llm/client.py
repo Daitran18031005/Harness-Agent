@@ -44,6 +44,10 @@ class LLMUnavailable(Exception):
     pass
 
 
+class LLMCancelled(BaseException):
+    """Caller hủy lượt LLM đang chạy (vd code đã nhận lượt). BaseException: vòng lặp tool không được nuốt nó thành lỗi tool."""
+
+
 class LLMRoundLimit(LLMUnavailable):
     """LLM vẫn đòi gọi tool sau số vòng tối đa (có thể bị loop). Tool đã chạy xong vẫn có hiệu lực — caller
     KHÔNG được chạy lại nhánh rule-based (tránh tạo đơn trùng)."""
@@ -234,6 +238,7 @@ class LLMClient:
         # dùng bản nào có gói đầu trước, đóng bản kia. 0 = tắt. Bản thua vẫn tính tiền prompt (ước tính bằng prompt của bản thắng).
         self.hedge_ms = _env_number("LLM_HEDGE_MS", float, 0.0)
         self._last_round_hedged = False
+        self._last_prompt_tokens = 0          # prompt tokens của vòng stream gần nhất: ước tính tiền của vòng bị hủy giữa chừng
         self.json_hedge_ms = _env_number("LLM_JSON_HEDGE_MS", float, 0.0)
         self.json_hedged_calls = 0
         self.available = False
@@ -406,11 +411,11 @@ class LLMClient:
         cost["latency_ms"] = int(round((time.perf_counter() - t0) * 1000))
         return data, cost
 
-    def _stream_round(self, messages: List[Dict[str, Any]], tools: List[Dict[str, Any]]):
+    def _stream_round(self, messages: List[Dict[str, Any]], tools: List[Dict[str, Any]], cancel: Optional[threading.Event] = None):
         """`_stream_round_once` + thử lại khi timeout/đứt kết nối (bỏ phần đã nhận dở: tool chỉ chạy SAU khi vòng đọc xong). Lỗi khác, kể cả trần chi phí, ném ngay."""
         for attempt in range(self.stream_retries + 1):
             try:
-                return self._stream_round_once(messages, tools)
+                return self._stream_round_once(messages, tools, cancel)
             except Exception as e:
                 if attempt >= self.stream_retries or not _is_transient(e):
                     raise
@@ -463,7 +468,7 @@ class LLMClient:
             yield from it
         return chain(), launched == 2
 
-    def _stream_round_once(self, messages: List[Dict[str, Any]], tools: List[Dict[str, Any]]):
+    def _stream_round_once(self, messages: List[Dict[str, Any]], tools: List[Dict[str, Any]], cancel: Optional[threading.Event] = None):
         """1 vòng gọi API ở chế độ stream: gom text + tool_call từ các delta; trả về
         (text, tool_calls[{id,name,arguments}], usage, thời điểm perf_counter của token text đầu tiên)."""
         text_parts: List[str] = []
@@ -472,6 +477,14 @@ class LLMClient:
         first_token_at = None
         chunks, self._last_round_hedged = self._open_stream(messages, tools)
         for chunk in chunks:
+            if cancel is not None and cancel.is_set():          # caller đã nhận lượt: đóng stream, ghi ước tính tiền prompt đã xử lý (vòng dở không có usage)
+                try:
+                    getattr(chunks, "close", lambda: None)()
+                except Exception:
+                    pass
+                if self._last_prompt_tokens:
+                    self.cost_tracker.note_round(self.model, self._last_prompt_tokens, 0)
+                raise LLMCancelled()
             chunk_usage = getattr(chunk, "usage", None)
             if chunk_usage is not None:
                 usage = chunk_usage
@@ -497,17 +510,18 @@ class LLMClient:
 
     def chat_with_tools(self, messages: List[Dict[str, Any]], tool_executor: Callable[[str, Dict[str, Any]], Tuple[Any, Dict[str, Any]]],
                          max_rounds: int = 6, tools_override: Optional[List[Dict[str, Any]]] = None,
-                         timing: Optional[Dict[str, Any]] = None, expect_tools: bool = True, parallel_tools: frozenset = frozenset()
-                         ) -> Tuple[str, List[Dict[str, Any]], Dict[str, Any]]:
+                         timing: Optional[Dict[str, Any]] = None, expect_tools: bool = True, parallel_tools: frozenset = frozenset(),
+                         cancel: Optional[threading.Event] = None) -> Tuple[str, List[Dict[str, Any]], Dict[str, Any]]:
         try:
-            return self._chat_with_tools(messages, tool_executor, max_rounds, tools_override, timing, expect_tools, parallel_tools)
+            return self._chat_with_tools(messages, tool_executor, max_rounds, tools_override, timing, expect_tools, parallel_tools, cancel)
         except BaseException:               # kể cả BudgetExceeded: các vòng đã trả tiền phải nằm trong tổng chi phí
             self.cost_tracker.commit_inflight()
             raise
 
     def _chat_with_tools(self, messages: List[Dict[str, Any]], tool_executor: Callable[[str, Dict[str, Any]], Tuple[Any, Dict[str, Any]]],
                          max_rounds: int, tools_override: Optional[List[Dict[str, Any]]], timing: Optional[Dict[str, Any]],
-                         expect_tools: bool = True, parallel_tools: frozenset = frozenset()) -> Tuple[str, List[Dict[str, Any]], Dict[str, Any]]:
+                         expect_tools: bool = True, parallel_tools: frozenset = frozenset(),
+                         cancel: Optional[threading.Event] = None) -> Tuple[str, List[Dict[str, Any]], Dict[str, Any]]:
         """Chạy vòng lặp function-calling tới khi LLM trả lời bằng text (không còn tool_call).
         tool_executor(name, args) -> (result, executed_args): executed_args là tham số THỰC SỰ đã
         chạy (sau khi orchestrator tiêm 'on', sửa SKU...) — đó là thứ được ghi vào trace (N3).
@@ -531,13 +545,16 @@ class LLMClient:
         for _ in range(max_rounds):
             round_start = time.perf_counter()
             round_tools = active_tools() if callable(active_tools) else active_tools      # callable: dựng lại schema mỗi vòng (sản phẩm đang bàn có thể đổi giữa lượt)
-            text, tool_calls, usage, first_token_at = self._stream_round(working_messages, round_tools)
+            if cancel is not None and cancel.is_set():
+                raise LLMCancelled()
+            text, tool_calls, usage, first_token_at = self._stream_round(working_messages, round_tools, *([cancel] if cancel is not None else []))
             round_ms.append(int(round((time.perf_counter() - round_start) * 1000)))
             api_calls += 1
             if usage is not None:
                 prompt_details = getattr(usage, "prompt_tokens_details", None)
                 usage_totals["cached_tokens"] += (getattr(prompt_details, "cached_tokens", 0) or 0) if prompt_details else 0
                 usage_totals["prompt_tokens"] += getattr(usage, "prompt_tokens", 0) or 0
+                self._last_prompt_tokens = getattr(usage, "prompt_tokens", 0) or 0
                 usage_totals["completion_tokens"] += getattr(usage, "completion_tokens", 0) or 0
                 self.cost_tracker.note_round(self.model, getattr(usage, "prompt_tokens", 0) or 0, getattr(usage, "completion_tokens", 0) or 0,
                                              (getattr(prompt_details, "cached_tokens", 0) or 0) if prompt_details else 0)
