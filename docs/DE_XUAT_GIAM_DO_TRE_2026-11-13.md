@@ -240,3 +240,59 @@ Ghi chú: yêu cầu ghi "227 kịch bản"; tôi hiểu là 277 (bộ public_sa
   | 1 | 117 | 3,8 / 10,7 s |
   | ≥ 2 | 28 | 6,4 / 12,5 s |
   | Code xử lý | 87 | 1,8 / 6,1 s |
+
+## 10. Đo tách e101c63 vs 699d657 (prefetch catalog.search + F2 bật) — 13/11, 39 kịch bản đo độ trễ, mỗi bên 2 lần
+
+**Chưa quyết bật F2.** Toàn bộ hướng tối ưu độ trễ đang tạm dừng để đo hồi quy so với mốc 73958d2.
+
+| | cũ a / b (e101c63) | mới a / b (699d657, F2 bật) |
+|---|---|---|
+| Số lượt theo số vòng LLM trước token (0 / 1 / ≥ 2 / code) | 36/59/16/40 · 34/60/18/37 | 47/49/11/43 · 48/51/10/41 |
+| TTFT p50 | 2,49 / 2,68 s | 2,35 / 2,35 s |
+| TTFT p95 | 7,47 / 7,37 s | 6,67 / 6,99 s |
+| Total p95 | 9,81 / 9,85 s | 9,10 / 9,49 s |
+| TSR (68 cuộc) | 73,5 / 72,1 | 73,5 / 70,6 |
+| TTFT lượt có search_policy, p50 / p95 | 6,3 / 10,9 s · 5,9 / 10,2 s | 5,4 / 6,7 s · 5,8 / 8,0 s |
+| Đơn mở khi không cần / tạo đơn khi cấm / cần đơn mà không tạo | 1 / 0 / 1 (TEST-89) | 1 / 0 / 1 (TEST-122) |
+| Chi phí | 4.150 / 4.126 | 3.988 / 3.888 |
+
+**F2:**
+- Số lượt LLM vẫn tự gọi lại đúng tool đã tra sẵn: 15 (bên cũ 13–14). F2 không chặn được.
+- Số lượt F2 không ẩn chỉ vì chặn an toàn "số 1–2 chữ số": ước tính 17 mỗi lần chạy (tính lại offline từ trace).
+
+**TEST-122 trượt ở cả 2 lần chạy bản mới:** prefetch chỉ tra máy AirPure X mà bộ đọc chọn nhầm, bỏ qua "Màng lọc thay thế AirPure X/Y" khách gọi tên. Bản sửa 108b85a chưa được đo bằng LLM thật.
+
+Lần đo này chạy cùng mã e101c63 nhưng TTFT p95 khác lần đo trước (7,4 s so với 8,9–9,8 s): API thay đổi tốc độ theo giờ chạy.
+
+## 11. Đo hồi quy 73958d2 (mốc m1_final4) vs HEAD 108b85a — bộ 40 kịch bản chuẩn (runs/ab_ids.txt), 13/11
+
+- Bên HEAD dùng cờ mặc định, `PREFETCH_HIDE_TOOLS` tắt.
+- Mỗi bên chạy 2 lần, song song cùng giờ, trần 6.000 VND mỗi lần. Tổng đã chi 23.084 VND.
+- **Lần chạy không trọn vẹn:**
+  - head-a/b chạm trần.
+  - base-b thoát bất thường (timeout API).
+  - base-a bị ngắt khi phiên làm việc đóng.
+  - Vì vậy chỉ so trên **37/40 kịch bản** có đủ ở cả 4 lần (bỏ SC-TV-18, 19, 20).
+
+| Lần | TSR kịch bản | TSR cuộc gọi | HR giá-KM | over_escalation | TTFT p50 | TTFT p95 | Total p95 | VND/cuộc |
+|---|---|---|---|---|---|---|---|---|
+| base10 (73958d2, chạy 12/11) | 100 (37/37) | 95,7 (45/47) | 0,0 % | 1 | 2,26 s | 5,13 s | 6,46 s | 57 |
+| base-a (73958d2) | 100 (37/37) | 95,7 (45/47) | 8,3 % | 3 | 2,82 s | 7,37 s | 10,04 s | 57 |
+| base-b (73958d2) | 94,6 (35/37) | 91,5 (43/47) | 5,4 % | 3 | 2,96 s | 6,93 s | 8,93 s | 57 |
+| head-a (108b85a) | 97,3 (36/37) | 93,6 (44/47) | 2,9 % | 4 | 2,26 s | 6,30 s | 8,86 s | 59 |
+| head-b (108b85a) | 86,5 (32/37) | 85,1 (40/47) | 7,7 % | 3 | 2,22 s | 6,81 s | 8,77 s | 61 |
+
+**Đọc bảng:**
+- **Không thấy tụt có hệ thống.** Chỉ 1 cuộc đạt ở base cả 2 lần mà trượt ở head cả 2 lần: SC-ULTRA-07/call_4. Không có chiều ngược lại.
+- **5 cuộc dao động:** SAMPLE-01/call_2, SAMPLE-05/call_2, SC-GEN-06/call_2, SC-TV-10/call_3, SC-TV-16/call_3.
+- **Độ trễ:** head nhanh hơn base khi chạy cùng giờ.
+- **Không so độ trễ giữa các giờ chạy khác nhau.** base10 và base-a/b là cùng mã 73958d2; base10 nhanh hơn chỉ vì API hôm 12/11 nhanh hơn.
+- **VND/cuộc là ước tính hơi cao:** chi phí cộng dồn của cả lần chạy (kể cả kịch bản bị loại) chia cho số cuộc của 37 kịch bản.
+
+**SC-ULTRA-07/call_4**, điều tra từ trace, không gọi LLM:
+- Khách hỏi cách mở khóa đẩy 2 chiều và tháo đệm Dacco giặt máy. Tài liệu chính sách và catalog không có nội dung này.
+- Cả base lẫn head đều trả lời "em chưa có thông tin chuyên môn" và đều gọi các tool giống nhau (catalog.search, inventory.check, pricing.get_quote); không có lời gọi chạy trước nào.
+- Base đạt vì câu đề nghị có nhắc lại chủ đề ("nhờ nhân viên hỗ trợ về cách tháo đệm Dacco giặt máy"), khớp `must_say_any`. Head nói chung chung ("chuyển máy cho nhân viên phụ trách") nên trượt.
+- Prompt phần từ chối/chuyển máy không đổi từ commit đầu tiên (086c2d4). 108b85a không tác động vào lượt này: không có lời gọi chạy trước, chỉ đổi nhãn trace.
+- Các cuộc 1–3 của kịch bản này giống nhau ở hai bên.
+- **Kết luận:** khác biệt nằm ở cách LLM diễn đạt, không quy được cho commit nào từ trace sẵn có. Không sửa, không đề xuất revert.
