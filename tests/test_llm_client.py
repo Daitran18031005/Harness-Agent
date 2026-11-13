@@ -397,3 +397,70 @@ class StripInternalTest(unittest.TestCase):  # N15
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class HedgeAndLazyNudgeTest(unittest.TestCase):
+    """Sửa độ trễ 2026-11-13: hedged request (gửi bản sao khi chưa có gói đầu) và quyết định vòng nhắc lúc vòng đầu xong."""
+
+    def _slow_then_fast(self, delays):
+        import time as _t
+
+        class Stream:
+            def __init__(self, delay, text):
+                self.delay, self.text, self.closed = delay, text, False
+
+            def __iter__(self):
+                _t.sleep(self.delay)
+                yield _chunk(content=self.text)
+                yield _chunk(with_choice=False, usage=NS(prompt_tokens=100, completion_tokens=5))
+
+            def close(self):
+                self.closed = True
+        made = []
+
+        def create(**kw):
+            s = Stream(*delays[len(made)])
+            made.append(s)
+            return s
+        c = LLMClient()
+        c._client = NS(chat=NS(completions=NS(create=create)))
+        c.available = True
+        return c, made
+
+    def test_hedge_uses_whichever_first_chunk_arrives_first_and_bills_the_copy(self):
+        c, made = self._slow_then_fast([(0.6, "chậm"), (0.0, "nhanh")])
+        c.hedge_ms = 50
+        timing = {}
+        text, _, cost = c.chat_with_tools([{"role": "user", "content": "x"}], lambda n, a: ({}, a), timing=timing, expect_tools=False)
+        self.assertEqual(text, "nhanh")
+        self.assertEqual(len(made), 2)
+        self.assertEqual(timing["hedged_rounds"], 1)
+        self.assertEqual(cost["prompt_tokens"], 200)            # bản sao bị đóng vẫn tính tiền prompt
+
+    def test_no_hedge_when_first_chunk_is_fast_or_hedging_off(self):
+        for hedge in (500, 0):
+            c, made = self._slow_then_fast([(0.0, "một")])
+            c.hedge_ms = hedge
+            timing = {}
+            text, _, _ = c.chat_with_tools([{"role": "user", "content": "x"}], lambda n, a: ({}, a), timing=timing, expect_tools=False)
+            self.assertEqual((text, len(made), timing["hedged_rounds"]), ("một", 1, 0))
+
+    def test_expect_tools_callable_is_asked_only_when_first_round_has_no_tool(self):
+        rounds = [[_chunk(content="Dạ vâng ạ."), _chunk(with_choice=False, usage=NS(prompt_tokens=10, completion_tokens=3))]]
+        client, fake = make_client(rounds)
+        asked = []
+        timing = {}
+        text, _, _ = client.chat_with_tools([{"role": "user", "content": "x"}], lambda n, a: ({}, a), timing=timing,
+                                            expect_tools=lambda: asked.append(1) or False)
+        self.assertEqual((text, len(fake.calls), len(asked), timing["nudged"]), ("Dạ vâng ạ.", 1, 1, False))
+
+
+class ReadingNeedsNothingTest(unittest.TestCase):
+    def test_only_a_reading_with_no_request_skips_the_nudge(self):
+        from src.harness.orchestrator import reading_needs_nothing
+        from src.harness.reply_reader import ReplyReading
+        self.assertFalse(reading_needs_nothing(None))
+        self.assertTrue(reading_needs_nothing(ReplyReading()))
+        for kw in ({"asks_question": True}, {"price_topic": True}, {"commits": True}, {"asks_transfer": True}, {"stance": "agree"},
+                   {"product_sku": "SKU-AP-X"}, {"qty": 2}, {"address": "12 Lê Lợi"}, {"affirmed": ["recipient_phone"]}):
+            self.assertFalse(reading_needs_nothing(ReplyReading(**kw)), kw)

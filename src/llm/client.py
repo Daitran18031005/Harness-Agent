@@ -11,7 +11,9 @@ import re
 import copy
 import json
 import time
+import queue
 import logging
+import threading
 from typing import Dict, Any, List, Callable, Tuple, Optional
 
 from .cost_tracker import CostTracker
@@ -217,6 +219,10 @@ class LLMClient:
         self.timeout_s = _env_number("LLM_TIMEOUT_S", float, 20.0)
         self.api_retries = _env_number("LLM_API_RETRIES", int, 1)           # SDK tự thử lại trước khi có phản hồi (kết nối/429/5xx)
         self.stream_retries = _env_number("LLM_STREAM_RETRIES", int, 2)     # thử lại cả vòng stream khi đứt/đứng giữa chừng (vòng chưa chạy tool nên thử lại an toàn)
+        # Hedged request (Dean & Barroso, "The Tail at Scale", CACM 2013): vòng stream chưa có gói đầu sau LLM_HEDGE_MS → gửi MỘT bản sao y hệt,
+        # dùng bản nào có gói đầu trước, đóng bản kia. 0 = tắt. Bản thua vẫn tính tiền prompt (ước tính bằng prompt của bản thắng).
+        self.hedge_ms = _env_number("LLM_HEDGE_MS", float, 0.0)
+        self._last_round_hedged = False
         self.available = False
         self._client = None
         self._tools: List[Dict[str, Any]] = []
@@ -346,6 +352,52 @@ class LLMClient:
                 logger.warning("[LLM] vòng stream lỗi mạng/timeout (%s) — thử lại %d/%d", e, attempt + 1, self.stream_retries)
                 time.sleep(0.5 * (attempt + 1))
 
+    def _open_stream(self, messages: List[Dict[str, Any]], tools: List[Dict[str, Any]]):
+        """(iterator các chunk, có gửi bản sao hay không). Hedging chỉ chờ GÓI ĐẦU: sau đó bản thắng stream bình thường."""
+        if not self.hedge_ms or self.hedge_ms <= 0:
+            return self._create_stream(messages, tools), False
+        results: "queue.Queue" = queue.Queue()
+
+        def start(tag: int) -> None:
+            try:
+                stream = self._create_stream(messages, tools)
+                it = iter(stream)
+                first = next(it, None)
+                results.put((tag, stream, it, first, None))
+            except BaseException as e:          # kể cả BudgetExceeded: đưa về luồng chính
+                results.put((tag, None, None, None, e))
+
+        threading.Thread(target=start, args=(0,), daemon=True).start()
+        launched = 1
+        try:
+            got = results.get(timeout=self.hedge_ms / 1000.0)
+        except queue.Empty:
+            threading.Thread(target=start, args=(1,), daemon=True).start()
+            launched = 2
+            got = results.get()
+        pending = launched - 1
+        while got[4] is not None and pending:        # bản về trước lỗi mà còn bản kia đang chạy → chờ bản kia
+            got = results.get()
+            pending -= 1
+        if got[4] is not None:
+            raise got[4]
+        if pending:                                   # bản thua: đóng ngay khi nó trả gói đầu (không đọc tiếp, không chặn luồng chính)
+            def close_loser() -> None:
+                loser = results.get()
+                try:
+                    if loser[1] is not None:
+                        loser[1].close()
+                except Exception:
+                    pass
+            threading.Thread(target=close_loser, daemon=True).start()
+        _, _, it, first, _ = got
+
+        def chain():
+            if first is not None:
+                yield first
+            yield from it
+        return chain(), launched == 2
+
     def _stream_round_once(self, messages: List[Dict[str, Any]], tools: List[Dict[str, Any]]):
         """1 vòng gọi API ở chế độ stream: gom text + tool_call từ các delta; trả về
         (text, tool_calls[{id,name,arguments}], usage, thời điểm perf_counter của token text đầu tiên)."""
@@ -353,7 +405,8 @@ class LLMClient:
         calls: Dict[int, Dict[str, str]] = {}
         usage = None
         first_token_at = None
-        for chunk in self._create_stream(messages, tools):
+        chunks, self._last_round_hedged = self._open_stream(messages, tools)
+        for chunk in chunks:
             chunk_usage = getattr(chunk, "usage", None)
             if chunk_usage is not None:
                 usage = chunk_usage
@@ -405,6 +458,7 @@ class LLMClient:
         usage_totals = {"prompt_tokens": 0, "completion_tokens": 0, "reasoning_tokens": 0, "cached_tokens": 0}
         active_tools = tools_override if tools_override is not None else self._tools
         nudged_once = False
+        hedged_rounds = 0
         api_calls = 0
         round_ms: List[int] = []          # thời gian từng vòng gọi LLM (đến hết stream của vòng đó)
         tool_ms = 0.0                      # tổng thời gian chạy tool giữa các vòng
@@ -424,9 +478,17 @@ class LLMClient:
                                              (getattr(prompt_details, "cached_tokens", 0) or 0) if prompt_details else 0)
                 details = getattr(usage, "completion_tokens_details", None)
                 usage_totals["reasoning_tokens"] += (getattr(details, "reasoning_tokens", 0) or 0) if details else 0
+                if self._last_round_hedged:           # bản sao bị đóng vẫn đã xử lý prompt → tính tiền prompt như bản thắng (ước tính bảo thủ)
+                    hedged_rounds += 1
+                    loser_prompt = getattr(usage, "prompt_tokens", 0) or 0
+                    loser_cached = (getattr(prompt_details, "cached_tokens", 0) or 0) if prompt_details else 0
+                    usage_totals["prompt_tokens"] += loser_prompt
+                    usage_totals["cached_tokens"] += loser_cached
+                    self.cost_tracker.note_round(self.model, loser_prompt, 0, loser_cached)
 
             if not tool_calls:
-                if not tool_calls_log and not nudged_once and (expect_tools or _PROMISES_LOOKUP.search(text or "")):
+                want_tools = expect_tools() if callable(expect_tools) else expect_tools    # callable: orchestrator quyết định lúc vòng đầu xong (bộ đọc song song đã có kết quả)
+                if not tool_calls_log and not nudged_once and (want_tools or _PROMISES_LOOKUP.search(text or "")):
                     # (2026-11-11: vòng nhắc tốn nguyên một vòng LLM ≈ 1,2 s ở MỌI lượt không gọi tool. Bỏ hẳn thì nhanh nhưng TSR 92,5 → 72,5 %: model hứa
                     # "em sẽ lên đơn" hoặc bỏ chuyển máy mà không gọi tool. Nên: vẫn nhắc mặc định; caller truyền expect_tools=False khi dữ liệu lượt này đã
                     # được code tra sẵn trong prompt — khi đó chỉ nhắc nếu câu trả lời còn HỨA tra cứu/hành động.)
@@ -460,7 +522,7 @@ class LLMClient:
                         # Phân rã TTFT: bao nhiêu vòng LLM phải xong TRƯỚC khi có token đầu tiên của câu trả lời, mỗi vòng mất bao lâu,
                         # tool mất bao lâu, và riêng vòng cuối chờ token đầu bao lâu.
                         "rounds_before_first_token": api_calls - 1, "round_ms": round_ms, "tool_ms": int(round(tool_ms)),
-                        "final_round_ttft_ms": final_ttft,
+                        "final_round_ttft_ms": final_ttft, "nudged": nudged_once, "hedged_rounds": hedged_rounds,
                         "prompt_tokens": usage_totals["prompt_tokens"], "cached_tokens": usage_totals["cached_tokens"]})
                 cost = self.cost_tracker.record_turn(self.model, usage_totals["prompt_tokens"], usage_totals["completion_tokens"],
                                                      cached_tokens=usage_totals["cached_tokens"])

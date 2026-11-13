@@ -58,7 +58,17 @@ def _off(name: str) -> bool:
 
 
 PARALLEL_READER = not _off("PARALLEL_READER")          # đọc hiểu lời khách chạy song song với LLM chính (khi không có đơn nháp đang mở)
-SPECULATIVE_TOOLS = not _off("SPECULATIVE_TOOLS")      # chạy trước inventory.check/pricing.get_quote cho sản phẩm khách vừa nhắc/đang bàn
+def reading_needs_nothing(r) -> bool:
+    """Bộ đọc LLM (có trích dẫn) hiểu lời khách KHÔNG chứa yêu cầu nào cần tra cứu/hành động: không hỏi, không hỏi giá/KM, không chốt/đồng ý/từ chối,
+    không xin chuyển máy, không nêu sản phẩm/số lượng/thanh toán/địa chỉ/người nhận, không nói đã từng liên hệ. Không có kết quả đọc → False (giữ vòng nhắc)."""
+    if r is None:
+        return False
+    return not (r.asks_question or r.price_topic or r.commits or r.asks_transfer or r.prior_contact or r.stance in ("agree", "decline")
+                or r.product_sku or r.qty or r.payment or r.address or r.recipient_name or r.extra_items or r.affirmed)
+
+
+NUDGE_BY_READER = not _off("NUDGE_BY_READER")          # bộ đọc hiểu khách không yêu cầu gì cần tra/làm → bỏ vòng nhắc gọi tool (đo 2026-11-13: 119/2180 lượt mất trọn 1 vòng LLM cho vòng nhắc vô ích)
+SPECULATIVE_TOOLS = not _off("SPECULATIVE_TOOLS")     # chạy trước inventory.check/pricing.get_quote cho sản phẩm khách vừa nhắc/đang bàn
 
 
 class _GateTakeover(BaseException):       # BaseException: vòng lặp tool của LLMClient bắt Exception và biến thành lỗi tool; ngoại lệ này phải thoát thẳng ra
@@ -685,6 +695,19 @@ class HarnessOrchestrator:
                     parents = self._discussed_parents(brief.product_advised, prior_call_log + pre_stock + live_calls)
                     tools = with_order_gate_params(self._build_dynamic_tools(llm_client, parents) or llm_client.get_base_tools())
                     return tools if self.retriever is not None else [t for t in tools if "shortlist" not in str((t.get("function") or {}).get("name"))]
+                data_in_prompt = any(c.get("name") == "pricing.get_quote" for c in pre_stock) or bool(self._precomp.get(working_session_id))
+
+                def _expect_tools() -> bool:
+                    """Có nhắc model gọi tool khi vòng đầu trả lời không gọi tool không (vòng nhắc ≈ 1 vòng LLM nữa trước token đầu).
+                    Không nhắc khi dữ liệu đã nằm sẵn trong prompt, hoặc (NUDGE_BY_READER) bộ đọc LLM hiểu lời khách KHÔNG yêu cầu gì cần tra/làm.
+                    Câu trả lời còn HỨA tra cứu/hành động thì client vẫn nhắc (`_PROMISES_LOOKUP`)."""
+                    if data_in_prompt:
+                        return False
+                    if NUDGE_BY_READER:
+                        sync_gate()                            # lấy kết quả bộ đọc đang chạy song song (đúng một lần; nhánh tool cũng gọi y như vậy)
+                        if reading_needs_nothing(reading):
+                            return False
+                    return True
                 llm_started_at = time.perf_counter()
                 llm_text, llm_tool_calls, llm_usage = llm_client.chat_with_tools(
                     messages=self._build_llm_messages(turn, brief, history, current_date, caller_phone, stock_calls=pre_stock, precomputed=self._precomp.get(working_session_id),
@@ -694,8 +717,7 @@ class HarnessOrchestrator:
                     timing=llm_timing,
                     # Dữ liệu lượt này đã được code tra sẵn và nằm trong prompt → câu trả lời không gọi tool là bình thường: bỏ vòng nhắc (≈ 1,2 s),
                     # trừ khi câu trả lời còn hứa tra cứu/hành động (LLMClient tự soi). Client giả trong test không có tham số này.
-                    **({"expect_tools": False} if (any(c.get("name") == "pricing.get_quote" for c in pre_stock) or self._precomp.get(working_session_id))
-                       and "expect_tools" in inspect.signature(llm_client.chat_with_tools).parameters else {}),
+                    **({"expect_tools": _expect_tools} if "expect_tools" in inspect.signature(llm_client.chat_with_tools).parameters else {}),
                 )
                 if sync_gate():
                     raise _GateTakeover()
