@@ -150,3 +150,44 @@ Mỗi thay đổi có cờ môi trường riêng để đo tách (ablation). Kh�
    - Báo: TSR, HR giá-KM, TTFT p50/p95, Total p95 từng lượt và trung bình, so với m1_final4/5/6.
 
 Ghi chú: yêu cầu ghi "227 kịch bản"; tôi hiểu là 277 (bộ public_sample + team_eval đang dùng).
+
+## 8. Kết quả thực hiện (2026-11-13, chiều)
+
+Đã đọc toàn văn 10/10 nguồn. Speculative Actions đọc bản HTML v2. *The Tail at Scale* trích từ PDF: hedging sau mốc p95 tốn thêm khoảng 5 % tải; ví dụ BigTable gửi bản sao sau 10 ms thì p99.9 giảm từ 1.800 ms xuống 74 ms, chỉ gửi thêm 2 % yêu cầu.
+
+**Nguyên nhân 119 vòng thừa:** đó là "vòng nhắc" (nudge) trong `LLMClient._chat_with_tools`.
+- Vòng đầu trả lời không gọi tool, client nhắc model gọi tool, model lặp lại câu trả lời. Mỗi lần mất trọn một vòng LLM trước token đầu.
+- Vòng nhắc mặc định bật vì bỏ hẳn thì TSR giảm từ 92,5 xuống 72,5 % (đo 11/11).
+- Soát lại các lượt bị nhắc ở lần đo mới: phần lớn là nhắc CÓ ích (sau khi nhắc, model mới gọi `pricing.get_quote`, `handoff.transfer`, `search_policy`). Lượt nhắc vô ích chủ yếu rơi vào lượt bộ đọc bị bỏ qua (lượt khám phá) hoặc khách từ chối.
+
+**Đã sửa (commit 74ccad3, 97761b1; 1054 test đạt):**
+- `NUDGE_BY_READER`: bỏ vòng nhắc khi bộ đọc LLM hiểu khách không yêu cầu gì. Hiệu quả rất nhỏ: số lượt bị nhắc giảm từ 19 xuống 18 trên 150 lượt.
+- `LLM_HEDGE_MS`: hedging cho vòng stream của LLM chính.
+- `LLM_JSON_HEDGE_MS`: hedging cho lời gọi JSON (bộ đọc, chốt).
+
+**Đo tách** trên 39 kịch bản team_eval (lấy mỗi 7 kịch bản một), hai bản chạy song song cùng giờ:
+
+| Lần | Bản | Số lượt | TSR cuộc gọi % | TTFT p50 | TTFT p95 | Total p95 | Bộ đọc p50 / p95 | VND |
+|---|---|---:|---:|---:|---:|---:|---:|---:|
+| 1 | base | 150 | 70,6 | 3192 | 9221 | 10402 | — | 4042 |
+| 1 | nudge + hedge stream 1,5 s | 151 | 73,5 | 3265 | 8993 | 10350 | — | 4181 |
+| 2 | base | 152 | 76,5 | 3212 | 9042 | 10682 | 2576 / 8415 | 4008 |
+| 2 | + hedge JSON 2,5 s | 151 | 70,6 | 3051 | 9339 | 10479 | 2494 / 8060 | 4778 |
+
+**Kết luận:**
+- Hai sửa C và D **không** cải thiện p95 một cách đáng kể; chênh lệch nằm trong nhiễu.
+- TSR dao động ±6 điểm giữa hai lần chạy base cùng mã, tức nhiễu của mẫu 68 cuộc gọi lớn hơn mọi hiệu ứng ở trên.
+- API lúc chạy nhanh: TTFT vòng cuối p50 khoảng 865 ms, ngang m1_final4. Vậy mà TTFT p95 vẫn khoảng 9 s, nên vấn đề nằm ở cấu trúc.
+
+**Gốc rễ thật của đuôi TTFT** (đo trực tiếp bộ đọc, 4 lần gọi):
+- Prompt khoảng 2.100 token, đã cache 2.048.
+- Đầu ra 72–222 token, mất 2,6–6,8 s, tức khoảng 30 ms/token. Lời gọi không stream nên phải chờ hết phần sinh.
+- Prompt đã yêu cầu chỉ ghi khóa khác mặc định, nhưng model vẫn in `null`, `[]`, cùng các trường `*_quote`.
+- Hedging không giúp được, vì đuôi không do xếp hàng phía API mà do độ dài đầu ra. Điều này đúng như *Tail at Scale* phân biệt: hedging chỉ chữa biến động do nhiễu, không chữa phần việc vốn đã dài.
+- Trong 10 % lượt chậm nhất, thời gian bộ đọc trung bình 4,5 s, và `tool_ms` 2,3 s gồm cả thời gian chờ bộ đọc ở `sync_gate` trước tool đầu tiên.
+
+**Hướng còn lại (cần duyệt):**
+1. Rút đầu ra của bộ đọc: thêm ví dụ đầu ra thưa vào prompt, hoặc tách bộ đọc thành câu hỏi ngắn theo giai đoạn. Đây là thay đổi prompt, phải đo TSR.
+2. A — bộ đọc không chặn tool đầu và các lượt code xử lý. Đây là thay đổi lớn trong order gate.
+3. Đổi model riêng cho bộ đọc sang model sinh nhanh hơn. Đây là thay đổi model, cần duyệt.
+4. Chưa chạy 3 × 277: với mã hiện tại, đo tách cho thấy p95 vẫn khoảng 9 s, nên chạy đầy đủ (khoảng 90.000 VND) chỉ xác nhận lại việc chưa đạt ngưỡng.
