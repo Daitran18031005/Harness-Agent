@@ -572,3 +572,49 @@ class ReadOnlyToolsDoNotWaitForReaderTest(GateBase):
         started = {k: v - t0 for k, v in self.llm.tool_started.items()}
         self.assertLess(started["inventory.check"], 1.5)            # không chờ bộ đọc 3 s
         self.assertGreaterEqual(started["order.create"], 2.9)       # tool ghi: chờ bộ đọc xong như cũ
+
+
+class PrefetchHideToolsTest(GateBase):
+    """B + F2 (13/11): code chạy trước tool chỉ đọc cho sản phẩm khách gọi tên; khi bật PREFETCH_HIDE_TOOLS thì tool đã tra sẵn ĐÚNG sản phẩm đó không đưa cho LLM."""
+
+    class ToolsSeen(TurnLLM):
+        def __init__(self):
+            super().__init__()
+            self.seen = []
+
+        def chat_with_tools(self, messages, tool_executor, max_rounds=6, tools_override=None, timing=None):
+            tools = tools_override() if callable(tools_override) else (tools_override or [])
+            self.seen.append({str((t.get("function") or {}).get("name")).replace("__", ".") for t in tools})
+            return super().chat_with_tools(messages, tool_executor, max_rounds, tools_override, timing)
+
+    def _tools_for(self, text, hide=True):
+        from unittest import mock
+        import src.harness.orchestrator as O
+        self.llm = self.ToolsSeen()
+        self.orch.llm_client = self.llm
+        self.llm.get_base_tools = lambda: [{"type": "function", "function": {"name": n.replace(".", "__"), "parameters": {"type": "object", "properties": {}}}}
+                                           for n in ("catalog.search", "inventory.check", "pricing.get_quote", "order.create")]
+        with mock.patch.object(O, "PREFETCH_HIDE_TOOLS", hide):
+            self.turn(NEW_PHONE, text, [])
+        return self.llm.seen[-1]
+
+    def test_prefetched_product_hides_its_lookup_tools(self):
+        seen = self._tools_for("Máy lọc không khí AirPure X bên em còn hàng không em?")
+        self.assertFalse(seen & {"catalog.search", "inventory.check", "pricing.get_quote"}, seen)
+        self.assertIn("order.create", seen)
+
+    def test_flag_off_keeps_all_tools(self):
+        seen = self._tools_for("Máy lọc không khí AirPure X bên em còn hàng không em?", hide=False)
+        self.assertTrue({"catalog.search", "inventory.check", "pricing.get_quote"} <= seen)
+
+    def test_other_or_wrong_product_keeps_tools(self):
+        orch = self.orch
+        spec_x = [{"name": n, "args": {"sku": "SKU-AP-X"}, "speculative": True} for n in ("catalog.search", "inventory.check", "pricing.get_quote")]
+        self.assertTrue(orch._prefetch_hidden_tools("máy lọc không khí AirPure X còn không", "", spec_x, None))
+        # khách nhắc thêm sản phẩm khác → không ẩn
+        self.assertEqual(orch._prefetch_hidden_tools("AirPure X với Máy lọc không khí AirPure Y khác gì", "", spec_x, None), set())
+        # tra sẵn SAI sản phẩm (bộ đọc nói khách gọi AirPure Y) → không ẩn
+        self.assertEqual(orch._prefetch_hidden_tools("cái máy đó còn không", "", spec_x, "SKU-AP-Y"), set())
+        # địa chỉ giao (giá ship) hoặc số lượng → không ẩn
+        self.assertEqual(orch._prefetch_hidden_tools("AirPure X giao về <ADDR_1> nhé", "AirPure X giao về <ADDR_1> nhé", spec_x, None), set())
+        self.assertEqual(orch._prefetch_hidden_tools("lấy 2 cái AirPure X", "", spec_x, None), set())

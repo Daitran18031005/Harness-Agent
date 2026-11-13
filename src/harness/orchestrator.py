@@ -67,6 +67,7 @@ def reading_needs_nothing(r) -> bool:
                 or r.product_sku or r.qty or r.payment or r.address or r.recipient_name or r.extra_items or r.affirmed)
 
 
+PREFETCH_HIDE_TOOLS = os.environ.get("PREFETCH_HIDE_TOOLS", "").strip().lower() in ("on", "1", "true")   # F2, MẶC ĐỊNH TẮT tới khi đo xong
 READ_ONLY_TOOLS = frozenset({"inventory.check", "pricing.get_quote", "catalog.search", "search_policy"})   # không chờ bộ đọc (xem _tool_executor)
 NUDGE_BY_READER = os.environ.get("NUDGE_BY_READER", "").strip().lower() in ("on", "1", "true")   # MẶC ĐỊNH TẮT (đo tách 13/11: không thấy lợi). bộ đọc hiểu khách không yêu cầu gì cần tra/làm → bỏ vòng nhắc gọi tool (đo 2026-11-13: 119/2180 lượt mất trọn 1 vòng LLM cho vòng nhắc vô ích)
 SPECULATIVE_TOOLS = not _off("SPECULATIVE_TOOLS")     # chạy trước inventory.check/pricing.get_quote cho sản phẩm khách vừa nhắc/đang bàn
@@ -689,14 +690,19 @@ class HarnessOrchestrator:
                     return masked, trace_args
 
                 pre_stock = self._check_named_variants(customer_texts_now, brief.product_advised, prior_call_log, [], current_date)
+                ready = reader_future.result() if reader_future is not None and reader_future.done() else None      # bộ đọc về kịp thì dùng, không thì KHÔNG chờ
+                reader_sku = (ready.product_sku if ready is not None else None) or self._reader_product(working_session_id)
                 pre_stock = pre_stock + self._speculative_lookups(turn.normalized_text, self._quoted_focus(prior_call_log), pre_stock, self._precomp.get(working_session_id), brief, caller_phone, current_date, vault,
-                                                                  picked=self._reader_product(working_session_id))
+                                                                  picked=reader_sku, agent_text=last_agent)
+                hidden_tools = self._prefetch_hidden_tools(turn.normalized_text, turn.llm_text, pre_stock, reader_sku, ready) if PREFETCH_HIDE_TOOLS else set()
                 history = self._trim_history(list(working_state.messages_in_session)[-20:])
                 # Tầng 1 (Dynamic Tool Enum): nếu đã biết sản phẩm cha đang tư vấn, ép tools
                 # schema chỉ chấp nhận đúng variant_sku THẬT của sản phẩm đó cho sku/new_variant_sku.
                 def dynamic_tools():                                    # dựng lại MỖI vòng: sản phẩm khách vừa đổi sang (catalog.search ở vòng trước) vào được enum ngay vòng sau
                     parents = self._discussed_parents(brief.product_advised, prior_call_log + pre_stock + live_calls)
                     tools = with_order_gate_params(self._build_dynamic_tools(llm_client, parents) or llm_client.get_base_tools())
+                    if hidden_tools:                                    # F2: tool đã chạy trước đúng sản phẩm này → không đưa cho LLM (tránh một vòng gọi lại)
+                        tools = [t for t in tools if str((t.get("function") or {}).get("name")).replace("__", ".") not in hidden_tools]
                     return tools if self.retriever is not None else [t for t in tools if "shortlist" not in str((t.get("function") or {}).get("name"))]
                 data_in_prompt = any(c.get("name") == "pricing.get_quote" for c in pre_stock) or bool(self._precomp.get(working_session_id))
 
@@ -1132,10 +1138,11 @@ class HarnessOrchestrator:
         return None
 
     def _speculative_lookups(self, text: str, focus: Optional[str], stock_done: List[Dict[str, Any]], precomputed: Optional[Dict[str, Any]], brief: CallBrief,
-                             caller_phone: Optional[str], on: str, vault: PiiVault, picked: Optional[str] = None) -> List[Dict[str, Any]]:
+                             caller_phone: Optional[str], on: str, vault: PiiVault, picked: Optional[str] = None, agent_text: str = "") -> List[Dict[str, Any]]:
         """CHẠY TRƯỚC tool ĐỌC mà LLM gần như chắc sẽ gọi (trace: "tìm → tồn kho → báo giá" là chuỗi lặp lại nhiều nhất và mỗi lần LLM yêu cầu tốn nguyên một vòng ≈ 1,2 s):
         `picked` (SKU bộ đọc LLM đã kiểm) nếu có; không thì sản phẩm khách nhắc tên (alias, lọc bằng `named`, tối đa 2) — giữ cho lượt khám phá chưa có bộ đọc; không nữa thì sản phẩm đang bàn; với biến thể size/màu vừa được tra tồn kho thì báo giá đúng biến thể đó.
-        Chỉ `inventory.check` + `pricing.get_quote` (không tool ghi). Kết quả vào prompt và trace như tool thật; LLM vẫn là bên quyết định dùng hay không.
+        Thêm sản phẩm AGENT vừa nêu ở câu trước (cùng bộ lọc `named`). Mỗi sản phẩm còn được tra trước `catalog.search` theo SKU (biến thể, thuộc tính) —
+        lời gọi LLM hay tốn một vòng nhất ở lượt đầu (đo 13/11). Chỉ tool ĐỌC, không tool ghi. Kết quả vào prompt và trace như tool thật; LLM vẫn quyết định dùng hay không.
         Tắt bằng SPECULATIVE_TOOLS=off."""
         if not SPECULATIVE_TOOLS:
             return []
@@ -1145,12 +1152,28 @@ class HarnessOrchestrator:
             """Khách gọi tên sản phẩm thật: ≥ 60% số từ của tên trong catalog có trong lời khách (bộ khớp alias của ASR khớp mờ, "có bé nhỏ" từng ra "Ghế ngồi ô tô cho bé")."""
             words = fold(self._product_info(sku).get("name") or "").split()
             return len(words) >= 2 and sum(w in said for w in words) / len(words) >= 0.6
+        agent_said = set(fold(agent_text).split())
+
+        def agent_named(sku: str) -> bool:
+            words = fold(self._product_info(sku).get("name") or "").split()
+            return len(words) >= 2 and sum(w in agent_said for w in words) / len(words) >= 0.6
         targets = ([picked] if picked else [s for s in dict.fromkeys(self._parent_sku(s) for _, s, _ in product_mentions(text)) if named(s)][:2]) or ([focus] if focus else [])
+        if not targets and agent_text:                 # chưa có gì: sản phẩm agent vừa nêu tên ở câu trước (khách đang trả lời câu đó)
+            targets = [s for s in dict.fromkeys(self._parent_sku(s) for _, s, _ in product_mentions(agent_text)) if agent_named(s)][:1]
         targets = [self._discontinued_named(said, t) or t for t in targets]
         skus = [c["args"]["sku"] for c in stock_done if c.get("name") == "inventory.check" and (c.get("result") or {}).get("in_stock")]      # biến thể khách nêu, còn hàng
         skus += [s for s in targets if s and not self._fetch_variants(s) and s not in skus]
         skus = [s for s in skus if not (precomputed and precomputed.get("sku") in (s, self._parent_sku(s)))]      # lượt đầu cuộc gọi lại: đã tra sẵn
         out: List[Dict[str, Any]] = []
+        for parent in list(dict.fromkeys(self._parent_sku(t) for t in targets if t))[:2]:
+            if precomputed and precomputed.get("sku") in (parent,):
+                continue
+            try:
+                res = self.mcp.execute_tool("catalog.search", {"sku": parent}, caller="HarnessOrchestrator")
+            except Exception:
+                res = None
+            if isinstance(res, dict) and res.get("items") and "error" not in res:
+                out.append({"name": "catalog.search", "tool": "catalog.search", "args": {"sku": parent}, "result": res, "speculative": True})
         phone = {"customer_phone": caller_phone} if caller_phone and not brief.blocker else {}
         have_stock = {c["args"]["sku"] for c in stock_done if c.get("name") == "inventory.check"}
         for sku in skus[:2]:
@@ -1163,6 +1186,24 @@ class HarnessOrchestrator:
                 if isinstance(res, dict) and "error" not in res:
                     out.append({"name": name, "tool": name, "args": vault.redact_args_for_trace(args), "result": vault.mask_value(res, caller_phone), "speculative": True})
         return out
+
+    def _prefetch_hidden_tools(self, text: str, llm_text: str, pre_stock: List[Dict[str, Any]], reader_sku: Optional[str], reading: Any = None) -> set:
+        """F2: tool CHỈ ĐỌC đã chạy trước cho ĐÚNG sản phẩm đang bàn thì không đưa cho LLM ở lượt này. Vẫn đưa (trả set rỗng) khi:
+        khách nhắc sản phẩm KHÁC sản phẩm đã tra, có địa chỉ giao (giá ship), có thể có số lượng/nhiều món (số nhỏ ngoài tên sản phẩm, bộ đọc thấy qty/món thêm)."""
+        spec = [c for c in pre_stock if c.get("speculative")]
+        covered = {self._parent_sku((c.get("args") or {}).get("sku") or "") for c in spec}
+        if not covered:
+            return set()
+        mentioned = {self._parent_sku(s) for _, s, _ in product_mentions(text)} | ({self._parent_sku(reader_sku)} if reader_sku else set())
+        if mentioned - covered or len(mentioned | covered) > 1 or "<ADDR_" in (llm_text or ""):
+            return set()
+        if reading is not None and (getattr(reading, "qty", None) or getattr(reading, "extra_items", None) or getattr(reading, "address", None)):
+            return set()
+        name_words = set(fold(" ".join(self._product_info(p).get("name") or "" for p in covered)).split())
+        if any(re.fullmatch(r"\d{1,2}", w) and w not in name_words for w in fold(text).split()):     # shortcut: số nhỏ có thể là số lượng → không ẩn (an toàn, có thể bỏ lỡ vài lượt)
+            return set()
+        return {name for name in ("catalog.search", "inventory.check", "pricing.get_quote")
+                if all(any(c["name"] == name and self._parent_sku((c.get("args") or {}).get("sku") or "") == p for c in spec) for p in covered)}
 
     def _gate_trace(self, sid: str) -> Optional[List[Dict[str, Any]]]:
         evs = [{k: v for k, v in e.items() if k != "must_contain"} for e in self.order_gate.events(sid)]
@@ -2039,6 +2080,13 @@ class HarnessOrchestrator:
                                  + "; ".join(x for x in facts_now if x) + ". Dùng ĐÚNG các số này, KHÔNG gọi lại pricing.get_quote/inventory.check cho sản phẩm/size/màu này (chỉ gọi lại khi khách đổi sản phẩm, size, màu, số lượng hoặc đưa địa chỉ). "
                                  "Khi nói, GOM tồn kho + giá cuối + ưu đãi + bảo hành vào MỘT câu; chỉ nhắc tối đa 2 thông tin cũ của cuộc trước; không đọc mã SKU.")
         quotes = [c for c in stock_calls or [] if c.get("name") == "pricing.get_quote"]
+        for c in (c for c in stock_calls or [] if c.get("name") == "catalog.search"):
+            item = ((c.get("result") or {}).get("items") or [{}])[0]
+            variants = [{k: v for k, v in x.items() if k != "price_delta_vnd" or v} for x in item.get("variants") or []]
+            context_lines.append(f"Hệ thống ĐÃ chạy TRƯỚC catalog.search THẬT cho {item.get('name')} ({item.get('sku')}): giá niêm yết {item.get('list_price_vnd')}, "
+                                 f"thuộc tính {json.dumps(item.get('attributes') or {}, ensure_ascii=False)}"
+                                 + (f", biến thể {json.dumps(variants, ensure_ascii=False)}" if variants else "")
+                                 + ". KHÔNG gọi lại catalog.search cho sản phẩm này.")
         stock_calls = [c for c in stock_calls or [] if c.get("name") == "inventory.check"]
         if quotes:
             def _q(c):
