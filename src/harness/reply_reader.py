@@ -9,6 +9,7 @@ lớp một ≥ ngưỡng; "none" = không chốt (chỉ để đo). Không qua 
 
 Không có LLM / LLM lỗi → `read_reply` trả None và gate rơi về bộ regex cũ trong order_gate.py (chỉ là đường dự phòng offline, luôn thiên về "chưa đồng ý").
 """
+import inspect
 import logging
 import os
 import re
@@ -22,6 +23,8 @@ logger = logging.getLogger(__name__)
 PAYMENTS = ("COD", "bank", "momo", "zalopay")
 AFFIRMABLE = ("recipient_name", "recipient_phone", "address", "payment")
 GUARDS = ("none", "confidence", "verify")
+# Trần token đầu ra của bộ đọc: bị cắt → LLMUnavailable → coi như không đọc được (không đoán phần thiếu). Chọn theo phân bố đo 13/11 (runs/reader_replay_0113).
+READER_MAX_TOKENS = int(os.environ.get("READER_MAX_TOKENS", "") or 220)   # prompt đầu ra thưa: p50 52, p95 155, p99 188, max 205 trên 150 lời khách thật
 DEFAULT_GUARD = "verify"             # tạm thời: chốt an toàn nhất; chọn chính thức sau khi đo (scripts/eval_consent_guard.py)
 CONFIDENCE_THRESHOLD = 0.85
 NUM_WORDS = {1: "mot", 2: "hai", 3: "ba", 4: "bon", 5: "nam", 6: "sau", 7: "bay", 8: "tam", 9: "chin", 10: "muoi"}   # chữ số đã bỏ dấu (fold)
@@ -74,8 +77,17 @@ NGUYÊN TẮC (áp dụng theo ý nghĩa, không theo từ ngữ cụ thể):
 
 Mọi *_quote PHẢI chép nguyên văn từ lời khách (không sửa, không dịch).
 
-ĐỂ TRẢ LỜI NHANH: chỉ ghi các khóa có giá trị KHÁC mặc định; khóa vắng mặt được hiểu là mặc định (stance "other", order_intent "other", false, null, [] và "" cho mọi khóa còn lại).
-Khi stance là agree/decline thì luôn ghi kèm "stance_quote" và "confidence". Không có gì khác mặc định thì trả {}."""
+ĐẦU RA THƯA (bắt buộc, để trả lời nhanh): CHỈ ghi các khóa có giá trị KHÁC mặc định. KHÔNG BAO GIỜ ghi khóa có giá trị null, false, [], "" hay "other";
+khóa vắng mặt được hiểu là mặc định (stance "other", order_intent "other", false, null, [] và "" cho mọi khóa còn lại). Không ghi "confidence" khi stance là other.
+Khi stance là agree/decline thì luôn ghi kèm "stance_quote" và "confidence". Không có gì khác mặc định thì trả đúng {}.
+Thưa KHÔNG có nghĩa là bỏ sót: mọi khóa có giá trị (đặc biệt product_sku khi khách nhắc/chỉ tới một sản phẩm trong danh sách ứng viên, asks_price_promo, asks_question, affirmed) vẫn PHẢI ghi đủ như khi viết đầy đủ — chỉ bỏ khóa mang giá trị mặc định.
+Viết JSON trên MỘT dòng, không xuống dòng, không thụt lề. Mỗi *_quote là đoạn nguyên văn NGẮN NHẤT đủ làm bằng chứng (thường vài từ), không chép cả câu;
+riêng address_quote / name_quote / qty_quote phải chứa trọn giá trị tương ứng.
+Ví dụ ĐỊNH DẠNG (minh họa, không phải dữ liệu cuộc gọi):
+- "ừ để mình nghĩ thêm đã" → {"stance":"decline","stance_quote":"để mình nghĩ thêm đã","confidence":0.8}
+- "cái này bảo hành mấy năm vậy" → {"asks_question":true}
+- "con quạt A1 đó còn bớt được nữa không em" (ứng viên có "MA-01 — Quạt A1") → {"asks_question":true,"asks_price_promo":true,"price_promo_quote":"còn bớt được nữa không","product_sku":"MA-01","product_quote":"quạt A1"}
+- "ok chốt 2 cái nha, hàng tới mới đưa tiền" → {"stance":"agree","stance_quote":"ok chốt 2 cái nha","confidence":0.9,"order_intent":"commit","intent_quote":"ok chốt 2 cái nha","qty":2,"qty_quote":"2 cái","payment":"COD","payment_quote":"hàng tới mới đưa tiền"}"""
 
 VERIFY_PROMPT = """Bạn là chốt kiểm tra độc lập trước khi tạo đơn hàng. Nhân viên đã đọc lại toàn bộ đơn và xin khách xác nhận. Bạn chỉ trả lời MỘT câu hỏi:
 lời khách có phải là sự cho phép rõ ràng, chủ động, không điều kiện để đặt ĐÚNG đơn vừa đọc lại, ngay bây giờ hay không?
@@ -344,7 +356,9 @@ def read_reply(llm: Any, text: str, last_agent: str = "", waiting: Optional[Dict
         return None
     ctx = f"Câu cuối của nhân viên: {last_agent or '(chưa có)'}\nSản phẩm ứng viên: {[f"{c['sku']} — {c['name']}" for c in (waiting or {}).get('candidates') or []]}\nĐang chờ khách xác nhận: {(waiting or {}).get('to_confirm') or []}; đang chờ khách cung cấp: {(waiting or {}).get('missing') or []}; giai đoạn đơn: {(waiting or {}).get('stage') or 'chưa có đơn'}"
     try:
-        raw, usage = llm.complete_json([{"role": "system", "content": PROMPT}, {"role": "user", "content": f"{ctx}\n\nLời khách: {text}"}])
+        msgs = [{"role": "system", "content": PROMPT}, {"role": "user", "content": f"{ctx}\n\nLời khách: {text}"}]
+        takes_cap = "max_tokens" in inspect.signature(llm.complete_json).parameters      # LLM giả trong test không có tham số này
+        raw, usage = llm.complete_json(msgs, max_tokens=READER_MAX_TOKENS) if takes_cap else llm.complete_json(msgs)
     except Exception as e:                                     # LLMUnavailable, lỗi mạng… → dự phòng regex, không làm hỏng lượt
         logger.warning("[reply_reader] không đọc được bằng LLM (%s) — dùng regex dự phòng", e)
         return None

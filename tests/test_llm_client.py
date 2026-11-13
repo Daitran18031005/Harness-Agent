@@ -487,3 +487,22 @@ class JsonHedgeTest(unittest.TestCase):
         self.assertEqual((data, len(made), c.json_hedged_calls), ({"who": 1}, 2, 1))     # bản sao (nhanh) thắng
         _t.sleep(0.7)                                                                      # bản thua chạy xong → tiền được cộng
         self.assertGreater(c.cost_tracker.cumulative_usd_cost - before, cost["usd_cost"] * 1.5)
+
+
+class JsonTruncationTest(unittest.TestCase):
+    def test_truncated_json_is_unreadable_and_reader_gets_the_cap(self):
+        from src.llm.client import LLMUnavailable
+        from src.harness import reply_reader as RR
+        sent = []
+
+        def create(**kw):
+            sent.append(kw)
+            return NS(usage=NS(prompt_tokens=10, completion_tokens=5, completion_tokens_details=None),
+                      choices=[NS(finish_reason="length", message=NS(content='{"stance":"agr'))])
+        c = LLMClient()
+        c._client = NS(chat=NS(completions=NS(create=create)))
+        c.available = True
+        with self.assertRaises(LLMUnavailable):
+            c.complete_json([{"role": "user", "content": "x"}], max_tokens=5)
+        self.assertIsNone(RR.read_reply(c, "ok lấy luôn", "Anh lấy không ạ?"))          # bị cắt → không đọc được, không đoán
+        self.assertEqual(sent[-1][c._token_param], RR.READER_MAX_TOKENS)

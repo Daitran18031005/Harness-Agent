@@ -257,7 +257,7 @@ class LLMClient:
         return content
 
     def _build_kwargs(self, messages: List[Dict[str, Any]], tools: List[Dict[str, Any]],
-                      stream: bool = True, json_mode: bool = False) -> Dict[str, Any]:
+                      stream: bool = True, json_mode: bool = False, max_tokens: Optional[int] = None) -> Dict[str, Any]:
         """Dựng tham số gọi API, tự BỎ tham số model không hỗ trợ (hồ sơ model + tham số đã học từ lỗi)."""
         kwargs: Dict[str, Any] = {"model": self.model, "messages": messages}
         if stream:
@@ -274,8 +274,9 @@ class LLMClient:
             kwargs["seed"] = self.seed
         if self.reasoning_effort and self.profile.is_reasoning and "reasoning_effort" not in self.dropped_params:
             kwargs["reasoning_effort"] = self.reasoning_effort
-        if self.max_output_tokens is not None:
-            kwargs[self._token_param] = self.max_output_tokens
+        caps = [m for m in (self.max_output_tokens, max_tokens) if m is not None]
+        if caps:
+            kwargs[self._token_param] = min(caps)
         return kwargs
 
     @staticmethod
@@ -297,11 +298,12 @@ class LLMClient:
     def _create_stream(self, messages: List[Dict[str, Any]], tools: List[Dict[str, Any]]):
         return self._create(messages, tools, stream=True)
 
-    def _create(self, messages: List[Dict[str, Any]], tools: List[Dict[str, Any]], stream: bool = True, json_mode: bool = False):
+    def _create(self, messages: List[Dict[str, Any]], tools: List[Dict[str, Any]], stream: bool = True, json_mode: bool = False,
+                max_tokens: Optional[int] = None):
         """Gọi API; nếu API từ chối 1 tham số thì bỏ tham số đó và thử lại (tối đa 4 lần)."""
         for _ in range(4):
             self.cost_tracker.check_cap()                          # trần chi phí cứng: dừng TRƯỚC khi gọi API (không bao giờ vượt quá một vòng)
-            kwargs = self._build_kwargs(messages, tools, stream=stream, json_mode=json_mode)
+            kwargs = self._build_kwargs(messages, tools, stream=stream, json_mode=json_mode, max_tokens=max_tokens)
             try:
                 return self._client.chat.completions.create(**kwargs)
             except Exception as e:
@@ -317,19 +319,19 @@ class LLMClient:
                 raise
         raise LLMUnavailable("Không gọi được API sau khi bỏ các tham số không được hỗ trợ.")
 
-    def _create_json_hedged(self, messages: List[Dict[str, Any]]):
+    def _create_json_hedged(self, messages: List[Dict[str, Any]], max_tokens: Optional[int] = None):
         """Lời gọi JSON (bộ đọc, chốt…) có hedging: chưa xong sau LLM_JSON_HEDGE_MS → gửi MỘT bản sao, lấy bản xong trước (Dean & Barroso 2013).
         Đo 2026-11-13: một lần đọc có p50 1,8 s nhưng p95 6,2 s — đuôi do phía API, không do nội dung. Bản thua chạy nốt (lời gọi non-stream
         không hủy được) và được cộng tiền vào tổng khi xong."""
         if not self.json_hedge_ms or self.json_hedge_ms <= 0:
-            return self._create(messages, [], stream=False, json_mode=True)
+            return self._create(messages, [], stream=False, json_mode=True, max_tokens=max_tokens)
         results: "queue.Queue" = queue.Queue()
         state = {"taken": False}
         lock = threading.Lock()
 
         def run() -> None:
             try:
-                resp, err = self._create(messages, [], stream=False, json_mode=True), None
+                resp, err = self._create(messages, [], stream=False, json_mode=True, max_tokens=max_tokens), None
             except BaseException as e:
                 resp, err = None, e
             with lock:
@@ -360,19 +362,21 @@ class LLMClient:
         self.json_hedged_calls += launched - 1
         return resp
 
-    def complete_json(self, messages: List[Dict[str, Any]]) -> Tuple[Dict[str, Any], Dict[str, Any]]:
+    def complete_json(self, messages: List[Dict[str, Any]], max_tokens: Optional[int] = None) -> Tuple[Dict[str, Any], Dict[str, Any]]:
         """1 lần gọi KHÔNG tool, đầu ra JSON object (dùng cho bộ trích bộ nhớ). Trả về (dict đã parse, chi phí/usage).
         Lỗi mạng/JSON hỏng -> ném LLMUnavailable (caller bỏ qua phần trích LLM, không crash)."""
         if not self.available:
             raise LLMUnavailable("LLM client không khả dụng (thiếu OPENAI_API_KEY hoặc lỗi khởi tạo).")
         t0 = time.perf_counter()
         try:
-            response = self._create_json_hedged(messages)
+            response = self._create_json_hedged(messages, max_tokens)
             usage = getattr(response, "usage", None)
             prompt_t = getattr(usage, "prompt_tokens", 0) or 0
             completion_t = getattr(usage, "completion_tokens", 0) or 0
             details = getattr(usage, "completion_tokens_details", None)
             cost = self.cost_tracker.record_turn(self.model, prompt_t, completion_t)   # đã trả tiền: ghi TRƯỚC khi phân tích (JSON hỏng vẫn tốn tiền)
+            if getattr(response.choices[0], "finish_reason", None) == "length":      # chạm max_tokens: đầu ra bị cắt → coi như không đọc được, không đoán phần thiếu
+                raise LLMUnavailable("complete_json: đầu ra bị cắt ở max_tokens")
             content = response.choices[0].message.content or "{}"
             data = json.loads(content)
         except LLMUnavailable:

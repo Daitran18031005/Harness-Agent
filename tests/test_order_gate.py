@@ -537,3 +537,38 @@ class PromisedTransferTest(GateBase):
         txt, tc, _ = self.turn(NEW_PHONE, "Công ty anh cần giá sỉ cho 50 máy", [], self.REPLY)
         self.assertFalse([c for c in tc if c["name"] == "handoff.transfer"])
         self.assertNotIn("bộ phận phụ trách", txt)
+
+
+class SlowReaderLLM(TurnLLM):
+    """Bộ đọc giả chậm 3 s (complete_json); LLM chính ghi thời điểm từng tool bắt đầu chạy."""
+
+    def __init__(self, delay=3.0):
+        super().__init__()
+        self.delay, self.tool_started = delay, {}
+
+    def complete_json(self, messages):
+        import time
+        time.sleep(self.delay)
+        return {}, {"vnd_cost": 0, "latency_ms": int(self.delay * 1000)}
+
+    def chat_with_tools(self, messages, tool_executor, max_rounds=6, tools_override=None, timing=None):
+        import time
+        def timed(name, args):                              # thời điểm tool CHẠY XONG (gồm cả thời gian chờ bộ đọc bên trong executor)
+            out = tool_executor(name, args)
+            self.tool_started.setdefault(name, time.perf_counter())
+            return out
+        return super().chat_with_tools(messages, timed, max_rounds, tools_override, timing)
+
+
+class ReadOnlyToolsDoNotWaitForReaderTest(GateBase):
+    """Sửa độ trễ 13/11: tool chỉ đọc chạy ngay khi bộ đọc (song song) còn chạy; order.create vẫn chờ kết quả bộ đọc."""
+
+    def test_lookup_runs_before_slow_reader_finishes_and_order_create_waits(self):
+        import time
+        self.llm = SlowReaderLLM()
+        self.orch.llm_client = self.llm
+        t0 = time.perf_counter()
+        self.turn(NEW_PHONE, "Em ơi giày Urban Classic size 39 màu đen còn không?", [("inventory.check", {"sku": SKU39}), order()])
+        started = {k: v - t0 for k, v in self.llm.tool_started.items()}
+        self.assertLess(started["inventory.check"], 1.5)            # không chờ bộ đọc 3 s
+        self.assertGreaterEqual(started["order.create"], 2.9)       # tool ghi: chờ bộ đọc xong như cũ

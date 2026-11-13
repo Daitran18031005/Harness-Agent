@@ -67,7 +67,8 @@ def reading_needs_nothing(r) -> bool:
                 or r.product_sku or r.qty or r.payment or r.address or r.recipient_name or r.extra_items or r.affirmed)
 
 
-NUDGE_BY_READER = not _off("NUDGE_BY_READER")          # bộ đọc hiểu khách không yêu cầu gì cần tra/làm → bỏ vòng nhắc gọi tool (đo 2026-11-13: 119/2180 lượt mất trọn 1 vòng LLM cho vòng nhắc vô ích)
+READ_ONLY_TOOLS = frozenset({"inventory.check", "pricing.get_quote", "catalog.search", "search_policy"})   # không chờ bộ đọc (xem _tool_executor)
+NUDGE_BY_READER = os.environ.get("NUDGE_BY_READER", "").strip().lower() in ("on", "1", "true")   # MẶC ĐỊNH TẮT (đo tách 13/11: không thấy lợi). bộ đọc hiểu khách không yêu cầu gì cần tra/làm → bỏ vòng nhắc gọi tool (đo 2026-11-13: 119/2180 lượt mất trọn 1 vòng LLM cho vòng nhắc vô ích)
 SPECULATIVE_TOOLS = not _off("SPECULATIVE_TOOLS")     # chạy trước inventory.check/pricing.get_quote cho sản phẩm khách vừa nhắc/đang bàn
 
 
@@ -531,7 +532,9 @@ class HarnessOrchestrator:
                 def _tool_executor(name: str, args: Dict[str, Any]) -> Tuple[Dict[str, Any], Dict[str, Any]]:
                     """Trả về (kết quả đã che PII cho LLM+trace, tham số THỰC SỰ đã chạy để ghi trace).
                     Token PII chỉ được mở cho tool/field trong danh sách cho phép (UNMASK_ALLOWED)."""
-                    if sync_gate():                        # đọc hiểu (song song) báo khách chốt mua → code đã mở order gate: không chạy tool nào của LLM cho lượt này
+                    # Tool CHỈ ĐỌC chạy ngay, không chờ bộ đọc song song (không tác dụng phụ; nếu bộ đọc sau đó mở order gate thì kết quả bị bỏ ở sync_gate()
+                    # sau LLM — đúng nguyên tắc "đoán trước, chỉ commit sau xác nhận" của Speculative Actions). Tool ghi/chuyển máy vẫn chờ như cũ.
+                    if name not in READ_ONLY_TOOLS and sync_gate():   # đọc hiểu báo khách chốt mua → code đã mở order gate: không chạy tool nào của LLM cho lượt này
                         raise _GateTakeover()
                     exec_args = vault.unmask_args(name, args, caller_phone)
                     if name == "search_policy":
