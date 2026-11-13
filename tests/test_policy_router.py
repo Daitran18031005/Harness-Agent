@@ -102,6 +102,13 @@ class PolicyRouterTest(unittest.TestCase):
         self.assertEqual(llm.calls, [])
         self.assertEqual(out, self.baseline())
 
+    def test_policy_no_router_flag_uses_local_retrieval(self):
+        llm = FakeLLM({"files": [DOI_TRA], "answerable": False})
+        with mock.patch.dict(os.environ, {"POLICY_NO_ROUTER": "on", "POLICY_ROUTER": ""}):
+            out = make_service(llm).query_policy(self.Q)
+        self.assertEqual(llm.calls, [])                 # không tốn lời gọi LLM (≈ 1–1,5 s)
+        self.assertEqual(out, self.baseline())
+
     def test_selected_files_without_tfidf_hit_do_not_lose_result(self):
         # router chọn file mà backend không xếp hạng được gì -> thử lại toàn bộ thay vì trả rỗng
         class OnlyDoiTra:
