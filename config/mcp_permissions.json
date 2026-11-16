@@ -163,6 +163,12 @@
     "memory.search": [
       "HarnessOrchestrator"
     ],
+    "memory.prefetch_policy": [
+      "HarnessOrchestrator",
+      "HarnessCore",
+      "EvalRunner",
+      "TestHarness"
+    ],
     "memory.timeline": [
       "StreamlitUI",
       "Operator"

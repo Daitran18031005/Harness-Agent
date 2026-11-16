@@ -338,6 +338,9 @@ class RemoteMemoryService:
     # ------------------------------------------------------------------ Semantic
     last_policy_route: Optional[Dict[str, Any]] = None
 
+    def prefetch_policy(self, query: str, on_date: str = "2026-10-15") -> List[Dict[str, Any]]:
+        return self._call("memory.prefetch_policy", query=query, on_date=on_date)["chunks"]
+
     def query_policy(self, query: str, on_date: str = "2026-10-15") -> List[Dict[str, Any]]:
         res = self._call("memory.query_policy" if self._low else "memory.search", query=query, on_date=on_date)
         self.last_policy_route = res.get("route_info")

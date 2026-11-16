@@ -21,14 +21,14 @@ from src.memory.service import MemoryService
 HIGH_TOOLS = {"memory.get_call_brief", "memory.search", "memory.timeline", "memory.commit_turn", "memory.commit_episode", "memory.delete_customer"}
 LOW_TOOLS = {"memory.open", "memory.close", "memory.begin_turn", "memory.drain_writes", "memory.abort_turn", "memory.working_get", "memory.working_set",
              "memory.profile_set", "memory.profile_get", "memory.facts_by_channel", "memory.profile_versions", "memory.episode_add", "memory.episodes_get",
-             "memory.merge_customer", "memory.query_policy", "memory.identity_links_load", "memory.identity_link_save"}
+             "memory.merge_customer", "memory.query_policy", "memory.prefetch_policy", "memory.identity_links_load", "memory.identity_link_save"}
 EXPECTED_TOOLS = HIGH_TOOLS | LOW_TOOLS | {"memory.admin_audit"}
 ORCH, BRIEF, UI, OPERATOR, IDENT, CORE = "HarnessOrchestrator", "CallBriefBuilder", "StreamlitUI", "Operator", "IdentityResolver", "HarnessCore"
 VALID_ARGS = {"memory.begin_turn": {"source": "x#turn1"}, "memory.working_get": {"session_id": "S"}, "memory.working_set": {"session_id": "S", "fields": {}},
               "memory.profile_set": {"customer_id": "Z", "key": "k", "value": 1}, "memory.profile_get": {"customer_id": "C1"},
               "memory.facts_by_channel": {"customer_id": "C1"}, "memory.profile_versions": {"customer_id": "C1"},
               "memory.episode_add": {"customer_id": "Z", "episode": {}}, "memory.episodes_get": {"customer_id": "C1"},
-              "memory.merge_customer": {"src_id": "A", "dst_id": "A"}, "memory.query_policy": {"query": "đổi trả"},
+              "memory.merge_customer": {"src_id": "A", "dst_id": "A"}, "memory.query_policy": {"query": "đổi trả"}, "memory.prefetch_policy": {"query": "đổi trả"},
               "memory.identity_link_save": {"contact_hash": "h", "master_id": "m"}, "memory.get_call_brief": {"customer_id": "C1"},
               "memory.search": {"query": "đổi trả"}, "memory.timeline": {"customer_id": "C1"}, "memory.commit_turn": {"ops": []},
               "memory.commit_episode": {"customer_id": "Z", "episode": {}}, "memory.delete_customer": {"customer_id": "NOBODY"}}

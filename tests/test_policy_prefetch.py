@@ -41,3 +41,13 @@ class PolicyPrefetchTest(unittest.TestCase):
         f2 = Future(); f2.set_result([{"chunk_id": "[VC-01]", "score": 0.3, "content": "y"}])
         self.assertEqual(O._prefetched_policy(f2, "q"), [])
         self.assertEqual(O._prefetched_policy(Future(), "q"), [])      # chưa xong trong thời gian chờ → bỏ
+
+
+class PolicyPrefetchRemoteTest(unittest.TestCase):
+    def test_remote_memory_exposes_prefetch(self):
+        """17/11: run_eval chạy bộ nhớ qua MCP (mcp-memory); thiếu tool này thì tra trước bị bỏ qua mà không báo (đo ab_polprefetch_1117: 0 lượt)."""
+        from src.memory.remote import create_memory_service
+        base = create_memory_service(enable_persistence=False, transport="inproc", caller="EvalRunner")
+        for mem in (base, base.as_caller("HarnessOrchestrator")):
+            self.assertTrue(hasattr(mem, "prefetch_policy"))
+            self.assertIsInstance(mem.prefetch_policy("đổi trả trong bao lâu", "2026-10-15"), list)      # backend mặc định không chấm điểm → [] nhưng không lỗi quyền
