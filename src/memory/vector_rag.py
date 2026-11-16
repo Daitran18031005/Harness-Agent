@@ -110,6 +110,7 @@ class HybridBackend(VectorBackend):
 
 
 _QWEN = {}      # model nạp một lần mỗi tiến trình
+_EMB_CACHE = {}  # vector tài liệu theo nội dung, dùng chung mọi kho chính sách trong tiến trình (kho được tạo lại mỗi cuộc gọi)
 
 
 def _qwen(name: str):
@@ -129,7 +130,7 @@ class QwenEmbedBackend(VectorBackend):
     INSTRUCT = "Instruct: Given a customer's question to an e-commerce call center, retrieve policy passages that answer it\nQuery:"
 
     def __init__(self):
-        self._cache = {}
+        self._cache = _EMB_CACHE
 
     def _embed(self, texts: List[str]):
         import torch
