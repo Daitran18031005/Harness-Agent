@@ -652,3 +652,19 @@ class PrefetchNamedVariantsTest(GateBase):
         cat = self.orch.mcp.execute_tool("catalog.search", {"sku": "SKU-JK-WND"}, caller="HarnessOrchestrator")
         pre = [{"name": "catalog.search", "args": {"sku": "SKU-JK-WND"}, "result": cat, "speculative": True}]
         self.assertEqual(self.orch._prefetch_named_variants(["Áo khoác gió Windbreak chống mưa được không em"], pre, SimpleNamespace(blocker=None), None, "2026-10-15", PiiVault()), [])
+
+
+class PrefetchAgentNamedTest(GateBase):
+    def _look(self, agent):
+        from types import SimpleNamespace
+        from src.privacy.pii_vault import PiiVault
+        return {c["args"]["sku"] for c in self.orch._speculative_lookups("Chương trình thu cũ đổi mới giảm được bao nhiêu tiền vậy em?", None, [], None,
+                                                                        SimpleNamespace(blocker=None), None, "2026-10-15", PiiVault(), agent_text=agent)
+                if c["name"] == "catalog.search"}
+
+    def test_agent_names_two_products_no_guess(self):
+        """SC-GEN-13 (16/11): agent nhắc máy cũ khách đã mua (AirPure X) trước máy định đổi (AirPure Pro) → không tra trước theo sản phẩm nhắc đầu."""
+        self.assertEqual(self._look("Dạ chị đã mua Máy lọc không khí AirPure X, nay nâng cấp lên Máy lọc không khí AirPure Pro được trừ 400.000đ ạ"), set())
+
+    def test_agent_names_one_product_still_prefetched(self):
+        self.assertEqual(self._look("Dạ Máy lọc không khí AirPure Pro đang có ưu đãi thu cũ đổi mới ạ"), {"SKU-AP-PRO"})

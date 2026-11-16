@@ -1195,7 +1195,8 @@ class HarnessOrchestrator:
         said_names = list(dict.fromkeys(sorted(full, key=lambda s: -len(self._product_info(s).get("name") or "")) + alias))[:2]
         targets = list(dict.fromkeys(said_names + ([picked] if picked else []))) or ([focus] if focus else [])
         if not targets and agent_text:                 # chưa có gì: sản phẩm agent vừa nêu tên ở câu trước (khách đang trả lời câu đó)
-            targets = [s for s in dict.fromkeys(self._parent_sku(s) for _, s, _ in product_mentions(agent_text)) if agent_named(s)][:1]
+            named_by_agent = [s for s in dict.fromkeys(self._parent_sku(s) for _, s, _ in product_mentions(agent_text)) if agent_named(s)]
+            targets = named_by_agent if len(named_by_agent) == 1 else []      # agent nêu ≥ 2 sản phẩm (SC-GEN-13: máy cũ đã mua + máy định đổi) → không đoán, để LLM tự tra
         targets = [self._discontinued_named(said, t) or t for t in targets]
         skus = [c["args"]["sku"] for c in stock_done if c.get("name") == "inventory.check" and (c.get("result") or {}).get("in_stock")]      # biến thể khách nêu, còn hàng
         skus += [s for s in targets if s and not self._fetch_variants(s) and s not in skus]
