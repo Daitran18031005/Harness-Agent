@@ -702,3 +702,32 @@ class PrefetchOrderQuoteTest(GateBase):
     def test_falls_back_to_precomputed_product(self):
         self.assertEqual([c["args"]["sku"] for c in self._quote("Giao về số 15 phố Tây Sơn, quận Đống Đa, Hà Nội nhé", [], {"sku": "SKU-AP-Y"})[1]], ["SKU-AP-Y"])
 
+
+
+class PolicyVersionPromptTest(GateBase):
+    """17/11: hướng dẫn chọn phiên bản chính sách theo ngày mua chỉ có trong system prompt khi POLICY_ALL_VERSIONS bật."""
+
+    class Capture(TurnLLM):
+        def __init__(self):
+            super().__init__()
+            self.systems = []
+
+        def chat_with_tools(self, messages, tool_executor, max_rounds=6, tools_override=None, timing=None):
+            self.systems.append(" ".join(m["content"] for m in messages if m.get("role") == "system" and isinstance(m.get("content"), str)))
+            return super().chat_with_tools(messages, tool_executor, max_rounds, tools_override, timing)
+
+    def _system(self, flag):
+        import os
+        from unittest import mock
+        self.llm = self.Capture()
+        self.orch.llm_client = self.llm
+        with mock.patch.dict(os.environ, {"POLICY_ALL_VERSIONS": "on" if flag else "off"}):
+            self.turn(NEW_PHONE, "Bên em đổi trả trong bao nhiêu ngày vậy?", [])
+        return self.llm.systems[-1]
+
+    def test_on_adds_version_rule(self):
+        self.assertIn("NHIỀU PHIÊN BẢN", self._system(True))
+        self.assertIn("effective_from", self._system(True))
+
+    def test_off_prompt_unchanged(self):
+        self.assertNotIn("effective_from", self._system(False))
