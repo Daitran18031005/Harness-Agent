@@ -58,6 +58,7 @@ def _off(name: str) -> bool:
     return os.environ.get(name, "").strip().lower() in ("off", "0", "false")
 
 
+READER_PARALLEL_DRAFT = os.environ.get("READER_PARALLEL_DRAFT", "").strip().lower() in ("on", "1", "true")   # MẶC ĐỊNH TẮT: có đơn nháp vẫn cho LLM chính chạy song song bộ đọc; begin_turn + driver của gate dời vào sync_gate (quyết định không đổi, chỉ đổi thời điểm)
 PARALLEL_READER = not _off("PARALLEL_READER")          # đọc hiểu lời khách chạy song song với LLM chính (khi không có đơn nháp đang mở)
 def reading_needs_nothing(r) -> bool:
     """Bộ đọc LLM (có trích dẫn) hiểu lời khách KHÔNG chứa yêu cầu nào cần tra cứu/hành động: không hỏi, không hỏi giá/KM, không chốt/đồng ý/từ chối,
@@ -431,18 +432,22 @@ class HarnessOrchestrator:
         # (a) code mở order gate nếu khách chốt mua, (b) câu xin SĐT lần trước; cả hai được xử lý ở `sync_gate()` TRƯỚC khi tool đầu tiên chạy và sau khi LLM trả lời.
         # Có đơn nháp (đang hỏi/đọc lại/chờ đồng ý) thì vẫn đọc TRƯỚC như cũ: bước đó quyết định có gọi LLM hay không.
         reader_future = None
-        if (want_reading and PARALLEL_READER and not self._gate_retry_args.get(working_session_id) and gst.pending_confirm is None and gst.stage in ("collect", "done")
+        no_draft = not self._gate_retry_args.get(working_session_id) and gst.pending_confirm is None and gst.stage in ("collect", "done")
+        deferred_gate = False                         # READER_PARALLEL_DRAFT: có đơn nháp → begin_turn + driver chạy trong sync_gate khi bộ đọc về
+        if (want_reading and PARALLEL_READER and (no_draft or (READER_PARALLEL_DRAFT and not closing))
                 and self.llm_client is not None and getattr(self.llm_client, "available", False) and hasattr(self.llm_client, "complete_json")):
             reader_future = self._pool.submit(read_reply, self.llm_client, turn.llm_text, last_agent, waiting)
             reading = ReplyReading()                  # tạm: "chưa có gì" (không đồng ý/không từ chối) cho tới khi sync_gate() lấy kết quả thật
+            deferred_gate = not no_draft
         else:
             reading = read_reply(self.llm_client, turn.llm_text, last_agent, waiting) if want_reading else None
         self._readings[working_session_id] = reading
         reading_trace = reading_trace_dict(reading, skipped=not (self.order_gate.enabled and buying))
-        self.order_gate.begin_turn(working_session_id, working_state.current_turn, turn.normalized_text, reading)
-        self._note_reader_sku(working_session_id, reading)
-        if self.order_gate.state(working_session_id).abandoned_turn == working_state.current_turn:
-            self._gate_retry_args.pop(working_session_id, None)  # khách từ chối/mặc cả/hẹn gọi lại: hủy đơn nháp, KHÔNG nối câu hỏi địa chỉ/tên nữa
+        if not deferred_gate:
+            self.order_gate.begin_turn(working_session_id, working_state.current_turn, turn.normalized_text, reading)
+            self._note_reader_sku(working_session_id, reading)
+            if self.order_gate.state(working_session_id).abandoned_turn == working_state.current_turn:
+                self._gate_retry_args.pop(working_session_id, None)  # khách từ chối/mặc cả/hẹn gọi lại: hủy đơn nháp, KHÔNG nối câu hỏi địa chỉ/tên nữa
         self._activity[working_session_id] = {"ts": time.monotonic(), "customer_id": customer_id, "call_date": current_date,
                                               "call_name": call_name, "channel": turn.channel.value}
         self._start_facts.setdefault(working_session_id, dict(brief.profile_facts or {}))   # chụp lúc lượt ĐẦU của cuộc gọi
@@ -492,7 +497,7 @@ class HarnessOrchestrator:
         customer_texts_now = self._customer_texts.get(working_session_id, []) + [turn.normalized_text]
         # Order gate chạy BẰNG CODE khi khách đang trả lời câu hỏi/xác nhận/đọc lại đơn của chính gate: LLM không cần (và không được tin) để chuyển tiếp từng bước.
         self._gate_extra_calls[working_session_id] = []
-        driver = (self._closing_driver if closing else self._order_driver)(working_session_id, turn, brief, profile, vault, caller_phone, current_date, write_cache)
+        driver = None if deferred_gate else (self._closing_driver if closing else self._order_driver)(working_session_id, turn, brief, profile, vault, caller_phone, current_date, write_cache)
         gate_open_trace: Dict[str, Any] = {"opened": False, "reason": "not_evaluated"}
         gate_sync: Dict[str, Any] = {"done": reader_future is None, "lock": threading.Lock()}
 
@@ -507,13 +512,22 @@ class HarnessOrchestrator:
                 gate_sync["done"] = True
                 reading = reader_future.result()
                 self._readings[working_session_id] = reading
+                if deferred_gate:                      # có đơn nháp: begin_turn TRƯỚC _note_reader_sku như nhánh tuần tự (sản phẩm bộ đọc ghi theo lượt của gate)
+                    self.order_gate.begin_turn(working_session_id, working_state.current_turn, turn.normalized_text, reading)
                 self._note_reader_sku(working_session_id, reading)
                 reading_trace = reading_trace_dict(reading)
+                if deferred_gate:                      # đúng các bước còn lại của nhánh đọc tuần tự, chỉ chạy muộn hơn (sau khi LLM chính đã bắt đầu)
+                    if self.order_gate.state(working_session_id).abandoned_turn == working_state.current_turn:
+                        self._gate_retry_args.pop(working_session_id, None)
+                    driver = self._order_driver(working_session_id, turn, brief, profile, vault, caller_phone, current_date, write_cache)
+                    if driver is not None and driver.get("reply") is not None:
+                        return True
                 if reading is None:                    # đọc hiểu lỗi/không có LLM: dự phòng regex như nhánh đọc tuần tự
                     self.order_gate.phone_ok_fallback(working_session_id, turn.normalized_text)
                 elif "recipient_phone" in reading.affirmed:
                     self.order_gate.state(working_session_id).phone_ok = True
-                driver, gate_open_trace = self._maybe_open_gate(working_session_id, turn, brief, profile, vault, caller_phone, current_date, reading, customer_texts_now)
+                if driver is None:                    # như nhánh tuần tự: chỉ mở gate khi bộ điều khiển đơn nháp không nhận lượt (defer phải còn cho _driver_followup)
+                    driver, gate_open_trace = self._maybe_open_gate(working_session_id, turn, brief, profile, vault, caller_phone, current_date, reading, customer_texts_now)
             return driver is not None and driver.get("reply") is not None
 
         if driver is None and reader_future is None:

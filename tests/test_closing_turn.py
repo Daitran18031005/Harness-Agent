@@ -608,3 +608,14 @@ class BlockedArgsTraceTest(unittest.TestCase):
         _, _, meta = self._run([self._create(AP_Y, 1, payment=None)])            # gate hỏi thông tin (chặn chờ): cũng ghi
         self.assertEqual(meta["order_gate"][-1]["blocked_args"]["sku"], AP_Y)
         self.assertNotIn("customer_phone", meta["order_gate"][-1]["blocked_args"])
+
+
+class OrderSkuFollowsCustomerDraftParallelTest(OrderSkuFollowsCustomerTest):
+    """READER_PARALLEL_DRAFT (17/11): cùng các ca đơn nháp ở trên, bộ đọc chạy song song LLM chính khi có đơn nháp → quyết định của gate y như nhánh tuần tự."""
+    def setUp(self):
+        from unittest import mock
+        import src.harness.orchestrator as O
+        p = mock.patch.object(O, "READER_PARALLEL_DRAFT", True)
+        p.start()
+        self.addCleanup(p.stop)
+        super().setUp()
