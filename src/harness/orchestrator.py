@@ -1079,7 +1079,7 @@ class HarnessOrchestrator:
             "questions": questions_asked,
             "claims": claims_made,
             "facts_used": list(set(facts_used)),
-            "tool_calls": [{**c, "by": c.get("by", "code")} for c in tool_calls_executed],
+            "tool_calls": tool_calls_executed,
             "repeat_questions_rewritten": repeat_rewritten,
             "repeat_questions_dropped": repeat_dropped,
             "order_gate": self._gate_trace(working_session_id),
@@ -1097,6 +1097,8 @@ class HarnessOrchestrator:
                                    "llm_cost": extraction.usage} if extraction else None)
         }
 
+        for c in tool_calls_executed:              # trace: lời gọi không do LLM yêu cầu là của code (tra trước, tra sẵn, gate, chuyển máy do code…)
+            c.setdefault("by", "code")
         return final_response_text, tool_calls_executed, metadata
 
     # ---------------------------------------------------------------- order gate (code chặn order.create)

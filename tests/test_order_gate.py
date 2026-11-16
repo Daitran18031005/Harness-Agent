@@ -673,9 +673,9 @@ class PrefetchAgentNamedTest(GateBase):
 class TraceToolSourceTest(GateBase):
     def test_trace_marks_llm_and_code_calls(self):
         """16/11: trace ghi nguồn từng lời gọi tool — 'llm' (LLM yêu cầu) hay 'code' (tra trước, tra sẵn, gate…)."""
-        _, _, meta = self.turn(NEW_PHONE, "Máy lọc không khí AirPure X bên em còn hàng không em?",
+        _, tc, _ = self.turn(NEW_PHONE, "Máy lọc không khí AirPure X bên em còn hàng không em?",
                                [("order.status", {"customer_phone": "CURRENT_CUSTOMER"})], "Dạ còn hàng ạ.")
-        by = {(c["name"], c.get("speculative", False)): c["by"] for c in meta["tool_calls"]}
+        by = {(c["name"], c.get("speculative", False)): c["by"] for c in tc}
         self.assertEqual(by.get(("order.status", False)), "llm")
         self.assertTrue(all(v == "code" for (n, spec), v in by.items() if spec), by)
 
