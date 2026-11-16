@@ -1,0 +1,1367 @@
+{
+ "description": "Lời gọi search_policy THẬT trong trace m1_final7 (truy vấn do LLM chính viết) + lời khách cùng lượt; gold = đoạn chính sách trả lời đúng, gán tay 16/11 (một người gán). router_top3 = kết quả router trong trace. Trúng = top-3 chứa bất kỳ đoạn gold.",
+ "items": [
+  {
+   "key": "SAMPLE-03/call_2/2",
+   "query": "đổi hàng",
+   "customer_text": "Đổi lên size 40 được không em? Mất phí gì không?",
+   "call_date": "2026-10-15",
+   "router_top3": [
+    "[DT-01]",
+    "[DT-03]",
+    "[CL-01]"
+   ],
+   "gold": [
+    "DT-03"
+   ]
+  },
+  {
+   "key": "SAMPLE-07/call_1/1",
+   "query": "đổi trả",
+   "customer_text": "Bên em cho đổi trả trong 14 ngày đúng không? Chị đọc trên web thấy thế.",
+   "call_date": "2026-10-15",
+   "router_top3": [
+    "[CL-01]",
+    "[DT-01]",
+    "[DT-06]"
+   ],
+   "gold": [
+    "DT-01",
+    "CL-01"
+   ]
+  },
+  {
+   "key": "SAMPLE-07/call_1/2",
+   "query": "phí đổi size",
+   "customer_text": "Thế phí đổi size 20.000 à?",
+   "call_date": "2026-10-15",
+   "router_top3": [
+    "[DT-03]",
+    "[DT-02]",
+    "[CL-01]"
+   ],
+   "gold": [
+    "DT-03"
+   ]
+  },
+  {
+   "key": "SC-TV-04/call_3/1",
+   "query": "quà tặng máy lọc nước RO",
+   "customer_text": "Sáng nay xem TV quảng cáo bên mình bảo mua máy lọc nước RO sẽ tặng kèm bộ lõi lọc thô miễn phí lắp đặt phải không em?",
+   "call_date": "2026-11-09",
+   "router_top3": [
+    "[KM-07]",
+    "[KM-09]",
+    "[FAQ-06]"
+   ],
+   "gold": [
+    "FAQ-14"
+   ]
+  },
+  {
+   "key": "SC-ULTRA-01/call_4/1",
+   "query": "bảo hành",
+   "customer_text": "Bưu tá giao máy tới Nam Định rồi, mở thùng chưa thấy lõi dự phòng bên trong em kiểm tra giùm anh với.",
+   "call_date": "2026-09-22",
+   "router_top3": [
+    "[BH-03]",
+    "[BH-05]",
+    "[CL-04]"
+   ],
+   "gold": [
+    "QT-05"
+   ]
+  },
+  {
+   "key": "SC-GEN-07/call_1/1",
+   "query": "bảo hành",
+   "customer_text": "Em ơi cái máy lọc AirPure X chị mới mua được 12 ngày mà tự nhiên bật không lên nguồn nữa.",
+   "call_date": "2026-10-15",
+   "router_top3": [
+    "[BH-03]",
+    "[BH-05]",
+    "[DT-05]"
+   ],
+   "gold": [
+    "DT-05",
+    "BH-02"
+   ]
+  },
+  {
+   "key": "SC-GEN-07/call_1/1",
+   "query": "đổi trả",
+   "customer_text": "Em ơi cái máy lọc AirPure X chị mới mua được 12 ngày mà tự nhiên bật không lên nguồn nữa.",
+   "call_date": "2026-10-15",
+   "router_top3": [
+    "[CL-01]",
+    "[DT-01]",
+    "[DT-06]"
+   ],
+   "gold": [
+    "DT-05",
+    "BH-02"
+   ]
+  },
+  {
+   "key": "SC-GEN-07/call_1/2",
+   "query": "đổi máy",
+   "customer_text": "Quá 7 ngày rồi thì có được đổi máy khác không em hay chỉ sửa thôi?",
+   "call_date": "2026-10-15",
+   "router_top3": [
+    "[DT-01]",
+    "[DT-06]",
+    "[KM-09]"
+   ],
+   "gold": [
+    "DT-05"
+   ]
+  },
+  {
+   "key": "SC-GEN-07/call_1/2",
+   "query": "bảo hành",
+   "customer_text": "Quá 7 ngày rồi thì có được đổi máy khác không em hay chỉ sửa thôi?",
+   "call_date": "2026-10-15",
+   "router_top3": [
+    "[BH-03]",
+    "[BH-05]",
+    "[DT-05]"
+   ],
+   "gold": [
+    "DT-05"
+   ]
+  },
+  {
+   "key": "SC-GEN-13/call_1/1",
+   "query": "ưu đãi thu cũ đổi mới",
+   "customer_text": "Em ơi chị trước có mua máy AirPure X đời 2024 bên em, giờ muốn nâng cấp lên AirPure Pro thì có ưu đãi thu cũ đổi mới không?",
+   "call_date": "2026-10-15",
+   "router_top3": [
+    "[KM-09]",
+    "[KM-07]",
+    "[FAQ-16]"
+   ],
+   "gold": [
+    "KM-09"
+   ]
+  },
+  {
+   "key": "SC-GEN-15/call_1/2",
+   "query": "phí giao hàng",
+   "customer_text": "Anh ở quận 1 TP.HCM thì phí giao hàng thế nào em?",
+   "call_date": "2026-10-15",
+   "router_top3": [
+    "[VC-07]",
+    "[VC-02]",
+    "[DT-03]"
+   ],
+   "gold": [
+    "VC-02",
+    "VC-01"
+   ]
+  },
+  {
+   "key": "SC-TV-01/call_3/1",
+   "query": "khuyến mãi 11/11",
+   "customer_text": "Tối qua mở VTV thấy bên mình quảng cáo siêu sale 11/11 giảm 15% toàn bộ hàng gia dụng phải không em?",
+   "call_date": "2026-11-11",
+   "router_top3": [
+    "[KM-02]",
+    "[KM-08]",
+    "[FAQ-14]"
+   ],
+   "gold": [
+    "FAQ-14",
+    "KM-01",
+    "KM-02"
+   ]
+  },
+  {
+   "key": "SC-TV-06/call_1/1",
+   "query": "ưu đãi cho khách miền Trung",
+   "customer_text": "Máy lọc nước UF Sunhouse không dùng điện giá 3.011.000 chục đang có ưu đãi gì cho khách miền Trung không?",
+   "call_date": "2026-09-28",
+   "router_top3": [
+    "[QT-04]",
+    "[BH-03]",
+    "[PB-07]"
+   ],
+   "gold": [
+    "KM-08"
+   ]
+  },
+  {
+   "key": "SC-TV-09/call_2/1",
+   "query": "mã giảm sinh nhật",
+   "customer_text": "Chị Trâm bữa hỏi áo phao Warmly đây, giờ đặt có được mã giảm sinh nhật hay miễn giao hàng không em?",
+   "call_date": "2026-10-09",
+   "router_top3": [
+    "[KM-06]",
+    "[KM-05]",
+    "[PB-02]"
+   ],
+   "gold": [
+    "VC-02"
+   ]
+  },
+  {
+   "key": "SC-TV-09/call_2/1",
+   "query": "miễn giao hàng",
+   "customer_text": "Chị Trâm bữa hỏi áo phao Warmly đây, giờ đặt có được mã giảm sinh nhật hay miễn giao hàng không em?",
+   "call_date": "2026-10-09",
+   "router_top3": [
+    "[VC-07]",
+    "[VC-02]",
+    "[DT-03]"
+   ],
+   "gold": [
+    "VC-02"
+   ]
+  },
+  {
+   "key": "SC-GEN-06/call_2/3",
+   "query": "quà tặng túi trữ sữa",
+   "customer_text": "À mà hôm trước em nói có tặng túi trữ sữa, giờ còn không em?",
+   "call_date": "2026-10-15",
+   "router_top3": [
+    "[KM-07]",
+    "[FAQ-11]",
+    "[PB-02]"
+   ],
+   "gold": [
+    "KM-07"
+   ]
+  },
+  {
+   "key": "SC-ULTRA-07/call_4/1",
+   "query": "bảo hành",
+   "customer_text": "Nhận xe rồi mà chỗ lẫy khóa đẩy 2 chiều với tháo đệm Dacco giặt máy sao em chỉ anh với.",
+   "call_date": "2026-10-08",
+   "router_top3": [
+    "[BH-03]",
+    "[BH-05]",
+    "[DT-05]"
+   ],
+   "gold": [
+    "SP-MB-02"
+   ]
+  },
+  {
+   "key": "SC-ULTRA-07/call_4/1",
+   "query": "đổi trả",
+   "customer_text": "Nhận xe rồi mà chỗ lẫy khóa đẩy 2 chiều với tháo đệm Dacco giặt máy sao em chỉ anh với.",
+   "call_date": "2026-10-08",
+   "router_top3": [
+    "[CL-01]",
+    "[DT-01]",
+    "[DT-06]"
+   ],
+   "gold": [
+    "SP-MB-02"
+   ]
+  },
+  {
+   "key": "SC-TV-07/call_1/1",
+   "query": "bảo hành máy lọc nước",
+   "customer_text": "Shop cho chị hỏi máy lọc nước RO Karofi 9 lõi bảo hành ba năm phải không, đặt online có thợ đấu ống nước luôn chưa?",
+   "call_date": "2026-09-24",
+   "router_top3": [
+    "[BH-01]",
+    "[BH-03]",
+    "[CL-04]"
+   ],
+   "gold": [
+    "CL-04",
+    "BH-01"
+   ]
+  },
+  {
+   "key": "SC-TV-07/call_1/1",
+   "query": "đặt hàng online có thợ đấu ống nước",
+   "customer_text": "Shop cho chị hỏi máy lọc nước RO Karofi 9 lõi bảo hành ba năm phải không, đặt online có thợ đấu ống nước luôn chưa?",
+   "call_date": "2026-09-24",
+   "router_top3": [
+    "[FAQ-06]",
+    "[FAQ-05]",
+    "[QT-04]"
+   ],
+   "gold": [
+    "CL-04",
+    "BH-01"
+   ]
+  },
+  {
+   "key": "SC-TV-04/call_3/1",
+   "query": "quảng cáo máy lọc nước RO tặng kèm bộ lõi lọc thô miễn phí lắp đặt",
+   "customer_text": "Sáng nay xem TV quảng cáo bên mình bảo mua máy lọc nước RO sẽ tặng kèm bộ lõi lọc thô miễn phí lắp đặt phải không em?",
+   "call_date": "2026-11-09",
+   "router_top3": [
+    "[FAQ-05]",
+    "[FAQ-06]",
+    "[BH-04]"
+   ],
+   "gold": [
+    "FAQ-14"
+   ]
+  },
+  {
+   "key": "SC-TV-19/call_2/1",
+   "query": "miễn phí giao hàng",
+   "customer_text": "Chị Thúy ở Đà Nẵng hỏi quạt Panasonic bữa trước nè, miền Trung mua số lượng nhiều có miễn giao hàng như miền Nam không?",
+   "call_date": "2026-10-10",
+   "router_top3": [
+    "[VC-02]",
+    "[VC-07]",
+    "[DT-03]"
+   ],
+   "gold": [
+    "VC-02",
+    "KM-08"
+   ]
+  },
+  {
+   "key": "SC-GEN-07/call_1/2",
+   "query": "đổi trả",
+   "customer_text": "Quá 7 ngày rồi thì có được đổi máy khác không em hay chỉ sửa thôi?",
+   "call_date": "2026-10-15",
+   "router_top3": [
+    "[CL-01]",
+    "[DT-01]",
+    "[DT-06]"
+   ],
+   "gold": [
+    "DT-05"
+   ]
+  },
+  {
+   "key": "SC-TV-06/call_1/1",
+   "query": "giao hàng miền Trung",
+   "customer_text": "Máy lọc nước UF Sunhouse không dùng điện giá 3.011.000 chục đang có ưu đãi gì cho khách miền Trung không?",
+   "call_date": "2026-09-28",
+   "router_top3": [
+    "[VC-07]",
+    "[DT-OLD-04]",
+    "[FAQ-15]"
+   ],
+   "gold": [
+    "KM-08"
+   ]
+  },
+  {
+   "key": "SAMPLE-02/call_1/3",
+   "query": "bảo hành",
+   "customer_text": "Thế bảo hành thế nào? chị cân nhắc thêm rồi báo lại.",
+   "call_date": "2026-10-15",
+   "router_top3": [
+    "[BH-03]",
+    "[BH-05]",
+    "[DT-05]"
+   ],
+   "gold": [
+    "BH-01",
+    "BH-02",
+    "BH-03"
+   ]
+  },
+  {
+   "key": "SC-TV-04/call_3/1",
+   "query": "khuyến mãi máy lọc nước RO",
+   "customer_text": "Sáng nay xem TV quảng cáo bên mình bảo mua máy lọc nước RO sẽ tặng kèm bộ lõi lọc thô miễn phí lắp đặt phải không em?",
+   "call_date": "2026-11-09",
+   "router_top3": [
+    "[FAQ-14]",
+    "[FAQ-06]",
+    "[FAQ-05]"
+   ],
+   "gold": [
+    "FAQ-14"
+   ]
+  },
+  {
+   "key": "SC-GEN-07/call_1/3",
+   "query": "đổi máy",
+   "customer_text": "Ok vậy em lên lịch kỹ thuật qua kiểm tra đổi máy mới cho chị nhé.",
+   "call_date": "2026-10-15",
+   "router_top3": [
+    "[KM-09]",
+    "[CL-01]",
+    "[DT-01]"
+   ],
+   "gold": [
+    "DT-05",
+    "BH-03"
+   ]
+  },
+  {
+   "key": "SC-GEN-07/call_1/3",
+   "query": "bảo hành",
+   "customer_text": "Ok vậy em lên lịch kỹ thuật qua kiểm tra đổi máy mới cho chị nhé.",
+   "call_date": "2026-10-15",
+   "router_top3": [
+    "[BH-03]",
+    "[BH-05]",
+    "[DT-05]"
+   ],
+   "gold": [
+    "DT-05",
+    "BH-03"
+   ]
+  },
+  {
+   "key": "SC-GEN-13/call_1/1",
+   "query": "thu cũ đổi mới",
+   "customer_text": "Em ơi chị trước có mua máy AirPure X đời 2024 bên em, giờ muốn nâng cấp lên AirPure Pro thì có ưu đãi thu cũ đổi mới không?",
+   "call_date": "2026-10-15",
+   "router_top3": [
+    "[KM-09]",
+    "[FAQ-16]",
+    "[DT-01]"
+   ],
+   "gold": [
+    "KM-09"
+   ]
+  },
+  {
+   "key": "SC-TV-06/call_1/1",
+   "query": "khuyến mãi cho khách miền Trung",
+   "customer_text": "Máy lọc nước UF Sunhouse không dùng điện giá 3.011.000 chục đang có ưu đãi gì cho khách miền Trung không?",
+   "call_date": "2026-09-28",
+   "router_top3": [
+    "[FAQ-14]",
+    "[CL-02]",
+    "[BH-03]"
+   ],
+   "gold": [
+    "KM-08"
+   ]
+  },
+  {
+   "key": "SC-GEN-13/call_1/2",
+   "query": "thu cũ đổi mới",
+   "customer_text": "Chương trình thu cũ đổi mới giảm được bao nhiêu tiền vậy em?",
+   "call_date": "2026-10-15",
+   "router_top3": [
+    "[KM-09]",
+    "[KM-07]",
+    "[FAQ-16]"
+   ],
+   "gold": [
+    "KM-09"
+   ]
+  },
+  {
+   "key": "SC-TV-09/call_2/2",
+   "query": "miễn phí giao hàng",
+   "customer_text": "Đơn dưới 2.000.000 không miễn giao hàng ngoài Bắc hả? Chán thế thôi chị không đặt nữa.",
+   "call_date": "2026-10-09",
+   "router_top3": [
+    "[VC-07]",
+    "[VC-02]",
+    "[DT-03]"
+   ],
+   "gold": [
+    "VC-02"
+   ]
+  },
+  {
+   "key": "SC-TV-01/call_3/1",
+   "query": "giảm giá 11/11",
+   "customer_text": "Tối qua mở VTV thấy bên mình quảng cáo siêu sale 11/11 giảm 15% toàn bộ hàng gia dụng phải không em?",
+   "call_date": "2026-11-11",
+   "router_top3": [
+    "[KM-06]",
+    "[KM-02]",
+    "[PB-02]"
+   ],
+   "gold": [
+    "FAQ-14",
+    "KM-01",
+    "KM-02"
+   ]
+  },
+  {
+   "key": "SC-ULTRA-01/call_4/1",
+   "query": "đổi trả",
+   "customer_text": "Bưu tá giao máy tới Nam Định rồi, mở thùng chưa thấy lõi dự phòng bên trong em kiểm tra giùm anh với.",
+   "call_date": "2026-09-22",
+   "router_top3": [
+    "[QT-03]",
+    "[CL-01]",
+    "[QT-05]"
+   ],
+   "gold": [
+    "QT-05"
+   ]
+  },
+  {
+   "key": "SC-ULTRA-02/call_3/1",
+   "query": "giảm giá 11/11",
+   "customer_text": "Hôm qua coi tivi thấy sale 11/11 giảm 15% hàng gia dụng đúng hông em?",
+   "call_date": "2026-11-11",
+   "router_top3": [
+    "[KM-06]",
+    "[KM-02]",
+    "[PB-02]"
+   ],
+   "gold": [
+    "FAQ-14",
+    "KM-02"
+   ]
+  },
+  {
+   "key": "SC-ULTRA-02/call_4/1",
+   "query": "bảo hành",
+   "customer_text": "Em ơi máy AirPure X mới nhận hôm qua mà bật số 3 quạt kêu rè rè bất thường quá, cho kỹ thuật check giùm tui.",
+   "call_date": "2026-11-14",
+   "router_top3": [
+    "[BH-03]",
+    "[BH-05]",
+    "[DT-05]"
+   ],
+   "gold": [
+    "QT-05",
+    "DT-05"
+   ]
+  },
+  {
+   "key": "SC-ULTRA-02/call_4/1",
+   "query": "đổi trả",
+   "customer_text": "Em ơi máy AirPure X mới nhận hôm qua mà bật số 3 quạt kêu rè rè bất thường quá, cho kỹ thuật check giùm tui.",
+   "call_date": "2026-11-14",
+   "router_top3": [
+    "[CL-01]",
+    "[DT-01]",
+    "[DT-06]"
+   ],
+   "gold": [
+    "QT-05",
+    "DT-05"
+   ]
+  },
+  {
+   "key": "SC-ULTRA-11/call_3/1",
+   "query": "bảo hành",
+   "customer_text": "Sao sạc đầy mà hút hai cữ mức mạnh nhất đã hết sạch pin rồi em, pin có bị lỗi gì hông?",
+   "call_date": "2026-10-20",
+   "router_top3": [
+    "[BH-03]",
+    "[BH-05]",
+    "[DT-05]"
+   ],
+   "gold": [
+    "BH-02",
+    "SP-MB-01"
+   ]
+  },
+  {
+   "key": "SC-ULTRA-11/call_3/1",
+   "query": "đổi trả",
+   "customer_text": "Sao sạc đầy mà hút hai cữ mức mạnh nhất đã hết sạch pin rồi em, pin có bị lỗi gì hông?",
+   "call_date": "2026-10-20",
+   "router_top3": [
+    "[CL-01]",
+    "[DT-01]",
+    "[DT-06]"
+   ],
+   "gold": [
+    "BH-02",
+    "SP-MB-01"
+   ]
+  },
+  {
+   "key": "SC-ULTRA-11/call_4/1",
+   "query": "bảo hành động cơ",
+   "customer_text": "Hạ xuống nấc 6 thấy bền hơn hẳn rồi, sạc pin tầm nào rút ra cho đỡ chai mà động cơ bảo hành mấy tháng vậy em?",
+   "call_date": "2026-10-22",
+   "router_top3": [
+    "[BH-05]",
+    "[BH-03]",
+    "[DT-05]"
+   ],
+   "gold": [
+    "BH-01"
+   ]
+  },
+  {
+   "key": "SC-ULTRA-11/call_4/1",
+   "query": "đổi trả",
+   "customer_text": "Hạ xuống nấc 6 thấy bền hơn hẳn rồi, sạc pin tầm nào rút ra cho đỡ chai mà động cơ bảo hành mấy tháng vậy em?",
+   "call_date": "2026-10-22",
+   "router_top3": [
+    "[CL-01]",
+    "[DT-01]",
+    "[DT-06]"
+   ],
+   "gold": [
+    "BH-01"
+   ]
+  },
+  {
+   "key": "TEST-02/call_1/2",
+   "query": "mã giảm giá",
+   "customer_text": "Hiện tại có mã giảm giá nào không shop?",
+   "call_date": "2026-10-15",
+   "router_top3": [
+    "[KM-06]",
+    "[KM-01]",
+    "[PB-02]"
+   ],
+   "gold": [
+    "FAQ-14"
+   ]
+  },
+  {
+   "key": "TEST-144/call_2/1",
+   "query": "đổi hàng",
+   "customer_text": "Áo phao lông vũ Warmly cỡ S mặc hơi chật vai, cho Kiên chuyển đơn qua cỡ L màu navy nhé, mới nhận 2 hôm đổi lần đầu không tốn phí vận chuyển phải không?",
+   "call_date": "2026-10-15",
+   "router_top3": [
+    "[DT-01]",
+    "[DT-03]",
+    "[CL-01]"
+   ],
+   "gold": [
+    "DT-03"
+   ]
+  },
+  {
+   "key": "TEST-193/call_1/1",
+   "query": "đổi trả",
+   "customer_text": "Anh Sơn coi bài viết cũ ghi Tất thể thao RunLite (3 đôi) hưởng hạn đổi tới 14 hôm, phí đổi size thu hai chục nghìn mà sao nghe bạn bảo đổi rồi?",
+   "call_date": "2026-10-15",
+   "router_top3": [
+    "[CL-01]",
+    "[DT-01]",
+    "[DT-06]"
+   ],
+   "gold": [
+    "DT-01",
+    "DT-03",
+    "CL-01"
+   ]
+  },
+  {
+   "key": "TEST-193/call_1/1",
+   "query": "bảo hành",
+   "customer_text": "Anh Sơn coi bài viết cũ ghi Tất thể thao RunLite (3 đôi) hưởng hạn đổi tới 14 hôm, phí đổi size thu hai chục nghìn mà sao nghe bạn bảo đổi rồi?",
+   "call_date": "2026-10-15",
+   "router_top3": [
+    "[BH-03]",
+    "[BH-05]",
+    "[DT-05]"
+   ],
+   "gold": [
+    "DT-01",
+    "DT-03",
+    "CL-01"
+   ]
+  },
+  {
+   "key": "TEST-79/call_2/1",
+   "query": "PUMP-GIFT",
+   "customer_text": "Hôm trước Trung xem Máy hút sữa điện đôi Spectra S1 đợt PUMP-GIFT đây, giờ mua về Nha Trang có giữ suất ưu đãi cũ không em?",
+   "call_date": "2026-10-18",
+   "router_top3": [
+    "[PB-05]"
+   ],
+   "gold": [
+    "KM-01"
+   ]
+  },
+  {
+   "key": "TEST-88/call_1/1",
+   "query": "đổi trả Giày chạy bộ RunLite 1",
+   "customer_text": "Bữa tháng 6 Nga đọc ảnh chụp chính sách của shop bảo Giày chạy bộ RunLite 1 (2025) — NGỪNG BÁN đổi trả thoải mái tới 14 ngày, phí đổi cỡ có 20.000 à?",
+   "call_date": "2026-10-15",
+   "router_top3": [
+    "[SP-SN-02]",
+    "[DT-01]",
+    "[FAQ-09]"
+   ],
+   "gold": [
+    "DT-01",
+    "DT-03",
+    "CL-01"
+   ]
+  },
+  {
+   "key": "TEST-88/call_1/1",
+   "query": "phí đổi cỡ Giày chạy bộ RunLite 1",
+   "customer_text": "Bữa tháng 6 Nga đọc ảnh chụp chính sách của shop bảo Giày chạy bộ RunLite 1 (2025) — NGỪNG BÁN đổi trả thoải mái tới 14 ngày, phí đổi cỡ có 20.000 à?",
+   "call_date": "2026-10-15",
+   "router_top3": [
+    "[SP-SN-02]",
+    "[DT-03]",
+    "[FAQ-09]"
+   ],
+   "gold": [
+    "DT-01",
+    "DT-03",
+    "CL-01"
+   ]
+  },
+  {
+   "key": "SC-ULTRA-12/call_4/1",
+   "query": "đổi bảo hành",
+   "customer_text": "Con cún ở nhà cắn nát cái điều khiển quạt từ xa rồi, lỗi này có được đổi bảo hành miễn phí không?",
+   "call_date": "2026-10-18",
+   "router_top3": [
+    "[BH-03]",
+    "[BH-05]",
+    "[DT-05]"
+   ],
+   "gold": [
+    "DT-06",
+    "BH-02"
+   ]
+  },
+  {
+   "key": "SC-ULTRA-12/call_4/1",
+   "query": "lỗi do nhà sản xuất",
+   "customer_text": "Con cún ở nhà cắn nát cái điều khiển quạt từ xa rồi, lỗi này có được đổi bảo hành miễn phí không?",
+   "call_date": "2026-10-18",
+   "router_top3": [
+    "[DT-05]",
+    "[DT-06]",
+    "[BH-02]"
+   ],
+   "gold": [
+    "DT-06",
+    "BH-02"
+   ]
+  },
+  {
+   "key": "SC-ULTRA-15/call_5/1",
+   "query": "bảo hành xe đẩy",
+   "customer_text": "Chị nhận xe rồi gấp siêu gọn, khung xe đẩy này được bảo hành chính hãng bao nhiêu tháng vậy em?",
+   "call_date": "2026-10-09",
+   "router_top3": [
+    "[BH-03]",
+    "[BH-01]",
+    "[DT-05]"
+   ],
+   "gold": [
+    "BH-01"
+   ]
+  },
+  {
+   "key": "TEST-115/call_2/1",
+   "query": "đổi trả",
+   "customer_text": "Trung mua Giày chạy bộ RunLite 1 gần hai tuần (12 ngày) rồi nhưng cất tủ nay mang ra thử không hợp muốn đổi trả hoàn tiền được không em?",
+   "call_date": "2026-10-15",
+   "router_top3": [
+    "[CL-01]",
+    "[DT-01]",
+    "[DT-06]"
+   ],
+   "gold": [
+    "DT-01",
+    "DT-02"
+   ]
+  },
+  {
+   "key": "TEST-115/call_2/1",
+   "query": "bảo hành",
+   "customer_text": "Trung mua Giày chạy bộ RunLite 1 gần hai tuần (12 ngày) rồi nhưng cất tủ nay mang ra thử không hợp muốn đổi trả hoàn tiền được không em?",
+   "call_date": "2026-10-15",
+   "router_top3": [
+    "[BH-03]",
+    "[BH-05]",
+    "[DT-05]"
+   ],
+   "gold": [
+    "DT-01",
+    "DT-02"
+   ]
+  },
+  {
+   "key": "TEST-131/call_1/1",
+   "query": "bảo hành",
+   "customer_text": "Khổ quá Máy lọc không khí AirPure Mini Trâm đặt mới chạy sang ngày thứ 23 bị lỗi kỹ thuật từ nhà máy thì bên mình xử lý sao?",
+   "call_date": "2026-10-15",
+   "router_top3": [
+    "[BH-03]",
+    "[BH-05]",
+    "[DT-05]"
+   ],
+   "gold": [
+    "DT-05"
+   ]
+  },
+  {
+   "key": "TEST-131/call_1/1",
+   "query": "đổi trả",
+   "customer_text": "Khổ quá Máy lọc không khí AirPure Mini Trâm đặt mới chạy sang ngày thứ 23 bị lỗi kỹ thuật từ nhà máy thì bên mình xử lý sao?",
+   "call_date": "2026-10-15",
+   "router_top3": [
+    "[CL-01]",
+    "[DT-01]",
+    "[DT-06]"
+   ],
+   "gold": [
+    "DT-05"
+   ]
+  },
+  {
+   "key": "TEST-142/call_1/1",
+   "query": "bảo hành van mỏ vịt silicone, màng chặn sữa và dây hơi",
+   "customer_text": "Trung dùng Máy hút sữa điện đôi Medela Swing Maxi ở Nghệ An được vài tháng rồi, muốn hỏi van mỏ vịt silicone, màng chặn sữa và dây hơi bị mòn theo thời gian có nằm trong danh mục bảo hành miễn phí không?",
+   "call_date": "2026-10-15",
+   "router_top3": [
+    "[BH-03]",
+    "[BH-02]",
+    "[SP-MB-03]"
+   ],
+   "gold": [
+    "BH-02"
+   ]
+  },
+  {
+   "key": "TEST-142/call_1/1",
+   "query": "đổi trả sản phẩm lỗi do nhà sản xuất",
+   "customer_text": "Trung dùng Máy hút sữa điện đôi Medela Swing Maxi ở Nghệ An được vài tháng rồi, muốn hỏi van mỏ vịt silicone, màng chặn sữa và dây hơi bị mòn theo thời gian có nằm trong danh mục bảo hành miễn phí không?",
+   "call_date": "2026-10-15",
+   "router_top3": [
+    "[DT-06]",
+    "[DT-05]",
+    "[DT-01]"
+   ],
+   "gold": [
+    "BH-02"
+   ]
+  },
+  {
+   "key": "TEST-156/call_1/1",
+   "query": "bảo hành",
+   "customer_text": "Khổ quá Ghế ngồi ô tô cho bé Chicco Tiến đặt mới chạy sang ngày thứ 17 bị lỗi kỹ thuật từ nhà máy thì bên mình xử lý sao?",
+   "call_date": "2026-10-15",
+   "router_top3": [
+    "[BH-03]",
+    "[BH-05]",
+    "[DT-05]"
+   ],
+   "gold": [
+    "DT-05"
+   ]
+  },
+  {
+   "key": "TEST-156/call_1/1",
+   "query": "đổi trả",
+   "customer_text": "Khổ quá Ghế ngồi ô tô cho bé Chicco Tiến đặt mới chạy sang ngày thứ 17 bị lỗi kỹ thuật từ nhà máy thì bên mình xử lý sao?",
+   "call_date": "2026-10-15",
+   "router_top3": [
+    "[CL-01]",
+    "[DT-01]",
+    "[DT-06]"
+   ],
+   "gold": [
+    "DT-05"
+   ]
+  },
+  {
+   "key": "TEST-161/call_1/1",
+   "query": "đổi trả Nồi chiên không dầu Lock&Lock 4L",
+   "customer_text": "Bữa tháng 6 Duy đọc ảnh chụp chính sách của shop bảo Nồi chiên không dầu Lock&Lock 4L đổi trả thoải mái tới 14 ngày, phí đổi cỡ có 20.000 à?",
+   "call_date": "2026-10-15",
+   "router_top3": [
+    "[SP-AF-01]",
+    "[DT-06]",
+    "[FAQ-07]"
+   ],
+   "gold": [
+    "DT-01",
+    "DT-03",
+    "CL-01"
+   ]
+  },
+  {
+   "key": "TEST-161/call_1/1",
+   "query": "phí đổi cỡ",
+   "customer_text": "Bữa tháng 6 Duy đọc ảnh chụp chính sách của shop bảo Nồi chiên không dầu Lock&Lock 4L đổi trả thoải mái tới 14 ngày, phí đổi cỡ có 20.000 à?",
+   "call_date": "2026-10-15",
+   "router_top3": [
+    "[DT-03]",
+    "[DT-01]",
+    "[CL-01]"
+   ],
+   "gold": [
+    "DT-01",
+    "DT-03",
+    "CL-01"
+   ]
+  },
+  {
+   "key": "TEST-197/call_1/1",
+   "query": "bảo hành",
+   "customer_text": "Alô em, anh Duy mới nhận Xe đẩy gấp gọn Joie Pact xài tới hôm thứ 13 tự dưng gặp trục trặc phần cứng do lỗi xưởng sản xuất.",
+   "call_date": "2026-10-15",
+   "router_top3": [
+    "[BH-03]",
+    "[BH-05]",
+    "[DT-05]"
+   ],
+   "gold": [
+    "DT-05"
+   ]
+  },
+  {
+   "key": "TEST-197/call_1/1",
+   "query": "đổi trả",
+   "customer_text": "Alô em, anh Duy mới nhận Xe đẩy gấp gọn Joie Pact xài tới hôm thứ 13 tự dưng gặp trục trặc phần cứng do lỗi xưởng sản xuất.",
+   "call_date": "2026-10-15",
+   "router_top3": [
+    "[CL-01]",
+    "[DT-01]",
+    "[DT-06]"
+   ],
+   "gold": [
+    "DT-05"
+   ]
+  },
+  {
+   "key": "TEST-20/call_1/1",
+   "query": "đổi trả lỗi do nhà sản xuất",
+   "customer_text": "Em ơi cái máy lọc AirPure X chị mới mua được 12 ngày mà tự nhiên bật không lên nguồn nữa.",
+   "call_date": "2026-10-15",
+   "router_top3": [
+    "[DT-06]",
+    "[DT-01]",
+    "[DT-05]"
+   ],
+   "gold": [
+    "DT-05"
+   ]
+  },
+  {
+   "key": "TEST-202/call_1/1",
+   "query": "bảo hành",
+   "customer_text": "Cho chị Vy thắc mắc chút về Máy tiệt trùng sấy khô Moaz Bebe: phần bộ ống hút silicone, gioăng cao su và núm ti mềm xài lâu bị xuống cấp thì có được hãng đổi bảo hành free không em?",
+   "call_date": "2026-10-15",
+   "router_top3": [
+    "[BH-03]",
+    "[BH-05]",
+    "[DT-05]"
+   ],
+   "gold": [
+    "BH-02"
+   ]
+  },
+  {
+   "key": "TEST-202/call_1/1",
+   "query": "đổi trả",
+   "customer_text": "Cho chị Vy thắc mắc chút về Máy tiệt trùng sấy khô Moaz Bebe: phần bộ ống hút silicone, gioăng cao su và núm ti mềm xài lâu bị xuống cấp thì có được hãng đổi bảo hành free không em?",
+   "call_date": "2026-10-15",
+   "router_top3": [
+    "[CL-01]",
+    "[DT-01]",
+    "[DT-06]"
+   ],
+   "gold": [
+    "BH-02"
+   ]
+  },
+  {
+   "key": "TEST-208/call_2/1",
+   "query": "đổi trả",
+   "customer_text": "Đơn Giày trekking HikePro của Minh mua hôm 8/10 giờ tròn 12 ngày quá mốc 7 ngày mất rồi, anh muốn gửi trả lấy tiền lại được chứ?",
+   "call_date": "2026-10-15",
+   "router_top3": [
+    "[CL-01]",
+    "[DT-01]",
+    "[DT-06]"
+   ],
+   "gold": [
+    "DT-01"
+   ]
+  },
+  {
+   "key": "TEST-219/call_1/1",
+   "query": "NAM-SHIP",
+   "customer_text": "Anh Tiến ngụ ở Vũng Tàu tính mua chiếc Màng lọc thay thế AirPure Pro, đơn nội vùng miền Nam chắc được áp NAM-SHIP0 nghen?",
+   "call_date": "2026-10-15",
+   "router_top3": [
+    "[PB-05]"
+   ],
+   "gold": [
+    "KM-08"
+   ]
+  },
+  {
+   "key": "TEST-32/call_1/1",
+   "query": "freeship",
+   "customer_text": "Em ơi bình sữa Pigeon PPSU 240ml giá 289.000 có được freeship về Hà Nội không em?",
+   "call_date": "2026-10-15",
+   "router_top3": [
+    "[KM-03]",
+    "[VC-02]",
+    "[FAQ-14]"
+   ],
+   "gold": [
+    "VC-02"
+   ]
+  },
+  {
+   "key": "TEST-38/call_1/2",
+   "query": "bảo hành phụ kiện máy hút sữa",
+   "customer_text": "Thế mấy cái phụ kiện như van một chiều với phễu hút có được bảo hành 12 tháng luôn không em?",
+   "call_date": "2026-10-15",
+   "router_top3": [
+    "[BH-01]",
+    "[BH-03]",
+    "[FAQ-11]"
+   ],
+   "gold": [
+    "BH-02"
+   ]
+  },
+  {
+   "key": "TEST-38/call_1/2",
+   "query": "đổi trả phụ kiện máy hút sữa",
+   "customer_text": "Thế mấy cái phụ kiện như van một chiều với phễu hút có được bảo hành 12 tháng luôn không em?",
+   "call_date": "2026-10-15",
+   "router_top3": [
+    "[FAQ-11]",
+    "[DT-02]",
+    "[SP-MB-01]"
+   ],
+   "gold": [
+    "BH-02"
+   ]
+  },
+  {
+   "key": "TEST-44/call_1/2",
+   "query": "combo",
+   "customer_text": "Bên em có gói combo nào giá tốt hơn mua lẻ không em?",
+   "call_date": "2026-10-15",
+   "router_top3": [
+    "[FAQ-18]",
+    "[FAQ-12]",
+    "[SP-MB-02]"
+   ],
+   "gold": [
+    "FAQ-18"
+   ]
+  },
+  {
+   "key": "TEST-50/call_1/1",
+   "query": "bảo hành",
+   "customer_text": "Hôm nay là ngày thứ 16 kể từ lúc Khải nhận Máy lọc không khí Xiaomi Smart 4 Pro mà máy có dấu hiệu lỗi kỹ thuật NSX rõ ràng luôn.",
+   "call_date": "2026-10-15",
+   "router_top3": [
+    "[BH-03]",
+    "[BH-05]",
+    "[DT-05]"
+   ],
+   "gold": [
+    "DT-05"
+   ]
+  },
+  {
+   "key": "TEST-50/call_1/1",
+   "query": "đổi trả",
+   "customer_text": "Hôm nay là ngày thứ 16 kể từ lúc Khải nhận Máy lọc không khí Xiaomi Smart 4 Pro mà máy có dấu hiệu lỗi kỹ thuật NSX rõ ràng luôn.",
+   "call_date": "2026-10-15",
+   "router_top3": [
+    "[CL-01]",
+    "[DT-01]",
+    "[DT-06]"
+   ],
+   "gold": [
+    "DT-05"
+   ]
+  },
+  {
+   "key": "TEST-80/call_1/1",
+   "query": "miễn phí giao hàng Mẹ & Bé",
+   "customer_text": "Một món Túi trữ sữa Sunmum 50 túi mức 119.000đ giao tới Nam Định cho Duy chưa đạt ngưỡng miễn phí giao hàng Mẹ & Bé hả shop?",
+   "call_date": "2026-10-15",
+   "router_top3": [
+    "[VC-02]",
+    "[VC-07]",
+    "[DT-01]"
+   ],
+   "gold": [
+    "VC-02"
+   ]
+  },
+  {
+   "key": "TEST-98/call_2/1",
+   "query": "đổi hàng",
+   "customer_text": "Cho Duy chuyển đơn Giày trekking HikePro qua cỡ 39 màu xam nhé, mới nhận 2 hôm đổi lần đầu không tốn phí vận chuyển phải không?",
+   "call_date": "2026-10-15",
+   "router_top3": [
+    "[DT-01]",
+    "[DT-03]",
+    "[CL-01]"
+   ],
+   "gold": [
+    "DT-03"
+   ]
+  },
+  {
+   "key": "TEST-149/call_1/1",
+   "query": "bảo hành",
+   "customer_text": "Cho anh Khải thắc mắc chút về Nồi chiên không dầu Philips 6.2L: phần giỏ chiên phụ, ron cao su nắp và núm xoay xài lâu bị xuống cấp thì có được hãng đổi bảo hành free không em?",
+   "call_date": "2026-10-15",
+   "router_top3": [
+    "[BH-03]",
+    "[BH-05]",
+    "[DT-05]"
+   ],
+   "gold": [
+    "BH-02"
+   ]
+  },
+  {
+   "key": "TEST-149/call_1/1",
+   "query": "đổi trả",
+   "customer_text": "Cho anh Khải thắc mắc chút về Nồi chiên không dầu Philips 6.2L: phần giỏ chiên phụ, ron cao su nắp và núm xoay xài lâu bị xuống cấp thì có được hãng đổi bảo hành free không em?",
+   "call_date": "2026-10-15",
+   "router_top3": [
+    "[CL-01]",
+    "[DT-01]",
+    "[DT-06]"
+   ],
+   "gold": [
+    "BH-02"
+   ]
+  },
+  {
+   "key": "TEST-19/call_1/1",
+   "query": "đổi hàng",
+   "customer_text": "Anh đọc trên mạng thấy bên em cho đổi hàng trong 14 ngày đúng không?",
+   "call_date": "2026-10-15",
+   "router_top3": [
+    "[DT-01]",
+    "[DT-03]",
+    "[CL-01]"
+   ],
+   "gold": [
+    "DT-01",
+    "CL-01"
+   ]
+  },
+  {
+   "key": "TEST-19/call_1/2",
+   "query": "phí đổi size",
+   "customer_text": "Với lại phí đổi size là 20.000 đồng phải không em?",
+   "call_date": "2026-10-15",
+   "router_top3": [
+    "[DT-03]",
+    "[DT-02]",
+    "[CL-01]"
+   ],
+   "gold": [
+    "DT-03"
+   ]
+  },
+  {
+   "key": "TEST-200/call_1/1",
+   "query": "miễn phí giao hàng miền Nam",
+   "customer_text": "Alo em ơi, Tiến ở Cần Thơ đặt Màng lọc thay thế AirPure X/Y giá 690.000đ có được hưởng miễn phí giao hàng miền Nam không?",
+   "call_date": "2026-10-15",
+   "router_top3": [
+    "[VC-02]",
+    "[VC-07]",
+    "[KM-08]"
+   ],
+   "gold": [
+    "VC-02",
+    "KM-08"
+   ]
+  },
+  {
+   "key": "TEST-217/call_1/1",
+   "query": "bảo hành linh kiện thay thế",
+   "customer_text": "Shop ơi màng lọc HEPA thay định kỳ, dây nguồn và nắp cảm biến của Máy lọc không khí AirPure Y thuộc diện linh kiện thay thế định kỳ hay cũng được bảo hành chung cho Minh như thân sản phẩm?",
+   "call_date": "2026-10-15",
+   "router_top3": [
+    "[BH-04]",
+    "[BH-03]",
+    "[BH-05]"
+   ],
+   "gold": [
+    "BH-04",
+    "BH-02"
+   ]
+  },
+  {
+   "key": "TEST-217/call_1/1",
+   "query": "đổi trả linh kiện thay thế",
+   "customer_text": "Shop ơi màng lọc HEPA thay định kỳ, dây nguồn và nắp cảm biến của Máy lọc không khí AirPure Y thuộc diện linh kiện thay thế định kỳ hay cũng được bảo hành chung cho Minh như thân sản phẩm?",
+   "call_date": "2026-10-15",
+   "router_top3": [
+    "[CL-01]",
+    "[DT-01]",
+    "[BH-04]"
+   ],
+   "gold": [
+    "BH-04",
+    "BH-02"
+   ]
+  },
+  {
+   "key": "TEST-45/call_1/1",
+   "query": "đổi trả bộ lõi lọc thô",
+   "customer_text": "Em ơi anh Bình đây, máy lọc nước Karofi anh dùng được 6 tháng rồi, giờ cần thay bộ 3 lõi lọc thô 1 2 3.",
+   "call_date": "2026-10-15",
+   "router_top3": [
+    "[BH-04]",
+    "[BH-01]",
+    "[SP-WF-02]"
+   ],
+   "gold": [
+    "SP-WF-02",
+    "BH-04"
+   ]
+  },
+  {
+   "key": "TEST-48/call_1/1",
+   "query": "đổi trả",
+   "customer_text": "Trang cũ lưu quy định tháng 6/2026 ghi nhận hỗ trợ đổi trả nửa tháng 14 ngày và thu phí 20.000 cho Combo AirPure Y + 2 màng lọc phải không em?",
+   "call_date": "2026-10-15",
+   "router_top3": [
+    "[CL-01]",
+    "[DT-01]",
+    "[DT-06]"
+   ],
+   "gold": [
+    "DT-01",
+    "DT-03",
+    "CL-01"
+   ]
+  },
+  {
+   "key": "TEST-48/call_1/1",
+   "query": "bảo hành",
+   "customer_text": "Trang cũ lưu quy định tháng 6/2026 ghi nhận hỗ trợ đổi trả nửa tháng 14 ngày và thu phí 20.000 cho Combo AirPure Y + 2 màng lọc phải không em?",
+   "call_date": "2026-10-15",
+   "router_top3": [
+    "[BH-03]",
+    "[BH-05]",
+    "[DT-05]"
+   ],
+   "gold": [
+    "DT-01",
+    "DT-03",
+    "CL-01"
+   ]
+  },
+  {
+   "key": "TEST-57/call_2/1",
+   "query": "đổi trả",
+   "customer_text": "Tiến mua Áo khoác gió Windbreak gần hai tuần (12 ngày) rồi nhưng cất tủ nay mang ra thử không hợp muốn đổi trả hoàn tiền được không em?",
+   "call_date": "2026-10-15",
+   "router_top3": [
+    "[CL-01]",
+    "[DT-01]",
+    "[DT-06]"
+   ],
+   "gold": [
+    "DT-01",
+    "DT-02"
+   ]
+  },
+  {
+   "key": "TEST-57/call_2/1",
+   "query": "bảo hành",
+   "customer_text": "Tiến mua Áo khoác gió Windbreak gần hai tuần (12 ngày) rồi nhưng cất tủ nay mang ra thử không hợp muốn đổi trả hoàn tiền được không em?",
+   "call_date": "2026-10-15",
+   "router_top3": [
+    "[BH-03]",
+    "[BH-05]",
+    "[DT-05]"
+   ],
+   "gold": [
+    "DT-01",
+    "DT-02"
+   ]
+  },
+  {
+   "key": "TEST-75/call_1/1",
+   "query": "bảo hành",
+   "customer_text": "Trong phiếu bảo hành Quạt đứng được inverter Panasonic F-409 gửi về Vũng Tàu, các món như dây cắm điện, ốc khóa cánh và pin điều khiển bị lão hóa thì Tiến có được hỗ trợ thay không tốn phí chứ?",
+   "call_date": "2026-10-15",
+   "router_top3": [
+    "[BH-03]",
+    "[BH-05]",
+    "[DT-05]"
+   ],
+   "gold": [
+    "BH-02"
+   ]
+  },
+  {
+   "key": "TEST-81/call_1/1",
+   "query": "bảo hành van xả thải, ống nước cấp và gioăng cao su",
+   "customer_text": "Trang dùng Máy lọc nước UF Sunhouse ở Cần Thơ được vài tháng rồi, muốn hỏi van xả thải, ống nước cấp và gioăng cao su bị mòn theo thời gian có nằm trong danh mục bảo hành miễn phí không?",
+   "call_date": "2026-10-15",
+   "router_top3": [
+    "[BH-03]",
+    "[BH-01]",
+    "[FAQ-06]"
+   ],
+   "gold": [
+    "BH-02"
+   ]
+  },
+  {
+   "key": "TEST-81/call_1/1",
+   "query": "đổi trả, bảo hành, lỗi do nhà sản xuất",
+   "customer_text": "Trang dùng Máy lọc nước UF Sunhouse ở Cần Thơ được vài tháng rồi, muốn hỏi van xả thải, ống nước cấp và gioăng cao su bị mòn theo thời gian có nằm trong danh mục bảo hành miễn phí không?",
+   "call_date": "2026-10-15",
+   "router_top3": [
+    "[DT-05]",
+    "[BH-02]",
+    "[DT-06]"
+   ],
+   "gold": [
+    "BH-02"
+   ]
+  },
+  {
+   "key": "TEST-84/call_1/1",
+   "query": "miễn cước vận chuyển khu vực phía Nam",
+   "customer_text": "Shop check giùm Tiến xem giao Bộ lõi lọc thay thế RO 1-2-3 (390.000đ) về Vũng Tàu có miễn cước vận chuyển theo ưu đãi khu vực phía Nam không?",
+   "call_date": "2026-10-15",
+   "router_top3": [
+    "[VC-02]",
+    "[VC-04]",
+    "[DT-03]"
+   ],
+   "gold": [
+    "KM-08",
+    "VC-02"
+   ]
+  },
+  {
+   "key": "TEST-87/call_1/1",
+   "query": "bảo hành",
+   "customer_text": "Tình huống của Hùng là dùng Máy lọc không khí AirPure X (bản 2024) — NGỪNG BÁN được 23 hôm bị hỏng do lỗi xuất xưởng không phải rơi vỡ đâu nhé.",
+   "call_date": "2026-10-15",
+   "router_top3": [
+    "[BH-03]",
+    "[BH-05]",
+    "[DT-05]"
+   ],
+   "gold": [
+    "DT-05",
+    "FAQ-16"
+   ]
+  },
+  {
+   "key": "TEST-87/call_1/1",
+   "query": "đổi trả",
+   "customer_text": "Tình huống của Hùng là dùng Máy lọc không khí AirPure X (bản 2024) — NGỪNG BÁN được 23 hôm bị hỏng do lỗi xuất xưởng không phải rơi vỡ đâu nhé.",
+   "call_date": "2026-10-15",
+   "router_top3": [
+    "[CL-01]",
+    "[DT-01]",
+    "[DT-06]"
+   ],
+   "gold": [
+    "DT-05",
+    "FAQ-16"
+   ]
+  }
+ ]
+}
