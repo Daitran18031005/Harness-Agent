@@ -731,3 +731,29 @@ class PolicyVersionPromptTest(GateBase):
 
     def test_off_prompt_unchanged(self):
         self.assertNotIn("effective_from", self._system(False))
+
+
+class LookupBundleTest(GateBase):
+    """LOOKUP_BUNDLE (17/11): catalog.search của LLM tự gắn tồn kho + giá hôm nay cho sản phẩm (≤ 3), biến thể chỉ khi khách nêu đúng một size/màu."""
+
+    def _run(self, text, flag=True):
+        from unittest import mock
+        import src.harness.orchestrator as O
+        with mock.patch.object(O, "LOOKUP_BUNDLE", flag), mock.patch.object(O, "SPECULATIVE_TOOLS", False):
+            _, tc, _ = self.turn(NEW_PHONE, text, [("catalog.search", {"query": "áo khoác gió Windbreak"})], "Dạ còn ạ.")
+        search = next(c for c in tc if c["name"] == "catalog.search" and c.get("by") == "llm")
+        return search, tc
+
+    def test_named_variant_gets_today(self):
+        search, tc = self._run("Áo khoác gió Windbreak size M màu navy còn không em?")
+        item = next(i for i in search["result"]["items"] if i["sku"] == "SKU-JK-WND")
+        self.assertEqual(item["today"]["variant_sku"], "SKU-JK-WND-M-NAVY")
+        self.assertIn(("inventory.check", "SKU-JK-WND-M-NAVY"), {(c["name"], c["args"]["sku"]) for c in tc if c.get("speculative")})
+
+    def test_no_variant_named_no_extra_calls(self):
+        search, tc = self._run("Áo khoác gió Windbreak chống mưa được không em?")
+        self.assertFalse(any("today" in i for i in search["result"]["items"]))
+
+    def test_flag_off_unchanged(self):
+        search, _ = self._run("Áo khoác gió Windbreak size M màu navy còn không em?", flag=False)
+        self.assertFalse(any("today" in i for i in search["result"]["items"]))

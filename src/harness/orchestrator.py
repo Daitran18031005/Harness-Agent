@@ -58,6 +58,7 @@ def _off(name: str) -> bool:
     return os.environ.get(name, "").strip().lower() in ("off", "0", "false")
 
 
+LOOKUP_BUNDLE = os.environ.get("LOOKUP_BUNDLE", "").strip().lower() in ("on", "1", "true")   # MẶC ĐỊNH TẮT: tool gộp — catalog.search (≤ 3 sản phẩm) tự gắn tồn kho + giá hôm nay cho từng sản phẩm/biến thể khách nêu, bớt vòng LLM
 READER_PARALLEL_DRAFT = os.environ.get("READER_PARALLEL_DRAFT", "").strip().lower() in ("on", "1", "true")   # MẶC ĐỊNH TẮT: có đơn nháp vẫn cho LLM chính chạy song song bộ đọc; begin_turn + driver của gate dời vào sync_gate (quyết định không đổi, chỉ đổi thời điểm)
 PARALLEL_READER = not _off("PARALLEL_READER")          # đọc hiểu lời khách chạy song song với LLM chính (khi không có đơn nháp đang mở)
 def reading_needs_nothing(r) -> bool:
@@ -688,13 +689,11 @@ class HarnessOrchestrator:
                                     for v in variants
                                 ]}
 
-                    if name == "catalog.search" and isinstance(result, dict) and len(result.get("items") or []) == 1 and not result["items"][0].get("variants"):
-                        # Tìm ra ĐÚNG MỘT sản phẩm không có biến thể: CODE tra luôn tồn kho + giá hôm nay và gắn vào kết quả, để LLM khỏi tốn thêm một vòng gọi
-                        # inventory.check/pricing.get_quote (trace cho thấy "search > get_quote" là dạng lượt 3 vòng hay gặp nhất). Hai lời gọi này vào trace như tool thật.
-                        one = result["items"][0].get("sku")
+                    def _today(sku: str) -> Dict[str, Any]:
+                        """Tồn kho + giá hôm nay của MỘT SKU do code tra (vào trace như tool thật, đánh dấu speculative)."""
                         today: Dict[str, Any] = {}
-                        for extra_name, extra_args in (("inventory.check", {"sku": one, "on": current_date}),
-                                                       ("pricing.get_quote", {"sku": one, "on": current_date, "qty": 1, **({"customer_phone": caller_phone} if caller_phone and not brief.blocker else {})})):
+                        for extra_name, extra_args in (("inventory.check", {"sku": sku, "on": current_date}),
+                                                       ("pricing.get_quote", {"sku": sku, "on": current_date, "qty": 1, **({"customer_phone": caller_phone} if caller_phone and not brief.blocker else {})})):
                             try:
                                 extra_res = self.mcp.execute_tool(extra_name, extra_args, caller="HarnessOrchestrator")
                             except Exception:
@@ -703,8 +702,28 @@ class HarnessOrchestrator:
                                 pre_stock.append({"name": extra_name, "tool": extra_name, "args": vault.redact_args_for_trace(extra_args), "result": vault.mask_value(extra_res, caller_phone),
                                                   "speculative": True})
                                 today.update({k: extra_res[k] for k in ("in_stock", "qty", "restock_expected", "final_price_vnd", "applied_promos", "expired_promos", "freeship") if k in extra_res})
+                        return today
+                    today_note = "Tồn kho và giá HÔM NAY của sản phẩm này đã tra bằng tool — dùng luôn, KHÔNG gọi lại inventory.check/pricing.get_quote cho nó."
+                    if name == "catalog.search" and isinstance(result, dict) and len(result.get("items") or []) == 1 and not result["items"][0].get("variants"):
+                        # Tìm ra ĐÚNG MỘT sản phẩm không có biến thể: CODE tra luôn tồn kho + giá hôm nay và gắn vào kết quả, để LLM khỏi tốn thêm một vòng gọi
+                        # inventory.check/pricing.get_quote (trace cho thấy "search > get_quote" là dạng lượt 3 vòng hay gặp nhất). Hai lời gọi này vào trace như tool thật.
+                        today = _today(result["items"][0].get("sku"))
                         if today:
-                            result = {**result, "today": {**today, "note": "Tồn kho và giá HÔM NAY của sản phẩm này đã tra bằng tool — dùng luôn, KHÔNG gọi lại inventory.check/pricing.get_quote cho nó."}}
+                            result = {**result, "today": {**today, "note": today_note}}
+                    elif LOOKUP_BUNDLE and name == "catalog.search" and isinstance(result, dict) and 1 <= len(result.get("items") or []) <= 3:
+                        # Tool gộp (17/11): mọi sản phẩm (≤ 3) — không biến thể thì tra luôn; có biến thể thì chỉ khi lời khách nêu đúng MỘT biến thể (khớp size/màu
+                        # theo giá trị trong catalog, như _check_named_variants). Gắn "today" vào TỪNG sản phẩm.
+                        items = []
+                        for it in result["items"]:
+                            variants = it.get("variants") or []
+                            if variants:
+                                named = next((v for v in (self._variants_named_in(self._fetch_variants(it.get("sku")), t) for t in reversed(customer_texts_now)) if v), [])
+                                sku = named[0] if len(named) == 1 else None
+                            else:
+                                sku = it.get("sku")
+                            today = _today(sku) if sku else {}
+                            items.append({**it, "today": {**today, **({"variant_sku": sku} if variants else {}), "note": today_note}} if today else it)
+                        result = {**result, "items": items}
                     if name == "catalog.search" and isinstance(result, dict) and not result.get("items") and not exec_args.get("sku"):
                         result = self._empty_search_fallback(result, exec_args, turn.normalized_text, _focus(), prior_call_log + live_calls, current_date)
                     if dedup_key is not None and "error" not in result:
