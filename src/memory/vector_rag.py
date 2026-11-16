@@ -195,12 +195,17 @@ class QwenRerankBackend(VectorBackend):
         self.first[1].warm(chunks)
 
     def rank(self, query: str, candidates: List["PolicyChunk"], top_k: int = 3) -> List["PolicyChunk"]:
+        ranked = self.rank_scored(query, candidates, top_k)
+        self.last_scores = [sc for sc, _ in ranked]
+        return [c for _, c in ranked]
+
+    def rank_scored(self, query: str, candidates: List["PolicyChunk"], top_k: int = 3) -> List[tuple]:
+        """[(p(yes), đoạn)] giảm dần — dùng cho tra trước chính sách (POLICY_PREFETCH) cần điểm để chọn ngưỡng."""
         import torch
         pool = []
         for part in self.first:
             pool += [c for c in part.rank(query, candidates, top_k=self.N) if c not in pool]
         if not pool:
-            self.last_scores = []
             return []
         tok, model = _qwen("rerank")
         yes, no = tok.convert_tokens_to_ids("yes"), tok.convert_tokens_to_ids("no")
@@ -209,9 +214,7 @@ class QwenRerankBackend(VectorBackend):
             batch = tok(texts, padding=True, truncation=True, max_length=1024, return_tensors="pt").to(model.device)
             logits = model(**batch).logits[:, -1, [no, yes]]
             p = torch.softmax(logits.float(), dim=-1)[:, 1].tolist()
-        ranked = sorted(zip(p, pool), key=lambda x: -x[0])[:top_k]
-        self.last_scores = [s for s, _ in ranked]
-        return [c for _, c in ranked]
+        return sorted(zip(p, pool), key=lambda x: -x[0])[:top_k]
 
 
 class ChromaBackend(VectorBackend):

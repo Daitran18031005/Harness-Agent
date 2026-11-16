@@ -69,6 +69,9 @@ def reading_needs_nothing(r) -> bool:
 
 
 PREFETCH_HIDE_TOOLS = os.environ.get("PREFETCH_HIDE_TOOLS", "").strip().lower() in ("on", "1", "true")   # F2, MẶC ĐỊNH TẮT tới khi đo xong
+POLICY_PREFETCH = os.environ.get("POLICY_PREFETCH", "").strip().lower() in ("on", "1", "true")   # MẶC ĐỊNH TẮT: tra trước chính sách theo lời khách (reranker, song song phần chuẩn bị); đoạn điểm ≥ POLICY_PREFETCH_MIN vào prompt
+POLICY_PREFETCH_MIN = float(os.environ.get("POLICY_PREFETCH_MIN", "0.9"))      # offline 17/11: lượt có nhãn vượt 0,9 → top-3 trúng 15/17
+POLICY_PREFETCH_WAIT_S = float(os.environ.get("POLICY_PREFETCH_WAIT_S", "0.3"))  # chờ tối đa khi dựng prompt; chưa xong thì bỏ, không làm chậm lượt
 POLICY_QUERY_CONTEXT = os.environ.get("POLICY_QUERY_CONTEXT", "").strip().lower() in ("on", "1", "true")   # MẶC ĐỊNH TẮT: search_policy tìm theo từ khóa LLM + lời khách lượt này (đã che PII); nhãn tay 94 truy vấn thật 16/11: reranker 43 % → 71 %
 PREFETCH_ORDER_QUOTE = os.environ.get("PREFETCH_ORDER_QUOTE", "").strip().lower() in ("on", "1", "true")   # MẶC ĐỊNH TẮT: hướng 1 — lời khách có địa chỉ (<ADDR_n>) → code báo giá trước sản phẩm đang bàn KÈM địa chỉ (KM theo vùng, freeship)
 PREFETCH_VARIANTS = os.environ.get("PREFETCH_VARIANTS", "").strip().lower() in ("on", "1", "true")   # MẶC ĐỊNH TẮT: hướng 1 — sản phẩm có biến thể vừa tra trước lượt này + khách nêu size/màu → tra trước tồn kho + giá đúng biến thể
@@ -408,6 +411,8 @@ class HarnessOrchestrator:
         vault = self._vaults.setdefault(working_session_id, PiiVault())
         caller_phone = brief.phone if brief.phone and brief.phone != "UNKNOWN" else None
         turn.llm_text = vault.mask_text(turn.normalized_text, caller_phone)
+        policy_future = (self._pool.submit(self.memory.prefetch_policy, turn.llm_text, current_date)
+                         if POLICY_PREFETCH and turn.llm_text and hasattr(self.memory, "prefetch_policy") else None)
         # HIỂU lời khách (đồng ý / từ chối / xác nhận SĐT / tên / thanh toán) bằng LLM kèm trích dẫn nguyên văn; không có LLM → gate dùng regex dự phòng.
         gst = self.order_gate.state(working_session_id)
         last_agent = next((m["content"] for m in reversed(working_state.messages_in_session) if m.get("role") == "assistant"), "")
@@ -708,6 +713,8 @@ class HarnessOrchestrator:
                                                                   picked=reader_sku, agent_text=last_agent)
                 if PREFETCH_VARIANTS:
                     pre_stock = pre_stock + self._prefetch_named_variants(customer_texts_now, pre_stock, brief, caller_phone, current_date, vault)
+                if policy_future is not None:
+                    pre_stock = pre_stock + self._prefetched_policy(policy_future, turn.llm_text)
                 if PREFETCH_ORDER_QUOTE:
                     pre_stock = pre_stock + self._prefetch_quote_with_address(turn.llm_text, prior_call_log + pre_stock, self._precomp.get(working_session_id), brief, caller_phone, current_date, vault)
                 hidden_tools = self._prefetch_hidden_tools(turn.normalized_text, turn.llm_text, pre_stock, reader_sku, ready) if PREFETCH_HIDE_TOOLS else set()
@@ -1232,6 +1239,16 @@ class HarnessOrchestrator:
                     out.append({"name": name, "tool": name, "args": vault.redact_args_for_trace(args), "result": vault.mask_value(res, caller_phone), "speculative": True})
         return out
 
+    @staticmethod
+    def _prefetched_policy(future: Any, query: str) -> List[Dict[str, Any]]:
+        """Kết quả tra trước chính sách (POLICY_PREFETCH): đợi tối đa POLICY_PREFETCH_WAIT_S, giữ đoạn điểm ≥ POLICY_PREFETCH_MIN; lỗi/chưa xong → không có gì."""
+        try:
+            chunks = future.result(timeout=POLICY_PREFETCH_WAIT_S)
+        except Exception:
+            return []
+        keep = [c for c in chunks or [] if (c.get("score") or 0) >= POLICY_PREFETCH_MIN]
+        return [{"name": "search_policy", "tool": "search_policy", "args": {"query": query}, "result": {"chunks": keep}, "speculative": True}] if keep else []
+
     def _prefetch_quote_with_address(self, llm_text: str, calls: List[Dict[str, Any]], precomputed: Optional[Dict[str, Any]], brief: CallBrief,
                                      caller_phone: Optional[str], on: str, vault: PiiVault) -> List[Dict[str, Any]]:
         """Hướng 1: khách đưa địa chỉ (vault đã che thành <ADDR_n>) → báo giá trước KÈM địa chỉ cho sản phẩm báo giá gần nhất trong cuộc (biến thể đúng như lần báo giá đó),
@@ -1275,7 +1292,7 @@ class HarnessOrchestrator:
     def _prefetch_hidden_tools(self, text: str, llm_text: str, pre_stock: List[Dict[str, Any]], reader_sku: Optional[str], reading: Any = None) -> set:
         """F2: tool CHỈ ĐỌC đã chạy trước cho ĐÚNG sản phẩm đang bàn thì không đưa cho LLM ở lượt này. Vẫn đưa (trả set rỗng) khi:
         khách nhắc sản phẩm KHÁC sản phẩm đã tra, có địa chỉ giao (giá ship), có thể có số lượng/nhiều món (số nhỏ ngoài tên sản phẩm, bộ đọc thấy qty/món thêm)."""
-        spec = [c for c in pre_stock if c.get("speculative")]
+        spec = [c for c in pre_stock if c.get("speculative") and (c.get("args") or {}).get("sku")]      # tra trước chính sách không theo sản phẩm
         covered = {self._parent_sku((c.get("args") or {}).get("sku") or "") for c in spec}
         if not covered:
             return set()
@@ -2182,6 +2199,12 @@ class HarnessOrchestrator:
                                  f"thuộc tính {json.dumps(item.get('attributes') or {}, ensure_ascii=False)}"
                                  + (f", biến thể {json.dumps(variants, ensure_ascii=False)}" if variants else "")
                                  + ". KHÔNG gọi lại catalog.search cho sản phẩm này.")
+        for c in (c for c in stock_calls or [] if c.get("name") == "search_policy"):
+            parts = [f"{x['chunk_id']} ({x.get('doc_name')}" + (f", hiệu lực {x['effective_from']}→{x['effective_to']}" if x.get("effective_from") else "") + f"): {x['content']}"
+                     for x in (c.get("result") or {}).get("chunks") or []]
+            context_lines.append("Hệ thống ĐÃ tra TRƯỚC search_policy THẬT theo lời khách lượt này — " + " || ".join(parts)
+                                 + ". Nếu các đoạn này trả lời đúng điều khách hỏi thì dùng luôn, KHÔNG gọi lại search_policy; không liên quan thì bỏ qua; "
+                                   "cần chính sách khác (hoặc khách hỏi điều chưa có ở đây) thì mới gọi search_policy.")
         stock_calls = [c for c in stock_calls or [] if c.get("name") == "inventory.check"]
         if quotes:
             def _q(c):

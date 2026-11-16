@@ -52,6 +52,18 @@ class SemanticKBStore:
         return [{"chunk_id": c.chunk_id, "doc_name": c.doc_name, "content": c.content, "version": c.version, "access": c.access,
                  **({"effective_from": c.effective_from, "effective_to": c.effective_to} if dated else {})} for c in ranked]
 
+    def prefetch(self, query: str, on_date: str = "2026-10-15", top_k: int = 3) -> List[Dict[str, Any]]:
+        """Tra trước theo lời khách (POLICY_PREFETCH): chỉ khi backend chấm được điểm (reranker); kèm `score`. Không router, không abstain.
+        POLICY_ALL_VERSIONS bật → mọi phiên bản kèm thời gian hiệu lực; không thì chỉ bản đang hiệu lực ngày gọi."""
+        scored = getattr(self.backend, "rank_scored", None)
+        if scored is None or not (query or "").strip():
+            return []
+        visible = [c for c in self.chunks if c.access == "public"]
+        all_versions = os.environ.get("POLICY_ALL_VERSIONS", "").strip().lower() in ("on", "1", "true")
+        cands = visible if all_versions else [c for c in visible if c.effective_from <= on_date <= c.effective_to]
+        ranked = scored(query, cands, top_k)
+        return [{**d, "score": round(sc, 3)} for (sc, _), d in zip(ranked, self._format([c for _, c in ranked], dated=all_versions))]
+
     def search(self, query: str, on_date: str = "2026-10-15", access_level: str = "public",
                top_k: int = 3) -> List[Dict[str, Any]]:
         """2 tầng: router LLM chọn file (+ ngày mua để chọn phiên bản, + abstain), vector backend xếp hạng trong file đã chọn (lai, xem dưới).
