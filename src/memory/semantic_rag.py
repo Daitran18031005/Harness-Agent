@@ -5,6 +5,7 @@ Semantic / KB Memory: Tri thức nghiệp vụ RAG có versioning & access contr
 - Lọc quyền truy cập: Public (được nói với khách) vs Internal (chỉ dùng nội bộ)
 - Chọn tài liệu 2 tầng (policy_router.py): LLM chọn file + ngày mua + abstain, TF-IDF chỉ tìm trong file đã chọn
 """
+import os
 from typing import Dict, Any, List, Optional
 from dataclasses import dataclass, field
 
@@ -47,9 +48,9 @@ class SemanticKBStore:
         return {"chunk_id": "[PB-05]", "doc_name": "", "version": "", "access": "public", "answerable": False,
                 "content": 'Trả lời "hiện em chưa có thông tin về…", ghi nhận câu hỏi, hẹn phản hồi qua kênh khách chọn. Không suy đoán.'}
 
-    def _format(self, ranked: List[PolicyChunk]) -> List[Dict[str, Any]]:
-        return [{"chunk_id": c.chunk_id, "doc_name": c.doc_name, "content": c.content, "version": c.version,
-                 "access": c.access} for c in ranked]
+    def _format(self, ranked: List[PolicyChunk], dated: bool = False) -> List[Dict[str, Any]]:
+        return [{"chunk_id": c.chunk_id, "doc_name": c.doc_name, "content": c.content, "version": c.version, "access": c.access,
+                 **({"effective_from": c.effective_from, "effective_to": c.effective_to} if dated else {})} for c in ranked]
 
     def search(self, query: str, on_date: str = "2026-10-15", access_level: str = "public",
                top_k: int = 3) -> List[Dict[str, Any]]:
@@ -72,6 +73,9 @@ class SemanticKBStore:
         restricted = bool(route and route.files)
         selected = [c for c in by_date if c.doc_name in route.files] if restricted else by_date
         if not restricted:
+            if route is None and os.environ.get("POLICY_ALL_VERSIONS", "").strip().lower() in ("on", "1", "true"):
+                # Không router thì không biết ngày mua: trả cả bản cũ lẫn bản mới kèm thời gian hiệu lực để LLM chính chọn theo ngày khách mua (MẶC ĐỊNH TẮT)
+                return self._format(self.backend.rank(query, visible, top_k=top_k), dated=True)
             return self._format(self.backend.rank(query, by_date, top_k=top_k))
         # Lai: ROUTED_TOP_K kết quả đầu từ file router chọn, phần còn lại bù từ TOÀN BỘ tài liệu đã lọc ngày (bỏ trùng) —
         # router chọn thiếu file thì kết quả đúng vẫn có cơ hội lọt top-k.

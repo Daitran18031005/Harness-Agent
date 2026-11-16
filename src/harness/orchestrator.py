@@ -69,6 +69,7 @@ def reading_needs_nothing(r) -> bool:
 
 
 PREFETCH_HIDE_TOOLS = os.environ.get("PREFETCH_HIDE_TOOLS", "").strip().lower() in ("on", "1", "true")   # F2, MẶC ĐỊNH TẮT tới khi đo xong
+POLICY_QUERY_CONTEXT = os.environ.get("POLICY_QUERY_CONTEXT", "").strip().lower() in ("on", "1", "true")   # MẶC ĐỊNH TẮT: search_policy tìm theo từ khóa LLM + lời khách lượt này (đã che PII); nhãn tay 94 truy vấn thật 16/11: reranker 43 % → 71 %
 PREFETCH_ORDER_QUOTE = os.environ.get("PREFETCH_ORDER_QUOTE", "").strip().lower() in ("on", "1", "true")   # MẶC ĐỊNH TẮT: hướng 1 — lời khách có địa chỉ (<ADDR_n>) → code báo giá trước sản phẩm đang bàn KÈM địa chỉ (KM theo vùng, freeship)
 PREFETCH_VARIANTS = os.environ.get("PREFETCH_VARIANTS", "").strip().lower() in ("on", "1", "true")   # MẶC ĐỊNH TẮT: hướng 1 — sản phẩm có biến thể vừa tra trước lượt này + khách nêu size/màu → tra trước tồn kho + giá đúng biến thể
 PARALLEL_TOOLS = os.environ.get("PARALLEL_TOOLS", "").strip().lower() in ("on", "1", "true")   # MẶC ĐỊNH TẮT: các tool chỉ đọc trong cùng một vòng LLM chạy đồng thời
@@ -549,7 +550,8 @@ class HarnessOrchestrator:
                         raise _GateTakeover()
                     exec_args = vault.unmask_args(name, args, caller_phone)
                     if name == "search_policy":
-                        chunks = self.memory.query_policy(args.get("query", ""), on_date=current_date)
+                        q = args.get("query", "")
+                        chunks = self.memory.query_policy(f"{q} | {turn.llm_text}" if POLICY_QUERY_CONTEXT and turn.llm_text else q, on_date=current_date)
                         self._note_policy_route(working_session_id, llm_client)
                         return {"chunks": chunks}, args
                     if name == "product.shortlist":
