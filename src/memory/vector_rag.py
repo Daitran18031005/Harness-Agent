@@ -113,7 +113,15 @@ _QWEN = {}      # model nạp một lần mỗi tiến trình
 _EMB_CACHE = {}  # vector tài liệu theo nội dung, dùng chung mọi kho chính sách trong tiến trình (kho được tạo lại mỗi cuộc gọi)
 
 
+_QWEN_LOCK = __import__("threading").Lock()   # luồng nạp sẵn và lần tra đầu không nạp cùng một model hai lần
+
+
 def _qwen(name: str):
+    with _QWEN_LOCK:
+        return _qwen_load(name)
+
+
+def _qwen_load(name: str):
     if name not in _QWEN:
         import torch
         from transformers import AutoTokenizer, AutoModel, AutoModelForCausalLM
@@ -131,6 +139,15 @@ class QwenEmbedBackend(VectorBackend):
 
     def __init__(self):
         self._cache = _EMB_CACHE
+
+    def warm(self, chunks: List["PolicyChunk"]) -> None:
+        """Nạp model và tính sẵn vector tài liệu ở luồng nền (lần tra đầu từng mất 21–29 s); lỗi thì thôi, lần tra đầu tự nạp như cũ."""
+        def run():
+            try:
+                self.scores("khởi động", list(chunks))
+            except Exception as e:
+                logger.warning("[RAG] nạp sẵn embedding lỗi (%s)", e)
+        __import__("threading").Thread(target=run, daemon=True).start()
 
     def _embed(self, texts: List[str]):
         import torch
@@ -166,6 +183,16 @@ class QwenRerankBackend(VectorBackend):
     def __init__(self):
         self.first = [Bm25Backend(), QwenEmbedBackend()]
         self.last_scores: List[float] = []
+
+    def warm(self, chunks: List["PolicyChunk"]) -> None:
+        """Nạp sẵn reranker + embedding và vector tài liệu ở luồng nền."""
+        def run():
+            try:
+                _qwen("rerank")
+            except Exception as e:
+                logger.warning("[RAG] nạp sẵn reranker lỗi (%s)", e)
+        __import__("threading").Thread(target=run, daemon=True).start()
+        self.first[1].warm(chunks)
 
     def rank(self, query: str, candidates: List["PolicyChunk"], top_k: int = 3) -> List["PolicyChunk"]:
         import torch
