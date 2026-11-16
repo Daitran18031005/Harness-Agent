@@ -63,6 +63,52 @@ class TfidfBackend(VectorBackend):
         return [c for score, c in ranked[:top_k] if score > 0]
 
 
+class Bm25Backend(VectorBackend):
+    """BM25 trên từ đã bỏ dấu (khách/teencode không dấu vẫn khớp) + cặp từ liền nhau. Thuần Python, không tải model."""
+
+    def __init__(self, k1: float = 1.5, b: float = 0.75):
+        self.k1, self.b = k1, b
+
+    @staticmethod
+    def _terms(text: str) -> List[str]:
+        import re
+        from src.harness.fact_usage import fold
+        words = re.findall(r"\w+", fold(text))
+        return words + [a + "_" + b for a, b in zip(words, words[1:])]
+
+    def scores(self, query: str, candidates: List["PolicyChunk"]) -> List[float]:
+        import math
+        from collections import Counter
+        docs = [Counter(self._terms(c.content + " " + c.doc_name)) for c in candidates]
+        n = len(docs)
+        avg = sum(sum(d.values()) for d in docs) / max(1, n)
+        df = Counter(t for d in docs for t in d)
+        out = []
+        for d in docs:
+            dl = sum(d.values())
+            out.append(sum(math.log(1 + (n - df[t] + .5) / (df[t] + .5)) * d[t] * (self.k1 + 1) / (d[t] + self.k1 * (1 - self.b + self.b * dl / avg))
+                           for t in set(self._terms(query)) if d[t]))
+        return out
+
+    def rank(self, query: str, candidates: List["PolicyChunk"], top_k: int = 3) -> List["PolicyChunk"]:
+        ranked = sorted(zip(self.scores(query, candidates), candidates), key=lambda x: -x[0])
+        return [c for s, c in ranked[:top_k] if s > 0]
+
+
+class HybridBackend(VectorBackend):
+    """Lai BM25 + TF-IDF char n-gram, gộp bằng Reciprocal Rank Fusion (k=60). VECTOR_BACKEND=hybrid, mặc định tắt."""
+
+    def __init__(self):
+        self.parts = [Bm25Backend(), TfidfBackend()]
+
+    def rank(self, query: str, candidates: List["PolicyChunk"], top_k: int = 3) -> List["PolicyChunk"]:
+        fused = {}
+        for part in self.parts:
+            for i, c in enumerate(part.rank(query, candidates, top_k=len(candidates))):
+                fused[id(c)] = (fused.get(id(c), (0.0, c))[0] + 1 / (60 + i), c)
+        return [c for _, c in sorted(fused.values(), key=lambda x: -x[0])[:top_k]]
+
+
 class ChromaBackend(VectorBackend):
     """Stub ChromaDB + embedding model — chọn qua VECTOR_BACKEND=chroma. Chưa wire sâu theo quyết
     định của người dùng: TF-IDF là backend chính thức hiện tại, đây chỉ chứng minh interface swap được."""
@@ -80,6 +126,11 @@ class ChromaBackend(VectorBackend):
 
 def get_vector_backend() -> VectorBackend:
     choice = os.environ.get("VECTOR_BACKEND", "tfidf").strip().lower()
+    if choice in ("bm25", "hybrid"):
+        try:
+            return Bm25Backend() if choice == "bm25" else HybridBackend()
+        except Exception as e:
+            logger.warning("[RAG] VECTOR_BACKEND=%s unavailable (%s) — falling back to tfidf.", choice, e)
     if choice == "chroma":
         try:
             return ChromaBackend()
