@@ -109,6 +109,83 @@ class HybridBackend(VectorBackend):
         return [c for _, c in sorted(fused.values(), key=lambda x: -x[0])[:top_k]]
 
 
+_QWEN = {}      # model nạp một lần mỗi tiến trình
+
+
+def _qwen(name: str):
+    if name not in _QWEN:
+        import torch
+        from transformers import AutoTokenizer, AutoModel, AutoModelForCausalLM
+        repo = {"emb": "Qwen/Qwen3-Embedding-0.6B", "rerank": "Qwen/Qwen3-Reranker-0.6B"}[name]
+        tok = AutoTokenizer.from_pretrained(repo, padding_side="left")
+        model = (AutoModel if name == "emb" else AutoModelForCausalLM).from_pretrained(repo, dtype=torch.float16 if torch.cuda.is_available() else torch.float32).eval()
+        model = model.to("cuda") if torch.cuda.is_available() else model
+        _QWEN[name] = (tok, model)
+    return _QWEN[name]
+
+
+class QwenEmbedBackend(VectorBackend):
+    """Qwen3-Embedding-0.6B (CPU), last-token pooling; vector tài liệu nhớ theo nội dung. VECTOR_BACKEND=qwen_emb, mặc định tắt."""
+    INSTRUCT = "Instruct: Given a customer's question to an e-commerce call center, retrieve policy passages that answer it\nQuery:"
+
+    def __init__(self):
+        self._cache = {}
+
+    def _embed(self, texts: List[str]):
+        import torch
+        tok, model = _qwen("emb")
+        with torch.no_grad():
+            batch = tok(texts, padding=True, truncation=True, max_length=512, return_tensors="pt").to(model.device)
+            vec = model(**batch).last_hidden_state[:, -1].float().cpu()
+        return torch.nn.functional.normalize(vec, dim=-1)
+
+    def scores(self, query: str, candidates: List["PolicyChunk"]) -> List[float]:
+        import torch
+        todo = [c.content for c in candidates if c.content not in self._cache]
+        for i in range(0, len(todo), 16):
+            for t, v in zip(todo[i:i + 16], self._embed(todo[i:i + 16])):
+                self._cache[t] = v
+        q = self._embed([self.INSTRUCT + query])[0]
+        return (torch.stack([self._cache[c.content] for c in candidates]) @ q).tolist()
+
+    def rank(self, query: str, candidates: List["PolicyChunk"], top_k: int = 3) -> List["PolicyChunk"]:
+        if not candidates:
+            return []
+        return [c for _, c in sorted(zip(self.scores(query, candidates), candidates), key=lambda x: -x[0])[:top_k]]
+
+
+class QwenRerankBackend(VectorBackend):
+    """Ứng viên = hợp BM25 top-N và embedding top-N, rồi Qwen3-Reranker-0.6B chấm p(yes). `last_scores` để chọn ngưỡng từ chối. VECTOR_BACKEND=qwen_rerank."""
+    N = int(os.environ.get("RERANK_POOL_N", "7"))
+    PREFIX = ("<|im_start|>system\nJudge whether the Document meets the requirements based on the Query and the Instruct provided. "
+              "Note that the answer can only be \"yes\" or \"no\".<|im_end|>\n<|im_start|>user\n")
+    SUFFIX = "<|im_end|>\n<|im_start|>assistant\n<think>\n\n</think>\n\n"
+    INSTRUCT = "Given a customer's question to an e-commerce call center, judge whether the policy passage helps answer it"
+
+    def __init__(self):
+        self.first = [Bm25Backend(), QwenEmbedBackend()]
+        self.last_scores: List[float] = []
+
+    def rank(self, query: str, candidates: List["PolicyChunk"], top_k: int = 3) -> List["PolicyChunk"]:
+        import torch
+        pool = []
+        for part in self.first:
+            pool += [c for c in part.rank(query, candidates, top_k=self.N) if c not in pool]
+        if not pool:
+            self.last_scores = []
+            return []
+        tok, model = _qwen("rerank")
+        yes, no = tok.convert_tokens_to_ids("yes"), tok.convert_tokens_to_ids("no")
+        texts = [self.PREFIX + f"<Instruct>: {self.INSTRUCT}\n<Query>: {query}\n<Document>: {c.content}" + self.SUFFIX for c in pool]
+        with torch.no_grad():
+            batch = tok(texts, padding=True, truncation=True, max_length=1024, return_tensors="pt").to(model.device)
+            logits = model(**batch).logits[:, -1, [no, yes]]
+            p = torch.softmax(logits.float(), dim=-1)[:, 1].tolist()
+        ranked = sorted(zip(p, pool), key=lambda x: -x[0])[:top_k]
+        self.last_scores = [s for s, _ in ranked]
+        return [c for _, c in ranked]
+
+
 class ChromaBackend(VectorBackend):
     """Stub ChromaDB + embedding model — chọn qua VECTOR_BACKEND=chroma. Chưa wire sâu theo quyết
     định của người dùng: TF-IDF là backend chính thức hiện tại, đây chỉ chứng minh interface swap được."""
@@ -126,9 +203,9 @@ class ChromaBackend(VectorBackend):
 
 def get_vector_backend() -> VectorBackend:
     choice = os.environ.get("VECTOR_BACKEND", "tfidf").strip().lower()
-    if choice in ("bm25", "hybrid"):
+    if choice in ("bm25", "hybrid", "qwen_emb", "qwen_rerank"):
         try:
-            return Bm25Backend() if choice == "bm25" else HybridBackend()
+            return {"bm25": Bm25Backend, "hybrid": HybridBackend, "qwen_emb": QwenEmbedBackend, "qwen_rerank": QwenRerankBackend}[choice]()
         except Exception as e:
             logger.warning("[RAG] VECTOR_BACKEND=%s unavailable (%s) — falling back to tfidf.", choice, e)
     if choice == "chroma":
