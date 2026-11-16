@@ -69,6 +69,7 @@ def reading_needs_nothing(r) -> bool:
 
 
 PREFETCH_HIDE_TOOLS = os.environ.get("PREFETCH_HIDE_TOOLS", "").strip().lower() in ("on", "1", "true")   # F2, MẶC ĐỊNH TẮT tới khi đo xong
+PREFETCH_VARIANTS = os.environ.get("PREFETCH_VARIANTS", "").strip().lower() in ("on", "1", "true")   # MẶC ĐỊNH TẮT: hướng 1 — sản phẩm có biến thể vừa tra trước lượt này + khách nêu size/màu → tra trước tồn kho + giá đúng biến thể
 PARALLEL_TOOLS = os.environ.get("PARALLEL_TOOLS", "").strip().lower() in ("on", "1", "true")   # MẶC ĐỊNH TẮT: các tool chỉ đọc trong cùng một vòng LLM chạy đồng thời
 EARLY_GATE_TAKEOVER = os.environ.get("EARLY_GATE_TAKEOVER", "").strip().lower() in ("on", "1", "true")   # MẶC ĐỊNH TẮT: bộ đọc song song về trước và code nhận lượt → trả câu của code ngay, hủy LLM chính (không chờ LLM viết xong)
 READ_ONLY_TOOLS = frozenset({"inventory.check", "pricing.get_quote", "catalog.search", "search_policy"})   # không chờ bộ đọc (xem _tool_executor)
@@ -702,6 +703,8 @@ class HarnessOrchestrator:
                 reader_sku = (ready.product_sku if ready is not None else None) or self._reader_product(working_session_id)
                 pre_stock = pre_stock + self._speculative_lookups(turn.normalized_text, self._quoted_focus(prior_call_log), pre_stock, self._precomp.get(working_session_id), brief, caller_phone, current_date, vault,
                                                                   picked=reader_sku, agent_text=last_agent)
+                if PREFETCH_VARIANTS:
+                    pre_stock = pre_stock + self._prefetch_named_variants(customer_texts_now, pre_stock, brief, caller_phone, current_date, vault)
                 hidden_tools = self._prefetch_hidden_tools(turn.normalized_text, turn.llm_text, pre_stock, reader_sku, ready) if PREFETCH_HIDE_TOOLS else set()
                 history = self._trim_history(list(working_state.messages_in_session)[-20:])
                 # Tầng 1 (Dynamic Tool Enum): nếu đã biết sản phẩm cha đang tư vấn, ép tools
@@ -1218,6 +1221,26 @@ class HarnessOrchestrator:
                     continue
                 if isinstance(res, dict) and "error" not in res:
                     out.append({"name": name, "tool": name, "args": vault.redact_args_for_trace(args), "result": vault.mask_value(res, caller_phone), "speculative": True})
+        return out
+
+    def _prefetch_named_variants(self, customer_texts: List[str], pre_stock: List[Dict[str, Any]], brief: CallBrief,
+                                 caller_phone: Optional[str], on: str, vault: PiiVault) -> List[Dict[str, Any]]:
+        """Hướng 1: `_check_named_variants` đầu lượt chỉ thấy sản phẩm đã tra ở lượt TRƯỚC; sản phẩm có biến thể khách gọi tên lần đầu ở lượt này
+        chỉ được tra trước catalog.search, LLM phải tốn một vòng tra tồn kho + giá biến thể (m1_final7: 227/1023 lượt > 3 s chỉ tra lại sản phẩm đã tra trước).
+        Chạy lại cùng bộ khớp size/màu trên catalog.search vừa tra trước, rồi báo giá biến thể còn hàng. Chỉ tool đọc."""
+        stock = [dict(c, speculative=True) for c in self._check_named_variants(customer_texts, None, [c for c in pre_stock if c.get("speculative")], pre_stock, on)]
+        phone = {"customer_phone": caller_phone} if caller_phone and not brief.blocker else {}
+        out = list(stock)
+        for c in stock[:2]:
+            if not (c.get("result") or {}).get("in_stock"):
+                continue
+            args = {"sku": c["args"]["sku"], "on": on, "qty": 1, **phone}
+            try:
+                res = self.mcp.execute_tool("pricing.get_quote", args, caller="HarnessOrchestrator")
+            except Exception:
+                continue
+            if isinstance(res, dict) and "error" not in res:
+                out.append({"name": "pricing.get_quote", "tool": "pricing.get_quote", "args": vault.redact_args_for_trace(args), "result": vault.mask_value(res, caller_phone), "speculative": True})
         return out
 
     def _prefetch_hidden_tools(self, text: str, llm_text: str, pre_stock: List[Dict[str, Any]], reader_sku: Optional[str], reading: Any = None) -> set:

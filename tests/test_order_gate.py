@@ -629,3 +629,24 @@ class PrefetchKeepsNamedProductsTest(GateBase):
                                              SimpleNamespace(blocker=None), None, "2026-10-15", PiiVault(), picked="SKU-AP-X")
         searched = {c["args"]["sku"] for c in out if c["name"] == "catalog.search"}
         self.assertIn("SKU-AP-FLT-X", searched)
+
+
+class PrefetchNamedVariantsTest(GateBase):
+    def test_variant_of_product_prefetched_this_turn_gets_stock_and_quote(self):
+        """Hướng 1 (16/11): sản phẩm có biến thể khách gọi tên lần đầu ở lượt này → tra trước tồn kho + giá đúng size/màu khách nêu."""
+        from types import SimpleNamespace
+        from src.privacy.pii_vault import PiiVault
+        cat = self.orch.mcp.execute_tool("catalog.search", {"sku": "SKU-JK-WND"}, caller="HarnessOrchestrator")
+        pre = [{"name": "catalog.search", "args": {"sku": "SKU-JK-WND"}, "result": cat, "speculative": True}]
+        out = self.orch._prefetch_named_variants(["Lấy Áo khoác gió Windbreak size M màu navy nhé"], pre, SimpleNamespace(blocker=None), None, "2026-10-15", PiiVault())
+        self.assertTrue(all(c.get("speculative") for c in out))
+        self.assertIn(("inventory.check", "SKU-JK-WND-M-NAVY"), {(c["name"], c["args"]["sku"]) for c in out})
+        if any(c["name"] == "inventory.check" and c["result"].get("in_stock") for c in out):
+            self.assertIn(("pricing.get_quote", "SKU-JK-WND-M-NAVY"), {(c["name"], c["args"]["sku"]) for c in out})
+
+    def test_no_size_color_no_extra_calls(self):
+        from types import SimpleNamespace
+        from src.privacy.pii_vault import PiiVault
+        cat = self.orch.mcp.execute_tool("catalog.search", {"sku": "SKU-JK-WND"}, caller="HarnessOrchestrator")
+        pre = [{"name": "catalog.search", "args": {"sku": "SKU-JK-WND"}, "result": cat, "speculative": True}]
+        self.assertEqual(self.orch._prefetch_named_variants(["Áo khoác gió Windbreak chống mưa được không em"], pre, SimpleNamespace(blocker=None), None, "2026-10-15", PiiVault()), [])
