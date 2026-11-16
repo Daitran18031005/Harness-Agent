@@ -141,3 +141,53 @@ Giá theo `config/pricing.yaml`. Trần chi phí cứng luôn bật (`--max-cost
 - Các sửa ở mục 5 (ca 1–6) chưa được đo lại trên cả bộ.
 - Chưa có LLM-judge và chưa có bảng chấm tay 20 lượt.
 - ASR chỉ đo trên 4 file TTS (xem [DATASET.md](DATASET.md)); ngưỡng ≥ 20 file chưa đạt.
+
+## 9. Truy hồi chính sách (RAG, M2): Recall@k và so sánh 6 cách tìm
+
+Tái lập bằng một lệnh, offline trừ router (router gọi LLM thật, lần đo 17/11 tốn 3.155 VND):
+
+```
+python scripts/eval_rag_all.py --router          # bỏ --router thì không gọi LLM
+```
+
+Hệ thống đang nộp dùng **router LLM + TF-IDF**: router đọc mục lục tài liệu, chọn file, ngày mua (phải kèm trích dẫn nguyên văn) và quyết định có trả lời được không; TF-IDF xếp hạng trong file đã chọn. Năm cách còn lại tắt router (`POLICY_NO_ROUTER=on`), chạy cùng đường `SemanticKBStore.search`.
+
+### 9.1. Bộ BTC `rag/qa_labeled.json` (60 câu), chấm bằng `reference_eval.rag_eval`
+
+| Cách tìm | R@3 | R@5 | R@5 câu teencode | multi-hop đủ @5 | từ chối câu nội bộ | từ chối nhầm | ms/lần tra p50 / p95 |
+|---|---|---|---|---|---|---|---|
+| **Router LLM + TF-IDF (đang nộp)** | 81,4 | 86,4 | 67,8 | 25,0 | **60** | 2,1 | 1.315 / 2.108 |
+| TF-IDF | 76,3 | 81,4 | 62,7 | 25,0 | 0 | 0 | 33 / 37 |
+| BM25 (bỏ dấu + cặp từ) | 79,7 | 86,4 | **84,7** | 66,7 | 0 | 0 | **8 / 9** |
+| Lai BM25 + TF-IDF (RRF) | 79,7 | 81,4 | 76,3 | 50,0 | 0 | 0 | 40 / 49 |
+| Qwen3-Embedding-0.6B | 79,7 | 86,4 | 69,5 | 58,3 | 0 | 0 | 55 / 68 |
+| Qwen3-Reranker-0.6B (ứng viên BM25 ∪ embedding) | **89,8** | **93,2** | 81,4 | **83,3** | 0 | 0 | 319 / 608 (GPU) |
+
+Không cách nào từ chối được câu ngoài tài liệu ở bước truy hồi (abstain unanswerable = 0 với cả router); việc từ chối do prompt của LLM chính (quy tắc PB-05). Tài liệu nội bộ bị lọc theo quyền truy cập trước khi tìm ở mọi cách, nên "từ chối 0" không có nghĩa là lộ thông tin nội bộ.
+
+### 9.2. 94 lời gọi `search_policy` thật trong trace (59 tình huống, nhãn tay), trúng = top-3 chứa đoạn đúng
+
+Bộ 60 câu dùng câu hỏi đầy đủ; trong hội thoại, LLM chính chỉ gửi từ khóa ngắn ("bảo hành", "đổi trả"). Nhóm gom các truy vấn thật từ trace `m1_final7`, gán tay đoạn chính sách đúng (`evaluation/rag/real_queries.json`), đo 3 dạng truy vấn:
+
+| Cách tìm | Từ khóa LLM viết | Lời khách | Từ khóa + lời khách |
+|---|---|---|---|
+| **Router LLM + TF-IDF** | 51 (54 %) | 44 (47 %) | 48 (51 %) |
+| TF-IDF | 52 (55 %) | 37 (39 %) | 46 (49 %) |
+| BM25 | 42 (45 %) | 39 (41 %) | 37 (39 %) |
+| Lai | 48 (51 %) | 44 (47 %) | 47 (50 %) |
+| Embedding | 29 (31 %) | 52 (55 %) | 55 (59 %) |
+| **Reranker** | 40 (43 %) | 58 (62 %) | **67 (71 %)** |
+
+### 9.3. Phân tích
+
+1. **Mọi cách đều tụt 15–40 điểm từ bộ 60 câu sang truy vấn thật.** Điểm nghẽn là truy vấn LLM chính viết quá ngắn (vd. "đổi trả" cho câu hỏi về máy lỗi sau 5 ngày → thiếu đoạn "đổi mới 30 ngày khi lỗi nhà sản xuất").
+2. **Router không tìm trúng hơn TF-IDF trên truy vấn thật** (54 % vs 55 %), lại tốn ~1,3 s và một lời gọi LLM mỗi lần tra. Giá trị thật của router là hai việc cần hiểu ý mà các cách xếp hạng không làm được: **chọn phiên bản chính sách theo ngày mua** và **từ chối câu hỏi nội bộ** (60 %).
+3. **Truy vấn dài hơn chỉ giúp các cách hiểu ngữ nghĩa:** thêm lời khách làm embedding/reranker tăng ~28 điểm nhưng router/TF-IDF/BM25 giảm 3–6 điểm (từ đệm, teencode làm lệch so khớp từ).
+4. **Teencode:** BM25 gần như không đổi (86,4 → 84,7) vì so khớp trên chữ đã bỏ dấu; router tụt 86,4 → 67,8.
+5. **Đã thử trong hội thoại thật (40 kịch bản × 2 lần mỗi bên):** reranker + lời khách + trả mọi phiên bản (để LLM chính chọn theo `created_on` của đơn) cho TSR trong mức nhiễu so với router (90,8 vs 93,4, ~1 cuộc) — kịch bản chấm theo hành động (tạo đơn, chuyển máy), không chấm đoạn tài liệu, nên tìm trúng hơn không thành điểm TSR.
+6. **Độ trễ reranker:** chạy một tiến trình trên GPU, mỗi lần tra 0,25–0,32 s (N=5 ứng viên), nhanh hơn router; trong lần đo hội thoại 2,3–2,7 s vì hai tiến trình cùng nạp model làm đầy GPU 8 GB. Lượt tra chính sách chỉ ~8 % số lượt nên không đổi được TTFT p95 tổng.
+7. **Đã thử và loại:** từ chối bằng ngưỡng điểm reranker (câu không trả lời được vẫn có điểm cao nhất ~0,9, đè lên vùng câu trả lời được).
+
+**Quyết định cho bản nộp:** giữ router LLM + TF-IDF. Các cờ `VECTOR_BACKEND`, `POLICY_NO_ROUTER`, `POLICY_QUERY_CONTEXT`, `POLICY_ALL_VERSIONS` có sẵn, mặc định tắt.
+
+**Giới hạn:** nhãn 94 truy vấn thật do một người gán, mỗi tình huống chỉ chấm đoạn trả lời chính; reranker/embedding cần GPU; số router 9.1/9.2 là một lần chạy (temperature 0, chưa có độ lệch).
