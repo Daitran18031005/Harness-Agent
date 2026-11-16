@@ -1250,7 +1250,10 @@ class HarnessOrchestrator:
         covered = {self._parent_sku((c.get("args") or {}).get("sku") or "") for c in spec}
         if not covered:
             return set()
-        mentioned = {self._parent_sku(s) for _, s, _ in product_mentions(text)} | ({self._parent_sku(reader_sku)} if reader_sku else set())
+        named = {self._parent_sku(s) for _, s, _ in product_mentions(text)}
+        if not named or covered - named:          # khách KHÔNG gọi tên đúng sản phẩm đã tra trong lượt này → đưa đủ tool (SC-GEN-13 16/11: tra trước nhầm AirPure X, F2 ẩn tool, LLM không tra được AirPure Pro)
+            return set()
+        mentioned = named | ({self._parent_sku(reader_sku)} if reader_sku else set())
         if mentioned - covered or len(mentioned | covered) > 1 or "<ADDR_" in (llm_text or ""):
             return set()
         if reading is not None and (getattr(reading, "qty", None) or getattr(reading, "extra_items", None) or getattr(reading, "address", None)):

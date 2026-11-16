@@ -615,6 +615,8 @@ class PrefetchHideToolsTest(GateBase):
         self.assertEqual(orch._prefetch_hidden_tools("AirPure X với Máy lọc không khí AirPure Y khác gì", "", spec_x, None), set())
         # tra sẵn SAI sản phẩm (bộ đọc nói khách gọi AirPure Y) → không ẩn
         self.assertEqual(orch._prefetch_hidden_tools("cái máy đó còn không", "", spec_x, "SKU-AP-Y"), set())
+        # khách không gọi tên sản phẩm nào trong lượt này (SC-GEN-13: tra trước theo sản phẩm đang bàn/bộ đọc, có thể nhầm) → không ẩn
+        self.assertEqual(orch._prefetch_hidden_tools("chương trình thu cũ giảm được bao nhiêu vậy em", "", spec_x, "SKU-AP-X"), set())
         # địa chỉ giao (giá ship) hoặc số lượng → không ẩn
         self.assertEqual(orch._prefetch_hidden_tools("AirPure X giao về <ADDR_1> nhé", "AirPure X giao về <ADDR_1> nhé", spec_x, None), set())
         self.assertEqual(orch._prefetch_hidden_tools("lấy 2 cái AirPure X", "", spec_x, None), set())
