@@ -69,6 +69,7 @@ def reading_needs_nothing(r) -> bool:
 
 
 PREFETCH_HIDE_TOOLS = os.environ.get("PREFETCH_HIDE_TOOLS", "").strip().lower() in ("on", "1", "true")   # F2, MẶC ĐỊNH TẮT tới khi đo xong
+PREFETCH_ORDER_QUOTE = os.environ.get("PREFETCH_ORDER_QUOTE", "").strip().lower() in ("on", "1", "true")   # MẶC ĐỊNH TẮT: hướng 1 — lời khách có địa chỉ (<ADDR_n>) → code báo giá trước sản phẩm đang bàn KÈM địa chỉ (KM theo vùng, freeship)
 PREFETCH_VARIANTS = os.environ.get("PREFETCH_VARIANTS", "").strip().lower() in ("on", "1", "true")   # MẶC ĐỊNH TẮT: hướng 1 — sản phẩm có biến thể vừa tra trước lượt này + khách nêu size/màu → tra trước tồn kho + giá đúng biến thể
 PARALLEL_TOOLS = os.environ.get("PARALLEL_TOOLS", "").strip().lower() in ("on", "1", "true")   # MẶC ĐỊNH TẮT: các tool chỉ đọc trong cùng một vòng LLM chạy đồng thời
 EARLY_GATE_TAKEOVER = os.environ.get("EARLY_GATE_TAKEOVER", "").strip().lower() in ("on", "1", "true")   # MẶC ĐỊNH TẮT: bộ đọc song song về trước và code nhận lượt → trả câu của code ngay, hủy LLM chính (không chờ LLM viết xong)
@@ -705,6 +706,8 @@ class HarnessOrchestrator:
                                                                   picked=reader_sku, agent_text=last_agent)
                 if PREFETCH_VARIANTS:
                     pre_stock = pre_stock + self._prefetch_named_variants(customer_texts_now, pre_stock, brief, caller_phone, current_date, vault)
+                if PREFETCH_ORDER_QUOTE:
+                    pre_stock = pre_stock + self._prefetch_quote_with_address(turn.llm_text, prior_call_log + pre_stock, self._precomp.get(working_session_id), brief, caller_phone, current_date, vault)
                 hidden_tools = self._prefetch_hidden_tools(turn.normalized_text, turn.llm_text, pre_stock, reader_sku, ready) if PREFETCH_HIDE_TOOLS else set()
                 history = self._trim_history(list(working_state.messages_in_session)[-20:])
                 # Tầng 1 (Dynamic Tool Enum): nếu đã biết sản phẩm cha đang tư vấn, ép tools
@@ -762,6 +765,7 @@ class HarnessOrchestrator:
                 llm_timing["reader_ms"] = int(reading_trace.get("latency_ms") or 0)      # bước đọc hiểu lời khách (LLM riêng, chạy TRƯỚC LLM chính) — phần lớn "thời gian chuẩn bị" của TTFT
                 llm_timing["reader_calls"] = int(reading_trace.get("llm_calls") or 0)
                 llm_tool_calls = [c for c in llm_tool_calls if (c.get("result") or {}).get("error") not in ("order_gate_blocked", "handoff_blocked") and not (c.get("result") or {}).get("already_checked_this_turn")]    # lời gọi bị chặn/trùng với tra cứu của code KHÔNG vào tool_calls của trace
+                llm_tool_calls = [{**c, "by": "llm"} for c in llm_tool_calls]          # trace: lời gọi do LLM yêu cầu; mọi lời gọi khác trong lượt là "code"
                 # Khiếu nại ĐƠN ĐÃ ĐẶT: lượt có tra order.status mà LLM không tự chuyển máy → CODE gọi chốt phân loại (có dữ kiện đơn); ca sự cố/ngoài phạm vi thì CODE chuyển máy và nối câu báo khách.
                 status_calls = [c for c in llm_tool_calls if c.get("name") == "order.status" and (c.get("result") or {}).get("orders")]
                 llm_text, llm_tool_calls = self._bind_price_to_product(llm_text, llm_tool_calls, _tool_executor, live_calls)
@@ -848,7 +852,7 @@ class HarnessOrchestrator:
             elif llm_error is not None:
                 e = llm_error
                 logging.getLogger("harness.llm").warning("[LLM] call failed (%s) — xử lý lỗi an toàn.", e)
-                tool_calls_executed.extend(pre_stock + live_calls)  # tool đã chạy thật phải còn trong trace
+                tool_calls_executed.extend(pre_stock + [{**c, "by": "llm"} for c in live_calls])  # tool đã chạy thật phải còn trong trace (live_calls lúc LLM lỗi là lời gọi LLM yêu cầu)
                 wrote = any(c["name"] in self.WRITE_TOOLS for c in live_calls)
                 if wrote or isinstance(e, LLMRoundLimit):
                     # KHÔNG chạy nhánh rule-based (có thể tạo đơn thứ hai): trả lời an toàn dựa trên tool đã chạy.
@@ -1075,7 +1079,7 @@ class HarnessOrchestrator:
             "questions": questions_asked,
             "claims": claims_made,
             "facts_used": list(set(facts_used)),
-            "tool_calls": tool_calls_executed,
+            "tool_calls": [{**c, "by": c.get("by", "code")} for c in tool_calls_executed],
             "repeat_questions_rewritten": repeat_rewritten,
             "repeat_questions_dropped": repeat_dropped,
             "order_gate": self._gate_trace(working_session_id),
@@ -1223,6 +1227,26 @@ class HarnessOrchestrator:
                 if isinstance(res, dict) and "error" not in res:
                     out.append({"name": name, "tool": name, "args": vault.redact_args_for_trace(args), "result": vault.mask_value(res, caller_phone), "speculative": True})
         return out
+
+    def _prefetch_quote_with_address(self, llm_text: str, calls: List[Dict[str, Any]], precomputed: Optional[Dict[str, Any]], brief: CallBrief,
+                                     caller_phone: Optional[str], on: str, vault: PiiVault) -> List[Dict[str, Any]]:
+        """Hướng 1: khách đưa địa chỉ (vault đã che thành <ADDR_n>) → báo giá trước KÈM địa chỉ cho sản phẩm báo giá gần nhất trong cuộc (biến thể đúng như lần báo giá đó),
+        không có thì sản phẩm đã tra sẵn đầu cuộc gọi lại. Prompt cho phép LLM gọi lại pricing.get_quote khi khách đưa địa chỉ — m1_final7: các lượt "lên đơn, giao về …" tốn
+        một vòng chỉ để báo giá lại. Chỉ tool đọc; số lượng 1 (khách nói số lượng khác thì LLM tự báo giá lại)."""
+        token = re.search(r"<ADDR_\d+>", llm_text or "")
+        if not token:
+            return []
+        sku = next((c["args"]["sku"] for c in reversed(calls) if c.get("name") == "pricing.get_quote" and isinstance((c.get("args") or {}).get("sku"), str)), None)             or (precomputed or {}).get("sku")
+        if not sku:
+            return []
+        args = {"sku": sku, "on": on, "qty": 1, "address": token.group(0), **({"customer_phone": caller_phone} if caller_phone and not brief.blocker else {})}
+        try:
+            res = self.mcp.execute_tool("pricing.get_quote", vault.unmask_args("pricing.get_quote", args, caller_phone), caller="HarnessOrchestrator")
+        except Exception:
+            return []
+        if not isinstance(res, dict) or "error" in res:
+            return []
+        return [{"name": "pricing.get_quote", "tool": "pricing.get_quote", "args": vault.redact_args_for_trace(args), "result": vault.mask_value(res, caller_phone), "speculative": True}]
 
     def _prefetch_named_variants(self, customer_texts: List[str], pre_stock: List[Dict[str, Any]], brief: CallBrief,
                                  caller_phone: Optional[str], on: str, vault: PiiVault) -> List[Dict[str, Any]]:
@@ -2153,7 +2177,8 @@ class HarnessOrchestrator:
                 r = c["result"]
                 promos = ", ".join(str(a.get("promo_code")) for a in r.get("applied_promos") or []) or "không có"
                 return (f"{self._product_info(self._parent_sku(c['args']['sku'])).get('name') or c['args']['sku']} ({c['args']['sku']}): giá niêm yết {r.get('list_price_vnd')}, "
-                        f"giá cuối hôm nay {r.get('final_price_vnd')} (KM đang áp: {promos}; KM đã hết hạn: {[(e.get('promo_code') if isinstance(e, dict) else e) for e in r.get('expired_promos') or []] or 'không'})")
+                        f"giá cuối hôm nay {r.get('final_price_vnd')} (KM đang áp: {promos}; KM đã hết hạn: {[(e.get('promo_code') if isinstance(e, dict) else e) for e in r.get('expired_promos') or []] or 'không'})"
+                        + (f" — ĐÃ tính theo địa chỉ giao khách vừa đưa ({c['args']['address']}, freeship: {'có' if r.get('freeship') else 'không'}), KHÔNG cần báo giá lại vì địa chỉ" if (c.get("args") or {}).get("address") else ""))
             context_lines.append("Hệ thống ĐÃ chạy TRƯỚC pricing.get_quote THẬT hôm nay cho sản phẩm khách vừa nhắc/đang bàn — " + "; ".join(_q(c) for c in quotes)
                                  + ". Dùng ĐÚNG các số này và trả lời luôn; KHÔNG gọi lại pricing.get_quote/inventory.check cho các sản phẩm đó "
                                    "(chỉ gọi tool khi khách hỏi sản phẩm khác, đổi số lượng, đưa địa chỉ, hoặc cần thông tin chưa có ở đây).")

@@ -668,3 +668,37 @@ class PrefetchAgentNamedTest(GateBase):
 
     def test_agent_names_one_product_still_prefetched(self):
         self.assertEqual(self._look("Dạ Máy lọc không khí AirPure Pro đang có ưu đãi thu cũ đổi mới ạ"), {"SKU-AP-PRO"})
+
+
+class TraceToolSourceTest(GateBase):
+    def test_trace_marks_llm_and_code_calls(self):
+        """16/11: trace ghi nguồn từng lời gọi tool — 'llm' (LLM yêu cầu) hay 'code' (tra trước, tra sẵn, gate…)."""
+        _, _, meta = self.turn(NEW_PHONE, "Máy lọc không khí AirPure X bên em còn hàng không em?",
+                               [("order.status", {"customer_phone": "CURRENT_CUSTOMER"})], "Dạ còn hàng ạ.")
+        by = {(c["name"], c.get("speculative", False)): c["by"] for c in meta["tool_calls"]}
+        self.assertEqual(by.get(("order.status", False)), "llm")
+        self.assertTrue(all(v == "code" for (n, spec), v in by.items() if spec), by)
+
+
+class PrefetchOrderQuoteTest(GateBase):
+    def _quote(self, text, calls, pre=None):
+        from types import SimpleNamespace
+        from src.privacy.pii_vault import PiiVault
+        vault = PiiVault()
+        masked = vault.mask_text(text, None)
+        return masked, self.orch._prefetch_quote_with_address(masked, calls, pre, SimpleNamespace(blocker=None), None, "2026-10-15", vault)
+
+    def test_address_requotes_last_quoted_variant_with_address(self):
+        prior = [{"name": "pricing.get_quote", "args": {"sku": "SKU-JK-WND-M-NAVY", "qty": 1}}]
+        masked, out = self._quote("Lên đơn cho chị, giao về số 15 phố Tây Sơn, quận Đống Đa, Hà Nội, COD nhé", prior)
+        self.assertIn("<ADDR_", masked)
+        self.assertEqual([(c["name"], c["args"]["sku"], c.get("speculative")) for c in out], [("pricing.get_quote", "SKU-JK-WND-M-NAVY", True)])
+        self.assertTrue(out[0]["args"].get("address"))
+
+    def test_no_address_or_no_product_no_call(self):
+        self.assertEqual(self._quote("Lên đơn cho chị nhé", [{"name": "pricing.get_quote", "args": {"sku": "SKU-AP-X"}}])[1], [])
+        self.assertEqual(self._quote("Giao về số 15 phố Tây Sơn, quận Đống Đa, Hà Nội nhé", [])[1], [])
+
+    def test_falls_back_to_precomputed_product(self):
+        self.assertEqual([c["args"]["sku"] for c in self._quote("Giao về số 15 phố Tây Sơn, quận Đống Đa, Hà Nội nhé", [], {"sku": "SKU-AP-Y"})[1]], ["SKU-AP-Y"])
+
