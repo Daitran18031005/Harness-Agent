@@ -238,3 +238,10 @@ Trên 17 kịch bản chung với bước 4c: ≥ 2 vòng 19 → 14, search_poli
 - Các cuộc trượt khác chỉ bên thử: SC-GEN-06, SC-GEN-13 (order.create), SC-ULTRA-01/call_4 (order.status); bên mốc trượt riêng SAMPLE-01/call_2, SC-ULTRA-04/call_4, SC-ULTRA-07/call_4 → TSR trong nhiễu.
 - Chi phí gấp ~4 lần gpt-4o-mini với giá thật.
 - **Kết luận:** chưa thay số nộp. Nếu đi tiếp hướng này: bỏ POLICY_ALL_VERSIONS (hoặc chỉ trả bản cũ khi có ngày mua), và cần duyệt chi phí ×4.
+
+### Sửa lỗi hướng gpt-5.4-mini (17/11) — runs/rerun_54mini_fails_1117, chi ~12k VND
+
+Cấu hình như bước 4d, mỗi phép đo 3 lần.
+- **SAMPLE-07 (9a6adec):** POLICY_ALL_VERSIONS giờ giữ top_k bản hiện hành, bản cũ chỉ nối thêm (tối đa 2). Đạt 3/3.
+- **SC-GEN-06 (quà tặng thành đơn):** bộ đọc gpt-5.4-mini gán "túi trữ sữa" (quà) thành sản phẩm đơn. Quy tắc trong prompt không đủ (vẫn trượt 3/3). `READER_MODEL=gpt-4o-mini` (1917caf): lỗi quà tặng không còn lần nào; đạt 2/3, lần trượt còn lại là lỗi khác — lượt 1 không tra sản phẩm, đơn ra SKU-AP-X (chưa phân tích).
+- **SC-ULTRA-01:** đạt 2/3 lần với READER_MODEL; lần trượt: call_4 LLM trả lời theo chính sách mà không gọi order.status (hành vi gpt-5.4-mini, chưa sửa).
