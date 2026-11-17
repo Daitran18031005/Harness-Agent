@@ -428,3 +428,14 @@ Phân bố thời gian chờ chữ đầu mỗi vòng (564 vòng, cấu hình t�
 | fast | 808 ms | 426 ms | **275 ms** |
 
 → Với Fast mode, mỗi lần gọi API mất ~0,28 s ngoài thời gian xử lý của OpenAI; lượt 2 vòng trả ~0,55 s. Đây là phần còn lại lớn nhất có thể gỡ mà không đụng tới model (mẫu nhỏ, dao động 0,2–0,6 s).
+
+### Thử WebSocket mode (18/11, duyệt) — scripts/probes/ws_probe.py, gpt-4o-mini fast, Responses API, 1 lượt 2 vòng × 4 lần mỗi bên
+
+| | vòng 1 tới lời gọi tool p50 | vòng 2 tới chữ đầu p50 | cả lượt p50 | từng lượt (ms) |
+|---|---|---|---|---|
+| HTTP stream | 1.017 ms | 727 ms | 2.475 ms | 2.249 / 3.440 / 2.537 / 2.413 |
+| WebSocket | **749 ms** | **586 ms** | **1.705 ms** | 1.568 / 1.874 / 1.759 / 1.651 |
+
+- gpt-4o-mini chạy được qua WebSocket với Fast mode. Mỗi vòng bớt 0,14–0,27 s; lượt 2 vòng tới chữ đầu bớt ~0,41 s — khớp phần mạng đã đo (~0,28 s/lần gọi). Dao động giữa các lượt cũng hẹp hơn.
+- Mẫu rất nhỏ (4 lượt mỗi bên), prompt nhỏ (không phải prompt ~12k token thật).
+- Muốn dùng: chuyển `chat_with_tools` sang Responses API qua WebSocket (định dạng tool, input item, function_call_output, previous_response_id với store=false phải cùng kết nối); yêu cầu song song (PARALLEL_REQUIRED_TOOLS) cần lane riêng hoặc kết nối thứ hai. Ước 1 ngày công, sát hạn 20/11.
