@@ -292,3 +292,24 @@ Thử = bước 4d + 9a6adec (bản hiện hành giữ top-3) + READER_MODEL=gpt
 
 - gpt-5.6-luna: mỗi vòng không nhanh hơn, gọi nhiều vòng hơn → TTFT tệ hơn. Loại.
 - gpt-4o-mini fast lần này p95 5,30 s (lần trước 3,60 s trên 34 lượt): mức lợi của Fast mode dao động mạnh giữa các lần → A/B 40 kịch bản phải chạy fast cùng giờ với bản thường.
+
+### A/B Fast mode, 40 kịch bản (17/11, duyệt) — runs/ab_fast_1117, cấu hình mặc định, cùng giờ
+
+So 36 kịch bản chung (~213 lượt mỗi bên). Bên fast chạy trước bản sửa bảng giá (301ac9f) nên sổ tính giá thường; tiền thật ≈ sổ × 1,67.
+
+| | gpt-4o-mini thường | gpt-4o-mini fast |
+|---|---|---|
+| TSR | 94,4 | 94,4 |
+| HR giá/KM % | 12,5 | 5,9 |
+| TTFT p50 / p90 / p95 (s) | 2,45 / 5,69 / 6,62 | **1,79 / 3,97 / 4,89** |
+| TTFT lớn nhất (s) | 15,1 | 11,3 |
+| Lượt > 3 s | 78 | **47** |
+| Vòng LLM p50 / p95 (s) | 1,86 / 4,47 | **1,35 / 1,83** |
+| Vòng cuối → token đầu p50 (s) | 0,94 | 0,86 |
+| Vòng / lượt | 1,63 | 1,55 |
+| Total p95 (s) | 9,44 | **6,09** |
+| Chi phí 36 kịch bản (VND thật) | ~3.360 | ~5.320 (×1,6) |
+
+- **Fast mode là hướng đầu tiên cải thiện rõ mà không mất TSR:** p95 −1,7 s, lượt > 3 s −40 %, Total p95 −3,4 s; chủ yếu nhờ cắt đuôi vòng LLM (p95 vòng 4,47 → 1,83 s). Hành vi không đổi (cùng model, số vòng gần như nhau).
+- Trượt: thường SAMPLE-01, SC-ULTRA-09; fast SC-GEN-06, SC-ULTRA-07 — đều là cuộc từng trượt ở các lần khác → nhiễu.
+- Vẫn chưa ≤ 3 s (p95 4,89 s). Hôm nay API chậm (bên thường p95 6,62 s so với 5,4–6,2 s các lần trước).
