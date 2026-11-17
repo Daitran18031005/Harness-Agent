@@ -176,3 +176,20 @@ So 38 kịch bản (router chạm trần 6.000; bên thử dùng 8.492 VND, tr�
 - Các model mới gọi nhiều vòng hơn mỗi lượt (2,0–2,5 so với 1,7), nên TTFT chỉ cải thiện ít; lượt chậm nhất còn tệ hơn.
 - Mẫu rất nhỏ (10–15 lượt), chưa đo TSR. Bộ đọc gpt-5.4-nano đã biết kém đúng hơn (18/34).
 - **Kết luận:** đổi model không đưa được TTFT p95 về ≤ 3 s.
+
+### Bước 4b — gpt-5.4-mini trên bộ 40 kịch bản (17/11) — runs/ab_54mini_1117, sổ ~18k VND (tiền thật ≤ sổ)
+
+Cả hệ thống đổi model (LLM chính, bộ đọc, router), reasoning none. Sổ chi phí tính gpt-5.4-mini theo giá mặc định (cao) nên chạm trần 12.000 sau 13 kịch bản; so trên 13 kịch bản chung (~80 lượt).
+
+| | gpt-4o-mini | gpt-5.4-mini |
+|---|---|---|
+| TSR | 92,3 | 84,6 (thêm trượt SC-ULTRA-01/call_4) |
+| HR giá/KM % | 30,8 | 16,7 |
+| TTFT p50 / p95 (s) | 2,82 / 6,51 | 3,47 / 6,99 |
+| Lượt > 3 s | 38 | 44 |
+| Vòng LLM p50 (s) | 2,05 | 1,69 |
+| Vòng / lượt | 1,52 | 1,82 |
+| Total p95 (s) | 9,49 | 8,22 |
+
+- Mỗi vòng nhanh hơn ~0,35 s nhưng gọi nhiều vòng hơn → TTFT **chậm hơn**, TSR thấp hơn. Không dùng.
+- Mẫu 13 kịch bản; hôm nay API chậm (gpt-4o-mini p50 2,82 s).
