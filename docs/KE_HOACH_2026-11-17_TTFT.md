@@ -106,3 +106,19 @@ B1 = tất cả cờ, TẮT POLICY_PREFETCH. B2 = B1 + NUDGE_OFF. So 37 kịch b
 
 - Lỗi riêng của nano nguy hiểm cho order gate: coi câu HỎI là "chỉ trả lời câu hỏi của gate" (`only_answers=True` với "giao mất mấy ngày vậy em?", "bên em có size 41 không?"), bỏ sót tên người nhận ("đại", "tên là thu…"), bỏ sót xác nhận ("ừ đúng rồi").
 - **Không đổi model bộ đọc.** Nano chỉ nhanh hơn ~0,3 s mà kém đúng hơn ở đúng các trường gate dùng để quyết định.
+
+### Đo B3 + lặp B1 (17/11) — runs/ab_nudge2_1117, chi ~24k VND
+
+B3 = B1 + NUDGE_OFF + POLICY_PREFETCH. Số tính trên toàn file (~230 lượt), TSR trên 38 kịch bản.
+
+| | router a | B3 | router b | B1 (lặp) | B1 (lần trước) |
+|---|---|---|---|---|---|
+| TSR | 92,1 | 89,5 | 92,1 | 86,8 | 91,9 |
+| TTFT p95 (s) | 5,42 | 4,75 | 5,36 | 4,30 | 5,25 |
+| Lượt > 3 s | 66 | 44 | 57 | 45 | 46 |
+| Lượt bị nhắc | 22 | 8 | 22 | 20 | 23 |
+
+- **B1 không tái lập:** p95 5,25 → 4,30 s, TSR 91,9 → 86,8 giữa hai lần chạy cùng cấu hình. Số lượt > 3 s ổn định hơn (46 / 45).
+- **SC-GEN-07 trượt ở cả B1 lặp (có vòng nhắc)** → lỗi chính sách "đổi mới 30 ngày" gắn với reranker (đã thấy ở đo B lần 2), không chỉ do bỏ vòng nhắc.
+- B3: tra trước chính sách không bù được: vẫn trượt SC-GEN-07.
+- Cấu hình bật cờ nhất quán giảm lượt > 3 s (≈ 44–49 so với 57–70) và p95 thấp hơn router 0,3–1,0 s, nhưng TSR thấp hơn 0–5 điểm tùy lần; với 1–2 lần chạy mỗi cấu hình chưa tách được khỏi nhiễu.
