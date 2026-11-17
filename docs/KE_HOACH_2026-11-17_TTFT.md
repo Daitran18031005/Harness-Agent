@@ -263,3 +263,19 @@ Thử = bước 4d + 9a6adec (bản hiện hành giữ top-3) + READER_MODEL=gpt
 - SAMPLE-07, SC-GEN-06, SC-GEN-13 đạt; SC-ULTRA-01 đạt (mốc trượt). Trượt riêng bên thử: SC-TV-05/call_3, SC-ULTRA-07/call_3 (mốc cũng từng trượt 2 cuộc này ở lần khác) → TSR trong nhiễu.
 - p95 thấp hơn ~1,9 s nhưng p50 chậm hơn 0,8 s và **lượt > 3 s nhiều hơn (72 vs 62)**: p95 thấp do mốc có đuôi API treo, không phải vì thử nhanh hơn đều. Vẫn chưa ≤ 3 s.
 - **Kết luận:** sửa lỗi đã giữ TSR, nhưng hướng gpt-5.4-mini không cải thiện TTFT toàn hệ thống. Đóng hướng này.
+
+## Fast mode (17/11, duyệt) — runs/fastmode_1117, ~4k VND tiền thật
+
+`LLM_SERVICE_TIER=fast` (mặc định trống) gửi `service_tier` cho mọi lời gọi (LLM chính, bộ đọc, router). gpt-4o-mini nhận Fast mode (API trả tier `priority`) dù tài liệu không liệt kê. Giá ×2; sổ chi phí KHÔNG nhân nên trần trên sổ đặt một nửa. 10 kịch bản, chạy cùng giờ, cấu hình mặc định.
+
+| (34 lượt chung) | gpt-4o-mini thường | gpt-4o-mini fast |
+|---|---|---|
+| Vòng LLM p50 / p95 (s) | 1,94 / 2,43 | **1,30 / 1,67** |
+| Vòng cuối → token đầu p50 (s) | 0,89 | 0,81 |
+| TTFT p50 / p95 (s) | 1,93 / 5,43 | 1,87 / **3,60** |
+| Lượt > 3 s | 12 | **5** |
+| Vòng / lượt | 1,61 | 1,53 |
+
+- gpt-6-luna fast (reasoning none): vòng 1,26 s nhưng 2,7 vòng/lượt → TTFT tệ hơn (22 lượt chung: p95 7,1 s, 12 lượt > 3 s so với 8 của 4o thường). gpt-6-astra: Chat Completions không cho tool kèm reasoning, cần Responses API → không đo.
+- Fast mode rút ngắn chủ yếu vòng gọi tool (−33 %), ít ở vòng cuối ra token. Trace chưa ghi được tier trả về (service_tier = None trong trace) — hiệu lực xác nhận qua lời gọi thử và độ trễ.
+- Mẫu nhỏ (34 lượt), chưa đo TSR. **Bước tiếp:** A/B 40 kịch bản 4o thường vs 4o fast.

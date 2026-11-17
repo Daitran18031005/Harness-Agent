@@ -25,6 +25,7 @@ logger = logging.getLogger("harness.llm")
 
 
 # Lời AGENT hứa sẽ tra cứu mà chưa tra ("để em kiểm tra…", "em sẽ tìm…", "chờ em một chút"): dấu hiệu để nhắc model gọi tool. Soi lời của chính agent, không phải lời khách.
+SERVICE_TIER = os.environ.get("LLM_SERVICE_TIER", "").strip()     # MẶC ĐỊNH TRỐNG (tier tài khoản). Đo 17/11: "fast" (= priority)
 PARALLEL_REQUIRED_TOOLS = os.environ.get("PARALLEL_REQUIRED_TOOLS", "").strip().lower() in ("on", "1", "true")   # MẶC ĐỊNH TẮT (duyệt 17/11): vòng đầu gửi song song thêm 1 yêu cầu tool_choice="required"; vòng thường không gọi tool mà lẽ ra bị nhắc → dùng ngay lời gọi tool của yêu cầu song song thay cho vòng nhắc (+1 lời gọi LLM mỗi lượt)
 PROMPT_CACHE_ORDER = os.environ.get("PROMPT_CACHE_ORDER", "").strip().lower() in ("on", "1", "true")   # MẶC ĐỊNH TẮT: gửi prompt_cache_key theo system prompt + tính giá cache cho lời gọi JSON
 
@@ -290,6 +291,8 @@ class LLMClient:
             kwargs["response_format"] = {"type": "json_object"}
         if tools:
             kwargs["tools"] = tools
+        if SERVICE_TIER and "service_tier" not in self.dropped_params:
+            kwargs["service_tier"] = SERVICE_TIER        # LLM_SERVICE_TIER=fast: Fast mode (giá ×2, sổ chi phí KHÔNG nhân — đặt trần tương ứng)
         if self.temperature is not None and self.profile.supports_temperature and "temperature" not in self.dropped_params:
             kwargs["temperature"] = self.temperature
         if self.seed is not None and self.profile.supports_seed and "seed" not in self.dropped_params:
@@ -518,6 +521,7 @@ class LLMClient:
                 if self._last_prompt_tokens:
                     self.cost_tracker.note_round(self.model, self._last_prompt_tokens, 0)
                 raise LLMCancelled()
+            self._last_service_tier = getattr(chunk, "service_tier", None) or getattr(self, "_last_service_tier", None)
             chunk_usage = getattr(chunk, "usage", None)
             if chunk_usage is not None:
                 usage = chunk_usage
@@ -644,7 +648,7 @@ class LLMClient:
                         # Phân rã TTFT: bao nhiêu vòng LLM phải xong TRƯỚC khi có token đầu tiên của câu trả lời, mỗi vòng mất bao lâu,
                         # tool mất bao lâu, và riêng vòng cuối chờ token đầu bao lâu.
                         "rounds_before_first_token": api_calls - 1, "round_ms": round_ms, "tool_ms": int(round(tool_ms)),
-                        "final_round_ttft_ms": final_ttft, "nudged": nudged_once, "hedged_rounds": hedged_rounds,
+                        "final_round_ttft_ms": final_ttft, "nudged": nudged_once, "hedged_rounds": hedged_rounds, "service_tier": getattr(self, "_last_service_tier", None),
                         "prompt_tokens": usage_totals["prompt_tokens"], "cached_tokens": usage_totals["cached_tokens"]})
                 cost = self.cost_tracker.record_turn(self.model, usage_totals["prompt_tokens"], usage_totals["completion_tokens"],
                                                      cached_tokens=usage_totals["cached_tokens"])
