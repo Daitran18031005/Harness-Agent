@@ -593,3 +593,42 @@ class FastPricingTest(unittest.TestCase):
             self.assertEqual(ct.load_pricing()["models"]["gpt-4o-mini"][:2], (0.25, 1.00))
         with mock.patch.dict(os.environ, {"LLM_SERVICE_TIER": ""}):
             self.assertEqual(ct.load_pricing()["models"]["gpt-4o-mini"][:2], (0.15, 0.60))
+
+
+class WebSocketRoundTest(unittest.TestCase):
+    """LLM_WS (18/11): vòng LLM qua Responses WebSocket trả về cùng dạng vòng stream Chat Completions."""
+
+    def test_messages_converted_to_responses_items(self):
+        from src.llm.client import LLMClient
+        items = LLMClient._to_responses_input([
+            {"role": "system", "content": "S"}, {"role": "user", "content": "U"},
+            {"role": "assistant", "content": "", "tool_calls": [{"id": "c1", "type": "function", "function": {"name": "inventory__check", "arguments": '{"sku":"A"}'}}]},
+            {"role": "tool", "tool_call_id": "c1", "content": "{}"}])
+        self.assertEqual(items, [{"role": "system", "content": "S"}, {"role": "user", "content": "U"},
+                                 {"type": "function_call", "call_id": "c1", "name": "inventory__check", "arguments": '{"sku":"A"}'},
+                                 {"type": "function_call_output", "call_id": "c1", "output": "{}"}])
+
+    def test_round_returns_text_calls_and_usage(self):
+        from unittest import mock
+        import src.llm.client as C
+        done = NS(service_tier="priority", output=[NS(type="function_call", call_id="c9", name="pricing__get_quote", arguments='{"sku":"B"}')],
+                  usage=NS(input_tokens=100, output_tokens=7, input_tokens_details=NS(cached_tokens=64), output_tokens_details=NS(reasoning_tokens=0)))
+        events = [NS(type="response.output_text.delta", delta="Dạ "), NS(type="response.output_text.delta", delta="em xem"),
+                  NS(type="response.completed", response=done)]
+        sent = {}
+        conn = NS(response=NS(create=lambda **kw: sent.update(kw)), __iter__=None)
+
+        class Conn:
+            response = NS(create=lambda **kw: sent.update(kw))
+            def __iter__(self):
+                return iter(events)
+        client, _ = make_client([])
+        with mock.patch.object(C, "LLM_WS", True), mock.patch.object(type(client), "_ws_conn", lambda self: Conn()):
+            text, calls, usage, first = client._stream_round_once([{"role": "user", "content": "x"}],
+                                                                  [{"type": "function", "function": {"name": "pricing__get_quote", "parameters": {}}}])
+        self.assertEqual(text, "Dạ em xem")
+        self.assertEqual(calls, [{"id": "c9", "name": "pricing__get_quote", "arguments": '{"sku":"B"}'}])
+        self.assertEqual((usage.prompt_tokens, usage.completion_tokens, usage.prompt_tokens_details.cached_tokens), (100, 7, 64))
+        self.assertIsNotNone(first)
+        self.assertEqual(sent["tools"][0]["name"], "pricing__get_quote")
+        self.assertFalse(sent["store"])

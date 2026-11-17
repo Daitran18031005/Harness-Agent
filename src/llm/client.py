@@ -15,6 +15,7 @@ import time
 import queue
 import logging
 import threading
+from types import SimpleNamespace
 from concurrent.futures import ThreadPoolExecutor
 from typing import Dict, Any, List, Callable, Tuple, Optional
 
@@ -25,6 +26,7 @@ logger = logging.getLogger("harness.llm")
 
 
 # Lời AGENT hứa sẽ tra cứu mà chưa tra ("để em kiểm tra…", "em sẽ tìm…", "chờ em một chút"): dấu hiệu để nhắc model gọi tool. Soi lời của chính agent, không phải lời khách.
+LLM_WS = os.environ.get("LLM_WS", "").strip().lower() in ("on", "1", "true")   # MẶC ĐỊNH TẮT (18/11): vòng LLM chính qua Responses API WebSocket (kết nối thường trực; đo thử: lượt 2 vòng bớt ~0,4 s)
 SERVICE_TIER = os.environ.get("LLM_SERVICE_TIER", "").strip()     # MẶC ĐỊNH TRỐNG (tier tài khoản). Đo 17/11: "fast" (= priority)
 PARALLEL_REQUIRED_TOOLS = os.environ.get("PARALLEL_REQUIRED_TOOLS", "").strip().lower() in ("on", "1", "true")   # MẶC ĐỊNH TẮT (duyệt 17/11): vòng đầu gửi song song thêm 1 yêu cầu tool_choice="required"; vòng thường không gọi tool mà lẽ ra bị nhắc → dùng ngay lời gọi tool của yêu cầu song song thay cho vòng nhắc (+1 lời gọi LLM mỗi lượt)
 PROMPT_CACHE_ORDER = os.environ.get("PROMPT_CACHE_ORDER", "").strip().lower() in ("on", "1", "true")   # MẶC ĐỊNH TẮT: gửi prompt_cache_key theo system prompt + tính giá cache cho lời gọi JSON
@@ -218,7 +220,13 @@ def _is_transient(exc: BaseException) -> bool:
     try:
         import httpx
         import openai
-        return isinstance(exc, (openai.APIConnectionError, httpx.TimeoutException, httpx.TransportError))
+        if isinstance(exc, (openai.APIConnectionError, httpx.TimeoutException, httpx.TransportError, ConnectionError)):
+            return True
+        try:
+            from websockets.exceptions import ConnectionClosed
+            return isinstance(exc, ConnectionClosed)      # LLM_WS: kết nối WebSocket đứt → mở lại, thử lại vòng
+        except Exception:
+            return False
     except ImportError:
         return False
 
@@ -504,9 +512,97 @@ class LLMClient:
             yield from it
         return chain(), launched == 2
 
+    @staticmethod
+    def _to_responses_input(messages: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
+        """Tin nhắn Chat Completions → input item của Responses API (vai trò giữ nguyên; tool_calls → function_call; tool → function_call_output)."""
+        items: List[Dict[str, Any]] = []
+        for m in messages:
+            role = m.get("role")
+            if role == "tool":
+                items.append({"type": "function_call_output", "call_id": m.get("tool_call_id"), "output": m.get("content") or ""})
+                continue
+            if m.get("content"):
+                items.append({"role": role, "content": m["content"]})
+            for tc in (m.get("tool_calls") or []):
+                fn = tc.get("function") or {}
+                items.append({"type": "function_call", "call_id": tc.get("id"), "name": fn.get("name"), "arguments": fn.get("arguments") or ""})
+        return items
+
+    def _ws_conn(self):
+        if getattr(self, "_ws", None) is None:
+            self._ws_mgr = self._client.responses.connect()
+            self._ws = self._ws_mgr.__enter__()
+        return self._ws
+
+    def _ws_drop(self) -> None:
+        try:
+            self._ws_mgr.__exit__(None, None, None)
+        except Exception:
+            pass
+        self._ws = None
+
+    def _ws_round_once(self, messages: List[Dict[str, Any]], tools: List[Dict[str, Any]], cancel: Optional[threading.Event] = None):
+        """LLM_WS: một vòng qua Responses API trên WebSocket thường trực; gửi đủ ngữ cảnh mỗi vòng (store=false, không dùng previous_response_id
+        nên không phụ thuộc trạng thái kết nối), trả về cùng dạng `_stream_round_once`. Lỗi kết nối → bỏ kết nối, `_stream_round` thử lại (kết nối mới)."""
+        kw = self._build_kwargs(messages, tools, stream=False)
+        body: Dict[str, Any] = {"model": kw["model"], "input": self._to_responses_input(messages), "store": False}
+        if tools:
+            body["tools"] = [{"type": "function", "name": t["function"]["name"], "description": t["function"].get("description", ""),
+                              "parameters": t["function"].get("parameters", {})} for t in tools]
+        for k in ("service_tier", "temperature", "prompt_cache_key"):
+            if k in kw:
+                body[k] = kw[k]
+        cap = kw.get(self._token_param)
+        if cap:
+            body["max_output_tokens"] = cap
+        if "reasoning_effort" in kw:
+            body["reasoning"] = {"effort": kw["reasoning_effort"]}
+        if not hasattr(self, "_ws_lock"):
+            self._ws_lock = threading.Lock()
+        text_parts: List[str] = []
+        first_token_at = None
+        cancelled = False
+        with self._ws_lock:
+            conn = self._ws_conn()
+            try:
+                conn.response.create(**body)
+                done = None
+                for ev in conn:
+                    if cancel is not None and cancel.is_set():
+                        cancelled = True                     # đọc tiếp tới hết (kết nối dùng lại phải sạch), không lấy kết quả
+                    t = ev.type
+                    if t == "response.output_text.delta" and not cancelled:
+                        if first_token_at is None:
+                            first_token_at = time.perf_counter()
+                        text_parts.append(ev.delta)
+                    elif t == "response.completed":
+                        done = ev.response
+                        break
+                    elif t in ("response.failed", "response.incomplete", "error"):
+                        raise RuntimeError(f"WebSocket round {t}: {ev.to_json()[:300]}")
+            except Exception:
+                self._ws_drop()
+                raise
+        if cancelled:
+            raise LLMCancelled()
+        self._last_service_tier = getattr(done, "service_tier", None)
+        u = getattr(done, "usage", None)
+        usage = None
+        if u is not None:
+            det = getattr(u, "input_tokens_details", None)
+            out_det = getattr(u, "output_tokens_details", None)
+            usage = SimpleNamespace(prompt_tokens=getattr(u, "input_tokens", 0) or 0, completion_tokens=getattr(u, "output_tokens", 0) or 0,
+                                    prompt_tokens_details=SimpleNamespace(cached_tokens=(getattr(det, "cached_tokens", 0) or 0) if det else 0),
+                                    completion_tokens_details=SimpleNamespace(reasoning_tokens=(getattr(out_det, "reasoning_tokens", 0) or 0) if out_det else 0))
+        calls = [{"id": o.call_id, "name": o.name, "arguments": o.arguments or ""} for o in (getattr(done, "output", None) or []) if getattr(o, "type", "") == "function_call"]
+        self._last_round_hedged = False
+        return "".join(text_parts), calls, usage, first_token_at
+
     def _stream_round_once(self, messages: List[Dict[str, Any]], tools: List[Dict[str, Any]], cancel: Optional[threading.Event] = None):
         """1 vòng gọi API ở chế độ stream: gom text + tool_call từ các delta; trả về
         (text, tool_calls[{id,name,arguments}], usage, thời điểm perf_counter của token text đầu tiên)."""
+        if LLM_WS:
+            return self._ws_round_once(messages, tools, cancel)
         text_parts: List[str] = []
         calls: Dict[int, Dict[str, str]] = {}
         usage = None
