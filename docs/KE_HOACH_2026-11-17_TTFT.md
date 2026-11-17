@@ -403,3 +403,7 @@ Nền: gpt-4o-mini fast + PARALLEL_REQUIRED_TOOLS + reranker. 37 kịch bản ch
 - Lượt dùng yêu cầu song song (21): phần ngoài LLM + tool p50 0,38 s, so với 0,24 s ở lượt khác → chờ thêm chỉ ~0,15 s; trong 21 lượt > 3 s chỉ 4 lượt có phần ngoài > 0,5 s (0,53–1,49 s), lẫn với chờ bộ đọc.
 - Stream không làm yêu cầu xong sớm hơn (lời gọi tool chỉ đủ khi stream kết thúc) → ước tính trước (gỡ 2–4 lượt) **sai**; không cài.
 - 21 lượt > 3 s còn lại phần lớn là 2 vòng LLM bình thường (mỗi vòng 1,0–2,0 s) + tool. Phía code gần như hết chỗ gỡ.
+
+### Hedging (18/11) — mô phỏng, lần đo ab_hedge_1118 đã DỪNG giữa chừng theo yêu cầu
+
+Phân bố thời gian chờ chữ đầu mỗi vòng (564 vòng, cấu hình tốt nhất): p50 0,78 / p90 1,08 / p95 1,31 / p99 1,76 s — rất hẹp. Mô phỏng (bản sao cùng phân bố, độc lập): ngưỡng ≥ 0,4 s gần như không đổi p95 mỗi vòng (1,31–1,33 s); chỉ gửi 2 bản ngay (ngưỡng 0) mới còn 0,91 s, chi phí LLM ×2. Khi API nghẽn, hai bản chậm cùng lúc → thực tế kém hơn mô phỏng. Ngưỡng 1,2 s chọn theo cảm tính, không có cơ sở → dừng đo.
