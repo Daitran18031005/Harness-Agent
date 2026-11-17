@@ -46,7 +46,7 @@ JSON gồm các khóa:
 - "qty_quote": đoạn nguyên văn chứa số lượng đó, hoặc ""
 - "address": địa chỉ NHẬN HÀNG khách vừa nói trong lời này (số nhà, đường, khu, phường/quận, tỉnh — kể cả khi viết thiếu dấu/thiếu chữ "số", "đường"), chép đúng như khách nói; null nếu không có hoặc chỉ là token dạng <ADDR_n>
 - "address_quote": đoạn nguyên văn chứa địa chỉ đó, hoặc ""
-- "product_sku": MÃ SKU của sản phẩm khách đang nói tới/chốt trong lời này, CHÉP ĐÚNG MỘT mã trong danh sách "Sản phẩm ứng viên" (danh sách có thể dư, gồm cả phụ kiện/combo; lời khách là ASR nên tên có thể bị nghe sai — chọn theo ý nghĩa và ngữ cảnh cuộc gọi, kể cả khi khách gọi tắt: "combo đó", "cái máy hôm trước", "bản Pro"). Phụ kiện/combo khác máy chính: "màng lọc của máy X" là màng lọc, không phải máy X. null nếu khách không nói tới sản phẩm nào, không chắc là mã nào, hay sản phẩm khách nói không có trong danh sách — đừng đoán theo âm gần giống
+- "product_sku": MÃ SKU của sản phẩm khách đang nói tới/chốt trong lời này, CHÉP ĐÚNG MỘT mã trong danh sách "Sản phẩm ứng viên" (danh sách có thể dư, gồm cả phụ kiện/combo; lời khách là ASR nên tên có thể bị nghe sai — chọn theo ý nghĩa và ngữ cảnh cuộc gọi, kể cả khi khách gọi tắt: "combo đó", "cái máy hôm trước", "bản Pro"). Phụ kiện/combo khác máy chính: "màng lọc của máy X" là màng lọc, không phải máy X. Món khách nhắc như QUÀ TẶNG/khuyến mãi kèm theo ("có tặng túi trữ sữa không em") không phải sản phẩm khách đang mua → không ghi mã đó. null nếu khách không nói tới sản phẩm nào, không chắc là mã nào, hay sản phẩm khách nói không có trong danh sách — đừng đoán theo âm gần giống
 - "product_quote": đoạn nguyên văn trong lời khách chỉ ra sản phẩm đó, hoặc ""
 - "extra_items": danh sách món KHÁC khách muốn mua THÊM trong CÙNG đơn, mỗi món {"name": tên món chép như khách nói, "qty": số nguyên, "quote": đoạn nguyên văn}; [] nếu không có
 - "payment": "COD" | "bank" | "momo" | "zalopay" | null — hình thức thanh toán khách vừa CHỌN
@@ -103,7 +103,7 @@ Khóa (mỗi *_quote = đoạn NGUYÊN VĂN trong lời khách làm bằng chứ
 - recipient_name: tên NGƯỜI NHẬN (không phải sản phẩm/thương hiệu); name_quote
 - qty: số lượng (nguyên) khách NÓI RÕ trong lời này; qty_quote
 - address: địa chỉ NHẬN HÀNG khách vừa nói, chép như khách nói (kể cả thiếu dấu/thiếu chữ "số", "đường"); null nếu chỉ là token <ADDR_n>; address_quote
-- product_sku: ĐÚNG MỘT mã trong "Sản phẩm ứng viên" mà khách đang nói tới/chốt (chọn theo ý nghĩa và ngữ cảnh, kể cả gọi tắt "combo đó", "cái máy hôm trước", "bản Pro"; ASR có thể nghe sai tên). "màng lọc của máy X" là màng lọc, không phải máy X. null nếu không nói tới, không chắc, hay không có trong danh sách — đừng đoán theo âm gần giống; product_quote
+- product_sku: ĐÚNG MỘT mã trong "Sản phẩm ứng viên" mà khách đang nói tới/chốt (chọn theo ý nghĩa và ngữ cảnh, kể cả gọi tắt "combo đó", "cái máy hôm trước", "bản Pro"; ASR có thể nghe sai tên). "màng lọc của máy X" là màng lọc, không phải máy X. Món nhắc như quà tặng/khuyến mãi kèm ("có tặng túi trữ sữa không") không phải sản phẩm đang mua. null nếu không nói tới, không chắc, hay không có trong danh sách — đừng đoán theo âm gần giống; product_quote
 - extra_items: món KHÁC khách mua THÊM trong cùng đơn, mỗi món {"name","qty","quote"}
 - payment: COD|bank|momo|zalopay — hình thức khách vừa CHỌN; payment_quote
 - order_intent: commit|other; intent_quote
@@ -396,12 +396,30 @@ def apply_guard(r: ReplyReading, llm: Any, text: str, last_agent: str, mode: str
         r.stance = "other"
 
 
+_READER_LLMS: Dict[int, Any] = {}
+
+
+def _reader_llm(llm: Any) -> Any:
+    """READER_MODEL (17/11, mặc định trống = dùng chung model chính): bộ đọc chạy model riêng, chung sổ chi phí/trần.
+    Lý do: gpt-5.4-mini làm LLM chính nhanh hơn nhưng khi làm bộ đọc gán quà tặng thành sản phẩm khách mua (SC-GEN-06)."""
+    model = os.environ.get("READER_MODEL", "").strip()
+    if not model or getattr(llm, "model", None) == model or not hasattr(llm, "cost_tracker"):
+        return llm
+    if id(llm) not in _READER_LLMS:
+        from src.llm.client import LLMClient
+        r = LLMClient(model=model, temperature=0.0)
+        r.cost_tracker = llm.cost_tracker
+        _READER_LLMS[id(llm)] = r
+    return _READER_LLMS[id(llm)]
+
+
 def read_reply(llm: Any, text: str, last_agent: str = "", waiting: Optional[Dict[str, Any]] = None, guard: Optional[str] = None) -> Optional[ReplyReading]:
     """None nếu không có LLM / lỗi (caller dùng regex dự phòng). `text` nên là bản đã che PII (turn.llm_text).
     `guard` (mặc định env CONSENT_GUARD, rồi DEFAULT_GUARD) chỉ áp dụng khi `waiting['stage'] == 'readback'`."""
     if llm is None or not getattr(llm, "available", False) or not hasattr(llm, "complete_json") or not (text or "").strip():
         return None
     ctx = f"Câu cuối của nhân viên: {last_agent or '(chưa có)'}\nSản phẩm ứng viên: {[f"{c['sku']} — {c['name']}" for c in (waiting or {}).get('candidates') or []]}\nĐang chờ khách xác nhận: {(waiting or {}).get('to_confirm') or []}; đang chờ khách cung cấp: {(waiting or {}).get('missing') or []}; giai đoạn đơn: {(waiting or {}).get('stage') or 'chưa có đơn'}"
+    llm = _reader_llm(llm)
     try:
         msgs = [{"role": "system", "content": PROMPT_SHORT if READER_PROMPT_SHORT else PROMPT}, {"role": "user", "content": f"{ctx}\n\nLời khách: {text}"}]
         takes_cap = "max_tokens" in inspect.signature(llm.complete_json).parameters      # LLM giả trong test không có tham số này
