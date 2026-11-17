@@ -452,3 +452,19 @@ Phân bố thời gian chờ chữ đầu mỗi vòng (564 vòng, cấu hình t�
 | WS + PROMPT_CACHE_ORDER | 0,84 | **1,21 s** | **1,07** / 3,14 s |
 
 - **Quy tắc:** LLM_WS phải đi kèm PROMPT_CACHE_ORDER. Bước tiếp: A/B 40 kịch bản (runs/ab_ws_1118, đã chuẩn bị, chưa chạy — chờ duyệt ~28k VND).
+
+### A/B WebSocket, 40 kịch bản (18/11, duyệt) — runs/ab_ws_1118, ~27k VND, NỐI TIẾP; bỏ 3 lượt khởi động như BTC
+
+| | mốc: tốt nhất + PROMPT_CACHE_ORDER (HTTP) | thử: + LLM_WS |
+|---|---|---|
+| TSR | 85,0 | 92,5 |
+| HR giá/KM % | 13,3 | 13,3 |
+| TTFT p50 / p95 (s) | 1,37 / **2,89** | 1,16 / 3,16 |
+| Lượt > 2,9 s (cần ≤ 11) | **12** | 14 |
+| Vòng LLM p50 / p95 (s) | 1,30 / 1,78 | 1,19 / 1,94 |
+| Cache trúng p50 | **0,95** | 0,81 |
+| Total p95 (s) | 4,19 | 4,15 |
+
+- WebSocket nhanh hơn ở trung vị nhưng cache thấp hơn → p95 kém hơn. **Không dùng LLM_WS.**
+- **Phát hiện chính: khóa cache (PROMPT_CACHE_ORDER) trên HTTP.** So với các lần cấu hình tốt nhất trước, cùng tốc độ API (vòng p50 1,25–1,32 s): cache 0,84–0,90 → 0,95, lượt > 2,9 s 23–25 → 12, p95 3,29–3,36 → **2,89 s**. Kết luận trước đó "cache không còn gì để lấy" là SAI: phân tích trước chỉ xét lượt 1 vòng (cache 97 %); lượt chậm là lượt cache trượt.
+- TSR mốc 85,0: trượt SC-GEN-07 (reranker, đã biết), SC-GEN-13, SC-TV-16… — các cuộc từng trượt ở lần khác; 1 lần chạy chưa đủ kết luận.
