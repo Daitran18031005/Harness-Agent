@@ -73,13 +73,14 @@ def reading_needs_nothing(r) -> bool:
 PREFETCH_HIDE_TOOLS = os.environ.get("PREFETCH_HIDE_TOOLS", "").strip().lower() in ("on", "1", "true")   # F2, MẶC ĐỊNH TẮT tới khi đo xong
 POLICY_PREFETCH = os.environ.get("POLICY_PREFETCH", "").strip().lower() in ("on", "1", "true")   # MẶC ĐỊNH TẮT: tra trước chính sách theo lời khách (reranker, song song phần chuẩn bị); đoạn điểm ≥ POLICY_PREFETCH_MIN vào prompt
 POLICY_PREFETCH_MIN = float(os.environ.get("POLICY_PREFETCH_MIN", "0.9"))      # offline 17/11: lượt có nhãn vượt 0,9 → top-3 trúng 15/17
-POLICY_PREFETCH_WAIT_S = float(os.environ.get("POLICY_PREFETCH_WAIT_S", "0.3"))  # chờ tối đa khi dựng prompt; chưa xong thì bỏ, không làm chậm lượt
+POLICY_PREFETCH_WAIT_S = float(os.environ.get("POLICY_PREFETCH_WAIT_S", "0"))    # 0 = không chờ: xong kịp lúc dựng prompt thì dùng (đo 17/11: chờ 0,3 s làm mọi lượt LLM chậm ~0,28 s)
 POLICY_QUERY_CONTEXT = os.environ.get("POLICY_QUERY_CONTEXT", "").strip().lower() in ("on", "1", "true")   # MẶC ĐỊNH TẮT: search_policy tìm theo từ khóa LLM + lời khách lượt này (đã che PII); nhãn tay 94 truy vấn thật 16/11: reranker 43 % → 71 %
 PREFETCH_ORDER_QUOTE = os.environ.get("PREFETCH_ORDER_QUOTE", "").strip().lower() in ("on", "1", "true")   # MẶC ĐỊNH TẮT: hướng 1 — lời khách có địa chỉ (<ADDR_n>) → code báo giá trước sản phẩm đang bàn KÈM địa chỉ (KM theo vùng, freeship)
 PREFETCH_VARIANTS = os.environ.get("PREFETCH_VARIANTS", "").strip().lower() in ("on", "1", "true")   # MẶC ĐỊNH TẮT: hướng 1 — sản phẩm có biến thể vừa tra trước lượt này + khách nêu size/màu → tra trước tồn kho + giá đúng biến thể
 PARALLEL_TOOLS = os.environ.get("PARALLEL_TOOLS", "").strip().lower() in ("on", "1", "true")   # MẶC ĐỊNH TẮT: các tool chỉ đọc trong cùng một vòng LLM chạy đồng thời
 EARLY_GATE_TAKEOVER = os.environ.get("EARLY_GATE_TAKEOVER", "").strip().lower() in ("on", "1", "true")   # MẶC ĐỊNH TẮT: bộ đọc song song về trước và code nhận lượt → trả câu của code ngay, hủy LLM chính (không chờ LLM viết xong)
 READ_ONLY_TOOLS = frozenset({"inventory.check", "pricing.get_quote", "catalog.search", "search_policy"})   # không chờ bộ đọc (xem _tool_executor)
+TOOL_FIRST_PROMPT = os.environ.get("TOOL_FIRST_PROMPT", "").strip().lower() in ("on", "1", "true")   # MẶC ĐỊNH TẮT: system prompt thêm quy tắc gọi tool ngay vòng đầu (giảm vòng nhắc)
 NUDGE_OFF = os.environ.get("NUDGE_OFF", "").strip().lower() in ("on", "1", "true")   # MẶC ĐỊNH TẮT: bỏ vòng nhắc mặc định (17/11: 22–25 lượt bị nhắc/lần chạy, 12–14 vô ích); 11/11 bỏ hẳn từng làm TSR 92,5 → 72,5
 NUDGE_BY_READER = os.environ.get("NUDGE_BY_READER", "").strip().lower() in ("on", "1", "true")   # MẶC ĐỊNH TẮT (đo tách 13/11: không thấy lợi). bộ đọc hiểu khách không yêu cầu gì cần tra/làm → bỏ vòng nhắc gọi tool (đo 2026-11-13: 119/2180 lượt mất trọn 1 vòng LLM cho vòng nhắc vô ích)
 SPECULATIVE_TOOLS = not _off("SPECULATIVE_TOOLS")     # chạy trước inventory.check/pricing.get_quote cho sản phẩm khách vừa nhắc/đang bàn
@@ -2181,6 +2182,11 @@ class HarnessOrchestrator:
                "Khi các phiên bản nói khác nhau mà chưa biết ngày mua, tra order.status hoặc hỏi khách ngày mua/đặt hàng trước khi trả lời; không được trộn số liệu của hai phiên bản. "
                "Khi trả lời theo phiên bản cũ, nói rõ đó là chính sách áp dụng cho đơn mua vào thời điểm đó. "
                if os.environ.get("POLICY_ALL_VERSIONS", "").strip().lower() in ("on", "1", "true") else "")      # chỉ khi kết quả có thời gian hiệu lực (semantic_rag); cờ tắt thì prompt không đổi
+            + (" GỌI TOOL NGAY TRONG LẦN TRẢ LỜI ĐẦU TIÊN: khi khách hỏi chính sách (đổi trả, bảo hành, giao hàng, thanh toán, khuyến mãi), giá, tồn kho/size/màu, "
+               "thời gian giao, tình trạng đơn hoặc muốn hẹn/đổi/hủy đơn, mà dữ liệu đó CHƯA có sẵn trong phần 'Hệ thống ĐÃ…' ở trên, thì GỌI TOOL tương ứng NGAY, "
+               "không viết câu trả lời trước rồi mới tra, không trả lời theo trí nhớ. Chỉ trả lời không gọi tool khi khách chào hỏi, cảm ơn, trả lời câu hỏi của em, "
+               "hoặc dữ liệu cần thiết đã nằm sẵn trong prompt. "
+               if TOOL_FIRST_PROMPT else "")      # 17/11: ~22 lượt/lần chạy bị nhắc, 12 lượt nhắc xong mới gọi tool (≥ 2 vòng, 5–6,5 s)
             + "GIÁ THEO SỐ LƯỢNG / NHIỀU SẢN PHẨM: final_price_vnd của pricing.get_quote là giá MỘT sản phẩm — không gọi giá một sản phẩm là giá cả đơn. "
             "Khách mua từ 2 sản phẩm trở lên trong một đơn (cùng một sản phẩm số lượng > 1, hoặc nhiều sản phẩm khác nhau, kể cả phụ kiện/sản phẩm mua kèm): gọi pricing.quote_order với "
             "lines=[{sku, qty}] chứa ĐỦ mọi sản phẩm của đơn (SKU của từng sản phẩm lấy từ catalog.search, không tự đặt) và báo khách total_vnd cùng giá từng máy trong units — không tự nhân/cộng; "

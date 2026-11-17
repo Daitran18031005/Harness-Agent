@@ -757,3 +757,26 @@ class LookupBundleTest(GateBase):
     def test_flag_off_unchanged(self):
         search, _ = self._run("Áo khoác gió Windbreak size M màu navy còn không em?", flag=False)
         self.assertFalse(any("today" in i for i in search["result"]["items"]))
+
+
+class ToolFirstPromptTest(PolicyVersionPromptTest):
+    """TOOL_FIRST_PROMPT (17/11): quy tắc gọi tool ngay vòng đầu chỉ có trong system prompt khi cờ bật."""
+
+    def test_on_adds_version_rule(self):
+        pass
+
+    def test_off_prompt_unchanged(self):
+        pass
+
+    def _sys(self, flag):
+        from unittest import mock
+        import src.harness.orchestrator as O
+        self.llm = self.Capture()
+        self.orch.llm_client = self.llm
+        with mock.patch.object(O, "TOOL_FIRST_PROMPT", flag):
+            self.turn(NEW_PHONE, "Bên em đổi trả trong bao nhiêu ngày vậy?", [])
+        return self.llm.systems[-1]
+
+    def test_rule_only_when_flag_on(self):
+        self.assertIn("GỌI TOOL NGAY TRONG LẦN TRẢ LỜI ĐẦU TIÊN", self._sys(True))
+        self.assertNotIn("GỌI TOOL NGAY TRONG LẦN TRẢ LỜI ĐẦU TIÊN", self._sys(False))
