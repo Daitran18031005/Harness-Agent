@@ -122,3 +122,20 @@ B3 = B1 + NUDGE_OFF + POLICY_PREFETCH. Số tính trên toàn file (~230 lượt
 - **SC-GEN-07 trượt ở cả B1 lặp (có vòng nhắc)** → lỗi chính sách "đổi mới 30 ngày" gắn với reranker (đã thấy ở đo B lần 2), không chỉ do bỏ vòng nhắc.
 - B3: tra trước chính sách không bù được: vẫn trượt SC-GEN-07.
 - Cấu hình bật cờ nhất quán giảm lượt > 3 s (≈ 44–49 so với 57–70) và p95 thấp hơn router 0,3–1,0 s, nhưng TSR thấp hơn 0–5 điểm tùy lần; với 1–2 lần chạy mỗi cấu hình chưa tách được khỏi nhiễu.
+
+## Kế hoạch 4 bước (17/11) — bước 0–1
+
+- **Bước 0:** tra trước chính sách mặc định không chờ (`POLICY_PREFETCH_WAIT_S=0`). Cấu hình nền B1r = B1 nhưng giữ router (bỏ reranker: SC-GEN-07, cần GPU, không tái lập).
+- **Bước 1:** `TOOL_FIRST_PROMPT` — quy tắc gọi tool ngay vòng đầu. Đo 1 cặp cùng giờ (runs/ab_toolfirst_1117, ~12k VND), 36 kịch bản:
+
+| | router | B1r + TOOL_FIRST_PROMPT |
+|---|---|---|
+| TSR | 97,2 | 94,4 (thêm trượt SC-TV-05/call_3) |
+| HR giá/KM % | 13,3 | 18,8 |
+| TTFT p50 / p95 (s) | 1,68 / 5,02 | 1,78 / 5,33 |
+| Lượt > 3 s | 56 | 56 |
+| Lượt bị nhắc | 21 | 20 |
+| Total p95 (s) | 6,68 | 6,87 |
+
+- **Không đạt** (tiêu chí: lượt bị nhắc ≤ 11). LLM gần như không làm theo quy tắc (21 → 20). Bỏ hướng này (cờ giữ tắt). Theo kế hoạch: sang bước 2 (yêu cầu song song bắt buộc gọi tool) — cần duyệt.
+- B1r (giữ router) không giảm lượt > 3 s như B1 có reranker (56 vs 44–49): phần giảm ở B1 chủ yếu đến từ reranker làm lượt chính sách nhanh hơn.
