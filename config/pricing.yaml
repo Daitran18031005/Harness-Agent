@@ -17,6 +17,12 @@ models:
     output_usd_per_1m: 0.60
     source: "bảng tham khảo trong cost_tracker.py cũ (trùng giá niêm yết gpt-4o-mini đã biết)"
     needs_official_verification: false
+  gpt-5.4-mini:
+    input_usd_per_1m: 0.75
+    cached_input_usd_per_1m: 0.075
+    output_usd_per_1m: 4.50
+    source: "https://developers.openai.com/api/docs/models/gpt-5.4-mini, tra 2026-11-17 (endpoint data residency +10%, không dùng)"
+    needs_official_verification: false
   gpt-4o:
     input_usd_per_1m: 2.50
     output_usd_per_1m: 10.00
