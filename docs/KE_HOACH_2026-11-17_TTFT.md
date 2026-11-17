@@ -397,3 +397,9 @@ Nền: gpt-4o-mini fast + PARALLEL_REQUIRED_TOOLS + reranker. 37 kịch bản ch
 
 - So cùng lần: −9 lượt > 3 s, p95 −0,39 s, TSR giữ (trượt SC-GEN-07 bên thử — lỗi reranker đã biết; SC-GEN-06 bên mốc).
 - Mức tuyệt đối kém ước tính vì API chậm hơn lúc chạy (mốc lần này p95 3,70 so với 3,36 s ở ab_fastreqrr_1118). Còn 4 lượt bộ đọc tuần tự (lượt chốt / closing — chưa kiểm).
+
+### Kiểm giả định "stream yêu cầu bắt buộc gọi tool" (18/11, offline, runs/ab_rpd_1118 bên thử) — KHÔNG làm
+
+- Lượt dùng yêu cầu song song (21): phần ngoài LLM + tool p50 0,38 s, so với 0,24 s ở lượt khác → chờ thêm chỉ ~0,15 s; trong 21 lượt > 3 s chỉ 4 lượt có phần ngoài > 0,5 s (0,53–1,49 s), lẫn với chờ bộ đọc.
+- Stream không làm yêu cầu xong sớm hơn (lời gọi tool chỉ đủ khi stream kết thúc) → ước tính trước (gỡ 2–4 lượt) **sai**; không cài.
+- 21 lượt > 3 s còn lại phần lớn là 2 vòng LLM bình thường (mỗi vòng 1,0–2,0 s) + tool. Phía code gần như hết chỗ gỡ.
