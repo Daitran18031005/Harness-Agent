@@ -59,6 +59,7 @@ def _off(name: str) -> bool:
 
 
 SHORTLIST_FULL_QUOTE = os.environ.get("SHORTLIST_FULL_QUOTE", "").strip().lower() in ("on", "1", "true")   # MẶC ĐỊNH TẮT: product.shortlist gắn luôn KM/quà hôm nay của từng mẫu (bớt chuỗi shortlist → get_quote)
+HANDOFF_PREFETCH = os.environ.get("HANDOFF_PREFETCH", "").strip().lower() in ("on", "1", "true")   # MẶC ĐỊNH TẮT (18/11): kiểm duyệt chuyển máy chạy sẵn từ đầu lượt (+1 lời gọi LLM ngắn mỗi lượt; lượt chuyển máy bớt 0,9–2,8 s)
 LOOKUP_BUNDLE = os.environ.get("LOOKUP_BUNDLE", "").strip().lower() in ("on", "1", "true")   # MẶC ĐỊNH TẮT: tool gộp — catalog.search (≤ 3 sản phẩm) tự gắn tồn kho + giá hôm nay cho từng sản phẩm/biến thể khách nêu, bớt vòng LLM
 READER_PARALLEL_DRAFT = os.environ.get("READER_PARALLEL_DRAFT", "").strip().lower() in ("on", "1", "true")   # MẶC ĐỊNH TẮT: có đơn nháp vẫn cho LLM chính chạy song song bộ đọc; begin_turn + driver của gate dời vào sync_gate (quyết định không đổi, chỉ đổi thời điểm)
 PARALLEL_READER = not _off("PARALLEL_READER")          # đọc hiểu lời khách chạy song song với LLM chính (khi không có đơn nháp đang mở)
@@ -132,7 +133,7 @@ class HarnessOrchestrator:
 
         self._gate_extra_calls: Dict[str, List[Dict[str, Any]]] = {}   # tool cổng tự gọi trong lượt (báo giá để đọc lại đơn) — đưa vào trace
         self.order_gate = OrderGate()             # cổng đặt đơn bằng code (src/harness/order_gate.py)
-        self._pool = ThreadPoolExecutor(max_workers=2, thread_name_prefix="reader")
+        self._pool = ThreadPoolExecutor(max_workers=3, thread_name_prefix="reader")   # bộ đọc + tra trước chính sách + kiểm duyệt chuyển máy
         self._llm_pool = ThreadPoolExecutor(max_workers=2, thread_name_prefix="main-llm")   # EARLY_GATE_TAKEOVER: LLM chính chạy ở luồng riêng để code nhận lượt sớm      # bước đọc hiểu chạy song song với LLM chính
         memory.register_delete_listener(self._forget_customer)  # xóa khách -> xóa cả trạng thái theo cuộc gọi
         # Bước 12: chọn sản phẩm bằng luật slot→thuộc tính (dữ liệu config/slot_rules.json) + chính sách hỏi lại if/else
@@ -469,6 +470,8 @@ class HarnessOrchestrator:
             tool_calls_executed.extend(pre["calls"])
         precomp_served: List[str] = []         # lời gọi trùng của LLM đã được trả từ kết quả tra sẵn (không gọi tool lần hai)
         handoff_check: Dict[str, Any] = {}     # kết quả chốt chuyển máy của lượt này (chỉ có khi LLM định gọi handoff.transfer)
+        handoff_future = (self._pool.submit(authorize_handoff, self.llm_client, turn.llm_text, last_agent)
+                          if HANDOFF_PREFETCH and (turn.llm_text or "").strip() else None)   # chỉ cần lời khách + câu cuối nhân viên → chạy sẵn, dùng nếu LLM gọi chuyển máy
 
         shared_state = {
             "customer_id": customer_id,
@@ -641,7 +644,7 @@ class HarnessOrchestrator:
                     if name == "handoff.transfer":
                         # Chuyển máy chỉ khi KHÁCH yêu cầu/đồng ý (chốt bằng cấu trúc, không dựa vào chỉ dẫn prompt); kiểm tra một lần/lượt, theo yêu cầu.
                         if "v" not in handoff_check:
-                            handoff_check["v"] = authorize_handoff(llm_client, turn.llm_text, last_agent)
+                            handoff_check["v"] = handoff_future.result() if handoff_future is not None else authorize_handoff(llm_client, turn.llm_text, last_agent)
                         if not handoff_check["v"]["authorized"]:
                             return ({"error": "handoff_blocked", "instruction": "CHƯA chuyển máy: đây không phải ca ngoài phạm vi/an toàn và khách chưa yêu cầu hoặc đồng ý chuyển. KHÔNG nói là đã/sẽ chuyển máy. "
                                      "Tiếp tục trả lời khách, rồi hỏi MỘT câu khách có muốn nhờ nhân viên hỗ trợ không."},
