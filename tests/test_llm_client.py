@@ -553,3 +553,31 @@ class JsonTruncationTest(unittest.TestCase):
             c.complete_json([{"role": "user", "content": "x"}], max_tokens=5)
         self.assertIsNone(RR.read_reply(c, "ok lấy luôn", "Anh lấy không ạ?"))          # bị cắt → không đọc được, không đoán
         self.assertEqual(sent[-1][c._token_param], RR.READER_MAX_TOKENS)
+
+
+class ParallelRequiredToolsTest(unittest.TestCase):
+    def test_forced_tool_call_replaces_nudge_round(self):
+        """PARALLEL_REQUIRED_TOOLS (17/11): vòng đầu không gọi tool (lẽ ra bị nhắc) → dùng lời gọi tool của yêu cầu song song, không tốn vòng nhắc."""
+        from concurrent.futures import Future
+        from unittest import mock
+        import src.llm.client as C
+        answer = [_chunk(content="Dạ chính sách là 14 ngày ạ."), _chunk(with_choice=False, usage=NS(prompt_tokens=10, completion_tokens=3))]
+        final = [_chunk(content="Dạ đổi trả trong 7 ngày ạ."), _chunk(with_choice=False, usage=NS(prompt_tokens=10, completion_tokens=3))]
+        client, _ = make_client([answer, final])
+        forced = Future()
+        forced.set_result(NS(choices=[NS(message=NS(tool_calls=[NS(id="r1", function=NS(name="search_policy", arguments='{"query": "đổi trả"}'))]))]))
+        seen = []
+        with mock.patch.object(C, "PARALLEL_REQUIRED_TOOLS", True), mock.patch.object(type(client), "_submit_required", lambda self, m, t: forced):
+            timing = {}
+            text, log, _ = client.chat_with_tools([{"role": "user", "content": "x"}], lambda n, a: (seen.append(n) or {"chunks": []}, a),
+                                                  timing=timing, tools_override=[{"type": "function", "function": {"name": "search_policy"}}])
+        self.assertEqual(seen, ["search_policy"])
+        self.assertEqual(text, "Dạ đổi trả trong 7 ngày ạ.")
+        self.assertEqual(timing["rounds_before_first_token"], 1)          # 1 vòng (đã có lời gọi tool) thay vì vòng đầu + vòng nhắc + vòng tool
+
+    def test_flag_off_never_submits(self):
+        from unittest import mock
+        import src.llm.client as C
+        client, _ = make_client([[_chunk(content="Dạ chào ạ."), _chunk(with_choice=False, usage=NS(prompt_tokens=10, completion_tokens=3))]])
+        with mock.patch.object(C, "PARALLEL_REQUIRED_TOOLS", False), mock.patch.object(type(client), "_submit_required", side_effect=AssertionError):
+            client.chat_with_tools([{"role": "user", "content": "x"}], lambda n, a: ({}, a), expect_tools=False)

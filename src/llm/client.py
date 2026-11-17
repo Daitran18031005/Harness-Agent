@@ -25,6 +25,7 @@ logger = logging.getLogger("harness.llm")
 
 
 # Lời AGENT hứa sẽ tra cứu mà chưa tra ("để em kiểm tra…", "em sẽ tìm…", "chờ em một chút"): dấu hiệu để nhắc model gọi tool. Soi lời của chính agent, không phải lời khách.
+PARALLEL_REQUIRED_TOOLS = os.environ.get("PARALLEL_REQUIRED_TOOLS", "").strip().lower() in ("on", "1", "true")   # MẶC ĐỊNH TẮT (duyệt 17/11): vòng đầu gửi song song thêm 1 yêu cầu tool_choice="required"; vòng thường không gọi tool mà lẽ ra bị nhắc → dùng ngay lời gọi tool của yêu cầu song song thay cho vòng nhắc (+1 lời gọi LLM mỗi lượt)
 PROMPT_CACHE_ORDER = os.environ.get("PROMPT_CACHE_ORDER", "").strip().lower() in ("on", "1", "true")   # MẶC ĐỊNH TẮT: gửi prompt_cache_key theo system prompt + tính giá cache cho lời gọi JSON
 
 
@@ -411,6 +412,33 @@ class LLMClient:
         cost["latency_ms"] = int(round((time.perf_counter() - t0) * 1000))
         return data, cost
 
+    def _submit_required(self, messages: List[Dict[str, Any]], tools: List[Dict[str, Any]]):
+        """PARALLEL_REQUIRED_TOOLS: gửi song song một yêu cầu bắt buộc gọi tool (không stream) với đúng prompt của vòng đầu. Chi phí ghi vào sổ khi xong, dùng hay không."""
+        if not hasattr(self, "_required_pool"):
+            self._required_pool = ThreadPoolExecutor(max_workers=4, thread_name_prefix="required-tools")
+        kwargs = {**self._build_kwargs(list(messages), tools, stream=False), "tool_choice": "required"}
+
+        def call():
+            resp = self._client.chat.completions.create(**kwargs)
+            u = getattr(resp, "usage", None)
+            if u is not None:
+                det = getattr(u, "prompt_tokens_details", None)
+                pt, ct = getattr(u, "prompt_tokens", 0) or 0, getattr(u, "completion_tokens", 0) or 0
+                cached = min(pt, (getattr(det, "cached_tokens", 0) or 0) if det else 0)
+                in_p, out_p, _ = self.cost_tracker.price_for(self.model)
+                self.cost_tracker.add_external_cost(((pt - cached) * in_p + cached * in_p / 2 + ct * out_p) / 1e6)   # ghi vĩnh viễn (ngoài sổ của lượt); giá cache ước = 1/2 giá vào
+            return resp
+        return self._required_pool.submit(call)
+
+    @staticmethod
+    def _required_calls(future) -> List[Dict[str, Any]]:
+        """Lời gọi tool của yêu cầu song song, cùng dạng _stream_round trả về; lỗi/không có → [] (khi đó nhắc như cũ)."""
+        try:
+            msg = future.result(timeout=30).choices[0].message
+        except Exception:
+            return []
+        return [{"id": tc.id, "name": tc.function.name, "arguments": tc.function.arguments or ""} for tc in (getattr(msg, "tool_calls", None) or [])]
+
     def _stream_round(self, messages: List[Dict[str, Any]], tools: List[Dict[str, Any]], cancel: Optional[threading.Event] = None):
         """`_stream_round_once` + thử lại khi timeout/đứt kết nối (bỏ phần đã nhận dở: tool chỉ chạy SAU khi vòng đọc xong). Lỗi khác, kể cả trần chi phí, ném ngay."""
         for attempt in range(self.stream_retries + 1):
@@ -547,6 +575,7 @@ class LLMClient:
             round_tools = active_tools() if callable(active_tools) else active_tools      # callable: dựng lại schema mỗi vòng (sản phẩm đang bàn có thể đổi giữa lượt)
             if cancel is not None and cancel.is_set():
                 raise LLMCancelled()
+            required_future = self._submit_required(working_messages, round_tools) if (PARALLEL_REQUIRED_TOOLS and api_calls == 0 and round_tools) else None
             text, tool_calls, usage, first_token_at = self._stream_round(working_messages, round_tools, *([cancel] if cancel is not None else []))
             round_ms.append(int(round((time.perf_counter() - round_start) * 1000)))
             api_calls += 1
@@ -570,7 +599,12 @@ class LLMClient:
 
             if not tool_calls:
                 want_tools = expect_tools() if callable(expect_tools) else expect_tools    # callable: orchestrator quyết định lúc vòng đầu xong (bộ đọc song song đã có kết quả)
-                if not tool_calls_log and not nudged_once and (want_tools or _PROMISES_LOOKUP.search(text or "")):
+                forced = self._required_calls(required_future) if (required_future is not None and not tool_calls_log and not nudged_once
+                                                                     and (want_tools or _PROMISES_LOOKUP.search(text or ""))) else []
+                if forced:                            # lẽ ra bị nhắc: dùng lời gọi tool của yêu cầu song song (đã chạy cùng lúc) thay cho một vòng nhắc
+                    nudged_once, tool_calls, text = True, forced, ""
+                    self._required_used = getattr(self, "_required_used", 0) + 1
+                elif not tool_calls_log and not nudged_once and (want_tools or _PROMISES_LOOKUP.search(text or "")):
                     # (2026-11-11: vòng nhắc tốn nguyên một vòng LLM ≈ 1,2 s ở MỌI lượt không gọi tool. Bỏ hẳn thì nhanh nhưng TSR 92,5 → 72,5 %: model hứa
                     # "em sẽ lên đơn" hoặc bỏ chuyển máy mà không gọi tool. Nên: vẫn nhắc mặc định; caller truyền expect_tools=False khi dữ liệu lượt này đã
                     # được code tra sẵn trong prompt — khi đó chỉ nhắc nếu câu trả lời còn HỨA tra cứu/hành động.)
@@ -593,6 +627,7 @@ class LLMClient:
                         )
                     })
                     continue
+            if not tool_calls:
                 t_end = time.perf_counter()
                 if timing is not None:
                     total_ms = int(round((t_end - t0) * 1000))
