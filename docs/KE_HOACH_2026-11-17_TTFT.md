@@ -439,3 +439,16 @@ Phân bố thời gian chờ chữ đầu mỗi vòng (564 vòng, cấu hình t�
 - gpt-4o-mini chạy được qua WebSocket với Fast mode. Mỗi vòng bớt 0,14–0,27 s; lượt 2 vòng tới chữ đầu bớt ~0,41 s — khớp phần mạng đã đo (~0,28 s/lần gọi). Dao động giữa các lượt cũng hẹp hơn.
 - Mẫu rất nhỏ (4 lượt mỗi bên), prompt nhỏ (không phải prompt ~12k token thật).
 - Muốn dùng: chuyển `chat_with_tools` sang Responses API qua WebSocket (định dạng tool, input item, function_call_output, previous_response_id với store=false phải cùng kết nối); yêu cầu song song (PARALLEL_REQUIRED_TOOLS) cần lane riêng hoặc kết nối thứ hai. Ước 1 ngày công, sát hạn 20/11.
+
+### LLM_WS trong hệ thống thật (18/11) — commit 98a65aa, runs/ws_smoke_1118 (3 kịch bản, 17 lượt mỗi bên, bỏ lượt đầu nạp reranker)
+
+- **Sai sót phép thử trước:** bên HTTP dùng Responses API, không phải Chat Completions hệ thống đang chạy. Đo lại công bằng (Chat Completions HTTP vs Responses WS, 5 lượt): vòng 1 1.034 → 690 ms, vòng 2 809 → 645 ms, cả lượt 2.024 → 1.680 ms. Fast mode áp dụng qua WS (tier trả về `priority`).
+- **Trong hệ thống thật, WS mất cache:** prompt ~12k chỉ trúng ~4k token (HTTP ~10,9k) → vòng chậm hơn (1,48 vs 1,29 s). Gửi kèm `prompt_cache_key` (PROMPT_CACHE_ORDER=on) sửa được:
+
+| | cache trúng p50 | vòng p50 | TTFT p50 / p95 (16 lượt) |
+|---|---|---|---|
+| HTTP | 0,88 | 1,29 s | 1,58 / 2,98 s |
+| WS | 0,73 | 1,48 s | 1,35 / 4,76 s |
+| WS + PROMPT_CACHE_ORDER | 0,84 | **1,21 s** | **1,07** / 3,14 s |
+
+- **Quy tắc:** LLM_WS phải đi kèm PROMPT_CACHE_ORDER. Bước tiếp: A/B 40 kịch bản (runs/ab_ws_1118, đã chuẩn bị, chưa chạy — chờ duyệt ~28k VND).
