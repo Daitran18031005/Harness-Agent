@@ -279,3 +279,16 @@ Thử = bước 4d + 9a6adec (bản hiện hành giữ top-3) + READER_MODEL=gpt
 - gpt-6-luna fast (reasoning none): vòng 1,26 s nhưng 2,7 vòng/lượt → TTFT tệ hơn (22 lượt chung: p95 7,1 s, 12 lượt > 3 s so với 8 của 4o thường). gpt-6-astra: Chat Completions không cho tool kèm reasoning, cần Responses API → không đo.
 - Fast mode rút ngắn chủ yếu vòng gọi tool (−33 %), ít ở vòng cuối ra token. Trace chưa ghi được tier trả về (service_tier = None trong trace) — hiệu lực xác nhận qua lời gọi thử và độ trễ.
 - Mẫu nhỏ (34 lượt), chưa đo TSR. **Bước tiếp:** A/B 40 kịch bản 4o thường vs 4o fast.
+
+### gpt-5.6-luna fast vs gpt-4o-mini fast (17/11) — runs/fastmode3_1117, ~5k VND tiền thật (giá luna thêm ở 452f501)
+
+| (50 lượt chung, 8 kịch bản) | gpt-4o-mini fast | gpt-5.6-luna fast |
+|---|---|---|
+| Vòng LLM p50 / p95 (s) | 1,36 / 1,76 | 1,41 / 1,90 |
+| Vòng / lượt | 1,75 | 2,07 |
+| TTFT p50 / p95 (s) | 2,22 / 5,30 | 2,84 / 7,46 |
+| Lượt > 3 s | 14 | 25 |
+| TSR (8 kịch bản, gồm 1 dở của luna) | 75,0 | 100,0 |
+
+- gpt-5.6-luna: mỗi vòng không nhanh hơn, gọi nhiều vòng hơn → TTFT tệ hơn. Loại.
+- gpt-4o-mini fast lần này p95 5,30 s (lần trước 3,60 s trên 34 lượt): mức lợi của Fast mode dao động mạnh giữa các lần → A/B 40 kịch bản phải chạy fast cùng giờ với bản thường.
