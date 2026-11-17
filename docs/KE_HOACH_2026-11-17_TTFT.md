@@ -193,3 +193,25 @@ Cả hệ thống đổi model (LLM chính, bộ đọc, router), reasoning none
 
 - Mỗi vòng nhanh hơn ~0,35 s nhưng gọi nhiều vòng hơn → TTFT **chậm hơn**, TSR thấp hơn. Không dùng.
 - Mẫu 13 kịch bản; hôm nay API chậm (gpt-4o-mini p50 2,82 s).
+
+### Bước 4c — gpt-5.4-mini + reranker thay router (17/11) — runs/ab_54mini_rr_1117, sổ ~21k VND (tiền thật ≤ sổ)
+
+So 17 kịch bản chung (99 lượt mỗi bên; bên thử chạm trần sổ 15.000 do giá mặc định).
+
+| | gpt-4o-mini + router | gpt-5.4-mini + reranker |
+|---|---|---|
+| TSR | 88,2 | 88,2 |
+| HR giá/KM % | 20,0 | 10,0 |
+| TTFT p50 (s) | 2,04 | 2,47 |
+| TTFT p95 (s) | 12,45* | 5,31 |
+| Lượt > 3 s | 32 | 35 |
+| Lượt 0 / 1 / ≥ 2 vòng tool trước token | 43 / 28 / 8 | 27 / 32 / 19 |
+| Vòng LLM p50 (s) | 2,09 | 1,56 |
+| search_policy: số lần / ms mỗi lần | 9 / 1.248 | 22 / 520 |
+| Total p95 (s) | 14,07* | 7,71 |
+
+\* Bên router có 6 lượt API treo 12,5–18,7 s trong lần chạy này → p95 không dùng để so được.
+
+- Reranker cắt thời gian mỗi lần tra chính sách 1,25 → 0,52 s, nhưng gpt-5.4-mini vẫn tra nhiều gấp ~2,4 lần và có nhiều lượt ≥ 2 vòng hơn (19 so với 8). TTFT p50 chậm hơn 0,43 s, lượt > 3 s không ít hơn.
+- TSR ngang nhau; HR thấp hơn (mẫu nhỏ).
+- **Kết luận:** gpt-5.4-mini kể cả có reranker không cải thiện TTFT so với gpt-4o-mini + router.
