@@ -381,3 +381,19 @@ Nền cả hai bên: gpt-4o-mini fast + PARALLEL_REQUIRED_TOOLS + reranker. So 3
 - chờ **bộ đọc chạy tuần tự** khi có đơn nháp (0,76–1,2 s) → `READER_PARALLEL_DRAFT` (có sẵn);
 - chờ **yêu cầu bắt buộc gọi tool** (không stream) xong sau vòng thường.
 Ước tính offline: + READER_PARALLEL_DRAFT → p95 3,14 s, 16 lượt > 3 s; + HANDOFF_PREFETCH → **p95 3,09 s, 13 lượt** (cần ≤ 11 / 239).
+
+### A/B READER_PARALLEL_DRAFT + HANDOFF_PREFETCH (18/11, duyệt) — runs/ab_rpd_1118, ~27k VND thật, NỐI TIẾP (thử trước)
+
+Nền: gpt-4o-mini fast + PARALLEL_REQUIRED_TOOLS + reranker. 37 kịch bản chung (~220 lượt).
+
+| | mốc | thử | ước tính (trên trace mốc cũ) |
+|---|---|---|---|
+| TSR | 91,9 | 91,9 | — |
+| HR giá/KM % | 16,7 | 11,1 | — |
+| TTFT p50 / p95 (s) | 1,49 / 3,70 | 1,43 / **3,31** | p95 3,09 |
+| Lượt > 3 s | 30 | **21** | 13 |
+| Lượt chờ bộ đọc tuần tự | 10 | 4 | 0 |
+| Total p95 (s) | 4,96 | 4,44 | — |
+
+- So cùng lần: −9 lượt > 3 s, p95 −0,39 s, TSR giữ (trượt SC-GEN-07 bên thử — lỗi reranker đã biết; SC-GEN-06 bên mốc).
+- Mức tuyệt đối kém ước tính vì API chậm hơn lúc chạy (mốc lần này p95 3,70 so với 3,36 s ở ab_fastreqrr_1118). Còn 4 lượt bộ đọc tuần tự (lượt chốt / closing — chưa kiểm).
