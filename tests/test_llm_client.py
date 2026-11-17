@@ -581,3 +581,15 @@ class ParallelRequiredToolsTest(unittest.TestCase):
         client, _ = make_client([[_chunk(content="Dạ chào ạ."), _chunk(with_choice=False, usage=NS(prompt_tokens=10, completion_tokens=3))]])
         with mock.patch.object(C, "PARALLEL_REQUIRED_TOOLS", False), mock.patch.object(type(client), "_submit_required", side_effect=AssertionError):
             client.chat_with_tools([{"role": "user", "content": "x"}], lambda n, a: ({}, a), expect_tools=False)
+
+
+class FastPricingTest(unittest.TestCase):
+    def test_fast_tier_uses_fast_prices(self):
+        """LLM_SERVICE_TIER=fast → sổ chi phí tính giá bảng 'fast' (gpt-4o-mini 0,25 / 1,00), không phải giá thường."""
+        import os
+        from unittest import mock
+        from src.llm import cost_tracker as ct
+        with mock.patch.dict(os.environ, {"LLM_SERVICE_TIER": "fast"}):
+            self.assertEqual(ct.load_pricing()["models"]["gpt-4o-mini"][:2], (0.25, 1.00))
+        with mock.patch.dict(os.environ, {"LLM_SERVICE_TIER": ""}):
+            self.assertEqual(ct.load_pricing()["models"]["gpt-4o-mini"][:2], (0.15, 0.60))

@@ -292,7 +292,7 @@ class LLMClient:
         if tools:
             kwargs["tools"] = tools
         if SERVICE_TIER and "service_tier" not in self.dropped_params:
-            kwargs["service_tier"] = SERVICE_TIER        # LLM_SERVICE_TIER=fast: Fast mode (giá ×2, sổ chi phí KHÔNG nhân — đặt trần tương ứng)
+            kwargs["service_tier"] = SERVICE_TIER        # LLM_SERVICE_TIER=fast: Fast mode; sổ chi phí dùng bảng giá "fast" trong config/pricing.yaml
         if self.temperature is not None and self.profile.supports_temperature and "temperature" not in self.dropped_params:
             kwargs["temperature"] = self.temperature
         if self.seed is not None and self.profile.supports_seed and "seed" not in self.dropped_params:
