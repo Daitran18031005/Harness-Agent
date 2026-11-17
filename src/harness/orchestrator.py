@@ -80,6 +80,7 @@ PREFETCH_VARIANTS = os.environ.get("PREFETCH_VARIANTS", "").strip().lower() in (
 PARALLEL_TOOLS = os.environ.get("PARALLEL_TOOLS", "").strip().lower() in ("on", "1", "true")   # MẶC ĐỊNH TẮT: các tool chỉ đọc trong cùng một vòng LLM chạy đồng thời
 EARLY_GATE_TAKEOVER = os.environ.get("EARLY_GATE_TAKEOVER", "").strip().lower() in ("on", "1", "true")   # MẶC ĐỊNH TẮT: bộ đọc song song về trước và code nhận lượt → trả câu của code ngay, hủy LLM chính (không chờ LLM viết xong)
 READ_ONLY_TOOLS = frozenset({"inventory.check", "pricing.get_quote", "catalog.search", "search_policy"})   # không chờ bộ đọc (xem _tool_executor)
+NUDGE_OFF = os.environ.get("NUDGE_OFF", "").strip().lower() in ("on", "1", "true")   # MẶC ĐỊNH TẮT: bỏ vòng nhắc mặc định (17/11: 22–25 lượt bị nhắc/lần chạy, 12–14 vô ích); 11/11 bỏ hẳn từng làm TSR 92,5 → 72,5
 NUDGE_BY_READER = os.environ.get("NUDGE_BY_READER", "").strip().lower() in ("on", "1", "true")   # MẶC ĐỊNH TẮT (đo tách 13/11: không thấy lợi). bộ đọc hiểu khách không yêu cầu gì cần tra/làm → bỏ vòng nhắc gọi tool (đo 2026-11-13: 119/2180 lượt mất trọn 1 vòng LLM cho vòng nhắc vô ích)
 SPECULATIVE_TOOLS = not _off("SPECULATIVE_TOOLS")     # chạy trước inventory.check/pricing.get_quote cho sản phẩm khách vừa nhắc/đang bàn
 
@@ -766,7 +767,7 @@ class HarnessOrchestrator:
                     """Có nhắc model gọi tool khi vòng đầu trả lời không gọi tool không (vòng nhắc ≈ 1 vòng LLM nữa trước token đầu).
                     Không nhắc khi dữ liệu đã nằm sẵn trong prompt, hoặc (NUDGE_BY_READER) bộ đọc LLM hiểu lời khách KHÔNG yêu cầu gì cần tra/làm.
                     Câu trả lời còn HỨA tra cứu/hành động thì client vẫn nhắc (`_PROMISES_LOOKUP`)."""
-                    if data_in_prompt:
+                    if data_in_prompt or NUDGE_OFF:            # NUDGE_OFF: chỉ còn nhắc khi câu trả lời HỨA tra cứu/hành động (client soi)
                         return False
                     if NUDGE_BY_READER:
                         sync_gate()                            # lấy kết quả bộ đọc đang chạy song song (đúng một lần; nhánh tool cũng gọi y như vậy)
