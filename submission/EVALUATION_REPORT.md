@@ -9,23 +9,25 @@ Lời khách là lời cố định của kịch bản. Theo hướng dẫn củ
 
 Số liệu thô: `runs/m1_final2/` (`full.jsonl`, `baseline.jsonl`, `report.json`, `report.md`). Lệnh tái lập: [README.md](README.md) mục 3. Nhật ký: [CHECKING.md](../CHECKING.md) § 13.
 
-## 0. Lần đo mới nhất (2026-11-12, `runs/m1_final3/`) — số nộp
+## 0. Số nộp: `runs/m1_final7/` (commit `616b3cc`, 2026-11-13) — 3 lượt × 277 kịch bản, cấu hình hệ thống
 
-Cùng 277 kịch bản, cùng cách đo như mục 1, sau các sửa lỗi ở mục 5 và tối ưu độ trễ (chạy trước tool đọc, đọc hiểu song song, vòng nhắc có điều kiện — CHECKING.md § 13.12). Chi phí 54.081 VND.
+Cùng 277 kịch bản, cùng cách chấm như mục 1, chạy **3 lượt** (seed 42) để đo độ dao động. Chi phí 44.799 VND. Gộp lại 3 lượt: `python scripts/ab_report.py` → `runs/m1_final7/cmp/report.md`.
 
-| Chỉ số | Baseline | Hệ thống | Ngưỡng | Kết luận |
-|---|---:|---:|---|---|
-| Repeat-Question Rate | 4,0 % | 3,8 % | giảm ≥ 40 % | **Chưa đạt** (giảm 5 %) |
-| Context Carryover Rate | 10,7 % | 66,3 % | — | hơn rõ |
-| Task Success Rate | 73,6 % (204/277) | **79,1 %** (219/277) | ≥ 70 % | **Đạt** |
-| TSR riêng ca khó | — | 77,9 % | — | — |
-| Hallucination giá & KM | 20,9 % | 14,8 % | ≤ 5 % | **Chưa đạt theo script** (xem mục 4) |
-| Vi phạm guardrail | 4 | 7 | 0 | kém baseline |
-| TTFT p50 / p95 (1.078 lượt) | — | 2,4 s / 5,8 s | p95 ≤ 3 s | **Chưa đạt** |
-| Total p95 | — | **7,0 s** | ≤ 8 s | **Đạt** |
-| Nạp Call Brief p95 | — | 50 ms | ≤ 5 s | Đạt |
+| Chỉ số | Lượt 1 | Lượt 2 | Lượt 3 | Trung bình / gộp | Ngưỡng | Kết luận |
+|---|---:|---:|---:|---:|---|---|
+| Task Success Rate | 88,1 % (244/277) | 87,7 % (243/277) | 89,9 % (249/277) | **88,6 %** | ≥ 70 % | **Đạt** (lệch giữa các lượt ≤ 2,2 điểm) |
+| TSR riêng ca khó (244 kịch bản) | 86,9 % | 86,5 % | 89,3 % | 87,6 % | — | — |
+| Repeat-Question Rate | 0,8 % | 0,4 % | 0,7 % | 0,6 % | giảm ≥ 40 % so với baseline | xem dưới |
+| Context Carryover Rate | 66,3 % | 67,1 % | 67,1 % | 66,8 % | — | — |
+| Hallucination giá & KM | 16,5 % | 16,7 % | 15,8 % | 16,3 % | ≤ 5 % | **Chưa đạt theo script** (xem mục 4) |
+| Vi phạm guardrail (ca) | 10 | 8 | 7 | 8,3 | 0 | — |
+| TTFT p50 / p95 (3.249 lượt gộp) | | | | 2,0 s / **5,8 s** | p95 ≤ 3 s | **Chưa đạt** (phân tích: mục 3) |
+| Total latency p95 (gộp) | | | | **7,5 s** | ≤ 8 s | **Đạt** |
+| Nạp Call Brief p95 (gộp) | | | | 43 ms | ≤ 5 s | Đạt |
 
-TSR theo nhóm (hệ thống / baseline): mẫu BTC 6/7 / 5/7 · SC-GEN 12/15 / 11/15 · SC-TV 16/20 / 20/20 · SC-ULTRA 7/15 / 5/15 · TEST 178/220 / 163/220. Một seed; sai số đo được giữa hai lần chạy cùng cấu hình ≈ ±5 điểm TSR trên 40 kịch bản. Các mục dưới đây là lần đo trước (`runs/m1_final2`).
+**So với baseline:** `m1_final7` chỉ chạy cấu hình hệ thống. Baseline không-bộ-nhớ gần nhất là `runs/m1_final3` (2026-11-12, commit cũ hơn): RQR 4,0 %, CCR 10,7 %, TSR 73,6 %, HR 20,9 %. So với số này: RQR giảm ~85 % (đạt ngưỡng ≥ 40 %), CCR 10,7 → 66,8 %, TSR 73,6 → 88,6 %. **Giới hạn:** baseline và hệ thống chưa cùng commit như Phụ lục A.6 yêu cầu; cần chạy lại baseline trên `616b3cc` để bảng so sánh đúng chuẩn.
+
+Lịch sử: `m1_final2` TSR 76,5 % → `m1_final3` 79,1 % → `m1_final4` 79,4 % (3 lượt) → `m1_final7` 88,6 % (3 lượt). Các mục 1–8 dưới đây giữ số của lần đo `runs/m1_final2` (có baseline cùng commit) để tham chiếu.
 
 ## 1. Bảng A.6
 
@@ -80,7 +82,9 @@ Giới hạn: các sửa sau `runs/m1_final2` (mục 5, ca 1–3, 6) mới đư�
 
 ## 3. Độ trễ
 
-Đo bằng `perf_counter` tại ranh giới harness, chế độ stream, 1.084 lượt (≥ 100 theo yêu cầu). TTFT p50 4,5 s, p95 7,5 s; Total p95 8,9 s — **cả hai chưa đạt ngưỡng**. Nguyên nhân: một lượt thường gồm 1 lần đọc hiểu lời khách + 1–2 vòng LLM có gọi tool, mỗi vòng 2–3 s; token đầu tiên chỉ có ở vòng cuối. Lượt do code xử lý (order gate, lượt chốt) không gọi LLM chính. Nạp Call Brief 47 ms (p95) vì tra sẵn bằng code lúc nhận diện khách.
+Đo bằng `perf_counter` tại ranh giới harness, chế độ stream, 1.084 lượt (≥ 100 theo yêu cầu). TTFT p50 4,5 s, p95 7,5 s; Total p95 8,9 s — **cả hai chưa đạt ngưỡng** (số `m1_final2`; số nộp `m1_final7`: TTFT p95 5,8 s chưa đạt, Total p95 7,5 s đạt). Nguyên nhân: một lượt thường gồm 1 lần đọc hiểu lời khách + 1–2 vòng LLM có gọi tool, mỗi vòng 2–3 s; token đầu tiên chỉ có ở vòng cuối. Lượt do code xử lý (order gate, lượt chốt) không gọi LLM chính. Nạp Call Brief 47 ms (p95) vì tra sẵn bằng code lúc nhận diện khách.
+
+**Phân rã TTFT trên số nộp `m1_final7` (3.114 lượt, offline từ trace):** một lời gọi gpt-4o-mini mất ~1,2–1,5 s, nên ngân sách 3 s chỉ đủ cho **một** lời gọi LLM trước token đầu. Lượt LLM chính trả lời ngay (0 vòng tool, 1.041 lượt) có TTFT p95 **2,73 s — đã đạt**. 1.004 lượt > 3 s đều có thêm một lời gọi LLM nối tiếp: bộ đọc lời khách chạy **trước** LLM chính khi đang có đơn nháp (~409 lượt), vòng LLM gọi tool tra cứu/chuyển máy (~410), router LLM bên trong `search_policy` (~183). Đếm trần offline: kể cả đoán đúng 100 % các lượt tra cứu để tra trước, p95 chỉ còn ~5,4 s. Các hướng đã đo (tra trước + ẩn tool, bộ đọc song song khi có đơn nháp, reranker thay router, yêu cầu gọi tool song song, đổi model gpt-4.1-mini / gpt-5.4-mini / gpt-5.4-nano) đều không đưa p95 về ≤ 3 s; chi tiết `docs/KE_HOACH_2026-11-16.md`, `docs/KE_HOACH_2026-11-17_TTFT.md`. Nhóm không dùng câu đệm (câu nói trước khi tra) vì TTFT được định nghĩa là token đầu của câu trả lời.
 
 ## 4. Hallucination giá & khuyến mãi: 14,6 % theo script, 0,6 % theo giá của mock
 
@@ -185,7 +189,16 @@ Bộ 60 câu dùng câu hỏi đầy đủ; trong hội thoại, LLM chính ch�
 3. **Truy vấn dài hơn chỉ giúp các cách hiểu ngữ nghĩa:** thêm lời khách làm embedding/reranker tăng ~28 điểm nhưng router/TF-IDF/BM25 giảm 3–6 điểm (từ đệm, teencode làm lệch so khớp từ).
 4. **Teencode:** BM25 gần như không đổi (86,4 → 84,7) vì so khớp trên chữ đã bỏ dấu; router tụt 86,4 → 67,8.
 5. **Đã thử trong hội thoại thật (40 kịch bản × 2 lần mỗi bên):** reranker + lời khách + trả mọi phiên bản (để LLM chính chọn theo `created_on` của đơn) cho TSR trong mức nhiễu so với router (90,8 vs 93,4, ~1 cuộc) — kịch bản chấm theo hành động (tạo đơn, chuyển máy), không chấm đoạn tài liệu, nên tìm trúng hơn không thành điểm TSR.
-6. **Độ trễ reranker:** chạy một tiến trình trên GPU, mỗi lần tra 0,25–0,32 s (N=5 ứng viên), nhanh hơn router; trong lần đo hội thoại 2,3–2,7 s vì hai tiến trình cùng nạp model làm đầy GPU 8 GB. Lượt tra chính sách chỉ ~8 % số lượt nên không đổi được TTFT p95 tổng.
+6. **Độ trễ reranker:** chạy một tiến trình trên GPU, mỗi lần tra 0,25–0,32 s (N=5 ứng viên), nhanh hơn router; lần đo hội thoại đầu 2,3–2,7 s vì hai tiến trình cùng nạp model làm đầy GPU 8 GB. Đo lại đúng cách (`runs/ab_rerank4_1117`: mỗi đợt 1 tiến trình router + 1 tiến trình reranker, 2 đợt nối tiếp, 38 kịch bản):
+
+   | | router-a | router-b | reranker-a | reranker-b |
+   |---|---|---|---|---|
+   | TSR | 92,1 | 97,4 | 94,7 | 97,4 |
+   | TTFT p95 (s) | 4,87 | 5,19 | 4,59 | 5,25 |
+   | Lượt chính sách TTFT p50 / p95 (s) | 4,52 / 5,75 | 4,84 / 7,19 | 2,66 / 6,09 | 3,14 / 6,74 |
+   | Mỗi lời gọi search_policy, trung vị (s) | 1,35 | 1,38 | 0,43 | 0,47 |
+
+   Mỗi lần tra nhanh hơn ~0,9 s, lượt chính sách p50 giảm ~1,8 s, TSR không tụt (không cuộc nào trượt cả 2 lần bên reranker mà router đạt); TTFT p95 tổng gần như không đổi vì lượt chính sách chỉ ~8 % số lượt. Lần tra đầu của mỗi tiến trình mất ~20 s để nạp model (đã thêm nạp sẵn lúc khởi động).
 7. **Đã thử và loại:** từ chối bằng ngưỡng điểm reranker (câu không trả lời được vẫn có điểm cao nhất ~0,9, đè lên vùng câu trả lời được).
 
 **Quyết định cho bản nộp:** giữ router LLM + TF-IDF. Các cờ `VECTOR_BACKEND`, `POLICY_NO_ROUTER`, `POLICY_QUERY_CONTEXT`, `POLICY_ALL_VERSIONS` có sẵn, mặc định tắt.
