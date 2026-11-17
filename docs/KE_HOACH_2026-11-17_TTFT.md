@@ -96,3 +96,13 @@ B1 = tất cả cờ, TẮT POLICY_PREFETCH. B2 = B1 + NUDGE_OFF. So 37 kịch b
 - NUDGE_OFF: p95 −0,35 s nhưng mất 2 cuộc đúng do bỏ nhắc: SAMPLE-07 (nói 14 ngày, không tra chính sách), SC-GEN-07 (thiếu "đổi mới 30 ngày").
 - Bộ đọc không tách được lượt nhắc có ích / vô ích (khách hỏi: 36 có ích / 26 vô ích; không hỏi: 11 / 8).
 - Tiếp: B3 = NUDGE_OFF + POLICY_PREFETCH (câu hỏi chính sách có dữ liệu sẵn thay cho vòng nhắc); lặp B1 để kiểm tái lập.
+
+### Độ đúng bộ đọc gpt-5.4-nano (17/11) — scripts/eval_reply_reader.py, 34 câu có đáp án, chi ~2,1k VND (gồm ~0,5k lần đầu chạm trần)
+
+| Model | Đúng | |
+|---|---|---|
+| gpt-4o-mini (hiện tại) | 21/34 | |
+| gpt-5.4-nano (reasoning none) | 18/34 | đúng hơn 4 câu (khách sửa tên/địa chỉ, xác nhận SĐT), sai thêm 7 câu |
+
+- Lỗi riêng của nano nguy hiểm cho order gate: coi câu HỎI là "chỉ trả lời câu hỏi của gate" (`only_answers=True` với "giao mất mấy ngày vậy em?", "bên em có size 41 không?"), bỏ sót tên người nhận ("đại", "tên là thu…"), bỏ sót xác nhận ("ừ đúng rồi").
+- **Không đổi model bộ đọc.** Nano chỉ nhanh hơn ~0,3 s mà kém đúng hơn ở đúng các trường gate dùng để quyết định.

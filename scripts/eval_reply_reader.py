@@ -12,7 +12,7 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 CODE_DIR = os.path.abspath(os.path.join(HERE, ".."))
 sys.path.insert(0, CODE_DIR)
 
-MAX_COST_VND = 100.0
+MAX_COST_VND = float(os.environ.get("READER_EVAL_CAP_VND", "100"))      # mặc định 100; đo model khác (giá mặc định cao hơn) thì đặt qua biến môi trường
 READBACK = "Dạ em đọc lại đơn: 1 giày RunLite 2 Pro size 38 màu đen, tổng 1.521.000đ, giao cho Đại, COD. Anh xác nhận đặt đơn này giúp em nhé?"
 PHONE_Q = "Dạ em xin xác nhận lại số điện thoại 0986886113, đúng không ạ?"
 NAME_Q = "Mình cho em xin tên người nhận hàng ạ?"
