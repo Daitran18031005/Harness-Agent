@@ -346,3 +346,9 @@ Cả hai `LLM_SERVICE_TIER=fast` (sổ giá fast), cấu hình còn lại mặc 
 - **Khớp dự tính.** TSR giữ (trượt SC-GEN-06, SC-ULTRA-07 bên reranker; SAMPLE-01, SC-ULTRA-07 bên router — nhiễu). SC-GEN-07 đạt.
 - **Cấu hình tốt nhất tới nay:** gpt-4o-mini fast + PARALLEL_REQUIRED_TOOLS + reranker. Còn 21 lượt > 3 s / 239 (cần ≤ 11):
   5 chuyển máy (tool kiểm duyệt LLM 0,9–2,8 s), 5 chính sách (2 vòng LLM dài), 4 tra sản phẩm 1 vòng, 4 tra sản phẩm ≥ 2 vòng (chuỗi shortlist → báo giá), 3 khác.
+
+### Phân tích 21 lượt > 3 s còn lại (18/11, offline, runs/ab_fastreqrr_1118 bên reranker)
+
+- **Chuyển máy (5):** tool chờ `authorize_handoff` (1 lời gọi LLM, 0,9–2,8 s). Lời gọi chỉ cần lời khách + câu cuối nhân viên → có thể chạy sẵn song song từ đầu lượt. Ước tính gỡ 4 lượt (p95 3,36 → 3,12 s). Chưa cài.
+- **Tra sản phẩm ≥ 2 vòng (4):** chuỗi catalog.search → get_quote; `LOOKUP_BUNDLE` (có sẵn) gắn giá vào kết quả tìm. Ước tính chỉ gỡ thêm 1 lượt (p95 → 3,12 s); các lượt còn lại có vòng cuối dài (SC-GEN-13: 3,9 s) hoặc LLM gọi sai SKU.
+- **Còn ~16 lượt sau hai sửa (cần ≤ 11):** chính sách 2 vòng (5), shortlist 1 vòng nhưng mỗi vòng 1,8–2,3 s (2), tra sản phẩm 1 vòng (4)… — đều là 2 vòng LLM bình thường, mỗi vòng 1–2 s. Chỉ rút ngắn thêm thời gian mỗi vòng mới gỡ được.
