@@ -368,3 +368,16 @@ Nền cả hai bên: gpt-4o-mini fast + PARALLEL_REQUIRED_TOOLS + reranker. So 3
 - Kiểm duyệt chạy sẵn **có tác dụng đúng chỗ** (lượt chuyển máy chậm 7 → 2), nhưng tổng chỉ −4 lượt > 3 s, p95 −0,05 s; dự tính ~3,1 s không đạt. p50 bên thử chậm hơn 0,14 s (chạy khác giờ; chưa tách được do giờ hay do tải thêm).
 - Bên thử tốn hơn: chạm trần 14.000 trước khi xong 40 kịch bản (mốc 13.342 cho đủ 40).
 - TSR dao động lớn giữa 2 lần chạy cùng cấu hình mốc (86,8 vs 94,7); SC-GEN-07 trượt lại ở mốc lần này (đã biết gắn với reranker).
+
+## Nghiên cứu hướng mới sau cấu hình tốt nhất (18/11)
+
+**Web (đọc tài liệu OpenAI + nghiên cứu):**
+- **Ultrafast:** chỉ GPT-6 Astra / 6.1 Sol / 6.2, chỉ Responses API, giá bảng riêng (Astra Fast đã 20 / 100 USD mỗi 1M token ≈ 100× gpt-4o-mini). Một lần đo 40 kịch bản ước ~180k VND trở lên; prompt viết cho gpt-4o-mini, Astra hành vi chưa biết. **Không phù hợp.**
+- **WebSocket mode / Responses API:** lợi chủ yếu cho chuỗi ≥ 20 lời gọi tool; mình 1–2 vòng → vài trăm ms tốt nhất, phải chuyển API. **Không đáng trước hạn.**
+- **Prompt caching / cắt prompt:** đo trên trace: cache trúng 97 % (token chưa cache p50 131), tương quan token chưa cache ↔ TTFT = −0,01. **Không còn gì để lấy.**
+- **Dự đoán lời gọi tool bằng model nhỏ** (SPORK, Speculate While You Reason): tăng tốc 1,09–1,18× trong mô phỏng, chưa chứng minh thực tế; tương tự PARALLEL_REQUIRED_TOOLS đã có. **Không đáng.**
+
+**Phát hiện từ trace (ab_fastreqrr_1118, bên reranker):** thời gian ngoài LLM + tool trước token đầu p50 0,24 s, nhưng 9/21 lượt > 3 s có 0,6–1,6 s:
+- chờ **bộ đọc chạy tuần tự** khi có đơn nháp (0,76–1,2 s) → `READER_PARALLEL_DRAFT` (có sẵn);
+- chờ **yêu cầu bắt buộc gọi tool** (không stream) xong sau vòng thường.
+Ước tính offline: + READER_PARALLEL_DRAFT → p95 3,14 s, 16 lượt > 3 s; + HANDOFF_PREFETCH → **p95 3,09 s, 13 lượt** (cần ≤ 11 / 239).
