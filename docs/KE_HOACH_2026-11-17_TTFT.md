@@ -245,3 +245,21 @@ Cấu hình như bước 4d, mỗi phép đo 3 lần.
 - **SAMPLE-07 (9a6adec):** POLICY_ALL_VERSIONS giờ giữ top_k bản hiện hành, bản cũ chỉ nối thêm (tối đa 2). Đạt 3/3.
 - **SC-GEN-06 (quà tặng thành đơn):** bộ đọc gpt-5.4-mini gán "túi trữ sữa" (quà) thành sản phẩm đơn. Quy tắc trong prompt không đủ (vẫn trượt 3/3). `READER_MODEL=gpt-4o-mini` (1917caf): lỗi quà tặng không còn lần nào; đạt 2/3, lần trượt còn lại là lỗi khác — lượt 1 không tra sản phẩm, đơn ra SKU-AP-X (chưa phân tích).
 - **SC-ULTRA-01:** đạt 2/3 lần với READER_MODEL; lần trượt: call_4 LLM trả lời theo chính sách mà không gọi order.status (hành vi gpt-5.4-mini, chưa sửa).
+
+### Bước 4e — đo lại 40 kịch bản sau sửa (17/11) — runs/ab_54mini_rr3_1117 (chạy 2 phần: full.jsonl + full2.jsonl, bỏ kịch bản dở), ~25k VND
+
+Thử = bước 4d + 9a6adec (bản hiện hành giữ top-3) + READER_MODEL=gpt-4o-mini. So 39 kịch bản chung.
+
+| | gpt-4o-mini + router | gpt-5.4-mini + reranker + cờ + sửa |
+|---|---|---|
+| TSR | 94,9 (2 trượt) | 92,3 (3 trượt) |
+| HR giá/KM % | 23,5 | 9,5 |
+| TTFT p50 / p95 (s) | 1,61 / 6,79 | 2,39 / 4,91 |
+| Total p95 (s) | 8,33 | 6,68 |
+| Lượt > 3 s | 62 | 72 |
+| Lượt ≥ 2 vòng | 16 | 21 |
+| search_policy do LLM gọi | 26 | 45 |
+
+- SAMPLE-07, SC-GEN-06, SC-GEN-13 đạt; SC-ULTRA-01 đạt (mốc trượt). Trượt riêng bên thử: SC-TV-05/call_3, SC-ULTRA-07/call_3 (mốc cũng từng trượt 2 cuộc này ở lần khác) → TSR trong nhiễu.
+- p95 thấp hơn ~1,9 s nhưng p50 chậm hơn 0,8 s và **lượt > 3 s nhiều hơn (72 vs 62)**: p95 thấp do mốc có đuôi API treo, không phải vì thử nhanh hơn đều. Vẫn chưa ≤ 3 s.
+- **Kết luận:** sửa lỗi đã giữ TSR, nhưng hướng gpt-5.4-mini không cải thiện TTFT toàn hệ thống. Đóng hướng này.
