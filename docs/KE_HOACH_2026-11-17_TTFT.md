@@ -419,3 +419,12 @@ Phân bố thời gian chờ chữ đầu mỗi vòng (564 vòng, cấu hình t�
 - Endpoint khu vực OpenAI (jp.api.openai.com): theo một nguồn thứ cấp chỉ GPT-6 Luna + ZDR, phụ phí 10 % → không dùng được cho gpt-4o-mini.
 - Azure OpenAI vùng gần (Japan East / Southeast Asia): có thể bớt phần mạng mỗi vòng, nhưng không có Fast mode (mất ~33 % đã thắng), cần tài khoản mới, không có số đo độ trễ công bố → rủi ro lỗ ròng.
 - WebSocket mode (Responses API): OpenAI khuyên dùng chính vì "network overhead"; giữ kết nối tới máy chủ thay vì mỗi vòng một yêu cầu HTTP. Phải chuyển sang Responses API; mức lợi cho 2 vòng/lượt chưa có số.
+
+**Đo tách mạng (18/11, duyệt, gpt-4o-mini, 1 token, bỏ lần đầu mở kết nối, 5 lời gọi mỗi bên):**
+
+| | tổng p50 | OpenAI xử lý (`openai-processing-ms`) p50 | mạng + biên p50 |
+|---|---|---|---|
+| thường | 979 ms | 456 ms | 534 ms |
+| fast | 808 ms | 426 ms | **275 ms** |
+
+→ Với Fast mode, mỗi lần gọi API mất ~0,28 s ngoài thời gian xử lý của OpenAI; lượt 2 vòng trả ~0,55 s. Đây là phần còn lại lớn nhất có thể gỡ mà không đụng tới model (mẫu nhỏ, dao động 0,2–0,6 s).
