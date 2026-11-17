@@ -80,3 +80,19 @@ Tài khoản có (GET /v1/models): gpt-4.1-mini, gpt-5-nano, gpt-5.4-nano, gpt-5
 
 ### Vòng nhắc — cờ NUDGE_OFF (8e4d165)
 Bỏ vòng nhắc mặc định; client vẫn nhắc khi câu trả lời hứa tra cứu/hành động. Đang đo online (runs/ab_nudge_1117).
+
+### Đo online B1 / B2 (17/11) — runs/ab_nudge_1117, mỗi đợt 1 router mặc định + 1 cấu hình, chi ~24k VND
+
+B1 = tất cả cờ, TẮT POLICY_PREFETCH. B2 = B1 + NUDGE_OFF. So 37 kịch bản; số lượt > 3 s tính trên toàn file.
+
+| | router a | B1 | router b | B2 |
+|---|---|---|---|---|
+| TSR | 91,9 | 91,9 | 91,9 | 86,5 |
+| TTFT p95 (s) | 5,60 | 5,25 | 5,56 | 4,91 |
+| Lượt > 3 s | 65 | 46 | 70 | 49 |
+| Lượt bị nhắc | 20 | 23 | 23 | 8 |
+
+- Tắt tra trước chính sách: lượt > 3 s 60 (ab_all, có tra trước) → 46, TSR giữ.
+- NUDGE_OFF: p95 −0,35 s nhưng mất 2 cuộc đúng do bỏ nhắc: SAMPLE-07 (nói 14 ngày, không tra chính sách), SC-GEN-07 (thiếu "đổi mới 30 ngày").
+- Bộ đọc không tách được lượt nhắc có ích / vô ích (khách hỏi: 36 có ích / 26 vô ích; không hỏi: 11 / 8).
+- Tiếp: B3 = NUDGE_OFF + POLICY_PREFETCH (câu hỏi chính sách có dữ liệu sẵn thay cho vòng nhắc); lặp B1 để kiểm tái lập.
