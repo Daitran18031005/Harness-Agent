@@ -407,3 +407,15 @@ Nền: gpt-4o-mini fast + PARALLEL_REQUIRED_TOOLS + reranker. 37 kịch bản ch
 ### Hedging (18/11) — mô phỏng, lần đo ab_hedge_1118 đã DỪNG giữa chừng theo yêu cầu
 
 Phân bố thời gian chờ chữ đầu mỗi vòng (564 vòng, cấu hình tốt nhất): p50 0,78 / p90 1,08 / p95 1,31 / p99 1,76 s — rất hẹp. Mô phỏng (bản sao cùng phân bố, độc lập): ngưỡng ≥ 0,4 s gần như không đổi p95 mỗi vòng (1,31–1,33 s); chỉ gửi 2 bản ngay (ngưỡng 0) mới còn 0,91 s, chi phí LLM ×2. Khi API nghẽn, hai bản chậm cùng lúc → thực tế kém hơn mô phỏng. Ngưỡng 1,2 s chọn theo cảm tính, không có cơ sở → dừng đo.
+
+## Hướng tới p95 ≤ 2,9 s (18/11) — phân tích trace + nghiên cứu
+
+**Trace cấu hình tốt nhất (138 lượt 2 vòng):** vòng gọi tool p50 1,23 s, tool p50 0,02 s, vòng trả lời tới chữ đầu p50 0,71 s, phần code ~0,24 s. Vòng 1 không phụ thuộc số lời gọi / độ dài tham số (tương quan −0,12 / 0,05); vòng 2 không phụ thuộc độ dài kết quả tool (−0,03). → Thời gian là **chi phí cố định mỗi lần gọi API**, không phải độ dài nội dung.
+
+**Mạng:** curl tới api.openai.com: TCP 60–90 ms (biên Cloudflare gần), nhưng gói đầu của yêu cầu không gọi model 0,36–0,44 s (biên → trung tâm dữ liệu Mỹ). Mỗi vòng trả phần này; lượt 2 vòng trả 2 lần. Chưa đo tách bằng header `openai-processing-ms` (cần duyệt gọi API).
+
+**Tài liệu đã xem, mức phù hợp:**
+- AsyncLM (arXiv 2412.07017): giấu thời gian tool chạy lâu; tool của mình ~17 ms → không hợp.
+- Endpoint khu vực OpenAI (jp.api.openai.com): theo một nguồn thứ cấp chỉ GPT-6 Luna + ZDR, phụ phí 10 % → không dùng được cho gpt-4o-mini.
+- Azure OpenAI vùng gần (Japan East / Southeast Asia): có thể bớt phần mạng mỗi vòng, nhưng không có Fast mode (mất ~33 % đã thắng), cần tài khoản mới, không có số đo độ trễ công bố → rủi ro lỗ ròng.
+- WebSocket mode (Responses API): OpenAI khuyên dùng chính vì "network overhead"; giữ kết nối tới máy chủ thay vì mỗi vòng một yêu cầu HTTP. Phải chuyển sang Responses API; mức lợi cho 2 vòng/lượt chưa có số.
