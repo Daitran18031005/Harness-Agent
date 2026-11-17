@@ -330,3 +330,19 @@ Cả hai `LLM_SERVICE_TIER=fast` (sổ giá fast), cấu hình còn lại mặc 
 - Cộng dồn được nhưng ít: p95 −0,23 s, lượt > 3 s −5. Đêm nay API nhanh hơn (Fast p95 4,29 so với 4,89 s ở lần trước).
 - **35 lượt > 3 s còn lại (bên thử, 239 lượt):** 19 tra chính sách (tool 1,2–2,9 s — router LLM), 7 chuyển máy (tool 1–2 s — bước kiểm duyệt LLM), 6 tra sản phẩm, 3 khác. Vòng LLM giờ chỉ ~0,9–1,7 s; nút thắt chuyển sang **thời gian tool có LLM bên trong**.
 - Ước tính offline thay router bằng reranker (0,45 s/lần tra): p95 4,06 → ~3,5 s, lượt > 3 s 35 → 29 (cần ≤ 11 để p95 ≤ 3 s).
+
+### A/B Fast + yêu cầu song song: router vs reranker (18/11, duyệt) — runs/ab_fastreqrr_1118, ~27k VND thật, đủ 40 kịch bản
+
+| | router | reranker (POLICY_NO_ROUTER, qwen_rerank, POLICY_QUERY_CONTEXT) | dự tính offline |
+|---|---|---|---|
+| TSR | 95,0 | 95,0 | — |
+| HR giá/KM % | 12,5 | 15,0 | — |
+| TTFT p50 / p95 (s) | 1,26 / 3,97 | 1,20 / **3,36** | p95 3,31 |
+| Lượt > 3 s | 35 | **21** | 23 |
+| Lượt chính sách > 3 s | 20 / 22 | 5 / 19 | 7 / 19 |
+| search_policy mỗi lần (s) | 1,07 | 0,47 | 0,45 |
+| Total p95 (s) | 5,02 | **4,35** | — |
+
+- **Khớp dự tính.** TSR giữ (trượt SC-GEN-06, SC-ULTRA-07 bên reranker; SAMPLE-01, SC-ULTRA-07 bên router — nhiễu). SC-GEN-07 đạt.
+- **Cấu hình tốt nhất tới nay:** gpt-4o-mini fast + PARALLEL_REQUIRED_TOOLS + reranker. Còn 21 lượt > 3 s / 239 (cần ≤ 11):
+  5 chuyển máy (tool kiểm duyệt LLM 0,9–2,8 s), 5 chính sách (2 vòng LLM dài), 4 tra sản phẩm 1 vòng, 4 tra sản phẩm ≥ 2 vòng (chuỗi shortlist → báo giá), 3 khác.
