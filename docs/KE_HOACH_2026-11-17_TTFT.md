@@ -159,3 +159,20 @@ So 38 kịch bản (router chạm trần 6.000; bên thử dùng 8.492 VND, tr�
 - TSR −1 cuộc (trượt thêm SC-TV-16, SC-ULTRA-01; đạt thêm SC-GEN-13) — ở mức nhiễu, chưa kết luận.
 - Hôm nay API chậm hơn (router p95 6,05 s so với ~5,4 s các lần trước).
 - **Tiêu chí bước 2:** lượt bị nhắc thật ≤ 5 → đạt (≈ 3); TSR giữ nguyên → chưa chắc (−1 cuộc). p95 vẫn ~5,5 s: muốn ≤ 3 s phải rút ngắn chính vòng tool (bước 4, model nhanh hơn).
+
+## Bước 4 — đo thử model (17/11, duyệt) — runs/model_probe_1117, chi ~8,3k VND
+
+Đổi `LLM_MODEL` cho cả hệ thống (LLM chính, bộ đọc, router), 10 kịch bản, chạy cùng giờ với gpt-4o-mini, trần 2.000 VND mỗi model. Model chưa có giá trong bảng bị tính theo giá mặc định nên chỉ chạy được 10–15 lượt; so trên các lượt chung.
+
+| Model | Lượt chung | Vòng LLM p50 / p95 (s) | Vòng / lượt | TTFT p50 (s) | TTFT lớn nhất (s) |
+|---|---|---|---|---|---|
+| gpt-4o-mini (mốc) | 10–15 | 2,0–2,1 / 2,74 | 1,67–1,77 | 3,4 | 4,6–6,8 |
+| gpt-4.1-mini | 15 | 1,70 / 2,41 | 2,00 | 3,17 | 6,0 |
+| gpt-5.4-mini (reasoning none) | 11 | 1,54 / 2,07 | 2,12 | 2,66 | 8,3 |
+| gpt-5.4-nano (reasoning none) | 10 | 1,53 / 2,12 | 2,50 | 3,28 | 10,1 |
+| gpt-6-astra | — | — | — | — | không chạy được: không nhận reasoning_effort=none (chỉ low trở lên) |
+
+- Mỗi vòng nhanh hơn ~20–25 %, **không model nào đạt ~0,7 s/vòng**.
+- Các model mới gọi nhiều vòng hơn mỗi lượt (2,0–2,5 so với 1,7), nên TTFT chỉ cải thiện ít; lượt chậm nhất còn tệ hơn.
+- Mẫu rất nhỏ (10–15 lượt), chưa đo TSR. Bộ đọc gpt-5.4-nano đã biết kém đúng hơn (18/34).
+- **Kết luận:** đổi model không đưa được TTFT p95 về ≤ 3 s.
