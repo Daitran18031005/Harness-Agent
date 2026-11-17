@@ -215,3 +215,26 @@ So 17 kịch bản chung (99 lượt mỗi bên; bên thử chạm trần sổ 1
 - Reranker cắt thời gian mỗi lần tra chính sách 1,25 → 0,52 s, nhưng gpt-5.4-mini vẫn tra nhiều gấp ~2,4 lần và có nhiều lượt ≥ 2 vòng hơn (19 so với 8). TTFT p50 chậm hơn 0,43 s, lượt > 3 s không ít hơn.
 - TSR ngang nhau; HR thấp hơn (mẫu nhỏ).
 - **Kết luận:** gpt-5.4-mini kể cả có reranker không cải thiện TTFT so với gpt-4o-mini + router.
+
+### Bước 4d — gpt-5.4-mini + reranker + cờ cắt vòng (17/11, duyệt) — runs/ab_54mini_rr2_1117, chi 32.082 VND (giá gpt-5.4-mini thật, d62fc68)
+
+Thử = gpt-5.4-mini reasoning none + reranker (lời khách, mọi phiên bản) + SHORTLIST_FULL_QUOTE, POLICY_TOOL_NO_PROMO, LOOKUP_BUNDLE, POLICY_PREFETCH, READER_PARALLEL_DRAFT (HEAD 9787141). Mốc = gpt-4o-mini + router. 1 cặp cùng giờ; cả hai chạm trần (6.000 / 26.000) → so 35 kịch bản.
+
+| | gpt-4o-mini + router | gpt-5.4-mini + reranker + cờ |
+|---|---|---|
+| TSR | 91,4 (32/35) | 88,6 (31/35) |
+| HR giá/KM % | 12,5 | 5,3 |
+| TTFT p50 / p95 (s) | 2,02 / 6,22 | 2,31 / 4,68 |
+| Total p95 (s) | 8,21 | 5,98 |
+| Lượt > 3 s (208 lượt) | 75 | 63 |
+| Lượt ≥ 2 vòng | 19 | 19 |
+| search_policy do LLM gọi | 23 | 42 |
+| Chi phí cùng 35 kịch bản (VND) | 3.181 | 12.907 (×4) |
+
+Trên 17 kịch bản chung với bước 4c: ≥ 2 vòng 19 → 14, search_policy 22 → 17, lượt > 3 s 35 → 30 (mốc 4o lần này 35).
+
+- Các cờ cắt vòng có tác dụng một phần (≥ 2 vòng −5, search_policy −5 trên cùng 17 kịch bản), lượt > 3 s −12 trên 35 kịch bản; p95 4,68 s vẫn > 3 s.
+- **SAMPLE-07 (mẫu BTC, chính sách cũ) trượt do POLICY_ALL_VERSIONS:** top-3 của "đổi trả 14 ngày" là [DT-OLD-01, DT-02, DT-OLD-02] — bản hết hiệu lực chiếm chỗ [DT-01] "7 ngày", agent không nói được 7 ngày. Rủi ro phiên bản đã thành lỗi thật trên đúng loại ca khó BTC có trong bộ ẩn.
+- Các cuộc trượt khác chỉ bên thử: SC-GEN-06, SC-GEN-13 (order.create), SC-ULTRA-01/call_4 (order.status); bên mốc trượt riêng SAMPLE-01/call_2, SC-ULTRA-04/call_4, SC-ULTRA-07/call_4 → TSR trong nhiễu.
+- Chi phí gấp ~4 lần gpt-4o-mini với giá thật.
+- **Kết luận:** chưa thay số nộp. Nếu đi tiếp hướng này: bỏ POLICY_ALL_VERSIONS (hoặc chỉ trả bản cũ khi có ngày mua), và cần duyệt chi phí ×4.
