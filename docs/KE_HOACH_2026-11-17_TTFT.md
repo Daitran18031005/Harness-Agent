@@ -61,3 +61,22 @@ Chuẩn bị = TTFT − các vòng LLM trước token − thời gian tool − t
 | Lượt > 3 s còn lại (cần ≤ ~11) | 20 / 16 | 23 / 22 |
 
 Còn lại sau câu đệm: vòng LLM đầu tự nó > 3 s (7–17 lượt), lượt code sau bộ đọc (3–8). Bên bật tất cả cờ kém hơn vì POLICY_PREFETCH làm chậm mọi lượt.
+
+## Điều tra lại (17/11, sau khi bỏ câu đệm)
+
+### Bộ đọc bằng model nhỏ — replay 50 câu (runs/reader_model_1117), chạy cùng lúc, chi ~6,4k VND (gồm ~2,5k mất do lần đầu chạm trần trước khi ghi kết quả)
+
+Tài khoản có (GET /v1/models): gpt-4.1-mini, gpt-5-nano, gpt-5.4-nano, gpt-5.4-mini… (không có gpt-4.1-nano).
+
+| Model | Đọc xong | p50 / p95 | Token ra | Khác gpt-4o-mini ở trường chính |
+|---|---|---|---|---|
+| gpt-4o-mini (hiện tại) | 50/50 | 1,42 / 2,46 s | 53 | — |
+| gpt-4.1-mini | 34/50 | 1,20 / 2,73 s | 59 | 19/34 |
+| gpt-5-nano (minimal) | 26/50 | 2,42 / 3,49 s | 173 | 22/26 |
+| gpt-5.4-nano (none) | 28/50 | 1,10 / 1,86 s | 59 | 19/28 (mã sản phẩm 11) |
+
+- Model mới chưa có giá trong bảng → tính theo giá mặc định, chạm trần 900 VND trước khi xong 50 câu.
+- Không model nào đạt ~0,7 s. gpt-5.4-nano nhanh nhất (−0,3 s p50) nhưng đọc khác bộ đọc hiện tại ở 2/3 số câu; "khác" chưa chắc là sai, nhưng các trường này quyết định order gate → rủi ro TSR. Chưa đổi.
+
+### Vòng nhắc — cờ NUDGE_OFF (8e4d165)
+Bỏ vòng nhắc mặc định; client vẫn nhắc khi câu trả lời hứa tra cứu/hành động. Đang đo online (runs/ab_nudge_1117).
