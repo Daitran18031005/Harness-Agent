@@ -37,3 +37,27 @@ Bật: reranker thay router (+ lời khách, mọi phiên bản), POLICY_PREFETC
 - Tra trước chính sách chạy 56–58 lượt; lượt policy p50 nhanh hơn 1,1–1,7 s. Cái giá: lượt 0 vòng chậm thêm ~0,22 s p50 do chờ tra trước (tối đa 0,3 s).
 - Bộ đọc song song khi có đơn nháp gần như không thêm lượt (134–139 lượt đọc song song ở cả hai bên); tool gộp chỉ chạy 4–6 lượt.
 - **Kết luận:** các hướng không cần duyệt đã làm hết; không hướng nào, kể cả cộng lại, kéo được TTFT p95 về ≤ 3 s. Không cần bỏ từng cờ: không cờ nào làm tụt TSR, còn TTFT p95 không đổi nên đo loại trừ không cho thêm thông tin. Còn lại hai hướng chờ duyệt: câu đệm, model nhanh hơn cho vòng gọi tool.
+
+## Điều tra phần chuẩn bị trước vòng LLM đầu (17/11, offline, runs/ab_all_1117)
+
+Chuẩn bị = TTFT − các vòng LLM trước token − thời gian tool − token đầu vòng cuối. (Ước tính câu đệm trước đó quên trừ thời gian tool → phóng đại phần chuẩn bị.)
+
+| | mặc định a | tất cả cờ a |
+|---|---|---|
+| Chuẩn bị p50 / p95 (ms) | 238 / 1.327 | 515 / 774 |
+| Lượt chuẩn bị > 1 s | 11 (đều là chờ bộ đọc nối tiếp, có đơn nháp hoặc lượt 1) | 2 (lượt 1, đọc muộn khi khách nêu biến thể) |
+
+- Chuẩn bị > 1 s chỉ do **chờ bộ đọc nối tiếp**; READER_PARALLEL_DRAFT gỡ gần hết (11 → 2).
+- **POLICY_PREFETCH làm mọi lượt LLM chờ thêm ~0,28 s** (p50 238 → 515 ms, chờ tối đa 0,3 s) và thêm ~340 token prompt không cache.
+- Vòng LLM đầu p50 ~1,9 s, p95 2,7–3,5 s (API, không phải code).
+
+**Ước tính lại câu đệm (đã trừ đúng thời gian tool):**
+
+| | mặc định a / b | tất cả cờ a / b |
+|---|---|---|
+| Hiện tại p95 (s) | 5,41 / 5,70 | 5,80 / 5,33 |
+| Đệm khi LLM gọi tool | 4,98 / 5,19 | 5,72 / 4,99 |
+| Đệm mọi lượt có vòng LLM (kể cả bị nhắc) | **3,15 / 3,14** | **3,27 / 3,27** |
+| Lượt > 3 s còn lại (cần ≤ ~11) | 20 / 16 | 23 / 22 |
+
+Còn lại sau câu đệm: vòng LLM đầu tự nó > 3 s (7–17 lượt), lượt code sau bộ đọc (3–8). Bên bật tất cả cờ kém hơn vì POLICY_PREFETCH làm chậm mọi lượt.
