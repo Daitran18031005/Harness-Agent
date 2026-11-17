@@ -9,6 +9,8 @@ import os
 from typing import Dict, Any, List, Optional
 from dataclasses import dataclass, field
 
+OLD_VERSIONS_EXTRA = 2   # POLICY_ALL_VERSIONS: số đoạn bản cũ nối thêm sau top_k bản hiện hành
+
 
 @dataclass
 class PolicyChunk:
@@ -60,8 +62,10 @@ class SemanticKBStore:
             return []
         visible = [c for c in self.chunks if c.access == "public"]
         all_versions = os.environ.get("POLICY_ALL_VERSIONS", "").strip().lower() in ("on", "1", "true")
-        cands = visible if all_versions else [c for c in visible if c.effective_from <= on_date <= c.effective_to]
-        ranked = scored(query, cands, top_k)
+        current = [c for c in visible if c.effective_from <= on_date <= c.effective_to]
+        ranked = scored(query, current, top_k)
+        if all_versions:      # bản cũ chỉ nối thêm sau, không chiếm chỗ bản hiện hành (17/11: SAMPLE-07 mất "7 ngày" vì 2 bản cũ chen top-3)
+            ranked += scored(query, [c for c in visible if c not in current], OLD_VERSIONS_EXTRA)
         return [{**d, "score": round(sc, 3)} for (sc, _), d in zip(ranked, self._format([c for _, c in ranked], dated=all_versions))]
 
     def search(self, query: str, on_date: str = "2026-10-15", access_level: str = "public",
@@ -87,7 +91,8 @@ class SemanticKBStore:
         if not restricted:
             if route is None and os.environ.get("POLICY_ALL_VERSIONS", "").strip().lower() in ("on", "1", "true"):
                 # Không router thì không biết ngày mua: trả cả bản cũ lẫn bản mới kèm thời gian hiệu lực để LLM chính chọn theo ngày khách mua (MẶC ĐỊNH TẮT)
-                return self._format(self.backend.rank(query, visible, top_k=top_k), dated=True)
+                old = [c for c in visible if c not in by_date]
+                return self._format(self.backend.rank(query, by_date, top_k=top_k) + self.backend.rank(query, old, top_k=OLD_VERSIONS_EXTRA), dated=True)
             return self._format(self.backend.rank(query, by_date, top_k=top_k))
         # Lai: ROUTED_TOP_K kết quả đầu từ file router chọn, phần còn lại bù từ TOÀN BỘ tài liệu đã lọc ngày (bỏ trùng) —
         # router chọn thiếu file thì kết quả đúng vẫn có cơ hội lọt top-k.

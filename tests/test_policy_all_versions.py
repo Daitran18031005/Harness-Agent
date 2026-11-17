@@ -25,3 +25,14 @@ class PolicyAllVersionsTest(unittest.TestCase):
         out = self._search(False)
         self.assertNotIn("[DT-OLD-01]", [c["chunk_id"] for c in out])
         self.assertTrue(all("effective_from" not in c for c in out))
+
+    def test_on_keeps_current_version_in_top_k(self):
+        """17/11 SAMPLE-07: bản cũ không được đẩy bản hiện hành (DT-01, 7 ngày) ra khỏi top_k."""
+        from src.memory import MemoryService
+        svc = MemoryService(enable_persistence=False)
+        svc.semantic.router = None
+        with mock.patch.dict(os.environ, {"POLICY_ALL_VERSIONS": "on"}):
+            out = svc.semantic.search("đổi trả 14 ngày, điều kiện đổi trả", on_date="2026-10-15", top_k=3)
+        ids = [c["chunk_id"] for c in out]
+        self.assertTrue(all("OLD" not in i for i in ids[:3]))
+        self.assertIn("[DT-01]", ids[:3])
