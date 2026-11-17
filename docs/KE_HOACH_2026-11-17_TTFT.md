@@ -139,3 +139,23 @@ B3 = B1 + NUDGE_OFF + POLICY_PREFETCH. Số tính trên toàn file (~230 lượt
 
 - **Không đạt** (tiêu chí: lượt bị nhắc ≤ 11). LLM gần như không làm theo quy tắc (21 → 20). Bỏ hướng này (cờ giữ tắt). Theo kế hoạch: sang bước 2 (yêu cầu song song bắt buộc gọi tool) — cần duyệt.
 - B1r (giữ router) không giảm lượt > 3 s như B1 có reranker (56 vs 44–49): phần giảm ở B1 chủ yếu đến từ reranker làm lượt chính sách nhanh hơn.
+
+## Bước 2 — PARALLEL_REQUIRED_TOOLS (17/11, duyệt) — runs/ab_required_1117, 1 cặp cùng giờ, chi ~14,5k VND
+
+So 38 kịch bản (router chạm trần 6.000; bên thử dùng 8.492 VND, trần 9.000).
+
+| | router | B1r + yêu cầu song song |
+|---|---|---|
+| TSR | 89,5 | 86,8 |
+| HR giá/KM % | 23,5 | 14,3 |
+| TTFT p50 / p95 (s) | 2,11 / 6,05 | 1,92 / 5,47 |
+| Lượt > 3 s | 70 | 67 |
+| Lượt ≥ 2 vòng LLM trước token | 17 | **3** |
+| Total p95 (s) | 7,69 | 7,72 |
+| Chi phí cho cùng số kịch bản | ~6,0k | ~8,5k (+~40 %) |
+
+- **Cơ chế chạy đúng:** lượt ≥ 2 vòng 17 → 3 (vòng nhắc được thay bằng lời gọi tool song song). p95 giảm ~0,6 s.
+- **Nhưng lượt > 3 s gần như không đổi (70 → 67):** lượt từng bị nhắc giờ còn 1 vòng tool + vòng trả lời ≈ 3,2–4 s, vẫn trên ngưỡng.
+- TSR −1 cuộc (trượt thêm SC-TV-16, SC-ULTRA-01; đạt thêm SC-GEN-13) — ở mức nhiễu, chưa kết luận.
+- Hôm nay API chậm hơn (router p95 6,05 s so với ~5,4 s các lần trước).
+- **Tiêu chí bước 2:** lượt bị nhắc thật ≤ 5 → đạt (≈ 3); TSR giữ nguyên → chưa chắc (−1 cuộc). p95 vẫn ~5,5 s: muốn ≤ 3 s phải rút ngắn chính vòng tool (bước 4, model nhanh hơn).
