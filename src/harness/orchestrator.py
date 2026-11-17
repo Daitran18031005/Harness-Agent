@@ -58,6 +58,7 @@ def _off(name: str) -> bool:
     return os.environ.get(name, "").strip().lower() in ("off", "0", "false")
 
 
+SHORTLIST_FULL_QUOTE = os.environ.get("SHORTLIST_FULL_QUOTE", "").strip().lower() in ("on", "1", "true")   # MẶC ĐỊNH TẮT: product.shortlist gắn luôn KM/quà hôm nay của từng mẫu (bớt chuỗi shortlist → get_quote)
 LOOKUP_BUNDLE = os.environ.get("LOOKUP_BUNDLE", "").strip().lower() in ("on", "1", "true")   # MẶC ĐỊNH TẮT: tool gộp — catalog.search (≤ 3 sản phẩm) tự gắn tồn kho + giá hôm nay cho từng sản phẩm/biến thể khách nêu, bớt vòng LLM
 READER_PARALLEL_DRAFT = os.environ.get("READER_PARALLEL_DRAFT", "").strip().lower() in ("on", "1", "true")   # MẶC ĐỊNH TẮT: có đơn nháp vẫn cho LLM chính chạy song song bộ đọc; begin_turn + driver của gate dời vào sync_gate (quyết định không đổi, chỉ đổi thời điểm)
 PARALLEL_READER = not _off("PARALLEL_READER")          # đọc hiểu lời khách chạy song song với LLM chính (khi không có đơn nháp đang mở)
@@ -240,8 +241,12 @@ class HarnessOrchestrator:
             q = self.mcp.execute_tool("pricing.get_quote", {"sku": it.get("sku"), "on": on, **({"customer_phone": phone} if phone else {})}, caller="HarnessOrchestrator") if it.get("sku") else {}
             if isinstance(q, dict) and isinstance(q.get("final_price_vnd"), int):
                 it["final_price_vnd"] = q["final_price_vnd"]
+                if SHORTLIST_FULL_QUOTE:      # gpt-5.4-mini gọi tiếp get_quote chỉ để lấy KM/quà (17/11): gắn luôn để khỏi tốn một vòng LLM
+                    it["today"] = {k: q[k] for k in ("applied_promos", "expired_promos", "freeship") if k in q}
         if any("final_price_vnd" in it for it in items):
-            out["price_note"] = "Báo giá cho khách theo final_price_vnd (giá sau khuyến mãi hôm nay), không báo list_price_vnd như giá bán."
+            out["price_note"] = "Báo giá cho khách theo final_price_vnd (giá sau khuyến mãi hôm nay), không báo list_price_vnd như giá bán." + (
+                " Giá + khuyến mãi/quà HÔM NAY (qty 1) của từng mẫu đã tra sẵn trong 'today': KHÔNG gọi lại pricing.get_quote cho các mẫu này, "
+                "trừ khi khách đổi số lượng/biến thể." if SHORTLIST_FULL_QUOTE else "")
         if items and out.get("slots_used") and not any(i.get("matched") for i in items):
             # Không tiêu chí nào áp dụng cho nhóm sản phẩm này với thông tin khách nêu (vd diện tích phòng/trẻ nhỏ với máy lọc nước): điểm 0, thứ tự chỉ do giá.
             # Không để LLM coi đây là "đề xuất phù hợp" (lỗi ui_replay D: "UF Sunhouse phù hợp phòng 20m² và an toàn cho trẻ nhỏ" không có căn cứ nào).

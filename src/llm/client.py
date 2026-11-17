@@ -131,6 +131,11 @@ def build_openai_tools(tools_schema_path: Optional[str] = None) -> List[Dict[str
         "function": {
             "name": "search_policy",
             "description": (
+                "Tra cứu chính sách công khai (đổi trả, bảo hành, vận chuyển, điều khoản chung của khuyến mãi, COD...) "
+                "từ knowledge base thật, đã lọc theo ngày hiệu lực hiện tại. Luôn gọi tool này khi "
+                "khách hỏi về chính sách — không tự suy diễn số liệu. KHÔNG dùng để hỏi khuyến mãi/quà/giảm giá/freeship "
+                "đang áp dụng cho MỘT sản phẩm cụ thể: việc đó gọi pricing.get_quote (trả đúng KM còn hiệu lực hôm nay)."
+            ) if os.environ.get("POLICY_TOOL_NO_PROMO", "").strip().lower() in ("on", "1", "true") else (
                 "Tra cứu chính sách công khai (đổi trả, bảo hành, vận chuyển, khuyến mãi, COD...) "
                 "từ knowledge base thật, đã lọc theo ngày hiệu lực hiện tại. Luôn gọi tool này khi "
                 "khách hỏi về chính sách — không tự suy diễn số liệu."
