@@ -313,3 +313,20 @@ So 36 kịch bản chung (~213 lượt mỗi bên). Bên fast chạy trước b�
 - **Fast mode là hướng đầu tiên cải thiện rõ mà không mất TSR:** p95 −1,7 s, lượt > 3 s −40 %, Total p95 −3,4 s; chủ yếu nhờ cắt đuôi vòng LLM (p95 vòng 4,47 → 1,83 s). Hành vi không đổi (cùng model, số vòng gần như nhau).
 - Trượt: thường SAMPLE-01, SC-ULTRA-09; fast SC-GEN-06, SC-ULTRA-07 — đều là cuộc từng trượt ở các lần khác → nhiễu.
 - Vẫn chưa ≤ 3 s (p95 4,89 s). Hôm nay API chậm (bên thường p95 6,62 s so với 5,4–6,2 s các lần trước).
+
+### A/B Fast vs Fast + PARALLEL_REQUIRED_TOOLS (18/11, duyệt) — runs/ab_fastreq_1117, ~24k VND thật
+
+Cả hai `LLM_SERVICE_TIER=fast` (sổ giá fast), cấu hình còn lại mặc định. 38 kịch bản chung, 226 lượt mỗi bên. Hai bên chạm trần 10.000 / 14.000 ở cùng chỗ → yêu cầu song song tốn thêm ~40 % (chi phí yêu cầu song song ghi ngoài llm_cost của lượt).
+
+| | Fast | Fast + yêu cầu song song |
+|---|---|---|
+| TSR | 94,7 | 97,4 |
+| HR giá/KM % | 23,5 | 12,5 |
+| TTFT p50 / p95 (s) | 1,33 / 4,29 | 1,17 / **4,06** |
+| Lượt > 3 s | 38 | 33 |
+| Lượt ≥ 2 vòng | 21 | 6 |
+| Total p95 (s) | 5,21 | 5,13 |
+
+- Cộng dồn được nhưng ít: p95 −0,23 s, lượt > 3 s −5. Đêm nay API nhanh hơn (Fast p95 4,29 so với 4,89 s ở lần trước).
+- **35 lượt > 3 s còn lại (bên thử, 239 lượt):** 19 tra chính sách (tool 1,2–2,9 s — router LLM), 7 chuyển máy (tool 1–2 s — bước kiểm duyệt LLM), 6 tra sản phẩm, 3 khác. Vòng LLM giờ chỉ ~0,9–1,7 s; nút thắt chuyển sang **thời gian tool có LLM bên trong**.
+- Ước tính offline thay router bằng reranker (0,45 s/lần tra): p95 4,06 → ~3,5 s, lượt > 3 s 35 → 29 (cần ≤ 11 để p95 ≤ 3 s).
