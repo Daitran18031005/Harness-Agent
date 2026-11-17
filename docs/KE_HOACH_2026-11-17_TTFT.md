@@ -352,3 +352,19 @@ Cả hai `LLM_SERVICE_TIER=fast` (sổ giá fast), cấu hình còn lại mặc 
 - **Chuyển máy (5):** tool chờ `authorize_handoff` (1 lời gọi LLM, 0,9–2,8 s). Lời gọi chỉ cần lời khách + câu cuối nhân viên → có thể chạy sẵn song song từ đầu lượt. Ước tính gỡ 4 lượt (p95 3,36 → 3,12 s). Chưa cài.
 - **Tra sản phẩm ≥ 2 vòng (4):** chuỗi catalog.search → get_quote; `LOOKUP_BUNDLE` (có sẵn) gắn giá vào kết quả tìm. Ước tính chỉ gỡ thêm 1 lượt (p95 → 3,12 s); các lượt còn lại có vòng cuối dài (SC-GEN-13: 3,9 s) hoặc LLM gọi sai SKU.
 - **Còn ~16 lượt sau hai sửa (cần ≤ 11):** chính sách 2 vòng (5), shortlist 1 vòng nhưng mỗi vòng 1,8–2,3 s (2), tra sản phẩm 1 vòng (4)… — đều là 2 vòng LLM bình thường, mỗi vòng 1–2 s. Chỉ rút ngắn thêm thời gian mỗi vòng mới gỡ được.
+
+### A/B HANDOFF_PREFETCH + LOOKUP_BUNDLE (18/11, duyệt) — runs/ab_handoffpf_1118, ~27k VND thật, chạy NỐI TIẾP (cả hai dùng GPU)
+
+Nền cả hai bên: gpt-4o-mini fast + PARALLEL_REQUIRED_TOOLS + reranker. So 38 kịch bản chung (226 lượt).
+
+| | mốc | thử (+ HANDOFF_PREFETCH + LOOKUP_BUNDLE) | mốc lần trước (ab_fastreqrr_1118) |
+|---|---|---|---|
+| TSR | 86,8 | 89,5 | 94,7 |
+| TTFT p50 / p95 (s) | 1,23 / 3,31 | 1,37 / **3,26** | 1,20 / 3,24 |
+| Lượt > 3 s | 23 | **19** | 20 |
+| Lượt chuyển máy > 3 s | 7 / 9 | **2 / 9** | 4 / 7 |
+| Total p95 (s) | 4,60 | 4,43 | 4,33 |
+
+- Kiểm duyệt chạy sẵn **có tác dụng đúng chỗ** (lượt chuyển máy chậm 7 → 2), nhưng tổng chỉ −4 lượt > 3 s, p95 −0,05 s; dự tính ~3,1 s không đạt. p50 bên thử chậm hơn 0,14 s (chạy khác giờ; chưa tách được do giờ hay do tải thêm).
+- Bên thử tốn hơn: chạm trần 14.000 trước khi xong 40 kịch bản (mốc 13.342 cho đủ 40).
+- TSR dao động lớn giữa 2 lần chạy cùng cấu hình mốc (86,8 vs 94,7); SC-GEN-07 trượt lại ở mốc lần này (đã biết gắn với reranker).
