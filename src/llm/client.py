@@ -145,7 +145,12 @@ def build_openai_tools(tools_schema_path: Optional[str] = None) -> List[Dict[str
             ),
             "parameters": {
                 "type": "object",
-                "properties": {"query": {"type": "string", "description": "Câu hỏi/chủ đề chính sách khách vừa nói"}},
+                "properties": {"query": {"type": "string", "description": (
+                    "MỘT câu hỏi đầy đủ mô tả đúng tình huống của khách, không phải một từ khóa: nêu tình trạng sản phẩm "
+                    "(còn mới / đã dùng / bị lỗi, triệu chứng), đã mua hoặc nhận bao nhiêu ngày, và khách muốn gì (đổi máy, trả hàng, sửa, hoàn tiền...). "
+                    "Ví dụ: 'máy mua 12 ngày bị lỗi không lên nguồn có được đổi máy mới không' thay vì 'đổi trả'."
+                    # 18/11 SC-GEN-07: truy vấn 'đổi trả'/'bảo hành' trần → reranker không ra DT-05 (lỗi NSX đổi mới 30 ngày); câu đủ tình huống thì ra hạng 1
+                ) if os.environ.get("POLICY_QUERY_FULL", "").strip().lower() in ("on", "1", "true") else "Câu hỏi/chủ đề chính sách khách vừa nói"}},
                 "required": ["query"]
             }
         }
