@@ -487,3 +487,296 @@ class HonorificAndCompetitorTest(GateBase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class FreeshipReadbackTest(unittest.TestCase):
+    def test_closing_readback_says_free_shipping(self):                          # SC-GEN-15
+        from src.harness.order_gate import OrderGate, OrderDraft, OrderKnown, ProductInfo
+        g = OrderGate()
+        g.begin_turn("S", 1, "lên đơn giao số 12 Nguyễn Huệ")
+        g.state("S").closing = True
+        d = g.evaluate("S", OrderDraft(sku="SKU-X", payment="COD"), OrderKnown(caller_phone="0911265844"), ProductInfo(name="Quạt", unit_price=2450000, freeship=True), total=2450000)
+        self.assertIn("miễn phí vận chuyển", d["say"])
+
+
+class NoSecondConfirmTest(unittest.TestCase):
+    def test_answering_with_other_info_confirms_the_phone(self):                   # TEST-141: không hỏi lại "xác nhận số điện thoại" ở lượt sau
+        from types import SimpleNamespace
+        from src.harness.order_gate import OrderGate, OrderDraft, OrderKnown, ProductInfo
+        g = OrderGate()
+        rd = lambda: SimpleNamespace(agrees=False, declines=False, affirmed=[])
+        k, p = OrderKnown(caller_phone="0911116674"), ProductInfo(name="Máy lọc", unit_price=5490000)
+        g.begin_turn("S", 1, "nay Hùng gọi chốt nha", rd())
+        d1 = g.evaluate("S", OrderDraft(sku="SKU-XM-4P"), k, p)
+        self.assertIn("recipient_phone", d1["to_confirm"])
+        g.begin_turn("S", 2, "Nhận tại số 82 Thuận Giao, tên Hùng, thu COD nha", rd())
+        d2 = g.evaluate("S", OrderDraft(sku="SKU-XM-4P"), k, p)
+        self.assertNotIn("recipient_phone", d2.get("to_confirm", []))
+
+
+class ExchangeNotRepeatedTest(GateBase):
+    def test_exchange_from_previous_call_is_not_made_again(self):                # SC-ULTRA-06 cuộc 4: phiếu đổi đã tạo ở cuộc 3
+        self.c["memory"].set_profile_fact("C001", "exchange_ticket", {"order_id": "OD900001", "action": "exchange_size", "new_variant_sku": SKU40, "fee_vnd": 0})
+        upd = ("order.update", {"order_id": "OD900001", "action": "exchange_size", "new_variant_sku": SKU40})
+        _, tc, _ = self.turn(KNOWN_PHONE, "shipper tới rồi, đổi không mất phí hả em?", [upd], "Dạ miễn phí ạ.")
+        res = [c["result"] for c in tc if c["name"] == "order.update"][0]
+        self.assertTrue(res.get("already_done"))
+        self.assertEqual(res.get("fee_vnd"), 0)
+
+
+class PromisedTransferTest(GateBase):
+    REPLY = "Dạ bên em có giá sỉ cho đơn số lượng lớn ạ. Em sẽ chuyển yêu cầu của anh đến bộ phận phụ trách sỉ B2B để họ liên hệ lại."
+
+    def test_out_of_scope_promise_is_carried_out_by_code(self):                  # SC-TV-10 cuộc 3
+        self.llm.complete_json = lambda msgs: ({"category": "scope_safety", "category_quote": "giá sỉ cho 50 máy"}, {})
+        txt, tc, _ = self.turn(NEW_PHONE, "Công ty anh cần giá sỉ cho 50 máy", [], self.REPLY)
+        self.assertEqual([c["name"] for c in tc if c["name"] == "handoff.transfer"], ["handoff.transfer"])
+
+    def test_unapproved_promise_is_dropped(self):
+        self.llm.complete_json = lambda msgs: ({"category": "other", "authorized": False}, {})
+        txt, tc, _ = self.turn(NEW_PHONE, "Công ty anh cần giá sỉ cho 50 máy", [], self.REPLY)
+        self.assertFalse([c for c in tc if c["name"] == "handoff.transfer"])
+        self.assertNotIn("bộ phận phụ trách", txt)
+
+
+class SlowReaderLLM(TurnLLM):
+    """Bộ đọc giả chậm 3 s (complete_json); LLM chính ghi thời điểm từng tool bắt đầu chạy."""
+
+    def __init__(self, delay=3.0):
+        super().__init__()
+        self.delay, self.tool_started = delay, {}
+
+    def complete_json(self, messages):
+        import time
+        time.sleep(self.delay)
+        return {}, {"vnd_cost": 0, "latency_ms": int(self.delay * 1000)}
+
+    def chat_with_tools(self, messages, tool_executor, max_rounds=6, tools_override=None, timing=None):
+        import time
+        def timed(name, args):                              # thời điểm tool CHẠY XONG (gồm cả thời gian chờ bộ đọc bên trong executor)
+            out = tool_executor(name, args)
+            self.tool_started.setdefault(name, time.perf_counter())
+            return out
+        return super().chat_with_tools(messages, timed, max_rounds, tools_override, timing)
+
+
+class ReadOnlyToolsDoNotWaitForReaderTest(GateBase):
+    """Sửa độ trễ 13/11: tool chỉ đọc chạy ngay khi bộ đọc (song song) còn chạy; order.create vẫn chờ kết quả bộ đọc."""
+
+    def test_lookup_runs_before_slow_reader_finishes_and_order_create_waits(self):
+        import time
+        self.llm = SlowReaderLLM()
+        self.orch.llm_client = self.llm
+        t0 = time.perf_counter()
+        self.turn(NEW_PHONE, "Em ơi giày Urban Classic size 39 màu đen còn không?", [("inventory.check", {"sku": SKU39}), order()])
+        started = {k: v - t0 for k, v in self.llm.tool_started.items()}
+        self.assertLess(started["inventory.check"], 1.5)            # không chờ bộ đọc 3 s
+        self.assertGreaterEqual(started["order.create"], 2.9)       # tool ghi: chờ bộ đọc xong như cũ
+
+
+class PrefetchHideToolsTest(GateBase):
+    """B + F2 (13/11): code chạy trước tool chỉ đọc cho sản phẩm khách gọi tên; khi bật PREFETCH_HIDE_TOOLS thì tool đã tra sẵn ĐÚNG sản phẩm đó không đưa cho LLM."""
+
+    class ToolsSeen(TurnLLM):
+        def __init__(self):
+            super().__init__()
+            self.seen = []
+
+        def chat_with_tools(self, messages, tool_executor, max_rounds=6, tools_override=None, timing=None):
+            tools = tools_override() if callable(tools_override) else (tools_override or [])
+            self.seen.append({str((t.get("function") or {}).get("name")).replace("__", ".") for t in tools})
+            return super().chat_with_tools(messages, tool_executor, max_rounds, tools_override, timing)
+
+    def _tools_for(self, text, hide=True):
+        from unittest import mock
+        import src.harness.orchestrator as O
+        self.llm = self.ToolsSeen()
+        self.orch.llm_client = self.llm
+        self.llm.get_base_tools = lambda: [{"type": "function", "function": {"name": n.replace(".", "__"), "parameters": {"type": "object", "properties": {}}}}
+                                           for n in ("catalog.search", "inventory.check", "pricing.get_quote", "order.create")]
+        with mock.patch.object(O, "PREFETCH_HIDE_TOOLS", hide):
+            self.turn(NEW_PHONE, text, [])
+        return self.llm.seen[-1]
+
+    def test_prefetched_product_hides_its_lookup_tools(self):
+        seen = self._tools_for("Máy lọc không khí AirPure X bên em còn hàng không em?")
+        self.assertFalse(seen & {"catalog.search", "inventory.check", "pricing.get_quote"}, seen)
+        self.assertIn("order.create", seen)
+
+    def test_flag_off_keeps_all_tools(self):
+        seen = self._tools_for("Máy lọc không khí AirPure X bên em còn hàng không em?", hide=False)
+        self.assertTrue({"catalog.search", "inventory.check", "pricing.get_quote"} <= seen)
+
+    def test_other_or_wrong_product_keeps_tools(self):
+        orch = self.orch
+        spec_x = [{"name": n, "args": {"sku": "SKU-AP-X"}, "speculative": True} for n in ("catalog.search", "inventory.check", "pricing.get_quote")]
+        self.assertTrue(orch._prefetch_hidden_tools("máy lọc không khí AirPure X còn không", "", spec_x, None))
+        # khách nhắc thêm sản phẩm khác → không ẩn
+        self.assertEqual(orch._prefetch_hidden_tools("AirPure X với Máy lọc không khí AirPure Y khác gì", "", spec_x, None), set())
+        # tra sẵn SAI sản phẩm (bộ đọc nói khách gọi AirPure Y) → không ẩn
+        self.assertEqual(orch._prefetch_hidden_tools("cái máy đó còn không", "", spec_x, "SKU-AP-Y"), set())
+        # khách không gọi tên sản phẩm nào trong lượt này (SC-GEN-13: tra trước theo sản phẩm đang bàn/bộ đọc, có thể nhầm) → không ẩn
+        self.assertEqual(orch._prefetch_hidden_tools("chương trình thu cũ giảm được bao nhiêu vậy em", "", spec_x, "SKU-AP-X"), set())
+        # địa chỉ giao (giá ship) hoặc số lượng → không ẩn
+        self.assertEqual(orch._prefetch_hidden_tools("AirPure X giao về <ADDR_1> nhé", "AirPure X giao về <ADDR_1> nhé", spec_x, None), set())
+        self.assertEqual(orch._prefetch_hidden_tools("lấy 2 cái AirPure X", "", spec_x, None), set())
+
+
+class PrefetchKeepsNamedProductsTest(GateBase):
+    def test_reader_sku_adds_to_named_products_instead_of_replacing_them(self):
+        """TEST-122 (13/11): khách gọi tên 'Màng lọc thay thế AirPure X/Y', bộ đọc chọn nhầm máy AirPure X → vẫn phải tra trước màng lọc khách gọi tên."""
+        from types import SimpleNamespace
+        from src.privacy.pii_vault import PiiVault
+        out = self.orch._speculative_lookups("Khải tham khảo Màng lọc thay thế AirPure X/Y nãy giờ, phân vân chuẩn màng HEPA", None, [], None,
+                                             SimpleNamespace(blocker=None), None, "2026-10-15", PiiVault(), picked="SKU-AP-X")
+        searched = {c["args"]["sku"] for c in out if c["name"] == "catalog.search"}
+        self.assertIn("SKU-AP-FLT-X", searched)
+
+
+class PrefetchNamedVariantsTest(GateBase):
+    def test_variant_of_product_prefetched_this_turn_gets_stock_and_quote(self):
+        """Hướng 1 (16/11): sản phẩm có biến thể khách gọi tên lần đầu ở lượt này → tra trước tồn kho + giá đúng size/màu khách nêu."""
+        from types import SimpleNamespace
+        from src.privacy.pii_vault import PiiVault
+        cat = self.orch.mcp.execute_tool("catalog.search", {"sku": "SKU-JK-WND"}, caller="HarnessOrchestrator")
+        pre = [{"name": "catalog.search", "args": {"sku": "SKU-JK-WND"}, "result": cat, "speculative": True}]
+        out = self.orch._prefetch_named_variants(["Lấy Áo khoác gió Windbreak size M màu navy nhé"], pre, SimpleNamespace(blocker=None), None, "2026-10-15", PiiVault())
+        self.assertTrue(all(c.get("speculative") for c in out))
+        self.assertIn(("inventory.check", "SKU-JK-WND-M-NAVY"), {(c["name"], c["args"]["sku"]) for c in out})
+        if any(c["name"] == "inventory.check" and c["result"].get("in_stock") for c in out):
+            self.assertIn(("pricing.get_quote", "SKU-JK-WND-M-NAVY"), {(c["name"], c["args"]["sku"]) for c in out})
+
+    def test_no_size_color_no_extra_calls(self):
+        from types import SimpleNamespace
+        from src.privacy.pii_vault import PiiVault
+        cat = self.orch.mcp.execute_tool("catalog.search", {"sku": "SKU-JK-WND"}, caller="HarnessOrchestrator")
+        pre = [{"name": "catalog.search", "args": {"sku": "SKU-JK-WND"}, "result": cat, "speculative": True}]
+        self.assertEqual(self.orch._prefetch_named_variants(["Áo khoác gió Windbreak chống mưa được không em"], pre, SimpleNamespace(blocker=None), None, "2026-10-15", PiiVault()), [])
+
+
+class PrefetchAgentNamedTest(GateBase):
+    def _look(self, agent):
+        from types import SimpleNamespace
+        from src.privacy.pii_vault import PiiVault
+        return {c["args"]["sku"] for c in self.orch._speculative_lookups("Chương trình thu cũ đổi mới giảm được bao nhiêu tiền vậy em?", None, [], None,
+                                                                        SimpleNamespace(blocker=None), None, "2026-10-15", PiiVault(), agent_text=agent)
+                if c["name"] == "catalog.search"}
+
+    def test_agent_names_two_products_no_guess(self):
+        """SC-GEN-13 (16/11): agent nhắc máy cũ khách đã mua (AirPure X) trước máy định đổi (AirPure Pro) → không tra trước theo sản phẩm nhắc đầu."""
+        self.assertEqual(self._look("Dạ chị đã mua Máy lọc không khí AirPure X, nay nâng cấp lên Máy lọc không khí AirPure Pro được trừ 400.000đ ạ"), set())
+
+    def test_agent_names_one_product_still_prefetched(self):
+        self.assertEqual(self._look("Dạ Máy lọc không khí AirPure Pro đang có ưu đãi thu cũ đổi mới ạ"), {"SKU-AP-PRO"})
+
+
+class TraceToolSourceTest(GateBase):
+    def test_trace_marks_llm_and_code_calls(self):
+        """16/11: trace ghi nguồn từng lời gọi tool — 'llm' (LLM yêu cầu) hay 'code' (tra trước, tra sẵn, gate…)."""
+        _, tc, _ = self.turn(NEW_PHONE, "Máy lọc không khí AirPure X bên em còn hàng không em?",
+                               [("order.status", {"customer_phone": "CURRENT_CUSTOMER"})], "Dạ còn hàng ạ.")
+        by = {(c["name"], c.get("speculative", False)): c["by"] for c in tc}
+        self.assertEqual(by.get(("order.status", False)), "llm")
+        self.assertTrue(all(v == "code" for (n, spec), v in by.items() if spec), by)
+
+
+class PrefetchOrderQuoteTest(GateBase):
+    def _quote(self, text, calls, pre=None):
+        from types import SimpleNamespace
+        from src.privacy.pii_vault import PiiVault
+        vault = PiiVault()
+        masked = vault.mask_text(text, None)
+        return masked, self.orch._prefetch_quote_with_address(masked, calls, pre, SimpleNamespace(blocker=None), None, "2026-10-15", vault)
+
+    def test_address_requotes_last_quoted_variant_with_address(self):
+        prior = [{"name": "pricing.get_quote", "args": {"sku": "SKU-JK-WND-M-NAVY", "qty": 1}}]
+        masked, out = self._quote("Lên đơn cho chị, giao về số 15 phố Tây Sơn, quận Đống Đa, Hà Nội, COD nhé", prior)
+        self.assertIn("<ADDR_", masked)
+        self.assertEqual([(c["name"], c["args"]["sku"], c.get("speculative")) for c in out], [("pricing.get_quote", "SKU-JK-WND-M-NAVY", True)])
+        self.assertTrue(out[0]["args"].get("address"))
+
+    def test_no_address_or_no_product_no_call(self):
+        self.assertEqual(self._quote("Lên đơn cho chị nhé", [{"name": "pricing.get_quote", "args": {"sku": "SKU-AP-X"}}])[1], [])
+        self.assertEqual(self._quote("Giao về số 15 phố Tây Sơn, quận Đống Đa, Hà Nội nhé", [])[1], [])
+
+    def test_falls_back_to_precomputed_product(self):
+        self.assertEqual([c["args"]["sku"] for c in self._quote("Giao về số 15 phố Tây Sơn, quận Đống Đa, Hà Nội nhé", [], {"sku": "SKU-AP-Y"})[1]], ["SKU-AP-Y"])
+
+
+
+class PolicyVersionPromptTest(GateBase):
+    """17/11: hướng dẫn chọn phiên bản chính sách theo ngày mua chỉ có trong system prompt khi POLICY_ALL_VERSIONS bật."""
+
+    class Capture(TurnLLM):
+        def __init__(self):
+            super().__init__()
+            self.systems = []
+
+        def chat_with_tools(self, messages, tool_executor, max_rounds=6, tools_override=None, timing=None):
+            self.systems.append(" ".join(m["content"] for m in messages if m.get("role") == "system" and isinstance(m.get("content"), str)))
+            return super().chat_with_tools(messages, tool_executor, max_rounds, tools_override, timing)
+
+    def _system(self, flag):
+        import os
+        from unittest import mock
+        self.llm = self.Capture()
+        self.orch.llm_client = self.llm
+        with mock.patch.dict(os.environ, {"POLICY_ALL_VERSIONS": "on" if flag else "off"}):
+            self.turn(NEW_PHONE, "Bên em đổi trả trong bao nhiêu ngày vậy?", [])
+        return self.llm.systems[-1]
+
+    def test_on_adds_version_rule(self):
+        self.assertIn("NHIỀU PHIÊN BẢN", self._system(True))
+        self.assertIn("effective_from", self._system(True))
+
+    def test_off_prompt_unchanged(self):
+        self.assertNotIn("effective_from", self._system(False))
+
+
+class LookupBundleTest(GateBase):
+    """LOOKUP_BUNDLE (17/11): catalog.search của LLM tự gắn tồn kho + giá hôm nay cho sản phẩm (≤ 3), biến thể chỉ khi khách nêu đúng một size/màu."""
+
+    def _run(self, text, flag=True):
+        from unittest import mock
+        import src.harness.orchestrator as O
+        with mock.patch.object(O, "LOOKUP_BUNDLE", flag), mock.patch.object(O, "SPECULATIVE_TOOLS", False):
+            _, tc, _ = self.turn(NEW_PHONE, text, [("catalog.search", {"query": "áo khoác gió Windbreak"})], "Dạ còn ạ.")
+        search = next(c for c in tc if c["name"] == "catalog.search" and c.get("by") == "llm")
+        return search, tc
+
+    def test_named_variant_gets_today(self):
+        search, tc = self._run("Áo khoác gió Windbreak size M màu navy còn không em?")
+        item = next(i for i in search["result"]["items"] if i["sku"] == "SKU-JK-WND")
+        self.assertEqual(item["today"]["variant_sku"], "SKU-JK-WND-M-NAVY")
+        self.assertIn(("inventory.check", "SKU-JK-WND-M-NAVY"), {(c["name"], c["args"]["sku"]) for c in tc if c.get("speculative")})
+
+    def test_no_variant_named_no_extra_calls(self):
+        search, tc = self._run("Áo khoác gió Windbreak chống mưa được không em?")
+        self.assertFalse(any("today" in i for i in search["result"]["items"]))
+
+    def test_flag_off_unchanged(self):
+        search, _ = self._run("Áo khoác gió Windbreak size M màu navy còn không em?", flag=False)
+        self.assertFalse(any("today" in i for i in search["result"]["items"]))
+
+
+class ToolFirstPromptTest(PolicyVersionPromptTest):
+    """TOOL_FIRST_PROMPT (17/11): quy tắc gọi tool ngay vòng đầu chỉ có trong system prompt khi cờ bật."""
+
+    def test_on_adds_version_rule(self):
+        pass
+
+    def test_off_prompt_unchanged(self):
+        pass
+
+    def _sys(self, flag):
+        from unittest import mock
+        import src.harness.orchestrator as O
+        self.llm = self.Capture()
+        self.orch.llm_client = self.llm
+        with mock.patch.object(O, "TOOL_FIRST_PROMPT", flag):
+            self.turn(NEW_PHONE, "Bên em đổi trả trong bao nhiêu ngày vậy?", [])
+        return self.llm.systems[-1]
+
+    def test_rule_only_when_flag_on(self):
+        self.assertIn("GỌI TOOL NGAY TRONG LẦN TRẢ LỜI ĐẦU TIÊN", self._sys(True))
+        self.assertNotIn("GỌI TOOL NGAY TRONG LẦN TRẢ LỜI ĐẦU TIÊN", self._sys(False))

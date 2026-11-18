@@ -6,7 +6,7 @@ Policy Router (bước 11): chọn tài liệu chính sách bằng LLM trước 
 Code chỉ KIỂM CHỨNG đầu ra LLM: tên file phải có trong mục lục (tên bịa bị bỏ); as_of_date phải là ngày hợp lệ
 VÀ đi kèm đoạn trích nguyên văn có thật trong câu hỏi (không thì bỏ, dùng ngày cuộc gọi). Router lỗi / không có
 LLM / đầu ra hỏng -> route() trả None và caller quay về TF-IDF toàn bộ như trước.
-Tắt hẳn bằng POLICY_ROUTER=off; model riêng bằng POLICY_ROUTER_MODEL (mặc định = LLM_MODEL của agent).
+Tắt hẳn bằng POLICY_ROUTER=off hoặc POLICY_NO_ROUTER=on (cờ đo độ trễ, mặc định tắt); model riêng bằng POLICY_ROUTER_MODEL (mặc định = LLM_MODEL của agent).
 """
 import os
 import json
@@ -91,6 +91,11 @@ def validate(raw: Dict[str, Any], names: Sequence[str], question: str) -> Option
                          dropped_files=dropped, date_dropped=date_dropped)
 
 
+def _reranker_active() -> bool:
+    from .vector_rag import reranker_active
+    return reranker_active()
+
+
 class PolicyRouter:
     def __init__(self, llm: Optional[Any] = None):
         self._llm = llm
@@ -100,6 +105,9 @@ class PolicyRouter:
 
     def _client(self) -> Optional[Any]:
         if os.environ.get("POLICY_ROUTER", "").strip().lower() in ("off", "0", "false"):
+            return None
+        no_router = os.environ.get("POLICY_NO_ROUTER", "").strip().lower()
+        if no_router in ("on", "1", "true") or (not no_router and _reranker_active()):   # để trống: bỏ router khi reranker chạy (m1_final8)   # đo độ trễ 13/11: router ≈ 1–1,5 s mỗi search_policy; cờ này dùng truy hồi cục bộ (TF-IDF toàn bộ, lọc theo ngày cuộc gọi)
             return None
         if not self._llm_tried:
             self._llm_tried = True

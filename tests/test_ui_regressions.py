@@ -264,7 +264,7 @@ class EmptySearchIsNotOutOfStockTest(GateBase):
         """Ảnh 1 / replay A: "38 đen" còn 5 nhưng catalog.search("38 đen") rỗng → agent nói "không có sẵn trong kho"."""
         calls = [("catalog.search", {"sku": "SKU-SN-RUN2"}), ("catalog.search", {"query": "38 đen"})]
         _txt, tc, _m = self.turn(NEW_PHONE, "thế 38 đen có không?", calls, "Dạ còn ạ.")
-        second = tc[1]["result"]
+        second = [c for c in tc if c["name"] == "catalog.search" and c.get("by") == "llm"][1]["result"]      # theo nguồn, không theo vị trí (tra trước của code có thể chen vào)
         self.assertEqual(second["items"][0]["variants"][0], {"variant_sku": "SKU-SN-RUN2-38-DEN", "size": 38, "color": "den", "price_delta_vnd": 0, "in_stock": True, "qty": 5})
         self.assertEqual(second["matched_variant"]["variant_sku"], "SKU-SN-RUN2-38-DEN")
         self.assertTrue(second["matched_variant"]["in_stock"])
@@ -273,7 +273,7 @@ class EmptySearchIsNotOutOfStockTest(GateBase):
     def test_truly_out_of_stock_variant_is_reported_as_such(self):
         calls = [("catalog.search", {"sku": "SKU-SN-RUN2"}), ("catalog.search", {"query": "38 xám"})]
         _txt, tc, _m = self.turn(NEW_PHONE, "vậy cho tôi 38 xám đi", calls, "Dạ ạ.")
-        self.assertFalse(tc[1]["result"]["matched_variant"]["in_stock"])
+        self.assertFalse([c for c in tc if c["name"] == "catalog.search" and c.get("by") == "llm"][1]["result"]["matched_variant"]["in_stock"])
 
     def test_d_with_stroke_is_stripped_so_color_den_matches_variant_den(self):
         """NFKD không tách "đ": "đen" không bao giờ khớp màu "den" của catalog (lỗi tiềm ẩn ở tầng 2 của bộ sửa SKU)."""

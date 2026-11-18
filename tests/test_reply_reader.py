@@ -155,3 +155,40 @@ class GateUsesReadingTest(GateBase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class AddressReadingTest(unittest.TestCase):
+    def test_address_without_keywords_is_kept_with_verbatim_quote(self):          # B1
+        r = verify({"address": "14 Trần Phú, Hà Đông", "address_quote": "giao 14 Trần Phú, Hà Đông"}, "giao 14 Trần Phú, Hà Đông, COD nhé")
+        self.assertEqual(r.address, "14 Trần Phú, Hà Đông")
+        t = "gui ve so 129 khu nam viet a ngu hanh son da nang"
+        self.assertEqual(verify({"address": "so 129 khu nam viet a ngu hanh son da nang", "address_quote": t}, t).address, "so 129 khu nam viet a ngu hanh son da nang")
+
+    def test_invented_or_token_address_is_dropped(self):
+        self.assertIsNone(verify({"address": "1 Lê Lợi", "address_quote": "1 Lê Lợi"}, "giao về địa chỉ cũ nhé").address)
+        self.assertIsNone(verify({"address": "<ADDR_1>", "address_quote": "<ADDR_1>"}, "giao <ADDR_1>").address)
+
+
+class OldAddressGateTest(unittest.TestCase):
+    def test_old_address_reference_without_saved_address_says_so(self):           # B2
+        from types import SimpleNamespace
+        from src.harness.order_gate import OrderGate, OrderDraft, OrderKnown, ProductInfo
+        g = OrderGate()
+        g.begin_turn("S", 1, "giao về địa chỉ cũ nhé", reading=SimpleNamespace(agrees=False, declines=False, affirmed=["address"]))
+        d = g.evaluate("S", OrderDraft(sku="SKU-X", payment="COD"), OrderKnown(caller_phone="0911265844"), ProductInfo(name="Máy X", unit_price=100000))
+        self.assertIn("chưa có địa chỉ đã lưu", d["say"])
+
+
+class TransferRequestTest(unittest.TestCase):
+    def test_transfer_request_needs_verbatim_quote(self):                         # C3
+        t = "lấy 3 máy xuất hóa đơn đỏ, nối máy thầy gặp bên khách hàng tổ chức B2B"
+        self.assertTrue(verify({"asks_transfer": True, "transfer_quote": "nối máy thầy gặp bên khách hàng tổ chức B2B"}, t).asks_transfer)
+        self.assertFalse(verify({"asks_transfer": True, "transfer_quote": "cho gặp quản lý"}, t).asks_transfer)
+
+
+class QtyReadingTest(unittest.TestCase):
+    def test_qty_needs_number_in_verbatim_quote(self):                           # TEST-64/80
+        t = "Duy chốt thành 5 món Túi trữ sữa Sunmum 50 túi"
+        self.assertEqual(verify({"qty": 5, "qty_quote": "5 món"}, t).qty, 5)
+        self.assertIsNone(verify({"qty": 3, "qty_quote": "5 món"}, t).qty)             # số không nằm trong trích dẫn
+        self.assertEqual(verify({"qty": 3, "qty_quote": "lấy ba bộ"}, "ok lấy ba bộ nhé").qty, 3)

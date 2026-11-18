@@ -1,3 +1,4 @@
+import os
 """Bước 11: chi phí/quyết định của router chính sách phải vào trace và trần chi phí (trước đây router có LLMClient riêng nên chi phí không được đếm)."""
 import unittest
 
@@ -9,6 +10,20 @@ from src.memory.service import MemoryService
 USAGE = {"model": "gpt-4o-mini", "usd_cost": 0.001, "vnd_cost": 25.4, "llm_calls": 1, "latency_ms": 900}
 ROUTE = {"files": ["chinh-sach-doi-tra.md"], "as_of_date": None, "as_of_evidence": None, "answerable": True}
 
+
+
+_SAVED_ENV = {}
+
+
+def setUpModule():          # test của router: router phải bật, bất kể cờ đo độ trễ của môi trường chạy
+    for k in ("POLICY_NO_ROUTER", "POLICY_ROUTER"):
+        _SAVED_ENV[k] = os.environ.pop(k, None)
+
+
+def tearDownModule():
+    for k, v in _SAVED_ENV.items():
+        if v is not None:
+            os.environ[k] = v
 
 class RouterLLM:
     available = True

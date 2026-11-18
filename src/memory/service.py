@@ -52,6 +52,9 @@ class MemoryService:
                 raise FileNotFoundError("no chunks parsed")
             for c in chunks:
                 self.semantic.add_chunk(c)
+            warm = getattr(self.semantic.backend, "warm", None)     # backend Qwen: nạp model + vector tài liệu sẵn ở luồng nền
+            if warm:
+                warm([c for c in chunks if c.access == "public"])
             return
         except Exception as e:
             import logging
@@ -226,6 +229,9 @@ class MemoryService:
 
     # --- Semantic / KB Interface ---
     last_policy_route: Optional[Dict[str, Any]] = None      # {route, usage} của lần query_policy gần nhất: router chạy phía bộ nhớ nên chi phí phải đi theo kết quả
+
+    def prefetch_policy(self, query: str, on_date: str = "2026-10-15") -> List[Dict[str, Any]]:
+        return self.semantic.prefetch(query, on_date=on_date)
 
     def query_policy(self, query: str, on_date: str = "2026-10-15") -> List[Dict[str, Any]]:
         chunks = self.semantic.search(query, on_date=on_date, access_level="public")

@@ -84,7 +84,7 @@ def monitoring_extras(meta: Dict[str, Any]) -> Dict[str, Any]:
     lt = meta.get("llm_timing") or {}
     out: Dict[str, Any] = {}
     if "rounds_before_first_token" in lt:
-        out["latency_detail"] = {k: lt[k] for k in ("rounds_before_first_token", "round_ms", "tool_ms", "final_round_ttft_ms", "prompt_tokens", "cached_tokens") if k in lt}
+        out["latency_detail"] = {k: lt[k] for k in ("rounds_before_first_token", "round_ms", "tool_ms", "final_round_ttft_ms", "prompt_tokens", "cached_tokens", "reader_ms", "reader_calls", "reader_parallel", "nudged", "hedged_rounds") if k in lt}
     if meta.get("violation") or meta.get("guardrail_approved") is False:
         out["guardrail"] = {"approved": bool(meta.get("guardrail_approved")), "violation": meta.get("violation")}
     return out

@@ -1,3 +1,4 @@
+import time
 """Bước 2 — LLMClient stream + số đo thật (B1, N3). Dùng client OpenAI GIẢ, không gọi mạng."""
 import unittest
 from types import SimpleNamespace as NS
@@ -275,7 +276,43 @@ class LatencyBreakdownAndCacheTest(unittest.TestCase):
                                  [_chunk(content="Dạ chào ạ."), _chunk(with_choice=False, usage=NS(prompt_tokens=10, completion_tokens=3))]])
         timing = {}
         client.chat_with_tools([{"role": "user", "content": "x"}], lambda n, a: ({}, a), timing=timing)
-        self.assertEqual(timing["rounds_before_first_token"], 1)           # 1 lần nhắc gọi tool (nudge) trước câu trả lời cuối
+        self.assertEqual(timing["rounds_before_first_token"], 1)           # mặc định: 1 lần nhắc gọi tool (nudge) trước câu trả lời cuối
+        client, _ = make_client([[_chunk(content="Dạ chào ạ."), _chunk(with_choice=False, usage=NS(prompt_tokens=10, completion_tokens=3))]])
+        timing = {}
+        client.chat_with_tools([{"role": "user", "content": "x"}], lambda n, a: ({}, a), timing=timing, expect_tools=False)
+        self.assertEqual(timing["rounds_before_first_token"], 0)           # dữ liệu đã tra sẵn (expect_tools=False): trả lời thẳng, không tốn vòng nhắc
+
+    def test_read_only_tools_in_one_round_run_concurrently_in_order(self):
+        """PARALLEL_TOOLS: hai tool chỉ đọc cùng vòng chạy đồng thời (tổng ≈ 1 lần chờ), log giữ thứ tự model gọi; có tool ghi thì tuần tự."""
+        import threading
+        def rounds(second):
+            return [[_chunk(tool_calls=[_tc_delta(0, id="a", name="inventory__check", arguments='{"sku": "SKU-A"}'),
+                                        _tc_delta(1, id="b", name=second, arguments='{"sku": "SKU-B"}')]),
+                     _chunk(with_choice=False, usage=NS(prompt_tokens=10, completion_tokens=3))],
+                    [_chunk(content="Dạ còn hàng ạ."), _chunk(with_choice=False, usage=NS(prompt_tokens=10, completion_tokens=3))]]
+        ro = frozenset({"inventory.check", "pricing.get_quote"})
+        for second, expect_overlap in (("pricing__get_quote", True), ("order__create", False)):
+            live, peak, lock = [0], [0], threading.Lock()
+            def slow(name, args):
+                with lock:
+                    live[0] += 1; peak[0] = max(peak[0], live[0])
+                time.sleep(0.05)
+                with lock:
+                    live[0] -= 1
+                return {"ok": name}, args
+            client, _ = make_client(rounds(second))
+            _, log, _ = client.chat_with_tools([{"role": "user", "content": "x"}], slow, parallel_tools=ro, expect_tools=False)
+            self.assertEqual([c["name"] for c in log], ["inventory.check", second.replace("__", ".")])
+            self.assertEqual(peak[0] == 2, expect_overlap)
+
+    def test_promise_to_look_up_without_a_tool_call_is_nudged_once(self):
+        """Agent nói "để em kiểm tra" mà không gọi tool → kể cả khi dữ liệu đã tra sẵn (expect_tools=False) vẫn nhắc đúng MỘT lần."""
+        promise = [_chunk(content="Dạ để em kiểm tra giúp chị ạ."), _chunk(with_choice=False, usage=NS(prompt_tokens=10, completion_tokens=3))]
+        final = [_chunk(content="Dạ còn hàng ạ."), _chunk(with_choice=False, usage=NS(prompt_tokens=10, completion_tokens=3))]
+        client, _ = make_client([promise, final])
+        timing = {}
+        text, _, _ = client.chat_with_tools([{"role": "user", "content": "x"}], lambda n, a: ({}, a), timing=timing, expect_tools=False)
+        self.assertEqual((text, timing["rounds_before_first_token"]), ("Dạ còn hàng ạ.", 1))
 
     def test_cached_tokens_are_priced_at_cached_rate(self):
         from src.llm.cost_tracker import CostTracker
@@ -314,6 +351,29 @@ class CompleteJsonTest(unittest.TestCase):  # bộ trích slot khó (bước 9) 
         c._client = NS(chat=NS(completions=fake))
         c.available = True
         return c, fake
+
+    def test_prompt_cache_key_and_cached_json_tokens_behind_flag(self):
+        """PROMPT_CACHE_ORDER: cùng system prompt → cùng prompt_cache_key; token cache của lời gọi JSON được ghi và tính giá cache. Tắt cờ: không gửi khóa."""
+        from unittest import mock
+        import src.llm.client as client_mod
+        resp = lambda: NS(choices=[NS(message=NS(content="{}"))],
+                          usage=NS(prompt_tokens=2000, completion_tokens=10, completion_tokens_details=None, prompt_tokens_details=NS(cached_tokens=1536)))
+        msgs = lambda sysp, user: [{"role": "system", "content": sysp}, {"role": "user", "content": user}]
+        with mock.patch.object(client_mod, "PROMPT_CACHE_ORDER", True):
+            c, fake = self._client([resp(), resp(), resp()], model="gpt-4o-mini")
+            _, cost = c.complete_json(msgs("QUY TẮC A", "lời 1"))
+            c.complete_json(msgs("QUY TẮC A", "lời 2"))
+            c.complete_json(msgs("QUY TẮC B", "lời 1"))
+            keys = [k.get("prompt_cache_key") for k in fake.calls]
+            self.assertTrue(keys[0] and keys[0] == keys[1] != keys[2])
+            self.assertEqual((cost["prompt_tokens"], cost["cached_tokens"]), (2000, 1536))
+            full = client_mod.CostTracker().record_turn("gpt-4o-mini", 2000, 10)["usd_cost"]
+            self.assertLess(cost["usd_cost"], full)
+        with mock.patch.object(client_mod, "PROMPT_CACHE_ORDER", False):
+            c, fake = self._client([resp()], model="gpt-4o-mini")
+            _, cost = c.complete_json(msgs("QUY TẮC A", "lời 1"))
+        self.assertNotIn("prompt_cache_key", fake.calls[0])
+        self.assertEqual(cost["cached_tokens"], 1536)                       # trace vẫn thấy token cache khi tắt cờ (chỉ không đổi cách tính giá)
 
     def test_returns_parsed_dict_and_cost_non_stream_json_mode(self):
         c, fake = self._client([self._response('{"blocker": "can hoi chong"}', reasoning=5)], model="gpt-6-luna", seed=1)
@@ -384,3 +444,191 @@ class StripInternalTest(unittest.TestCase):  # N15
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class HedgeAndLazyNudgeTest(unittest.TestCase):
+    """Sửa độ trễ 2026-11-13: hedged request (gửi bản sao khi chưa có gói đầu) và quyết định vòng nhắc lúc vòng đầu xong."""
+
+    def _slow_then_fast(self, delays):
+        import time as _t
+
+        class Stream:
+            def __init__(self, delay, text):
+                self.delay, self.text, self.closed = delay, text, False
+
+            def __iter__(self):
+                _t.sleep(self.delay)
+                yield _chunk(content=self.text)
+                yield _chunk(with_choice=False, usage=NS(prompt_tokens=100, completion_tokens=5))
+
+            def close(self):
+                self.closed = True
+        made = []
+
+        def create(**kw):
+            s = Stream(*delays[len(made)])
+            made.append(s)
+            return s
+        c = LLMClient()
+        c._client = NS(chat=NS(completions=NS(create=create)))
+        c.available = True
+        return c, made
+
+    def test_hedge_uses_whichever_first_chunk_arrives_first_and_bills_the_copy(self):
+        c, made = self._slow_then_fast([(0.6, "chậm"), (0.0, "nhanh")])
+        c.hedge_ms = 50
+        timing = {}
+        text, _, cost = c.chat_with_tools([{"role": "user", "content": "x"}], lambda n, a: ({}, a), timing=timing, expect_tools=False)
+        self.assertEqual(text, "nhanh")
+        self.assertEqual(len(made), 2)
+        self.assertEqual(timing["hedged_rounds"], 1)
+        self.assertEqual(cost["prompt_tokens"], 200)            # bản sao bị đóng vẫn tính tiền prompt
+
+    def test_no_hedge_when_first_chunk_is_fast_or_hedging_off(self):
+        for hedge in (500, 0):
+            c, made = self._slow_then_fast([(0.0, "một")])
+            c.hedge_ms = hedge
+            timing = {}
+            text, _, _ = c.chat_with_tools([{"role": "user", "content": "x"}], lambda n, a: ({}, a), timing=timing, expect_tools=False)
+            self.assertEqual((text, len(made), timing["hedged_rounds"]), ("một", 1, 0))
+
+    def test_expect_tools_callable_is_asked_only_when_first_round_has_no_tool(self):
+        rounds = [[_chunk(content="Dạ vâng ạ."), _chunk(with_choice=False, usage=NS(prompt_tokens=10, completion_tokens=3))]]
+        client, fake = make_client(rounds)
+        asked = []
+        timing = {}
+        text, _, _ = client.chat_with_tools([{"role": "user", "content": "x"}], lambda n, a: ({}, a), timing=timing,
+                                            expect_tools=lambda: asked.append(1) or False)
+        self.assertEqual((text, len(fake.calls), len(asked), timing["nudged"]), ("Dạ vâng ạ.", 1, 1, False))
+
+
+class ReadingNeedsNothingTest(unittest.TestCase):
+    def test_only_a_reading_with_no_request_skips_the_nudge(self):
+        from src.harness.orchestrator import reading_needs_nothing
+        from src.harness.reply_reader import ReplyReading
+        self.assertFalse(reading_needs_nothing(None))
+        self.assertTrue(reading_needs_nothing(ReplyReading()))
+        for kw in ({"asks_question": True}, {"price_topic": True}, {"commits": True}, {"asks_transfer": True}, {"stance": "agree"},
+                   {"product_sku": "SKU-AP-X"}, {"qty": 2}, {"address": "12 Lê Lợi"}, {"affirmed": ["recipient_phone"]}):
+            self.assertFalse(reading_needs_nothing(ReplyReading(**kw)), kw)
+
+
+class JsonHedgeTest(unittest.TestCase):
+    def test_slow_json_call_is_hedged_and_loser_is_billed(self):
+        import time as _t
+        delays = [0.5, 0.0]
+        made = []
+
+        def create(**kw):
+            d = delays[len(made)]
+            made.append(d)
+            _t.sleep(d)
+            return NS(usage=NS(prompt_tokens=1000, completion_tokens=100, completion_tokens_details=None),
+                      choices=[NS(message=NS(content='{"who": %d}' % (len(made) - 1)))])
+        c = LLMClient()
+        c._client = NS(chat=NS(completions=NS(create=create)))
+        c.available = True
+        c.json_hedge_ms = 50
+        before = c.cost_tracker.cumulative_usd_cost
+        data, cost = c.complete_json([{"role": "user", "content": "x"}])
+        self.assertEqual((data, len(made), c.json_hedged_calls), ({"who": 1}, 2, 1))     # bản sao (nhanh) thắng
+        _t.sleep(0.7)                                                                      # bản thua chạy xong → tiền được cộng
+        self.assertGreater(c.cost_tracker.cumulative_usd_cost - before, cost["usd_cost"] * 1.5)
+
+
+class JsonTruncationTest(unittest.TestCase):
+    def test_truncated_json_is_unreadable_and_reader_gets_the_cap(self):
+        from src.llm.client import LLMUnavailable
+        from src.harness import reply_reader as RR
+        sent = []
+
+        def create(**kw):
+            sent.append(kw)
+            return NS(usage=NS(prompt_tokens=10, completion_tokens=5, completion_tokens_details=None),
+                      choices=[NS(finish_reason="length", message=NS(content='{"stance":"agr'))])
+        c = LLMClient()
+        c._client = NS(chat=NS(completions=NS(create=create)))
+        c.available = True
+        with self.assertRaises(LLMUnavailable):
+            c.complete_json([{"role": "user", "content": "x"}], max_tokens=5)
+        self.assertIsNone(RR.read_reply(c, "ok lấy luôn", "Anh lấy không ạ?"))          # bị cắt → không đọc được, không đoán
+        self.assertEqual(sent[-1][c._token_param], RR.READER_MAX_TOKENS)
+
+
+class ParallelRequiredToolsTest(unittest.TestCase):
+    def test_forced_tool_call_replaces_nudge_round(self):
+        """PARALLEL_REQUIRED_TOOLS (17/11): vòng đầu không gọi tool (lẽ ra bị nhắc) → dùng lời gọi tool của yêu cầu song song, không tốn vòng nhắc."""
+        from concurrent.futures import Future
+        from unittest import mock
+        import src.llm.client as C
+        answer = [_chunk(content="Dạ chính sách là 14 ngày ạ."), _chunk(with_choice=False, usage=NS(prompt_tokens=10, completion_tokens=3))]
+        final = [_chunk(content="Dạ đổi trả trong 7 ngày ạ."), _chunk(with_choice=False, usage=NS(prompt_tokens=10, completion_tokens=3))]
+        client, _ = make_client([answer, final])
+        forced = Future()
+        forced.set_result(NS(choices=[NS(message=NS(tool_calls=[NS(id="r1", function=NS(name="search_policy", arguments='{"query": "đổi trả"}'))]))]))
+        seen = []
+        with mock.patch.object(C, "PARALLEL_REQUIRED_TOOLS", True), mock.patch.object(type(client), "_submit_required", lambda self, m, t: forced):
+            timing = {}
+            text, log, _ = client.chat_with_tools([{"role": "user", "content": "x"}], lambda n, a: (seen.append(n) or {"chunks": []}, a),
+                                                  timing=timing, tools_override=[{"type": "function", "function": {"name": "search_policy"}}])
+        self.assertEqual(seen, ["search_policy"])
+        self.assertEqual(text, "Dạ đổi trả trong 7 ngày ạ.")
+        self.assertEqual(timing["rounds_before_first_token"], 1)          # 1 vòng (đã có lời gọi tool) thay vì vòng đầu + vòng nhắc + vòng tool
+
+    def test_flag_off_never_submits(self):
+        from unittest import mock
+        import src.llm.client as C
+        client, _ = make_client([[_chunk(content="Dạ chào ạ."), _chunk(with_choice=False, usage=NS(prompt_tokens=10, completion_tokens=3))]])
+        with mock.patch.object(C, "PARALLEL_REQUIRED_TOOLS", False), mock.patch.object(type(client), "_submit_required", side_effect=AssertionError):
+            client.chat_with_tools([{"role": "user", "content": "x"}], lambda n, a: ({}, a), expect_tools=False)
+
+
+class FastPricingTest(unittest.TestCase):
+    def test_fast_tier_uses_fast_prices(self):
+        """LLM_SERVICE_TIER=fast → sổ chi phí tính giá bảng 'fast' (gpt-4o-mini 0,25 / 1,00), không phải giá thường."""
+        import os
+        from unittest import mock
+        from src.llm import cost_tracker as ct
+        with mock.patch.dict(os.environ, {"LLM_SERVICE_TIER": "fast"}):
+            self.assertEqual(ct.load_pricing()["models"]["gpt-4o-mini"][:2], (0.25, 1.00))
+        with mock.patch.dict(os.environ, {"LLM_SERVICE_TIER": ""}):
+            self.assertEqual(ct.load_pricing()["models"]["gpt-4o-mini"][:2], (0.15, 0.60))
+
+
+class WebSocketRoundTest(unittest.TestCase):
+    """LLM_WS (18/11): vòng LLM qua Responses WebSocket trả về cùng dạng vòng stream Chat Completions."""
+
+    def test_messages_converted_to_responses_items(self):
+        from src.llm.client import LLMClient
+        items = LLMClient._to_responses_input([
+            {"role": "system", "content": "S"}, {"role": "user", "content": "U"},
+            {"role": "assistant", "content": "", "tool_calls": [{"id": "c1", "type": "function", "function": {"name": "inventory__check", "arguments": '{"sku":"A"}'}}]},
+            {"role": "tool", "tool_call_id": "c1", "content": "{}"}])
+        self.assertEqual(items, [{"role": "system", "content": "S"}, {"role": "user", "content": "U"},
+                                 {"type": "function_call", "call_id": "c1", "name": "inventory__check", "arguments": '{"sku":"A"}'},
+                                 {"type": "function_call_output", "call_id": "c1", "output": "{}"}])
+
+    def test_round_returns_text_calls_and_usage(self):
+        from unittest import mock
+        import src.llm.client as C
+        done = NS(service_tier="priority", output=[NS(type="function_call", call_id="c9", name="pricing__get_quote", arguments='{"sku":"B"}')],
+                  usage=NS(input_tokens=100, output_tokens=7, input_tokens_details=NS(cached_tokens=64), output_tokens_details=NS(reasoning_tokens=0)))
+        events = [NS(type="response.output_text.delta", delta="Dạ "), NS(type="response.output_text.delta", delta="em xem"),
+                  NS(type="response.completed", response=done)]
+        sent = {}
+        conn = NS(response=NS(create=lambda **kw: sent.update(kw)), __iter__=None)
+
+        class Conn:
+            response = NS(create=lambda **kw: sent.update(kw))
+            def __iter__(self):
+                return iter(events)
+        client, _ = make_client([])
+        with mock.patch.object(C, "LLM_WS", True), mock.patch.object(type(client), "_ws_conn", lambda self: Conn()):
+            text, calls, usage, first = client._stream_round_once([{"role": "user", "content": "x"}],
+                                                                  [{"type": "function", "function": {"name": "pricing__get_quote", "parameters": {}}}])
+        self.assertEqual(text, "Dạ em xem")
+        self.assertEqual(calls, [{"id": "c9", "name": "pricing__get_quote", "arguments": '{"sku":"B"}'}])
+        self.assertEqual((usage.prompt_tokens, usage.completion_tokens, usage.prompt_tokens_details.cached_tokens), (100, 7, 64))
+        self.assertIsNotNone(first)
+        self.assertEqual(sent["tools"][0]["name"], "pricing__get_quote")
+        self.assertFalse(sent["store"])

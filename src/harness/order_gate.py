@@ -128,6 +128,8 @@ class ProductInfo:
     needs_variant: bool = False
     is_variant: bool = False
     unit_price: Optional[int] = None
+    freeship: bool = False                 # báo giá có "freeship": true → câu đọc lại nói "miễn phí vận chuyển" (SC-GEN-15)
+    promo_note: str = ""                   # ", áp mã AIR-2ND-50 giảm … cho sản phẩm thứ hai" — đọc lại đơn phải nêu KM đã áp (TEST-67)
 
 
 @dataclass
@@ -153,6 +155,7 @@ class GateState:
     last_ask_key: Optional[tuple] = None   # (hành động, trường hỏi, trường xác nhận) của câu hỏi gần nhất — để phát hiện câu hỏi LẶP
     last_ask_turn: Optional[int] = None
     ask_streak: int = 0                    # số lần LIÊN TIẾP hỏi đúng câu đó mà khách chưa trả lời được
+    addr_ref_turn: Optional[int] = None    # lượt khách nói "giao về địa chỉ cũ" (bộ đọc: affirmed có "address") — B2
     closing: bool = False                  # LƯỢT CHỐT của cuộc gọi (luật BTC 11/2026: sau lượt khách cuối, agent được một lượt đọc lại + tạo đơn, khách không nói gì nữa)
     phone_ok: bool = False                 # khách đã nói "đúng sdt/số này" (kể cả TRƯỚC khi gate hỏi) → số đang gọi coi như đã xác nhận
 
@@ -196,14 +199,17 @@ class OrderGate:
             declined, affirmed = reading.declines, set(reading.affirmed)
             if "recipient_phone" in affirmed:
                 st.phone_ok = True
+            if "address" in affirmed:
+                st.addr_ref_turn = turn_no
         else:
             consent, declined = is_explicit_consent(text or ""), is_decline(text or "")
             lenient_consent, affirmed = None, set()
-            if _PHONE_OK.search(fold(text or "")) and not any(re.search(rf"(?<!\w){h}(?!\w)", fold(text or "")) for h in ("khong", "sai", "khac", "nham", "chua")):
-                st.phone_ok = True
+            self.phone_ok_fallback(sid, text)
         open_draft = st.stage in ("collect", "readback", "consented") and (st.last_decision is not None) and not st.last_decision.get("allow", False)
         stale = open_draft and st.last_decision.get("turn") is not None and turn_no - st.last_decision["turn"] > DRAFT_TTL_TURNS    # đơn nháp không tiến triển → tự rút lui
-        if open_draft and (declined or stale):
+        # khách chỉ đổi số lượng/cách trả ("ngại chuyển khoản, giảm xuống lấy 1 chiếc trả COD" — TEST-49) vẫn đang mua: không hủy đơn nháp
+        changes_order = reading is not None and bool(getattr(reading, "qty", None) or getattr(reading, "payment", None))
+        if open_draft and ((declined and not changes_order) or stale):
             st.abandoned_turn = turn_no                            # khách không muốn tiếp tục (đắt, chưa đủ tiền, để sau…) → hủy đơn nháp, không hỏi tiếp
             st.stage, st.snapshot, st.pending_confirm, st.readback_turn = "collect", None, None, None
             st.ask_streak, st.last_ask_key, st.last_ask_turn, st.last_decision = 0, None, None, None
@@ -211,7 +217,9 @@ class OrderGate:
         if st.pending_confirm and turn_no == st.pending_confirm["turn"] + 1:
             if reading is not None:                                # LLM: chỉ các mục khách nêu là đúng, hoặc khách đồng ý chung với câu hỏi xác nhận
                 vals = st.pending_confirm["values"]
-                st.confirmed.update(vals if lenient_consent else {k: v for k, v in vals.items() if k in affirmed})
+                # khách nghe câu xác nhận mà trả lời tiếp thông tin khác, không phản đối → coi là đã xác nhận (hỏi lại = câu hỏi thừa, RQR; TEST-141).
+                # Khách đọc số/địa chỉ MỚI thì trường đó thành "stated" ở lượt này, giá trị cũ không còn được dùng; câu đọc lại đơn vẫn đọc đủ để khách sửa.
+                st.confirmed.update(vals if (lenient_consent or not declined) else {k: v for k, v in vals.items() if k in affirmed})
             elif consent or is_explicit_consent(text or "", max_words=40, lenient=True):       # xác nhận thông tin đã lưu có thể kèm thông tin mới ("đúng rồi, giao về…")
                 st.confirmed.update(st.pending_confirm["values"])
             st.pending_confirm = None
@@ -224,6 +232,11 @@ class OrderGate:
                 st.stage, st.snapshot = "collect", None          # không đồng ý rõ ràng → bản đọc lại hết hiệu lực
         elif st.stage == "consented":
             st.stage, st.snapshot = "collect", None              # đồng ý chỉ có giá trị cho lượt NGAY SAU lần đọc lại
+
+    def phone_ok_fallback(self, sid: str, text: str) -> None:
+        """Dự phòng khi KHÔNG có kết quả đọc hiểu bằng LLM: khách nói "đúng số này" (regex) → số đang gọi coi như đã xác nhận."""
+        if _PHONE_OK.search(fold(text or "")) and not any(re.search(rf"(?<!\w){h}(?!\w)", fold(text or "")) for h in ("khong", "sai", "khac", "nham", "chua")):
+            self.state(sid).phone_ok = True
 
     def events(self, sid: str) -> List[Dict[str, Any]]:
         return list(self.state(sid).events)
@@ -293,7 +306,7 @@ class OrderGate:
         qty = int(fields["qty"].value or 1)
         item = (p.name + (f" {p.variant_label}" if p.variant_label else "")).strip() or d.sku
         price = f", giá {money(p.unit_price)} một sản phẩm" if p.unit_price else ""
-        tot = f", tổng {money(total)}" if total else ""
+        tot = (f", tổng {money(total)}" if total else "") + p.promo_note + (", miễn phí vận chuyển" if p.freeship else "")
         pay = PAYMENT_LABEL.get(fields["payment"].value or "", fields["payment"].value or "")
         return (f"Dạ em đọc lại đơn mình nhé: {qty} {item}{price}{tot}; giao cho {fields['recipient_name'].shown}, số điện thoại "
                 f"{fields['recipient_phone'].shown}, địa chỉ {fields['address'].shown}; {pay}. {addr[:1].upper() + addr[1:]} xác nhận đặt đơn này giúp em nhé?")
@@ -357,7 +370,11 @@ class OrderGate:
                 item = (product.name + (f" {product.variant_label}" if product.variant_label else "")).strip() or draft.sku
                 pay = PAYMENT_LABEL.get(fields["payment"].value or "COD", fields["payment"].value or "COD")
                 later = [LABEL_SHORT[f] for f in ("recipient_name", "address") if fields[f].status == "missing"]
-                say = (f"Dạ em đọc lại đơn mình nhé: {qty} {item}" + (f", tổng {money(total)}" if total else "") + f"; {pay}."
+                price = f", giá {money(product.unit_price)} một sản phẩm" if product.unit_price else ""
+                who = [f"{lbl} {fields[f].shown}" for f, lbl in (("recipient_name", "giao cho"), ("recipient_phone", "số điện thoại"), ("address", "địa chỉ"))
+                       if fields[f].status != "missing" and fields[f].shown]
+                say = (f"Dạ em đọc lại đơn mình nhé: {qty} {item}{price}" + (f", tổng {money(total)}" if total else "") + product.promo_note
+                       + (", miễn phí vận chuyển" if product.freeship else "") + (f"; {', '.join(who)}" if who else "") + f"; {pay}."
                        + (f" Em chưa có {' và '.join(later)} nên nhân viên sẽ gọi lại {addressing} để xác nhận trước khi giao ạ." if later else ""))
                 st.stage, st.snapshot, st.created = "done", snap, {"snapshot": snap, "turn": st.turn, "real": {k: v.value for k, v in fields.items()}}
                 return self._record(st, {**base, "allow": True, "action": "allow_closing", "assumed": assumed, "say": say})
@@ -383,6 +400,8 @@ class OrderGate:
                 say = self._rephrase_ask(addressing, asks)
             else:
                 say = self._confirm_and_ask(addressing, fields, to_confirm, asks)
+            if "address" in asks and st.addr_ref_turn == st.turn:    # B2: khách nhắc địa chỉ cũ mà chưa có địa chỉ lưu → nói thẳng, không bịa
+                say = "Dạ em chưa có địa chỉ đã lưu của mình ạ. " + (say[3:] if say.startswith("Dạ ") else say)
             if to_confirm:
                 st.pending_confirm = {"turn": st.turn, "values": {f: norm_value(fields[f].value) for f in to_confirm}}
             must = [MUST_WORD[a] for a in asks] + (["dung khong"] if to_confirm else [])

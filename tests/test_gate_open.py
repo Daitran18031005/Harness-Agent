@@ -31,7 +31,7 @@ class GateOpenTest(GateBase):
         go = meta["gate_open"]
         self.assertTrue(go["opened"])
         self.assertEqual(go["object"]["checked"], {"SKU-SN-CAS-39-DEN": True})
-        self.assertEqual(main_calls, 0)                                        # code trả lời, LLM chính không chạy
+        self.assertLessEqual(main_calls, 1)                                    # code trả lời; LLM chính có thể đã chạy SONG SONG với bước đọc hiểu nhưng kết quả bị bỏ, không tool nào của nó chạy
         self.assertEqual(meta["order_gate"][-1]["action"], "ask_confirm")      # gate hỏi tên/địa chỉ/thanh toán, xác nhận SĐT
         self.assertIn("địa chỉ", txt)
         self.assertEqual([c for c in tc if c["name"] == "order.create"], [])    # tuyệt đối chưa tạo đơn
@@ -92,7 +92,7 @@ class LateReadTest(GateBase):
         self.assertEqual(self.llm.read_calls, 1)                                        # đọc muộn đúng 1 lần
         self.assertTrue(meta["reply_reading"]["late"])
         self.assertTrue(meta["gate_open"]["opened"])
-        self.assertEqual(self.llm.calls - before, 0)
+        self.assertLessEqual(self.llm.calls - before, 1)             # LLM chính chạy song song với bước đọc hiểu, kết quả bị bỏ khi code mở gate
 
     def test_no_variant_named_means_no_late_read(self):
         self.llm.reader = lambda t: COMMIT
@@ -124,7 +124,7 @@ class SimpleProductTest(GateBase):
         _, tc, meta = self.turn(NEW_PHONE, "ok lấy luôn", [])
         go = meta["gate_open"]
         self.assertEqual((meta["reply_reading"]["order_intent"], go["opened"], go["object"]["checked"]), ("commit", True, {"SKU-WF-RO10": True}))
-        self.assertEqual(self.llm.calls - before, 0)
+        self.assertLessEqual(self.llm.calls - before, 1)             # LLM chính chạy song song với bước đọc hiểu, kết quả bị bỏ khi code mở gate
         self.assertEqual([c for c in tc if c["name"] == "order.create"], [])
 
     def test_simple_product_not_committed_is_read_but_not_opened(self):
@@ -193,3 +193,60 @@ class DraftExpiryTest(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class EarlyGateTakeoverTest(GateBase):
+    """EARLY_GATE_TAKEOVER (13/11): bộ đọc song song về trước và code mở gate → câu của code trả NGAY, LLM chính (chậm) bị hủy; tắt cờ thì chờ LLM như cũ."""
+
+    class SlowMain(ReaderLLM):
+        def __init__(self, reader, delay=2.0):
+            super().__init__(reader)
+            self.delay, self.cancelled = delay, []
+
+        def chat_with_tools(self, messages, tool_executor, max_rounds=6, tools_override=None, timing=None, cancel=None):
+            import time
+            self.calls += 1
+            calls, text = self.script.pop(0) if self.script else ([], "")
+            if calls:                                                         # lượt tra cứu: chạy tool như LLM giả thường, không chậm
+                log = []
+                for name, args in calls:
+                    result, executed = tool_executor(name, args)
+                    log.append({"name": name, "tool": name, "args": executed, "result": result})
+                return text, log, {"prompt_tokens": 0, "completion_tokens": 0}
+            end = time.perf_counter() + self.delay
+            while time.perf_counter() < end:
+                if cancel is not None and cancel.is_set():
+                    self.cancelled.append(True)
+                    from src.llm.client import LLMCancelled
+                    raise LLMCancelled()
+                time.sleep(0.01)
+            return "Dạ LLM chính trả lời.", [], {"prompt_tokens": 0, "completion_tokens": 0}
+
+    explore, say = GateOpenTest.explore, GateOpenTest.say
+
+    def run_commit(self, flag):
+        import time
+        from unittest import mock
+        import src.harness.orchestrator as orch_mod
+        self.llm = self.orch.llm_client = self.SlowMain(lambda t: {})
+        with mock.patch.object(orch_mod, "EARLY_GATE_TAKEOVER", flag):
+            self.explore()
+            t0 = time.perf_counter()
+            txt, tc, meta, _ = self.say("ok lấy 39 đen", COMMIT)
+            return time.perf_counter() - t0, txt, tc, meta
+
+    def test_code_reply_does_not_wait_for_the_main_llm(self):
+        took, txt, tc, meta = self.run_commit(True)
+        self.assertLess(took, 1.5)                                            # không chờ LLM chính 2 s
+        self.assertEqual((meta["gate_open"]["opened"], meta["order_gate"][-1]["action"]), (True, "ask_confirm"))
+        self.assertIn("địa chỉ", txt)
+        self.assertEqual([c for c in tc if c["name"] == "order.create"], [])
+        import time
+        time.sleep(0.1)
+        self.assertEqual(self.llm.cancelled, [True])                          # luồng LLM chính đã bị hủy
+
+    def test_flag_off_keeps_waiting_and_same_decision(self):
+        took, txt, tc, meta = self.run_commit(False)
+        self.assertGreaterEqual(took, 1.9)
+        self.assertEqual((meta["gate_open"]["opened"], meta["order_gate"][-1]["action"]), (True, "ask_confirm"))
+        self.assertIn("địa chỉ", txt)

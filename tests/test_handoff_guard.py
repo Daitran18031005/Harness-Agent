@@ -119,3 +119,29 @@ class BriefAfterMidCallHandoffTest(GateBase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class HandoffBriefFieldsTest(unittest.TestCase):
+    def test_placeholder_name_and_wrong_product_are_fixed(self):                 # C1, C2
+        from types import SimpleNamespace
+        from src.harness.orchestrator import HarnessOrchestrator
+        from src.privacy.pii_vault import PiiVault
+        b = SimpleNamespace(customer_name="Lan", product_advised="SKU-OLD", price_quoted_vnd=None)
+        out = HarnessOrchestrator._complete_handoff_brief({"customer_name": "Quý khách", "product_advised": "SKU-OLD"}, b, "", "0911265844", PiiVault(), "2026-10-15", focus_sku="SKU-NEW")
+        self.assertEqual((out["customer_name"], out["product_advised"]), ("Lan", "SKU-NEW"))
+
+
+class HandoffPrefetchTest(HandoffToolTest):
+    """HANDOFF_PREFETCH (18/11): kiểm duyệt chạy sẵn từ đầu lượt; lượt có chuyển máy dùng đúng kết quả đó (vẫn chỉ 1 lần chốt), quyết định không đổi."""
+
+    def setUp(self):
+        super().setUp()
+        from unittest import mock
+        import src.harness.orchestrator as O
+        p = mock.patch.object(O, "HANDOFF_PREFETCH", True)
+        p.start()
+        self.addCleanup(p.stop)
+
+    def test_turn_without_handoff_still_checks_once(self):
+        self.turn(NEW_PHONE, "máy này giá bao nhiêu em", [])
+        self.assertEqual(self.checks, 1)

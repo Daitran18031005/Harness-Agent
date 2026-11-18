@@ -21,7 +21,7 @@ EXPECTED = {
 }
 MEMORY_TOOLS = {"memory.open", "memory.close", "memory.begin_turn", "memory.drain_writes", "memory.abort_turn", "memory.working_get",
                 "memory.working_set", "memory.profile_set", "memory.profile_get", "memory.facts_by_channel", "memory.profile_versions",
-                "memory.episode_add", "memory.episodes_get", "memory.merge_customer", "memory.query_policy", "memory.identity_links_load",
+                "memory.episode_add", "memory.episodes_get", "memory.merge_customer", "memory.query_policy", "memory.prefetch_policy", "memory.identity_links_load",
                 "memory.identity_link_save", "memory.admin_audit",                                                   # tầng thấp (chỉ lõi)
                 "memory.get_call_brief", "memory.search", "memory.timeline", "memory.commit_turn", "memory.commit_episode",
                 "memory.delete_customer"}                                                                           # 6 tool cao; test riêng ở test_mcp_memory.py

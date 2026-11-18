@@ -123,6 +123,9 @@ def build_server(permissions: Optional[Permissions] = None, registry: Optional[S
         chunks = s.query_policy(p["query"], on_date=p.get("on_date") or "2026-10-15")
         return {"chunks": chunks, "route_info": s.last_policy_route}     # router chạy ở đây: chi phí/quyết định gửi kèm để client tính vào trần
 
+    def do_prefetch_policy(p):
+        return {"chunks": svc(p).prefetch_policy(p["query"], on_date=p.get("on_date") or "2026-10-15")}
+
     def do_versions(p):
         return {"versions": {k: [asdict(f) for f in fs] for k, fs in svc(p).profile_versions(p["customer_id"]).items()}}
 
@@ -289,6 +292,11 @@ def build_server(permissions: Optional[Permissions] = None, registry: Optional[S
     async def memory_query_policy(ctx: Context, store_id: str, query: str, on_date: str = "2026-10-15") -> Dict[str, Any]:
         """Tìm chính sách — bản tầng thấp của memory.search."""
         return run("memory.query_policy", ctx, do_query_policy, store_id=store_id, query=query, on_date=on_date)
+
+    @server.tool(name="memory.prefetch_policy")
+    async def memory_prefetch_policy(ctx: Context, store_id: str, query: str, on_date: str = "2026-10-15") -> Dict[str, Any]:
+        """Tra trước chính sách theo lời khách (POLICY_PREFETCH): đoạn kèm điểm reranker; backend không chấm điểm thì rỗng. Chỉ đọc."""
+        return run("memory.prefetch_policy", ctx, do_prefetch_policy, store_id=store_id, query=query, on_date=on_date)
 
     @server.tool(name="memory.identity_links_load")
     async def memory_identity_links_load(ctx: Context, store_id: str) -> Dict[str, Any]:

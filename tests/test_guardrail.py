@@ -75,3 +75,17 @@ class GatewaySanitizeTest(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class InternalTermRefusalTest(unittest.TestCase):
+    def test_refusal_does_not_repeat_internal_term(self):  # D1
+        d = check("Dạ em không thể tiết lộ Giá nhập của sản phẩm ạ")
+        self.assertNotIn("giá nhập", d.sanitized_text.lower())
+        self.assertIn("thông tin nội bộ", d.sanitized_text)
+
+
+class MemoryCostTermTest(unittest.TestCase):
+    def test_objection_never_stores_cost_terms(self):                            # TEST-21/71: mẫu cấm /giá\s*nhập/ khớp trong memory_writes
+        from src.memory.memory_extractor import validate_hard_slots
+        out = validate_hard_slots({"objection": "bớt cho anh sát giá nhập"}, "bớt cho anh sát giá nhập đi")
+        self.assertNotIn("giá nhập", out["objection"])

@@ -37,11 +37,14 @@ def load_pricing(path: Optional[str] = None) -> Dict[str, Any]:
         import yaml
         with open(path, "r", encoding="utf-8") as fh:
             raw = yaml.safe_load(fh) or {}
+        entries = dict(raw.get("models") or {})
+        if os.environ.get("LLM_SERVICE_TIER", "fast").strip().lower() in ("fast", "priority"):
+            entries.update(raw.get("fast") or {})        # Fast mode: giá riêng từng model (bảng "fast" trong pricing.yaml)
         models = {normalize_model_name(k): (float(v["input_usd_per_1m"]), float(v["output_usd_per_1m"]),
                                             bool(v.get("needs_official_verification", True)), str(v.get("source", "")))
-                  for k, v in (raw.get("models") or {}).items()}
+                  for k, v in entries.items()}
         cached = {normalize_model_name(k): float(v["cached_input_usd_per_1m"])
-                  for k, v in (raw.get("models") or {}).items() if v.get("cached_input_usd_per_1m") is not None}
+                  for k, v in entries.items() if v.get("cached_input_usd_per_1m") is not None}
         d = raw.get("default") or {}
         default = (float(d.get("input_usd_per_1m", _FALLBACK_DEFAULT[0])), float(d.get("output_usd_per_1m", _FALLBACK_DEFAULT[1])),
                    bool(d.get("needs_official_verification", True)))

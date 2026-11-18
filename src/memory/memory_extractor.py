@@ -237,6 +237,9 @@ def validate_hard_slots(raw: Dict[str, Any], customer_text: str, known_prices=()
     for key in ("blocker", "objection", "customer_goal"):
         v = _clean_text(raw.get(key), 120 if key == "customer_goal" else 80)
         if v:
+            from src.harness.guardrail import GuardrailAndFallback      # bộ nhớ là một phần trace: không ghi lại thuật ngữ giá nội bộ khách nhắc (TEST-21/71 "giá nhập")
+            for term in GuardrailAndFallback.COST_TERMS:
+                v = re.sub(re.escape(term), "thông tin nội bộ", v, flags=re.IGNORECASE)
             out[key] = v
     for key in ("budget_vnd", "competitor_price_vnd"):
         v = _grounded_amount(raw.get(key), customer_text)

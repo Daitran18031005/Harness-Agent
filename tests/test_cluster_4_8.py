@@ -29,6 +29,11 @@ class ExplodingLLM:
         raise self.error
 
 
+def _real(calls):
+    """Lời gọi tool THẬT của lượt (bỏ lời gọi code chạy trước — speculative — đứng đầu danh sách)."""
+    return [c for c in calls if not c.get("speculative")]
+
+
 class SafeWriteTest(unittest.TestCase):  # bước 4
     def setUp(self):
         self.c = build_components()
@@ -102,7 +107,7 @@ class SafeWriteTest(unittest.TestCase):  # bước 4
         self.assertNotIn("total_vnd", tc[0]["result"])           # 1 máy, không giỏ: kết quả như cũ
         self.orch.llm_client = FakeLLM({"calls": [("pricing.get_quote", {"sku": "SKU-SN-CAS-39-DEN", "qty": 2})], "text": "Dạ ạ."})
         _, tc, _ = self.orch.process_turn(t, b, current_date="2026-10-15")
-        self.assertEqual(tc[0]["result"]["total_vnd"], 2 * tc[0]["result"]["final_price_vnd"])   # không có KM 'máy thứ 2': giá × 2
+        self.assertEqual(next(c for c in tc if not c.get("speculative"))["result"]["total_vnd"], 2 * tc[-1]["result"]["final_price_vnd"])   # không có KM 'máy thứ 2': giá × 2
 
     def test_sanitize_basket_keeps_genuine_other_items(self):
         f = type(self.orch)._sanitize_basket
@@ -115,15 +120,15 @@ class SafeWriteTest(unittest.TestCase):  # bước 4
         t, b = self._turn("0922264686", "2026-10-15")
         self.orch.llm_client = FakeLLM({"calls": [("order.create", {"customer_phone": "CURRENT_CUSTOMER", "sku": "SKU-SN-CAS-39-DEN", "price_vnd": 890000, "payment": "COD"})], "text": "Dạ em đã lên đơn ạ."})
         _, tc1, _ = self.orch.process_turn(t, b, current_date="2026-10-15")
-        oid = tc1[0]["result"]["order_id"]
+        oid = _real(tc1)[0]["result"]["order_id"]
         t2, b2 = self._turn("0922264686", "2026-10-19")
         upd = ("order.update", {"order_id": oid, "action": "exchange_size", "new_variant_sku": "SKU-SN-CAS-40-DEN"})
         self.orch.llm_client = FakeLLM({"calls": [upd], "text": "Dạ em đã làm thủ tục đổi size ạ."})
         _, first, _ = self.orch.process_turn(t2, b2, current_date="2026-10-19")
         _, second, _ = self.orch.process_turn(t2, b2, current_date="2026-10-19")
-        self.assertNotIn("already_done", first[0]["result"])
-        self.assertTrue(second[0]["result"].get("already_done"))
-        self.assertEqual(second[0]["result"]["fee_vnd"], first[0]["result"]["fee_vnd"])
+        self.assertNotIn("already_done", _real(first)[0]["result"])
+        self.assertTrue(_real(second)[0]["result"].get("already_done"))
+        self.assertEqual(_real(second)[0]["result"]["fee_vnd"], _real(first)[0]["result"]["fee_vnd"])
         import mock_tools
         self.assertEqual(len([x for x in mock_tools._TICKETS if x.get("action", "").startswith("exchange")]), 1)
 
@@ -135,8 +140,8 @@ class SafeWriteTest(unittest.TestCase):  # bước 4
         self.orch.llm_client = FakeLLM({"calls": [create], "text": "ok"})
         _, first, _ = self.orch.process_turn(t, b, current_date="2026-10-15")
         _, second, _ = self.orch.process_turn(t, b, current_date="2026-10-15")
-        self.assertTrue(second[0]["result"].get("already_done"))
-        self.assertEqual(second[0]["result"]["order_id"], first[0]["result"]["order_id"])
+        self.assertTrue(_real(second)[0]["result"].get("already_done"))
+        self.assertEqual(_real(second)[0]["result"]["order_id"], _real(first)[0]["result"]["order_id"])
         self.assertEqual(len(mock_tools._ORDERS), 1)
 
     def test_new_order_after_the_first_was_returned_is_not_swallowed_by_dedup(self):
@@ -147,13 +152,13 @@ class SafeWriteTest(unittest.TestCase):  # bước 4
         create = ("order.create", {"customer_phone": "CURRENT_CUSTOMER", "sku": "SKU-SN-CAS-39-DEN", "payment": "COD"})
         self.orch.llm_client = FakeLLM({"calls": [create], "text": "ok"})
         _, first, _ = self.orch.process_turn(t, b, current_date="2026-10-15")
-        oid = first[0]["result"]["order_id"]
+        oid = _real(first)[0]["result"]["order_id"]
         self.orch.llm_client = FakeLLM({"calls": [("order.update", {"order_id": oid, "action": "return", "reason": "không vừa"})], "text": "ok"})
         _, ret, _ = self.orch.process_turn(t, b, current_date="2026-10-15")
-        self.assertEqual(ret[0]["result"]["status"], "pickup_scheduled")
+        self.assertEqual(_real(ret)[0]["result"]["status"], "pickup_scheduled")
         self.orch.llm_client = FakeLLM({"calls": [create], "text": "ok"})
         _, again, _ = self.orch.process_turn(t, b, current_date="2026-10-15")
-        res = again[0]["result"]
+        res = _real(again)[0]["result"]
         self.assertNotIn("already_done", res)
         self.assertEqual(res["status"], "created")
         self.assertNotEqual(res["order_id"], oid)

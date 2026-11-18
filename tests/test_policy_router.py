@@ -12,6 +12,20 @@ DOI_TRA_CU = "chinh-sach-doi-tra-v2026-06-HET-HIEU-LUC.md"
 CHANGELOG = "changelog.md"
 
 
+
+_SAVED_ENV = {}
+
+
+def setUpModule():          # test của router: router phải bật, bất kể cờ đo độ trễ của môi trường chạy
+    for k in ("POLICY_NO_ROUTER", "POLICY_ROUTER"):
+        _SAVED_ENV[k] = os.environ.pop(k, None)
+
+
+def tearDownModule():
+    for k, v in _SAVED_ENV.items():
+        if v is not None:
+            os.environ[k] = v
+
 class FakeLLM:
     """complete_json trả lần lượt các kết quả đã định; Exception -> ném ra."""
     available = True
@@ -100,6 +114,13 @@ class PolicyRouterTest(unittest.TestCase):
         with mock.patch.dict(os.environ, {"POLICY_ROUTER": "off"}):
             out = make_service(llm).query_policy(self.Q)
         self.assertEqual(llm.calls, [])
+        self.assertEqual(out, self.baseline())
+
+    def test_policy_no_router_flag_uses_local_retrieval(self):
+        llm = FakeLLM({"files": [DOI_TRA], "answerable": False})
+        with mock.patch.dict(os.environ, {"POLICY_NO_ROUTER": "on", "POLICY_ROUTER": ""}):
+            out = make_service(llm).query_policy(self.Q)
+        self.assertEqual(llm.calls, [])                 # không tốn lời gọi LLM (≈ 1–1,5 s)
         self.assertEqual(out, self.baseline())
 
     def test_selected_files_without_tfidf_hit_do_not_lose_result(self):

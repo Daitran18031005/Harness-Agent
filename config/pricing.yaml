@@ -17,6 +17,18 @@ models:
     output_usd_per_1m: 0.60
     source: "bảng tham khảo trong cost_tracker.py cũ (trùng giá niêm yết gpt-4o-mini đã biết)"
     needs_official_verification: false
+  gpt-5.4-mini:
+    input_usd_per_1m: 0.75
+    cached_input_usd_per_1m: 0.075
+    output_usd_per_1m: 4.50
+    source: "https://developers.openai.com/api/docs/models/gpt-5.4-mini, tra 2026-11-17 (endpoint data residency +10%, không dùng)"
+    needs_official_verification: false
+  gpt-5.6-luna:
+    input_usd_per_1m: 0.20
+    cached_input_usd_per_1m: 0.02
+    output_usd_per_1m: 1.20
+    source: "developers.openai.com/api/docs/models/gpt-5.6-luna (giá vào 0,20) + pricepertoken/computeprices (ra 1,20, cache 0,02), tra 2026-11-17; giá chuẩn, Fast mode ×2 không tính"
+    needs_official_verification: true
   gpt-4o:
     input_usd_per_1m: 2.50
     output_usd_per_1m: 10.00
@@ -38,3 +50,25 @@ models:
     output_usd_per_1m: 0.50
     source: "OpenRouter, ngày 2026-10-20 (do chủ dự án cung cấp) — KHÔNG phải trang giá OpenAI chính thức"
     needs_official_verification: true   # CẦN ĐỐI CHIẾU GIÁ OPENAI CHÍNH THỨC trước khi dùng số này để báo cáo chi phí
+
+# Giá Fast mode (service_tier "fast" = priority), dùng thay bảng "models" khi LLM_SERVICE_TIER=fast.
+# Nguồn: trang giá OpenAI, tab Speed = Fast, Short context (ảnh chủ dự án gửi 2026-11-17).
+fast:
+  gpt-4o-mini:
+    input_usd_per_1m: 0.25
+    cached_input_usd_per_1m: 0.125
+    output_usd_per_1m: 1.00
+    source: "trang giá OpenAI tab Fast, 2026-11-17 (≈ ×1,67 giá thường)"
+    needs_official_verification: false
+  gpt-5.6-luna:
+    input_usd_per_1m: 0.40
+    cached_input_usd_per_1m: 0.04
+    output_usd_per_1m: 2.40
+    source: "trang giá OpenAI tab Fast, 2026-11-17"
+    needs_official_verification: false
+  gpt-6-luna:
+    input_usd_per_1m: 0.20
+    cached_input_usd_per_1m: 0.02
+    output_usd_per_1m: 1.00
+    source: "trang giá OpenAI tab Fast, 2026-11-17"
+    needs_official_verification: false
