@@ -491,3 +491,8 @@ Phân bố thời gian chờ chữ đầu mỗi vòng (564 vòng, cấu hình t�
 - Do **nội dung truy vấn**: mọi câu nêu đủ tình huống ("máy mua 12 ngày bị lỗi không lên nguồn có được đổi máy mới không", "đổi trả sản phẩm bị lỗi sau 12 ngày sử dụng"…) đều ra DT-05 trong top-3 (4/5 câu thử; câu chỉ nói "bảo hành …" thì không).
 - Ghép lời khách (POLICY_QUERY_CONTEXT) **làm hỏng** truy vấn đầy đủ (kéo về BH-*: 3/4 câu mất DT-05) → dùng POLICY_QUERY_FULL thì tắt POLICY_QUERY_CONTEXT.
 - Sửa: `POLICY_QUERY_FULL` (mặc định tắt) — mô tả tham số `query` của search_policy yêu cầu một câu đủ tình huống (tình trạng, số ngày, mong muốn) kèm ví dụ. Chưa đo online (cần duyệt).
+
+**Đo online POLICY_QUERY_FULL (18/11, duyệt, ~1,2k VND) — runs/gen07_fix_1118, gen07_fix2_1118:**
+- Ví dụ trong mô tả tool trùng tình huống SC-GEN-07 → đạt 3/3, nhưng LLM **chép nguyên câu ví dụ** → rò rỉ đáp án, không tính.
+- Đổi sang ví dụ trung lập (giày đổi size) → **trượt 3/3**: LLM viết câu đủ tình huống nhưng không có chữ "lỗi" ("nhận 12 ngày, không bật nguồn, muốn đổi máy"); reranker trả BH-01/FAQ-04/FAQ-16, không suy ra "không lên nguồn" = lỗi nhà sản xuất. Router (LLM) suy ra được → điểm yếu thật của reranker.
+- **Gỡ bỏ cờ POLICY_QUERY_FULL** (không hiệu quả). SC-GEN-07 với reranker vẫn trượt; muốn giữ phải dùng router cho tra chính sách (mất ~0,6 s mỗi lần tra) hoặc chấp nhận trượt.
