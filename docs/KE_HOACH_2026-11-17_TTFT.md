@@ -560,3 +560,8 @@ Phân bố thời gian chờ chữ đầu mỗi vòng (564 vòng, cấu hình t�
 - **Tra trước chính sách gần như không bỏ được vòng search_policy:** đoạn điểm ≥ 0,9 rơi vào các lượt LLM vốn không tra; lượt cần tra thì không có tra trước (điểm thấp hoặc chưa kịp, WAIT 0). → giữ TẮT.
 - DRIVER_RECOMMIT: bộ 40 kịch bản ít ca (lượt 1 vòng không tool hiển thị 5 / 6); lợi ích chỉ thấy được trên cả bộ.
 - **Nhiễu lớn:** cùng cấu hình 3 sửa đo 2 lần: p95 2,89 s / 8 lượt > 3 s (ab_fix3) và 3,35 s / 18 lượt (ab_gatepf mốc). A/B 40 kịch bản 1 cặp không tách được thay đổi < ~10 lượt.
+
+## Sửa lỗi mã sản phẩm của bộ đọc (18/11, chưa commit, chưa đo LLM)
+- `_customer_named_product`: đơn nháp đang mở thì SKU bộ đọc của câu KHÔNG chốt không đổi sản phẩm đơn (SC-GEN-06: hỏi quà tặng → đơn túi trữ sữa). `_note_reader_sku` lưu kèm cờ chốt.
+- Câu nhắc nhiều mẫu (exact_model_skus > 1) mà SKU LLM đặt là một trong số đó → theo LLM (SC-TV-16: "Joie Pact vẫn hết… chuyển sang Combi Sugocal", bộ đọc trả rỗng → hỏi lại, không tạo đơn).
+- Test: 2 test mới (hỏng trên code cũ), sửa bộ đọc giả của test "combo đó" cho có ý định chốt như bộ đọc thật. 1127 test xanh.

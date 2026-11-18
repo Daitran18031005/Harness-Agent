@@ -465,13 +465,32 @@ class OrderSkuFollowsCustomerTest(unittest.TestCase):
         self.say("cho anh lấy một máy AirPure Y", self.order("SKU-AP-Y"))
         self.assertEqual(self.draft(), ["SKU-AP-Y"])
         self.say("bên em có combo nào không", [("pricing.get_quote", {"sku": "SKU-BDL-AIR", "qty": 1})])
-        self.say("à thôi anh lấy cái combo đó", reader=lambda t: {"product_sku": "SKU-BDL-AIR", "product_quote": "cái combo đó"} if "combo đó" in t else {})
+        self.say("à thôi anh lấy cái combo đó", reader=lambda t: {"product_sku": "SKU-BDL-AIR", "product_quote": "cái combo đó", "order_intent": "commit",
+                                                              "intent_quote": "anh lấy cái combo đó"} if "combo đó" in t else {})
         self.assertEqual(self.draft(), ["SKU-BDL-AIR"])                                        # bộ điều khiển đơn nháp chạy lại gate: lời khách mới nhất thắng
         sid = next(iter(self.case.orch._readings))
         self.case.orch._readings[sid] = None                                                   # lượt sau không còn kết quả bộ đọc của lượt "combo đó"
         self.assertEqual(self.case.orch._customer_named_product(sid), ("SKU-BDL-AIR", True))
         self.case.orch.order_gate.state(sid).texts.append("")                                 # lượt chốt (không có lời khách)
         self.assertEqual(self.case.orch._customer_named_product(sid), ("SKU-BDL-AIR", False))   # vẫn nhớ theo lượt
+
+    def test_reader_pick_from_a_question_does_not_change_the_open_draft(self):
+        """SC-GEN-06 (18/11): đơn nháp máy AirPure Y đang mở, khách chỉ HỎI về món khác ("combo có tặng gì không") — bộ đọc gán mã nhưng không chốt → lượt chốt vẫn là máy."""
+        self.say("cho anh lấy một máy AirPure Y", self.order("SKU-AP-Y"))
+        self.say("bên em có combo nào không", [("pricing.get_quote", {"sku": "SKU-BDL-AIR", "qty": 1})])
+        self.say("cái combo đó có tặng gì không em", reader=lambda t: {"product_sku": "SKU-BDL-AIR", "product_quote": "cái combo đó"} if "combo đó" in t else {})
+        sid = next(iter(self.case.orch._readings))
+        self.case.orch.order_gate.state(sid).texts.append("")                                 # lượt chốt
+        self.assertNotEqual(self.case.orch._customer_named_product(sid)[0], "SKU-BDL-AIR")
+        self.assertEqual(self.draft(), ["SKU-AP-Y"])
+
+    def test_two_models_named_in_one_turn_take_the_one_the_llm_ordered(self):
+        """SC-TV-16 (18/11): một câu nhắc HAI mẫu (hết hàng → chuyển sang mẫu kia), bộ đọc không chọn → mã LLM đặt nếu là một trong hai mẫu khách vừa gọi tên."""
+        sid = "SESS-X"
+        orch = self.case.orch
+        orch.order_gate.state(sid).texts = ["Joie Pact vẫn hết hả? Thế chị chuyển sang chiếc Combi Sugocal nhé"]
+        self.assertEqual(orch._customer_named_product(sid, prefer="SKU-MB-STR2"), ("SKU-MB-STR2", True))
+        self.assertEqual(orch._customer_named_product(sid, prefer="SKU-AP-Y")[0], None)       # mã LLM không nằm trong các mẫu khách nhắc → không theo
 
 
 class CandidateRankingTest(unittest.TestCase):

@@ -1405,7 +1405,7 @@ class HarnessOrchestrator:
         if sku and self._product_info(self._parent_sku(sku)).get("name") and not (isinstance(exec_args.get("lines"), list) and len(exec_args["lines"]) > 1):
             # SKU có thật nhưng KHÁC sản phẩm khách gọi chắc chắn (SC-TV-13: khách "một bộ Spectra S1", LLM đưa combo; TEST-44: khách "combo đó", LLM đưa máy lẻ).
             # Lần nhắc chắc chắn MỚI NHẤT của khách thắng; ở lượt này → ghi đè; chỉ ở lượt cũ (chưa có đơn nháp) → không tạo đơn, hỏi khách một lần.
-            named, current = self._customer_named_product(sid)
+            named, current = self._customer_named_product(sid, prefer=sku)
             if named and self._parent_sku(named) != self._parent_sku(sku):
                 if current or self._gate_retry_args.get(sid):         # đơn nháp đã mở: lời khách gọi chắc chắn mới nhất thắng (TEST-44: "combo đó" sau khi đơn nháp mở với máy lẻ)
                     sku = exec_args["sku"] = args["sku"] = named
@@ -1967,19 +1967,28 @@ class HarnessOrchestrator:
     def _note_reader_sku(self, sid: str, reading: Any) -> None:
         """SKU bộ đọc đã kiểm cho lời khách MỚI NHẤT, lưu theo vị trí lời đó — để lượt sau (vd. lượt chốt) vẫn biết khách đã gọi "combo đó"."""
         if getattr(reading, "product_sku", None):
-            self.__dict__.setdefault("_reader_skus", {}).setdefault(sid, {})[len(self.order_gate.state(sid).texts) - 1] = reading.product_sku
+            self.__dict__.setdefault("_reader_skus", {}).setdefault(sid, {})[len(self.order_gate.state(sid).texts) - 1] = (reading.product_sku, bool(getattr(reading, "commits", False)))
 
-    def _customer_named_product(self, sid: str) -> Tuple[Optional[str], bool]:
+    def _customer_named_product(self, sid: str, prefer: Optional[str] = None) -> Tuple[Optional[str], bool]:
         """(SKU, có phải lượt hiện tại) của lần khách gọi sản phẩm CHẮC CHẮN gần nhất: tên đầy đủ của sản phẩm đã tra → hãng+mẫu khớp tuyệt đối đúng một SKU
-        → SKU bộ đọc đã kiểm của lời đó (lưu theo lượt). Không dùng "sản phẩm tra gần nhất"."""
+        → SKU bộ đọc đã kiểm của lời đó (lưu theo lượt). Không dùng "sản phẩm tra gần nhất".
+        18/11: lời nhắc NHIỀU mẫu ("Joie Pact vẫn hết… chuyển sang Combi Sugocal", SC-TV-16) mà SKU LLM đặt (`prefer`) là một trong số đó → SKU đó (LLM chọn trong các mẫu khách vừa gọi tên);
+        đơn nháp đang mở thì SKU bộ đọc của câu KHÔNG chốt (hỏi quà tặng "có tặng túi trữ sữa không", SC-GEN-06) không đổi sản phẩm của đơn."""
         texts = self.order_gate.state(sid).texts or []
         catalog = getattr(self.retriever, "products", None) or []
         by_turn = self.__dict__.get("_reader_skus", {}).get(sid, {})
+        draft_open = bool(self._gate_retry_args.get(sid))
         for i in range(len(texts) - 1, -1, -1):
             t, latest = texts[i] or "", i == len(texts) - 1
             full = self._named_all(sid, t)
             exact = [s_ for s_ in exact_model_skus(t, catalog) if self._product_info(s_).get("name")] if t.strip() else []
-            sku = full[0] if full else exact[0] if len(exact) == 1 else by_turn.get(i) or (self._reader_product(sid) if latest else None)
+            noted, committed = by_turn.get(i) or (None, False)
+            reader_sku = noted if committed or not draft_open else None
+            if latest and reader_sku is None and (not draft_open or getattr(self._readings.get(sid), "commits", False)):
+                reader_sku = self._reader_product(sid)
+            if latest and prefer and len(exact) > 1 and self._parent_sku(prefer) in {self._parent_sku(e) for e in exact}:
+                return prefer, True
+            sku = full[0] if full else exact[0] if len(exact) == 1 else reader_sku
             if sku:
                 return sku, latest
         return None, False
