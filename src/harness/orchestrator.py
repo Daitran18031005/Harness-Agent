@@ -59,9 +59,9 @@ def _off(name: str) -> bool:
 
 
 SHORTLIST_FULL_QUOTE = os.environ.get("SHORTLIST_FULL_QUOTE", "").strip().lower() in ("on", "1", "true")   # MẶC ĐỊNH TẮT: product.shortlist gắn luôn KM/quà hôm nay của từng mẫu (bớt chuỗi shortlist → get_quote)
-HANDOFF_PREFETCH = os.environ.get("HANDOFF_PREFETCH", "").strip().lower() in ("on", "1", "true")   # MẶC ĐỊNH TẮT (18/11): kiểm duyệt chuyển máy chạy sẵn từ đầu lượt (+1 lời gọi LLM ngắn mỗi lượt; lượt chuyển máy bớt 0,9–2,8 s)
+HANDOFF_PREFETCH = os.environ.get("HANDOFF_PREFETCH", "on").strip().lower() in ("on", "1", "true")   # MẶC ĐỊNH BẬT từ 18/11 (m1_final8): kiểm duyệt chuyển máy chạy sẵn từ đầu lượt (+1 lời gọi LLM ngắn mỗi lượt; lượt chuyển máy bớt 0,9–2,8 s)
 LOOKUP_BUNDLE = os.environ.get("LOOKUP_BUNDLE", "").strip().lower() in ("on", "1", "true")   # MẶC ĐỊNH TẮT: tool gộp — catalog.search (≤ 3 sản phẩm) tự gắn tồn kho + giá hôm nay cho từng sản phẩm/biến thể khách nêu, bớt vòng LLM
-READER_PARALLEL_DRAFT = os.environ.get("READER_PARALLEL_DRAFT", "").strip().lower() in ("on", "1", "true")   # MẶC ĐỊNH TẮT: có đơn nháp vẫn cho LLM chính chạy song song bộ đọc; begin_turn + driver của gate dời vào sync_gate (quyết định không đổi, chỉ đổi thời điểm)
+READER_PARALLEL_DRAFT = os.environ.get("READER_PARALLEL_DRAFT", "on").strip().lower() in ("on", "1", "true")   # MẶC ĐỊNH BẬT từ 18/11 (m1_final8): có đơn nháp vẫn cho LLM chính chạy song song bộ đọc; begin_turn + driver của gate dời vào sync_gate (quyết định không đổi, chỉ đổi thời điểm)
 PARALLEL_READER = not _off("PARALLEL_READER")          # đọc hiểu lời khách chạy song song với LLM chính (khi không có đơn nháp đang mở)
 def reading_needs_nothing(r) -> bool:
     """Bộ đọc LLM (có trích dẫn) hiểu lời khách KHÔNG chứa yêu cầu nào cần tra cứu/hành động: không hỏi, không hỏi giá/KM, không chốt/đồng ý/từ chối,
@@ -76,7 +76,14 @@ PREFETCH_HIDE_TOOLS = os.environ.get("PREFETCH_HIDE_TOOLS", "").strip().lower() 
 POLICY_PREFETCH = os.environ.get("POLICY_PREFETCH", "").strip().lower() in ("on", "1", "true")   # MẶC ĐỊNH TẮT: tra trước chính sách theo lời khách (reranker, song song phần chuẩn bị); đoạn điểm ≥ POLICY_PREFETCH_MIN vào prompt
 POLICY_PREFETCH_MIN = float(os.environ.get("POLICY_PREFETCH_MIN", "0.9"))      # offline 17/11: lượt có nhãn vượt 0,9 → top-3 trúng 15/17
 POLICY_PREFETCH_WAIT_S = float(os.environ.get("POLICY_PREFETCH_WAIT_S", "0"))    # 0 = không chờ: xong kịp lúc dựng prompt thì dùng (đo 17/11: chờ 0,3 s làm mọi lượt LLM chậm ~0,28 s)
-POLICY_QUERY_CONTEXT = os.environ.get("POLICY_QUERY_CONTEXT", "").strip().lower() in ("on", "1", "true")   # MẶC ĐỊNH TẮT: search_policy tìm theo từ khóa LLM + lời khách lượt này (đã che PII); nhãn tay 94 truy vấn thật 16/11: reranker 43 % → 71 %
+POLICY_QUERY_CONTEXT = os.environ.get("POLICY_QUERY_CONTEXT", "").strip().lower()   # để trống = bật khi reranker chạy (m1_final8), tắt khi về router; search_policy tìm theo từ khóa LLM + lời khách lượt này (đã che PII); nhãn tay 94 truy vấn thật 16/11: reranker 43 % → 71 %
+
+
+def _query_context() -> bool:
+    if POLICY_QUERY_CONTEXT:
+        return POLICY_QUERY_CONTEXT in ("on", "1", "true")
+    from ..memory.vector_rag import reranker_active
+    return reranker_active()
 PREFETCH_ORDER_QUOTE = os.environ.get("PREFETCH_ORDER_QUOTE", "").strip().lower() in ("on", "1", "true")   # MẶC ĐỊNH TẮT: hướng 1 — lời khách có địa chỉ (<ADDR_n>) → code báo giá trước sản phẩm đang bàn KÈM địa chỉ (KM theo vùng, freeship)
 PREFETCH_VARIANTS = os.environ.get("PREFETCH_VARIANTS", "").strip().lower() in ("on", "1", "true")   # MẶC ĐỊNH TẮT: hướng 1 — sản phẩm có biến thể vừa tra trước lượt này + khách nêu size/màu → tra trước tồn kho + giá đúng biến thể
 PARALLEL_TOOLS = os.environ.get("PARALLEL_TOOLS", "").strip().lower() in ("on", "1", "true")   # MẶC ĐỊNH TẮT: các tool chỉ đọc trong cùng một vòng LLM chạy đồng thời
@@ -581,7 +588,7 @@ class HarnessOrchestrator:
                     exec_args = vault.unmask_args(name, args, caller_phone)
                     if name == "search_policy":
                         q = args.get("query", "")
-                        chunks = self.memory.query_policy(f"{q} | {turn.llm_text}" if POLICY_QUERY_CONTEXT and turn.llm_text else q, on_date=current_date)
+                        chunks = self.memory.query_policy(f"{q} | {turn.llm_text}" if _query_context() and turn.llm_text else q, on_date=current_date)
                         self._note_policy_route(working_session_id, llm_client)
                         return {"chunks": chunks}, args
                     if name == "product.shortlist":

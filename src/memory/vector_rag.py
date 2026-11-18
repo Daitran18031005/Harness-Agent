@@ -232,11 +232,41 @@ class ChromaBackend(VectorBackend):
         return TfidfBackend().rank(query, candidates, top_k)
 
 
+_RERANK_ACTIVE = False
+
+
+def reranker_active() -> bool:
+    """Backend chính sách đang là reranker Qwen — khi đó POLICY_NO_ROUTER / POLICY_QUERY_CONTEXT để trống được coi là bật (cấu hình m1_final8)."""
+    return _RERANK_ACTIVE
+
+
+def _rerank_ready() -> bool:
+    """Mặc định chỉ dùng reranker khi có GPU và model đã nằm sẵn trong cache HF (không tự tải 1,2 GB; CPU chậm hơn router)."""
+    try:
+        import torch
+        import transformers  # noqa: F401
+        from huggingface_hub import try_to_load_from_cache
+        return bool(torch.cuda.is_available()) and all(
+            isinstance(try_to_load_from_cache(r, "config.json"), str) for r in ("Qwen/Qwen3-Reranker-0.6B", "Qwen/Qwen3-Embedding-0.6B"))
+    except Exception:
+        return False
+
+
 def get_vector_backend() -> VectorBackend:
-    choice = os.environ.get("VECTOR_BACKEND", "tfidf").strip().lower()
+    global _RERANK_ACTIVE
+    choice = os.environ.get("VECTOR_BACKEND", "").strip().lower()
+    if not choice:                                   # mặc định từ 18/11: reranker nếu máy chạy được, không thì TF-IDF + router LLM (cấu hình m1_final7)
+        choice = "qwen_rerank" if _rerank_ready() else "tfidf"
+        if choice == "qwen_rerank":
+            os.environ.setdefault("HF_HUB_OFFLINE", "1")   # model đã có trong cache: không hỏi Hugging Face mỗi lần nạp
+        if choice == "tfidf":
+            logger.warning("[RAG] không có GPU hoặc model Qwen3 trong cache — dùng router LLM + TF-IDF thay reranker.")
+    _RERANK_ACTIVE = False
     if choice in ("bm25", "hybrid", "qwen_emb", "qwen_rerank"):
         try:
-            return {"bm25": Bm25Backend, "hybrid": HybridBackend, "qwen_emb": QwenEmbedBackend, "qwen_rerank": QwenRerankBackend}[choice]()
+            backend = {"bm25": Bm25Backend, "hybrid": HybridBackend, "qwen_emb": QwenEmbedBackend, "qwen_rerank": QwenRerankBackend}[choice]()
+            _RERANK_ACTIVE = choice == "qwen_rerank"
+            return backend
         except Exception as e:
             logger.warning("[RAG] VECTOR_BACKEND=%s unavailable (%s) — falling back to tfidf.", choice, e)
     if choice == "chroma":

@@ -496,3 +496,17 @@ Phân bố thời gian chờ chữ đầu mỗi vòng (564 vòng, cấu hình t�
 - Ví dụ trong mô tả tool trùng tình huống SC-GEN-07 → đạt 3/3, nhưng LLM **chép nguyên câu ví dụ** → rò rỉ đáp án, không tính.
 - Đổi sang ví dụ trung lập (giày đổi size) → **trượt 3/3**: LLM viết câu đủ tình huống nhưng không có chữ "lỗi" ("nhận 12 ngày, không bật nguồn, muốn đổi máy"); reranker trả BH-01/FAQ-04/FAQ-16, không suy ra "không lên nguồn" = lỗi nhà sản xuất. Router (LLM) suy ra được → điểm yếu thật của reranker.
 - **Gỡ bỏ cờ POLICY_QUERY_FULL** (không hiệu quả). SC-GEN-07 với reranker vẫn trượt; muốn giữ phải dùng router cho tra chính sách (mất ~0,6 s mỗi lần tra) hoặc chấp nhận trượt.
+
+## m1_final8 — 3×277 cấu hình tốt nhất (18/11, commit a31204e)
+- Cả 3 shard của mỗi lượt chạm trần 14.000 VND → mỗi lượt chỉ xong 194/277 kịch bản (ước chi phí sai: thực tế ~14k cho ~64 kịch bản/shard). Đã chi ~133.000 VND.
+- So cùng tập kịch bản (191–192 kịch bản hoàn chỉnh, 344–345 cuộc gọi) với m1_final7:
+  - r1: TSR 93,3 vs 93,0 | TTFT p50 1558 vs 2095 | p95 3622 vs 6063 | >3 s 9,1 % vs 33,9 %
+  - r2: TSR 92,7 vs 92,7 | p50 1551 vs 2155 | p95 3827 vs 5659 | >3 s 10,5 % vs 32,8 %
+  - r3: TSR 92,5 vs 93,3 | p50 1549 vs 1889 | p95 3879 vs 5565 | >3 s 11,6 % vs 29,2 %
+  - Total p95 (BTC, cả tập chạy) 4583 / 4607 / 4683 ms.
+- Kết luận: TSR giữ nguyên, TTFT p95 giảm ~5,8 s → ~3,8 s nhưng CHƯA ≤ 3 s (số 40 kịch bản 2,89/3,19 lạc quan). Chưa thay số nộp.
+- Chạy nốt 86/86/85 kịch bản (runs/m1_final8/launch_rest.sh, trần 22k/lượt, chi 16.358 + 15.821 + 15.509 VND). Gộp đủ 3×277 ở runs/m1_final8/cmp_full, chấm bằng reference_eval BTC:
+  - TSR 89,2 / 87,4 / 87,4 (TB 88,0) vs m1_final7 88,1 / 87,7 / 89,9 (TB 88,6)
+  - TTFT p50 1741 / 1722 / 1697 vs 2106 / 2109 / 1939 | TTFT p95 3997 / 3997 / 3997 vs 6063 / 5643 / 5565
+  - Total p95 4772 / 4743 / 4788 vs 7828 / 7329 / 7223 | RQR 0,0 / 0,4 / 0,7
+  - Tổng chi m1_final8 ≈ 181.000 VND (~60k/lượt thực tế theo sổ chi phí).

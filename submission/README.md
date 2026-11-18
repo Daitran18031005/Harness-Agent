@@ -52,6 +52,7 @@ python BTC-Data-Vong1-TEAMS/eval/reference_eval.py --scenarios <dir> --trace ful
 # Hoặc cả hai cấu hình + in bảng A.6 bằng một lệnh
 python run_eval.py --scenarios BTC-Data-Vong1-TEAMS/test_set/public_sample --config both --out-dir runs/my/sample --seed 42
 
+# Mặc định là cấu hình số nộp m1_final8 (Fast mode, reranker nếu có GPU + model Qwen3 trong cache; ≈ 60.000 VND/lượt 277 kịch bản). Cấu hình m1_final7: xem .env.example
 # Tái lập số trong báo cáo (277 kịch bản; ≈ 63.000 VND với gpt-4o-mini): chạy public_sample và team_eval vào runs/my/{sample,s1}, rồi gộp + chấm
 python run_eval.py --scenarios BTC-Data-Vong1-TEAMS/test_set/team_eval --config both --out-dir runs/my/s1 --seed 42 --no-report --max-cost-vnd 70000
 python scripts/m1_final_report.py --root runs/my

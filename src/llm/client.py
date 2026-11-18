@@ -27,9 +27,9 @@ logger = logging.getLogger("harness.llm")
 
 # Lời AGENT hứa sẽ tra cứu mà chưa tra ("để em kiểm tra…", "em sẽ tìm…", "chờ em một chút"): dấu hiệu để nhắc model gọi tool. Soi lời của chính agent, không phải lời khách.
 LLM_WS = os.environ.get("LLM_WS", "").strip().lower() in ("on", "1", "true")   # MẶC ĐỊNH TẮT (18/11): vòng LLM chính qua Responses API WebSocket (kết nối thường trực; đo thử: lượt 2 vòng bớt ~0,4 s)
-SERVICE_TIER = os.environ.get("LLM_SERVICE_TIER", "").strip()     # MẶC ĐỊNH TRỐNG (tier tài khoản). Đo 17/11: "fast" (= priority)
-PARALLEL_REQUIRED_TOOLS = os.environ.get("PARALLEL_REQUIRED_TOOLS", "").strip().lower() in ("on", "1", "true")   # MẶC ĐỊNH TẮT (duyệt 17/11): vòng đầu gửi song song thêm 1 yêu cầu tool_choice="required"; vòng thường không gọi tool mà lẽ ra bị nhắc → dùng ngay lời gọi tool của yêu cầu song song thay cho vòng nhắc (+1 lời gọi LLM mỗi lượt)
-PROMPT_CACHE_ORDER = os.environ.get("PROMPT_CACHE_ORDER", "").strip().lower() in ("on", "1", "true")   # MẶC ĐỊNH TẮT: gửi prompt_cache_key theo system prompt + tính giá cache cho lời gọi JSON
+SERVICE_TIER = os.environ.get("LLM_SERVICE_TIER", "fast").strip()     # MẶC ĐỊNH "fast" từ 18/11 (số nộp m1_final8); "" = tier tài khoản; model không nhận thì tham số tự bị bỏ. Đo 17/11: "fast" (= priority)
+PARALLEL_REQUIRED_TOOLS = os.environ.get("PARALLEL_REQUIRED_TOOLS", "on").strip().lower() in ("on", "1", "true")   # MẶC ĐỊNH BẬT từ 18/11 (m1_final8): vòng đầu gửi song song thêm 1 yêu cầu tool_choice="required"; vòng thường không gọi tool mà lẽ ra bị nhắc → dùng ngay lời gọi tool của yêu cầu song song thay cho vòng nhắc (+1 lời gọi LLM mỗi lượt)
+PROMPT_CACHE_ORDER = os.environ.get("PROMPT_CACHE_ORDER", "on").strip().lower() in ("on", "1", "true")   # MẶC ĐỊNH BẬT từ 18/11 (m1_final8): gửi prompt_cache_key theo system prompt + tính giá cache cho lời gọi JSON
 
 
 def _cache_key(messages: List[Dict[str, Any]]) -> Optional[str]:

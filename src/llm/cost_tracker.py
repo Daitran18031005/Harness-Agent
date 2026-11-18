@@ -38,7 +38,7 @@ def load_pricing(path: Optional[str] = None) -> Dict[str, Any]:
         with open(path, "r", encoding="utf-8") as fh:
             raw = yaml.safe_load(fh) or {}
         entries = dict(raw.get("models") or {})
-        if os.environ.get("LLM_SERVICE_TIER", "").strip().lower() in ("fast", "priority"):
+        if os.environ.get("LLM_SERVICE_TIER", "fast").strip().lower() in ("fast", "priority"):
             entries.update(raw.get("fast") or {})        # Fast mode: giá riêng từng model (bảng "fast" trong pricing.yaml)
         models = {normalize_model_name(k): (float(v["input_usd_per_1m"]), float(v["output_usd_per_1m"]),
                                             bool(v.get("needs_official_verification", True)), str(v.get("source", "")))
