@@ -468,3 +468,18 @@ Phân bố thời gian chờ chữ đầu mỗi vòng (564 vòng, cấu hình t�
 - WebSocket nhanh hơn ở trung vị nhưng cache thấp hơn → p95 kém hơn. **Không dùng LLM_WS.**
 - **Phát hiện chính: khóa cache (PROMPT_CACHE_ORDER) trên HTTP.** So với các lần cấu hình tốt nhất trước, cùng tốc độ API (vòng p50 1,25–1,32 s): cache 0,84–0,90 → 0,95, lượt > 2,9 s 23–25 → 12, p95 3,29–3,36 → **2,89 s**. Kết luận trước đó "cache không còn gì để lấy" là SAI: phân tích trước chỉ xét lượt 1 vòng (cache 97 %); lượt chậm là lượt cache trượt.
 - TSR mốc 85,0: trượt SC-GEN-07 (reranker, đã biết), SC-GEN-13, SC-TV-16… — các cuộc từng trượt ở lần khác; 1 lần chạy chưa đủ kết luận.
+
+### Kiểm tái lập cấu hình tốt nhất + PROMPT_CACHE_ORDER (18/11, duyệt) — runs/rep_cache_1118, ~13,6k VND
+
+| | lần 1 (ab_ws_1118 mốc) | lần 2 (tái lập) |
+|---|---|---|
+| TSR | 85,0 | 87,5 |
+| TTFT p50 / p95 (s) | 1,37 / 2,89 | 1,56 / **3,19** |
+| Lượt > 2,9 s (cần ≤ 11) | 12 | **22** |
+| Vòng LLM p50 / p95 (s) | 1,30 / 1,78 | 1,28 / 1,67 |
+| Cache trúng p50 | 0,95 | 0,89 |
+| Total p95 (s) | 4,19 | 4,44 |
+
+- **Không tái lập.** Cùng cấu hình, API lần 2 còn nhanh hơn, nhưng cache trúng thấp hơn và p95 3,19 s. Tỉ lệ cache dao động giữa các lần chạy (phía máy chủ OpenAI), cờ không giữ được cố định.
+- Tương quan token chưa cache ↔ TTFT chỉ 0,36–0,37, và bị lẫn với số vòng (token cộng dồn qua các vòng) → kết luận trước "khóa cache là nhân tố chính" **chưa chắc**; 2,89 s ở lần 1 nhiều khả năng một phần là may.
+- Ước lượng thực tế cho cấu hình tốt nhất: **TTFT p95 khoảng 2,9–3,3 s tùy lần chạy**, Total p95 khoảng 4,2–4,6 s. TSR 85–92 (SC-GEN-07 trượt cả 2 lần — lỗi reranker).
