@@ -483,3 +483,11 @@ Phân bố thời gian chờ chữ đầu mỗi vòng (564 vòng, cấu hình t�
 - **Không tái lập.** Cùng cấu hình, API lần 2 còn nhanh hơn, nhưng cache trúng thấp hơn và p95 3,19 s. Tỉ lệ cache dao động giữa các lần chạy (phía máy chủ OpenAI), cờ không giữ được cố định.
 - Tương quan token chưa cache ↔ TTFT chỉ 0,36–0,37, và bị lẫn với số vòng (token cộng dồn qua các vòng) → kết luận trước "khóa cache là nhân tố chính" **chưa chắc**; 2,89 s ở lần 1 nhiều khả năng một phần là may.
 - Ước lượng thực tế cho cấu hình tốt nhất: **TTFT p95 khoảng 2,9–3,3 s tùy lần chạy**, Total p95 khoảng 4,2–4,6 s. TSR 85–92 (SC-GEN-07 trượt cả 2 lần — lỗi reranker).
+
+### SC-GEN-07 trượt với reranker (18/11) — phân tích offline, cờ POLICY_QUERY_FULL
+
+- Trượt ở cả hai lần chạy cấu hình tốt nhất: LLM tra `search_policy` bằng truy vấn trần ("bảo hành", "đổi trả"); reranker trả BH-*/DT-01/DT-07, không có **DT-05** (lỗi nhà sản xuất, đổi mới 1-1 trong 30 ngày) → agent nói "quá 7 ngày chỉ sửa".
+- Không phải do nhóm ứng viên nhỏ: RERANK_POOL_N 5 → 10 → 15 vẫn không đưa DT-05 vào top-3, thời gian tra 0,23 → 0,73 s.
+- Do **nội dung truy vấn**: mọi câu nêu đủ tình huống ("máy mua 12 ngày bị lỗi không lên nguồn có được đổi máy mới không", "đổi trả sản phẩm bị lỗi sau 12 ngày sử dụng"…) đều ra DT-05 trong top-3 (4/5 câu thử; câu chỉ nói "bảo hành …" thì không).
+- Ghép lời khách (POLICY_QUERY_CONTEXT) **làm hỏng** truy vấn đầy đủ (kéo về BH-*: 3/4 câu mất DT-05) → dùng POLICY_QUERY_FULL thì tắt POLICY_QUERY_CONTEXT.
+- Sửa: `POLICY_QUERY_FULL` (mặc định tắt) — mô tả tham số `query` của search_policy yêu cầu một câu đủ tình huống (tình trạng, số ngày, mong muốn) kèm ví dụ. Chưa đo online (cần duyệt).
