@@ -105,6 +105,13 @@ class LateReadTest(GateBase):
         _, _, meta = self.turn(NEW_PHONE, "39 đen giá bao nhiêu", [])
         self.assertEqual((self.llm.read_calls, meta["gate_open"]["opened"], self.llm.calls - before), (1, False, 1))
 
+    def test_late_read_runs_alongside_the_main_llm(self):
+        """LATE_READ_PARALLEL (18/11): bộ đọc muộn không chặn trước LLM chính; sync_gate() lấy kết quả (kết quả quyết định gate không đổi — hai test trên)."""
+        self.llm.reader = lambda t: {"order_intent": "other", "asks_question": True}
+        _, _, meta = self.turn(NEW_PHONE, "39 đen giá bao nhiêu", [])
+        self.assertTrue(meta["llm_timing"]["reader_parallel"])
+        self.assertTrue(meta["reply_reading"]["late"])
+
 
 QUOTE_RO10 = ("pricing.get_quote", {"sku": "SKU-WF-RO10", "on": "2026-10-15"})
 

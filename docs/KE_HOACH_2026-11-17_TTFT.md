@@ -510,3 +510,53 @@ Phân bố thời gian chờ chữ đầu mỗi vòng (564 vòng, cấu hình t�
   - TTFT p50 1741 / 1722 / 1697 vs 2106 / 2109 / 1939 | TTFT p95 3997 / 3997 / 3997 vs 6063 / 5643 / 5565
   - Total p95 4772 / 4743 / 4788 vs 7828 / 7329 / 7223 | RQR 0,0 / 0,4 / 0,7
   - Tổng chi m1_final8 ≈ 181.000 VND (~60k/lượt thực tế theo sổ chi phí).
+
+## Phân rã offline m1_final8 (18/11, không gọi LLM) — 3.241 lượt, 459 lượt > 3 s, cần còn ≤ 162
+- Bộ đọc chạy NỐI TIẾP trước LLM chính ("đọc muộn" khi khách lần đầu nhắc biến thể, orchestrator `late_stock`): 92/102 lượt > 3 s.
+- Bộ đọc song song nhưng tool có tác dụng phụ (order.update, schedule.callback…) phải chờ bộ đọc: nhóm order.update 95/135 lượt chậm, phần chờ p50 ~1,6 s. Bộ đọc p50 1,18 s / p90 1,62 s (prompt 2,8k token, đầu ra JSON có trích dẫn).
+- Lượt code nhận (gate) không có EARLY_GATE_TAKEOVER: chờ LLM chính viết xong rồi bỏ → 29 lượt ~3,2 s.
+- search_policy: tool_ms p50 621 / p90 1400 ms; đo riêng reranker trên RTX 4060: BM25 8 ms, embedding 46 ms, rerank cả nhóm 309 ms.
+- Sàn cấu trúc: vòng 1 gọi tool p50 1,22 / p90 1,57 s + TTFT vòng cuối p50 0,80 / p90 0,98 s.
+- Mô phỏng: đọc muộn song song → p95 3,71 s; + EARLY_GATE_TAKEOVER → 3,68; + reranker −300 ms → 3,61; + bộ đọc nhanh 30 % → 3,33; 50 % → 3,24 (7,5 % lượt > 3 s). Cận dưới xóa MỌI phần chờ/chuẩn bị: 3,17 s (7,1 %). → Không đạt ≤ 3 s nếu còn 2 vòng LLM nối tiếp ở ~1/3 số lượt.
+
+## 3 sửa không tốn LLM (18/11, chưa commit, chưa đo bằng LLM)
+- `LATE_READ_PARALLEL` (mặc định bật): bộ đọc muộn chạy song song LLM chính; sync_gate() mở gate với tồn kho code đã tra (`stock`). Test mới `LateReadTest.test_late_read_runs_alongside_the_main_llm`.
+- `EARLY_GATE_TAKEOVER` mặc định bật.
+- Reranker: gom tài liệu theo độ dài + lm_head chỉ ở token cuối. eval_rag_all offline: độ đúng y hệt (60 câu: R@3 88,1, R@5 89,8; 94 truy vấn thật: 67/94), độ trễ (từ khóa + lời khách) p50/p95 238/356 → 202/256 ms.
+- Phát hiện: reranker rất nhạy tranh chấp GIL (hàng trăm lệnh GPU nhỏ): 236 ms rảnh → 3,9 s khi 2 luồng Python bận 50 %. `sys.setswitchinterval(0.0005)` khi tạo reranker: còn 0,43 s. Giải thích search_policy p50 621 ms trong m1_final8.
+- 1121 test xanh.
+
+### A/B 3 sửa (18/11, duyệt ≤ 28k) — runs/ab_fix3_1118, mốc 3a3a42c (worktree) vs bản sửa, nối tiếp, chi 13.424 + 12.848 VND
+39 kịch bản chung (bỏ kịch bản cuối mỗi bên), tốc độ API ngang nhau (vòng 1 p50 1338 / 1338 ms).
+
+| | mốc 3a3a42c | 3 sửa |
+|---|---|---|
+| TTFT p50 / p95 | 1331 / 3253 ms | 1277 / **2887 ms** |
+| lượt > 3 s | 22 / 233 (9,4 %) | **8 / 231 (3,5 %)** |
+| Total p95 | 4348 | 4179 |
+| đọc muộn: TTFT p50 | 2275 (7 lượt) | 1835 (8 lượt) |
+| tool lượt search_policy p50 | 456 | 422 |
+| TSR (102 cuộc gọi chung) | 98/102 | 98/102 |
+
+- Trượt chỉ ở bản sửa: SAMPLE-01/call_2 (m1_final8 trượt 3/3 — nhiễu), SC-GEN-06/call_2 (đơn thành quà tặng túi trữ sữa; m1_final8 đạt 3/3), SC-TV-16/call_3 (không tạo đơn; m1_final8 đạt 3/3). Trượt chỉ ở mốc: SC-GEN-07/call_1, SC-ULTRA-09/call_3, TEST-01/call_2.
+- Một cặp trên 40 kịch bản; bộ này trước đây cho p95 thấp hơn cả bộ 277 (m1_final8 cả bộ 4,0 s, mốc ở đây 3,25 s).
+
+## Điều tra 18/11 (offline, không gọi LLM)
+**SC-GEN-06/call_2 và SC-TV-16/call_3 trượt ở bản 3 sửa — không do 3 sửa:** cả hai lượt hỏng đi đường bộ đọc song song khi có/không đơn nháp (không phải đọc muộn, không có code nhận lượt). Gốc: `product_sku` của bộ đọc dao động.
+- SC-GEN-06 lượt 3 ("có tặng túi trữ sữa không"): bộ đọc gán SKU-MB-BAG (quà) dù prompt cấm → lượt chốt `_customer_named_product` lấy SKU bộ đọc của lời gần nhất → đơn túi trữ sữa 119k. Đã xảy ra ở m1_final7 r3.
+- SC-TV-16 lượt 2 ("chuyển sang Combi Sugocal"): bộ đọc trả sku=None (3/16 lần chạy: m1_final7 r2, ab_ws router, bản sửa) → lời chắc chắn gần nhất là Joie Pact (lượt 1) → `product_conflict` hỏi lại, không tạo đơn.
+**Tool có tác dụng phụ chờ bộ đọc:** khi bộ đọc song song, gần như không chờ (order.update −91 ms so với lượt chỉ tool đọc, schedule.callback +322, crm.get_customer +265). 87/87 lượt order.update chậm của m1_final8 là đọc muộn nối tiếp — đã gỡ bằng LATE_READ_PARALLEL.
+**Vòng LLM bị order gate chặn:** 83 lượt chậm (3 lượt chạy) có 1 vòng mà LLM gọi order.* bị chặn (không vào trace), rồi gate hỏi thông tin; 35 lượt bộ đọc báo commit khi đã có đơn nháp.
+**Tra trước chính sách (POLICY_PREFETCH) offline trên m1_final8 r1:** 77 lượt LLM gọi search_policy (34 lượt > 3 s); reranker theo lời khách điểm ≥ 0,9 ở 47 lượt, top-3 đều chứa đoạn LLM nhận được (24 lượt chậm); ≥ 0,8: 56 (29 chậm).
+
+### A/B chung sửa gate (DRIVER_RECOMMIT) + POLICY_PREFETCH (18/11, duyệt) — runs/ab_gatepf_1118, cùng code, khác env, chi 13.373 + 12.990 VND
+| | mốc (3 sửa, DRIVER_RECOMMIT=off) | thử (+ DRIVER_RECOMMIT + POLICY_PREFETCH) |
+|---|---|---|
+| TTFT p50 / p95 | 1374 / 3346 ms | 1438 / 3167 ms |
+| lượt > 3 s | 18 / 233 (7,7 %) | 14 / 234 (6,0 %) |
+| Total p95 | 4280 | 4171 |
+| TSR (102 cuộc gọi chung) | 100/102 | 101/102 (trượt riêng SC-GEN-06/call_2 — lỗi bộ đọc quà tặng đã biết) |
+| LLM gọi search_policy | 19 lượt | 18 lượt (+ 20 lượt chỉ có tra trước, 2 lượt cả hai) |
+- **Tra trước chính sách gần như không bỏ được vòng search_policy:** đoạn điểm ≥ 0,9 rơi vào các lượt LLM vốn không tra; lượt cần tra thì không có tra trước (điểm thấp hoặc chưa kịp, WAIT 0). → giữ TẮT.
+- DRIVER_RECOMMIT: bộ 40 kịch bản ít ca (lượt 1 vòng không tool hiển thị 5 / 6); lợi ích chỉ thấy được trên cả bộ.
+- **Nhiễu lớn:** cùng cấu hình 3 sửa đo 2 lần: p95 2,89 s / 8 lượt > 3 s (ab_fix3) và 3,35 s / 18 lượt (ab_gatepf mốc). A/B 40 kịch bản 1 cặp không tách được thay đổi < ~10 lượt.

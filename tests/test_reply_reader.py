@@ -192,3 +192,32 @@ class QtyReadingTest(unittest.TestCase):
         self.assertEqual(verify({"qty": 5, "qty_quote": "5 món"}, t).qty, 5)
         self.assertIsNone(verify({"qty": 3, "qty_quote": "5 món"}, t).qty)             # số không nằm trong trích dẫn
         self.assertEqual(verify({"qty": 3, "qty_quote": "lấy ba bộ"}, "ok lấy ba bộ nhé").qty, 3)
+
+
+class RecommitTest(GateBase):
+    """DRIVER_RECOMMIT (18/11): đơn nháp đang hỏi thông tin, khách trả lời KÈM lời chốt lại đúng sản phẩm đó → code hỏi bước kế ngay, không qua vòng LLM bị gate chặn."""
+    COMMIT = {"order_intent": "commit", "intent_quote": "lên đơn", "recipient_name": "Lan", "name_quote": "cho Lan", "payment": "COD", "payment_quote": "COD"}
+
+    def setUp(self):
+        super().setUp()
+        self.llm = self.orch.llm_client = ReaderLLM(lambda t: {})
+        burn_early(self)
+        self.turn(NEW_PHONE, "ok lấy 39 đen", [order()])                # LLM mở đơn nháp → gate hỏi thông tin
+
+    def say(self, reader, text="lên đơn cho Lan nhé, COD"):
+        self.llm.reader = lambda t: reader
+        before = self.llm.calls
+        reply, tc, meta = self.turn(NEW_PHONE, text, [], reply="LLM_TRẢ_LỜI")
+        return reply, meta, self.llm.calls - before
+
+    def test_recommit_of_the_same_order_is_answered_by_code(self):
+        reply, meta, _ = self.say(self.COMMIT)
+        self.assertNotIn("LLM_TRẢ_LỜI", reply)
+        self.assertEqual(meta["order_gate"][-1]["fields"]["recipient_name"]["status"], "stated")
+        self.assertIn("address", meta["order_gate"][-1]["missing"])
+
+    def test_question_or_other_product_still_goes_to_the_llm(self):
+        for extra in ({"asks_question": True, "question_quote": "lên đơn"}, {"extra_items": [{"name": "tất", "qty": 1, "quote": "thêm đôi tất"}]}):
+            self.setUp()
+            reply, _, _ = self.say({**self.COMMIT, **extra}, "lên đơn cho Lan nhé, COD, thêm đôi tất")
+            self.assertIn("LLM_TRẢ_LỜI", reply, extra)

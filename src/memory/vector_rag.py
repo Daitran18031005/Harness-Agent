@@ -183,6 +183,10 @@ class QwenRerankBackend(VectorBackend):
     def __init__(self):
         self.first = [Bm25Backend(), QwenEmbedBackend()]
         self.last_scores: List[float] = []
+        # Reranker gửi hàng trăm lệnh GPU nhỏ, mỗi lệnh giành lại GIL; luồng khác (bộ đọc, LLM stream) giữ GIL tới 5 ms/lần → đo 18/11: 236 ms rảnh, 3,9 s khi 2 luồng bận 50 %.
+        # Khoảng đổi luồng 0,5 ms: còn 0,43 s. Mức tranh chấp thật thấp hơn: search_policy trong m1_final8 p50 621 ms so với 236 ms khi máy rảnh.
+        import sys
+        sys.setswitchinterval(min(sys.getswitchinterval(), 0.0005))
 
     def warm(self, chunks: List["PolicyChunk"]) -> None:
         """Nạp sẵn reranker + embedding và vector tài liệu ở luồng nền."""
@@ -210,10 +214,20 @@ class QwenRerankBackend(VectorBackend):
         tok, model = _qwen("rerank")
         yes, no = tok.convert_tokens_to_ids("yes"), tok.convert_tokens_to_ids("no")
         texts = [self.PREFIX + f"<Instruct>: {self.INSTRUCT}\n<Query>: {query}\n<Document>: {c.content}" + self.SUFFIX for c in pool]
-        with torch.no_grad():
-            batch = tok(texts, padding=True, truncation=True, max_length=1024, return_tensors="pt").to(model.device)
-            logits = model(**batch).logits[:, -1, [no, yes]]
-            p = torch.softmax(logits.float(), dim=-1)[:, 1].tolist()
+        enc = tok(texts, truncation=True, max_length=1024)["input_ids"]
+        # 18/11: gom theo độ dài (một đoạn dài làm cả lô đệm tới ~550 token: 300 → 175 ms) và chỉ tính lm_head ở token cuối (−50 ms)
+        order, groups = sorted(range(len(enc)), key=lambda i: len(enc[i])), [[]]
+        for i in order:
+            if groups[-1] and len(enc[i]) > 1.5 * len(enc[groups[-1][0]]):
+                groups.append([])
+            groups[-1].append(i)
+        p = [0.0] * len(enc)
+        with torch.inference_mode():
+            for g in groups:
+                batch = tok.pad({"input_ids": [enc[i] for i in g]}, return_tensors="pt").to(model.device)   # đệm trái (padding_side="left") → vị trí cuối là token thật
+                logits = model.lm_head(model.model(**batch).last_hidden_state[:, -1])[:, [no, yes]]
+                for i, v in zip(g, torch.softmax(logits.float(), dim=-1)[:, 1].tolist()):
+                    p[i] = v
         return sorted(zip(p, pool), key=lambda x: -x[0])[:top_k]
 
 
