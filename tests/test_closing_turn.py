@@ -303,6 +303,12 @@ class ReturnAndPromoTest(unittest.TestCase):
             def complete_json(self, msgs):
                 return {"days": 3, "quote": "nhận 3 hôm"}, {}
         self.assertIsNone(self.o._return_window_expired(args, ["nhận 3 hôm thì thấy chật"], "2026-10-20", L2()))
+        from concurrent.futures import Future                                    # RECEIVED_PREFETCH: số ngày đọc sẵn từ đầu lượt → không gọi LLM lần nữa trong tool
+        done = Future(); done.set_result(12)
+        class Boom:
+            def complete_json(self, msgs):
+                raise AssertionError("không được gọi LLM khi đã có kết quả đọc sẵn")
+        self.assertEqual(self.o._return_window_expired(args, ["x"], "2026-10-20", Boom(), done)["days_since_received"], 12)
 
 
 class LateBasketTest(unittest.TestCase):

@@ -91,6 +91,24 @@ A và B của M1 là điều kiện cần cho C.
   | TSR / HR giá&KM / CCR / guardrail (reference_eval, 38 kịch bản) | 89,5 / 12,5 / 75,3 / 4 | 94,7 / 0,0 / 76,5 / 4 |
 
   - Lợi đến đúng từ phần chuẩn bị (−517 ms p50); tốc độ API hai bên như nhau. TSR/HR lệch là nhiễu 38 kịch bản (hành vi đã kiểm y hệt bằng LLM giả).
+  - **m1_final10 (1×277, commit 28f3029, 19/11 22:05–23:00, chi 58.647 VND):** TTFT p50 / p95 **1.396 / 3.293 ms** (m1_final9: 1.766–1.813 / 3.803–3.953), lượt > 3 s 86/1.082 = 7,9 % (cần ≤ 55), Total p95 4.300 ms (m1_final9 4.769–4.988), TSR 86,6 % (m1_final9 87,0–88,8; 1 lượt — chưa tách được nhiễu), HR 17,5 %, CCR 69,1 %, guardrail 13, Call Brief p95 44 ms. **Chưa đạt ≤ 3 s.**
+  - 86 lượt > 3 s: order.update 28 (tool chờ p50 937 ms — chờ bộ đọc + việc của order gate trong `sync_gate()`), search_policy 16 (tool p50 568 ms), vòng 1 không lời gọi hợp lệ 11, báo giá 9… Phần chuẩn bị chỉ còn p50 100 ms.
+  - Mô phỏng tiếp trên trace m1_final10: order.update ≤ 150 ms → 3.037 / 58 lượt; + search_policy ≤ 300 ms → **2.948 / 46**; + mỗi vòng LLM −10 % → 2.714 / 31. Chỉ LLM −15 % → 2.942.
+  - **Điều tra 2 chỗ chờ tool (19/11 đêm, offline, 0 VND):**
+    - order.update chậm = lượt **đổi size** (42/49 lượt; update_address chỉ p50 124 ms): `_return_window_expired` gọi LLM `days_since_received` NỐI TIẾP trong tool (p50 tool 582 ms; lượt đọc muộn 1.014 ms vì còn chờ bộ đọc). Sửa: `RECEIVED_PREFETCH` (mặc định bật) — khách có `order_id` trong brief (95/1.082 lượt; phủ 43/43 lượt đổi hàng) → chạy sẵn lời gọi này từ đầu lượt trên đúng chuỗi lời khách, tool dùng kết quả đó. Thêm ~95 lời gọi LLM ngắn mỗi 277 kịch bản. Test: `test_exchange_after_return_window_is_refused` kiểm dùng kết quả đọc sẵn, không gọi LLM lần hai. 1.131 test OK. Chưa đo LLM thật.
+    - search_policy: đo riêng (`scripts/probes/policy_latency_probe.py`) p50 248 ms khi gọi liên tiếp (qua MCP hay trong tiến trình như nhau), 400–550 ms khi nghỉ 2 s giữa các lần và tăng dần theo thời gian chạy; giữ ấm GPU / CPU không đổi → do máy (nhiệt/nguồn), không sửa bằng code. 27/57 lượt chính sách LLM tra 2 câu nối tiếp (p50 719 ms) — gộp 2 câu vào một lần chấm reranker cần thêm tool phía mcp-memory; để sau. `RERANK_POOL_N` đã là 5.
+  - **A/B RECEIVED_PREFETCH (19–20/11 23:33–00:09, duyệt ≤ 40k, chi ≈ 39.500 VND)** — `runs/ab_recv_1120`: cùng code, cờ tắt/bật, 65 kịch bản (40 ab_ids + 27 đổi hàng), xen kẽ theo nửa; 3/4 phần chạm trần → so 61 kịch bản chung (24 đổi hàng, 326 lượt).
+
+    | | tắt (mốc) | bật |
+    |---|---:|---:|
+    | TTFT p50 / p95 | 1.379 / 3.621 ms | 1.413 / **3.177 ms** |
+    | Lượt > 3 s | 48/323 (14,9 %) | **24/324 (7,4 %)** |
+    | Total p95 | 4.499 | 4.069 |
+    | Lượt đổi hàng: tool p50 / p90 | 919 / 1.655 ms | **118 / 584 ms** |
+    | Lượt đổi hàng: TTFT p50 / p90 | 3.183 / 4.120 ms | 2.473 / 2.934 ms |
+    | TSR / CCR / HR / guardrail (61 kịch bản) | 91,8 / 80,6 / 11,8 / 6 | 93,4 / 78,5 / 13,3 / 5 |
+
+    Bộ này nhiều lượt đổi hàng nên p95 của nó không đại diện cả bộ. Chiếu lên trace m1_final10 (đổi hàng tool ≤ 118–584 ms): **p95 ≈ 3,03–3,06 s, 58–63 lượt > 3 s (cần ≤ 55)** — sát nhưng chưa đạt.
   - Giới hạn: bộ 40 kịch bản từng lạc quan hơn cả bộ 277 (18/11: mốc 3,25 s vs 4,0 s cả bộ); lần này mốc 3,60 s. Cần đo 277 kịch bản trước khi nhận "đạt ≤ 3 s". Tool search_policy vẫn ~0,55 s — không phải do GIL của product_mentions; chỗ cắt tiếp theo.
 
 Nguồn: [LiveKit — preemptive generation](https://docs.livekit.io/agents/build/speech/), [Voice agent latency playbook](https://huggingface.co/blog/dvalle08/voice-agent-latency-playbook), [Groq/Cerebras TTFT theo vùng](https://dev.to/max_bob/fastest-ai-inference-api-in-2026-30-days-of-latency-data-for-groq-cerebras-sambanova-and-43-386k), [Artificial Analysis — gpt-4o-mini providers](https://artificialanalysis.ai/models/gpt-4o-mini/providers), [OpenAI Chat Completions — allowed_tools](https://developers.openai.com/api/reference/resources/chat/subresources/completions).

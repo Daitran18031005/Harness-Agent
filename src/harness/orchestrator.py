@@ -38,7 +38,7 @@ from src.harness.fact_usage import fact_mentioned, used_by_agent
 from src.harness.reask import REASK_LABEL, rewrite_reasks, strip_markdown
 from concurrent.futures import ThreadPoolExecutor, FIRST_COMPLETED, wait as futures_wait
 from src.channels.asr_entities import product_mentions
-from src.harness.reply_reader import ReplyReading, authorize_closing, exact_model_skus, product_candidates, authorize_handoff, read_reply, reading_trace_dict
+from src.harness.reply_reader import ReplyReading, authorize_closing, exact_model_skus, product_candidates, authorize_handoff, read_reply, reading_trace_dict, days_since_received
 from src.harness.order_gate import (OrderGate, OrderDraft, OrderKnown, ProductInfo, with_order_gate_params, detect_payment, GATE_ONLY_ARGS,
                                      extract_recipient_name, is_pure_gate_reply, money as _money)
 from src.memory.memory_extractor import extract_easy_slots, SLOT_TTL, CallFinalizer, HardSlotExtractor, detect_self_honorific, detect_bargain
@@ -59,6 +59,7 @@ def _off(name: str) -> bool:
 
 
 SHORTLIST_FULL_QUOTE = os.environ.get("SHORTLIST_FULL_QUOTE", "").strip().lower() in ("on", "1", "true")   # MẶC ĐỊNH TẮT: product.shortlist gắn luôn KM/quà hôm nay của từng mẫu (bớt chuỗi shortlist → get_quote)
+RECEIVED_PREFETCH = os.environ.get("RECEIVED_PREFETCH", "on").strip().lower() in ("on", "1", "true")   # 19/11: khách có đơn (order_id trong brief) → đọc sẵn "đã nhận hàng mấy ngày" từ đầu lượt; m1_final10: 42 lượt đổi size chờ lời gọi này nối tiếp trong tool (p50 ~0,6–1 s)
 HANDOFF_PREFETCH = os.environ.get("HANDOFF_PREFETCH", "on").strip().lower() in ("on", "1", "true")   # MẶC ĐỊNH BẬT từ 18/11 (m1_final8): kiểm duyệt chuyển máy chạy sẵn từ đầu lượt (+1 lời gọi LLM ngắn mỗi lượt; lượt chuyển máy bớt 0,9–2,8 s)
 LOOKUP_BUNDLE = os.environ.get("LOOKUP_BUNDLE", "").strip().lower() in ("on", "1", "true")   # MẶC ĐỊNH TẮT: tool gộp — catalog.search (≤ 3 sản phẩm) tự gắn tồn kho + giá hôm nay cho từng sản phẩm/biến thể khách nêu, bớt vòng LLM
 READER_PARALLEL_DRAFT = os.environ.get("READER_PARALLEL_DRAFT", "on").strip().lower() in ("on", "1", "true")   # MẶC ĐỊNH BẬT từ 18/11 (m1_final8): có đơn nháp vẫn cho LLM chính chạy song song bộ đọc; begin_turn + driver của gate dời vào sync_gate (quyết định không đổi, chỉ đổi thời điểm)
@@ -142,7 +143,7 @@ class HarnessOrchestrator:
 
         self._gate_extra_calls: Dict[str, List[Dict[str, Any]]] = {}   # tool cổng tự gọi trong lượt (báo giá để đọc lại đơn) — đưa vào trace
         self.order_gate = OrderGate()             # cổng đặt đơn bằng code (src/harness/order_gate.py)
-        self._pool = ThreadPoolExecutor(max_workers=3, thread_name_prefix="reader")   # bộ đọc + tra trước chính sách + kiểm duyệt chuyển máy
+        self._pool = ThreadPoolExecutor(max_workers=4, thread_name_prefix="reader")   # bộ đọc + tra trước chính sách + kiểm duyệt chuyển máy + số ngày đã nhận hàng
         self._llm_pool = ThreadPoolExecutor(max_workers=2, thread_name_prefix="main-llm")   # EARLY_GATE_TAKEOVER: LLM chính chạy ở luồng riêng để code nhận lượt sớm      # bước đọc hiểu chạy song song với LLM chính
         memory.register_delete_listener(self._forget_customer)  # xóa khách -> xóa cả trạng thái theo cuộc gọi
         # Bước 12: chọn sản phẩm bằng luật slot→thuộc tính (dữ liệu config/slot_rules.json) + chính sách hỏi lại if/else
@@ -481,6 +482,9 @@ class HarnessOrchestrator:
         handoff_check: Dict[str, Any] = {}     # kết quả chốt chuyển máy của lượt này (chỉ có khi LLM định gọi handoff.transfer)
         handoff_future = (self._pool.submit(authorize_handoff, self.llm_client, turn.llm_text, last_agent)
                           if HANDOFF_PREFETCH and (turn.llm_text or "").strip() else None)   # chỉ cần lời khách + câu cuối nhân viên → chạy sẵn, dùng nếu LLM gọi chuyển máy
+        received_texts = self._customer_texts.get(working_session_id, []) + [turn.normalized_text]      # đúng customer_texts_now mà _return_window_expired dùng
+        received_future = (self._pool.submit(days_since_received, self.llm_client, " ".join(t for t in received_texts if t.strip()))
+                           if RECEIVED_PREFETCH and (brief.profile_facts or {}).get("order_id") and self.llm_client is not None and getattr(self.llm_client, "available", False) else None)
 
         shared_state = {
             "customer_id": customer_id,
@@ -655,7 +659,8 @@ class HarnessOrchestrator:
                         if same:                           # SC-ULTRA-06: phiếu đổi đã tạo ở cuộc trước; gọi lại = mock tính "đổi lần 2" (60.000đ) sai
                             return ({**same["result"], "already_done": True, "note": "Phiếu đổi này ĐÃ tạo ở cuộc gọi trước (kết quả trên: phí/chênh lệch của lần đổi đó). KHÔNG tạo phiếu mới."},
                                     vault.redact_args_for_trace(exec_args))
-                        late = self._return_window_expired(exec_args, customer_texts_now, current_date, llm_client)
+                        late = self._return_window_expired(exec_args, customer_texts_now, current_date, llm_client,
+                                                           received_future if customer_texts_now == received_texts else None)
                         if late:
                             return late, vault.redact_args_for_trace(exec_args)
 
@@ -1895,7 +1900,7 @@ class HarnessOrchestrator:
                     seen.append(s_)
         return seen
 
-    def _return_window_expired(self, args: Dict[str, Any], customer_texts: List[str], on: str, llm: Any) -> Optional[Dict[str, Any]]:
+    def _return_window_expired(self, args: Dict[str, Any], customer_texts: List[str], on: str, llm: Any, days_future: Any = None) -> Optional[Dict[str, Any]]:
         """DT-01: đổi size/sản phẩm chỉ trong `return_days` ngày kể từ khi nhận. Mock order.update không kiểm hạn (TEST-111/179/211 cuộc 2: khách nói "12 hôm" mà vẫn được đổi).
         Số ngày = số khách NÓI (LLM đọc, trích dẫn có con số); khách không nói thì ngày tạo đơn + 5 ngày giao (ước lượng có lợi cho khách)."""
         from datetime import date
@@ -1907,7 +1912,7 @@ class HarnessOrchestrator:
         limit = ((items[0].get("attributes") or {}).get("return_days") if items else None)
         if not isinstance(limit, int):
             return None
-        days = days_since_received(llm, " ".join(t for t in customer_texts if t.strip()))
+        days = days_future.result() if days_future is not None else days_since_received(llm, " ".join(t for t in customer_texts if t.strip()))
         if days is None and isinstance(o.get("created_on"), str):
             try:
                 days = (date.fromisoformat(on[:10]) - date.fromisoformat(o["created_on"][:10])).days - 5
