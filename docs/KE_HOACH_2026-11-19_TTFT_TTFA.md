@@ -109,6 +109,24 @@ A và B của M1 là điều kiện cần cho C.
     | TSR / CCR / HR / guardrail (61 kịch bản) | 91,8 / 80,6 / 11,8 / 6 | 93,4 / 78,5 / 13,3 / 5 |
 
     Bộ này nhiều lượt đổi hàng nên p95 của nó không đại diện cả bộ. Chiếu lên trace m1_final10 (đổi hàng tool ≤ 118–584 ms): **p95 ≈ 3,03–3,06 s, 58–63 lượt > 3 s (cần ≤ 55)** — sát nhưng chưa đạt.
+  - **Hai hướng 0 VND tiếp theo (20/11, offline) — đều KHÔNG làm:**
+    - Lượt LLM gọi order.* bị gate chặn (252 lượt m1_final9/10, 13 lượt chậm ở m1_final10): câu cuối = câu mở đầu LLM viết + `say` của gate (229/252), chỉ 15 lượt trùng nguyên văn `say` → bỏ vòng LLM cuối sẽ mất phần LLM trả lời câu hỏi/nhắc giá (đổi hành vi, rủi ro TSR/CCR).
+    - Gộp nhiều câu search_policy: gọi song song qua mcp-memory không nhanh hơn (20 cặp: nối tiếp p50 807 / song song 794 ms — server xử lý tuần tự); gộp thật cần tool mới xuyên 5 lớp, mô phỏng chỉ gỡ 3 lượt (63 → 60).
+  - Mô phỏng sau RECEIVED_PREFETCH (trace m1_final10): p95 3.055 / 63 lượt; **mỗi vòng LLM −5 % → 2.935 / 48**; −8 % → 2.878 / 43. Còn lại là tốc độ mỗi vòng LLM (WebSocket mode, đầu ra vòng chọn tool) và điều kiện máy lúc đo (cắm sạc, Power mode "Best performance").
+  - **A/B LLM_WS lần 2 (20/11 00:20–00:42, duyệt ≤ 26k, chi ≈ 25.900 VND)** — `runs/ab_ws_1120`: cùng code (3388021 + sửa: hủy lượt thì bỏ kết nối WS, không đọc hết câu bị hủy dưới khóa, mở sẵn kết nối mới ở nền), cờ LLM_WS tắt/bật, 40 kịch bản, xen kẽ theo nửa; so 38 kịch bản chung (226 lượt).
+
+    | | HTTP (mốc) | WebSocket |
+    |---|---:|---:|
+    | TTFT p50 / p95 | 1.211 / **2.901 ms** | 1.062 / 3.131 ms |
+    | Lượt > 3 s | **7/223 (3,1 %)** | 14/222 (6,3 %) |
+    | Vòng chọn tool p50 / p90 | 1.318 / **1.662** | 1.290 / 1.900 |
+    | Vòng cuối → token đầu p50 / p90 | 811 / 1.049 | **716 / 884** |
+    | Cache trúng p50 (lượt < 0,5) | **0,93** (3) | 0,82 (7) |
+    | Total p95 | 4.095 | 4.200 |
+    | TSR / CCR / HR / guardrail | 89,5 / 74,1 / 13,3 / 5 | 86,8 / 77,6 / 12,5 / 6 |
+
+    Giống lần 18/11: WS nhanh hơn ở trung vị nhưng cache thấp hơn → đuôi vòng chọn tool dài hơn → p95 kém. **Không dùng LLM_WS.** Sửa hủy kết nối vẫn giữ (cờ mặc định tắt).
+  - Mốc HTTP ở đây (HEAD 3388021, 40 kịch bản) p95 2,90 s — bộ 40 vẫn lạc quan hơn cả bộ 277 (ước ~3,06 s).
   - Giới hạn: bộ 40 kịch bản từng lạc quan hơn cả bộ 277 (18/11: mốc 3,25 s vs 4,0 s cả bộ); lần này mốc 3,60 s. Cần đo 277 kịch bản trước khi nhận "đạt ≤ 3 s". Tool search_policy vẫn ~0,55 s — không phải do GIL của product_mentions; chỗ cắt tiếp theo.
 
 Nguồn: [LiveKit — preemptive generation](https://docs.livekit.io/agents/build/speech/), [Voice agent latency playbook](https://huggingface.co/blog/dvalle08/voice-agent-latency-playbook), [Groq/Cerebras TTFT theo vùng](https://dev.to/max_bob/fastest-ai-inference-api-in-2026-30-days-of-latency-data-for-groq-cerebras-sambanova-and-43-386k), [Artificial Analysis — gpt-4o-mini providers](https://artificialanalysis.ai/models/gpt-4o-mini/providers), [OpenAI Chat Completions — allowed_tools](https://developers.openai.com/api/reference/resources/chat/subresources/completions).

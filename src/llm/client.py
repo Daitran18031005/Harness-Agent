@@ -534,6 +534,13 @@ class LLMClient:
             self._ws = self._ws_mgr.__enter__()
         return self._ws
 
+    def _ws_reopen(self) -> None:
+        with self._ws_lock:
+            try:
+                self._ws_conn()
+            except Exception:
+                self._ws = None                              # lỗi mở trước: vòng sau tự mở như thường
+
     def _ws_drop(self) -> None:
         try:
             self._ws_mgr.__exit__(None, None, None)
@@ -569,7 +576,8 @@ class LLMClient:
                 done = None
                 for ev in conn:
                     if cancel is not None and cancel.is_set():
-                        cancelled = True                     # đọc tiếp tới hết (kết nối dùng lại phải sạch), không lấy kết quả
+                        cancelled = True                     # 20/11: KHÔNG đọc tiếp tới hết (EARLY_GATE_TAKEOVER: lượt sau phải chờ khóa trong lúc đọc câu bị hủy) → bỏ kết nối bên dưới
+                        break
                     t = ev.type
                     if t == "response.output_text.delta" and not cancelled:
                         if first_token_at is None:
@@ -583,7 +591,10 @@ class LLMClient:
             except Exception:
                 self._ws_drop()
                 raise
+            if cancelled:
+                self._ws_drop()                              # kết nối còn dở câu trả lời bị hủy → không dùng lại
         if cancelled:
+            threading.Thread(target=self._ws_reopen, daemon=True).start()   # mở sẵn kết nối mới: vòng sau không chờ bắt tay
             raise LLMCancelled()
         self._last_service_tier = getattr(done, "service_tier", None)
         u = getattr(done, "usage", None)
