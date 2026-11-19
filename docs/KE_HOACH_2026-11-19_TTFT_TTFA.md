@@ -71,6 +71,21 @@ A và B của M1 là điều kiện cần cho C.
   Nhiễu cùng prompt (bản gốc lần 1 vs lần 2 cùng ngày) là **25/100** → có nháp đọc như bản gốc, nhưng gần như không token nào được nhận (đầu ra là JSON ngắn, trích dẫn vài từ — không trùng thứ tự với lời khách) → không nhanh hơn, p95 chậm hơn, trả tiền thêm cho token bị loại. **Không dùng.** (Nhiễu 25/100 cũng là mốc đúng để đọc lại READER_COMPACT: 61/100 vẫn cao hơn nhiều.)
 - **Tool tra sản phẩm "564 ms" (20/11, offline):** không phải tool chậm — `READ_ONLY_TOOLS` chỉ có inventory.check / pricing.get_quote / catalog.search / search_policy, nên pricing.quote_order (p50 167, tối đa 2.020 ms), order.status (tối đa 6.544 ms), product.shortlist, crm.get_customer phải CHỜ BỘ ĐỌC (sync_gate) dù chỉ đọc. Mock BTC của cả bốn không ghi gì. **Đã sửa:** thêm vào READ_ONLY_TOOLS (1.135 test OK). Mô phỏng: 32 lượt hưởng lợi, 63 → 59 lượt > 3 s, p95 3.055 → 3.037.
 - **LOOKUP_BUNDLE (xem lại 20/11):** 25 lượt ≥ 2 vòng ở m1_final10 (16 lượt > 3 s); dạng hay gặp nhất `catalog.search → pricing.get_quote` (9) vì mặc định chỉ gắn giá/tồn khi tìm ra đúng 1 sản phẩm không biến thể. Bỏ sót: tìm ra 2 sản phẩm (AirPure X + màng lọc; 5 lượt) và sản phẩm có biến thể khách đã nêu size/màu (RunLite 2 Pro size 41 đen…; 6 lượt, có lượt 4,0–4,2 s). LOOKUP_BUNDLE phủ cả hai. Cận trên (bỏ trọn vòng 2 ở 11 lượt) cộng hai sửa trên: **p95 3.022, 57 lượt** (cần ≤ 55). Chưa đo LLM.
+- **m1_final11 (1×277, commit df0b8db + LOOKUP_BUNDLE=on, 20/11 02:11–02:58, chi 59.042 VND) — LẦN ĐẦU p95 ≤ 3 s trên cả bộ:**
+
+  | | m1_final10 | **m1_final11** |
+  |---|---:|---:|
+  | TTFT p50 / p95 | 1.396 / 3.293 ms | 1.366 / **2.865 ms** |
+  | Lượt > 3 s (cần ≤ 55) | 86 / 1.082 | **40 / 1.080** |
+  | Lượt > 2,8 s | 140 | 66 |
+  | Lượt ≥ 2 vòng tool | 25 | 16 |
+  | Total p95 | 4.300 | 4.005 |
+  | TSR / ca khó | 86,6 / 85,2 | 86,6 / 85,2 |
+  | HR giá&KM / CCR / RQR / guardrail | 17,5 / 69,1 / 0,0 / 13 | 16,3 / 67,9 / 0,4 / 12 |
+  | Call Brief p95 | 44 ms | 18 ms |
+  | Vòng chọn tool / vòng cuối p50 | 1.324 / 808 | 1.282 / 781 (API nhanh hơn ~3 %) |
+
+  TSR không đổi. 1 lượt chạy: p95 dao động ±0,1 s giữa các lượt (m1_final9: 3,80–3,95) → cần 3 lượt để chốt số nộp; biên hiện có 15 lượt.
 - Còn lại chưa thử: (b) Predicted Outputs cho bộ đọc (không dùng được với tool; chưa rõ hợp json_object), cần probe nhỏ; (c) câu báo tiến độ thật ("Dạ em đang kiểm tra tồn kho") — OpenAI khuyên (nguyên tắc 6) nhưng chủ dự án đã loại vì định nghĩa "token đầu của câu trả lời" của BTC → chỉ làm nếu BTC xác nhận được tính.
 
 ## 4. Không làm / đã loại

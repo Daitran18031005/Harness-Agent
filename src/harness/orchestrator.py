@@ -61,7 +61,7 @@ def _off(name: str) -> bool:
 SHORTLIST_FULL_QUOTE = os.environ.get("SHORTLIST_FULL_QUOTE", "").strip().lower() in ("on", "1", "true")   # MẶC ĐỊNH TẮT: product.shortlist gắn luôn KM/quà hôm nay của từng mẫu (bớt chuỗi shortlist → get_quote)
 RECEIVED_PREFETCH = os.environ.get("RECEIVED_PREFETCH", "on").strip().lower() in ("on", "1", "true")   # 19/11: khách có đơn (order_id trong brief) → đọc sẵn "đã nhận hàng mấy ngày" từ đầu lượt; m1_final10: 42 lượt đổi size chờ lời gọi này nối tiếp trong tool (p50 ~0,6–1 s)
 HANDOFF_PREFETCH = os.environ.get("HANDOFF_PREFETCH", "on").strip().lower() in ("on", "1", "true")   # MẶC ĐỊNH BẬT từ 18/11 (m1_final8): kiểm duyệt chuyển máy chạy sẵn từ đầu lượt (+1 lời gọi LLM ngắn mỗi lượt; lượt chuyển máy bớt 0,9–2,8 s)
-LOOKUP_BUNDLE = os.environ.get("LOOKUP_BUNDLE", "").strip().lower() in ("on", "1", "true")   # MẶC ĐỊNH TẮT: tool gộp — catalog.search (≤ 3 sản phẩm) tự gắn tồn kho + giá hôm nay cho từng sản phẩm/biến thể khách nêu, bớt vòng LLM
+LOOKUP_BUNDLE = os.environ.get("LOOKUP_BUNDLE", "on").strip().lower() in ("on", "1", "true")   # MẶC ĐỊNH BẬT từ 20/11 (m1_final11: lượt ≥ 2 vòng 25 → 16, TTFT p95 3,29 → 2,87 s, TSR không đổi): tool gộp — catalog.search (≤ 3 sản phẩm) tự gắn tồn kho + giá hôm nay cho từng sản phẩm/biến thể khách nêu, bớt vòng LLM
 READER_PARALLEL_DRAFT = os.environ.get("READER_PARALLEL_DRAFT", "on").strip().lower() in ("on", "1", "true")   # MẶC ĐỊNH BẬT từ 18/11 (m1_final8): có đơn nháp vẫn cho LLM chính chạy song song bộ đọc; begin_turn + driver của gate dời vào sync_gate (quyết định không đổi, chỉ đổi thời điểm)
 PARALLEL_READER = not _off("PARALLEL_READER")          # đọc hiểu lời khách chạy song song với LLM chính (khi không có đơn nháp đang mở)
 def reading_needs_nothing(r) -> bool:
