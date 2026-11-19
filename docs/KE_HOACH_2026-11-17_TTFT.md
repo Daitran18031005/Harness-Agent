@@ -565,3 +565,37 @@ Phân bố thời gian chờ chữ đầu mỗi vòng (564 vòng, cấu hình t�
 - `_customer_named_product`: đơn nháp đang mở thì SKU bộ đọc của câu KHÔNG chốt không đổi sản phẩm đơn (SC-GEN-06: hỏi quà tặng → đơn túi trữ sữa). `_note_reader_sku` lưu kèm cờ chốt.
 - Câu nhắc nhiều mẫu (exact_model_skus > 1) mà SKU LLM đặt là một trong số đó → theo LLM (SC-TV-16: "Joie Pact vẫn hết… chuyển sang Combi Sugocal", bộ đọc trả rỗng → hỏi lại, không tạo đơn).
 - Test: 2 test mới (hỏng trên code cũ), sửa bộ đọc giả của test "combo đó" cho có ý định chốt như bộ đọc thật. 1127 test xanh.
+
+## Kết quả m1_final9 (3×277, commit d11210c, 2026-11-18 18:08–20:54)
+
+| Chỉ số | m1_final8 (số nộp) | m1_final9 |
+|---|---|---|
+| TSR r1/r2/r3 (TB) | 89,2 / 87,4 / 87,4 (88,0) | 87,7 / 88,8 / 87,0 (87,8) |
+| TTFT p50 gộp | 1723 ms | 1783 ms |
+| TTFT p95 gộp | 3997 ms | 3843 ms |
+| Lượt > 3 s | 14,2 % | 17,1 % |
+| Total p95 gộp | 4762 ms | 4915 ms |
+| RQR / guardrail | 0,0–0,7 / 10–14 | 0,0–0,4 / 13–15 |
+| Chi phí cấu hình full 3 lượt | 69.640 VND | 66.555 VND |
+
+- SC-GEN-06/call_2 đạt 3/3; SC-TV-16/call_3 đạt 2/3.
+- Trượt nhiều hơn m1_final8 (số lần trượt m8→m9): TEST-113 0→3 và TEST-66 0→2 (order.create không khớp args), TEST-20 1→3, TEST-174 1→3, TEST-08 0→2.
+- Đỡ hơn: SC-ULTRA-08/call_4, TEST-114, TEST-12 (2→0), TEST-32 (3→1).
+- Kết luận: p95 giảm ~150 ms nhưng tỉ lệ lượt > 3 s tăng; chưa đủ để thay số nộp. TEST-113/TEST-66 nghi do DRIVER_RECOMMIT hoặc sửa reader-sku, cần xem trace.
+
+### A/B EARLY_GATE_TAKEOVER trên TEST-113 + TEST-66 (19/11, runs/ab_egt_1119, ~2.320 VND)
+
+| | TEST-113 | TEST-66 |
+|---|---|---|
+| EGT bật ×3 | 2/3 đạt (r1: order.create qty 3, bank) | 3/3 |
+| EGT tắt ×3 | 2/3 đạt (r3: order.create qty 3, bank) | 3/3 |
+
+- EARLY_GATE_TAKEOVER không phải nguyên nhân. TEST-66 trượt 2/3 trong m1_final9 (LLM gọi handoff.transfer khi khách đọc CCCD/STK) không lặp lại ở 6 lần chạy → dao động của LLM.
+- TEST-113: lỗi gốc có sẵn ở cả hai cấu hình — khách giảm 3 → 1 chiếc (và đổi lại COD) nhưng bộ đọc không ghi số lượng mới, đơn nháp giữ qty 3 từ lượt 1; đúng hay sai tùy LLM có báo giá lại qty 1 hay không. m1_final8 0/3 trượt là may.
+
+### Sửa bộ đọc cho TEST-113 (19/11, chưa đo LLM thật)
+
+- Trace lượt 2 của TEST-113 (5/5 lần trượt): bộ đọc ghi "giảm xuống lấy 1 chiếc" vào `price_promo_quote` (asks_price_promo), không ghi qty; 3/5 lần ghi payment = bank từ "chuyển khoản trước" mà khách đang ngại.
+- Phần code đưa qty/payment của bộ đọc vào đơn nháp đã đúng (test `DraftQtyPaymentTest` qua cả trên code cũ) → chỉ sửa PROMPT (cả bản dài và bản rút gọn), quy tắc 7: cách trả khách chỉ nhắc lại/ngại không phải lựa chọn; tăng/giảm số lượng là qty mới, không phải chuyện giá.
+- `scripts/eval_reply_reader.py` thêm 4 mẫu (cách nói khác TEST-113) + kiểm qty/price_topic. 1129 test offline OK.
+- Đo LLM thật (eval_reply_reader, 398 VND): 26/38 đúng; câu kiểu TEST-113 vẫn sai (decline, không qty/payment, price_topic) → BỎ sửa prompt. Giữ test DraftQtyPaymentTest và 4 mẫu đo. Bộ đọc gần như không trích qty; 8 mẫu cũ sai (sửa thông tin bị đọc là decline, "số em đang gọi" không thành affirmed, QR) chưa biết có từ trước không.

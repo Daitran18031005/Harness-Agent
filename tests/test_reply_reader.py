@@ -194,6 +194,31 @@ class QtyReadingTest(unittest.TestCase):
         self.assertEqual(verify({"qty": 3, "qty_quote": "lấy ba bộ"}, "ok lấy ba bộ nhé").qty, 3)
 
 
+class DraftQtyPaymentTest(GateBase):
+    """19/11 (TEST-113): đơn nháp đang mở, khách đổi số lượng/cách trả ở lượt LLM xử lý ("giảm xuống lấy 1 chiếc trả COD") → đơn nháp nhận theo bộ đọc (có trích dẫn).
+    Phần code đã đúng từ trước; lỗi TEST-113 là bộ đọc LLM coi "giảm xuống lấy 1 chiếc" là chuyện giá và lấy "chuyển khoản" khách đang ngại làm lựa chọn (sửa ở PROMPT)."""
+    def setUp(self):
+        super().setUp()
+        self.llm = self.orch.llm_client = ReaderLLM(lambda t: {})
+        burn_early(self)
+        self.turn(NEW_PHONE, "ok lấy 3 đôi 39 đen chuyển khoản", [order(qty=3, payment="bank")])
+        self.retry = lambda: next(iter(self.orch._gate_retry_args.values()))
+        self.assertEqual(self.retry()["qty"], 3)
+
+    def say(self, reader, text):
+        self.llm.reader = lambda t: reader
+        self.turn(NEW_PHONE, text, [], reply="LLM_TRẢ_LỜI")
+
+    def test_changed_qty_and_payment_update_the_open_draft(self):
+        self.say({"asks_question": True, "qty": 1, "qty_quote": "lấy 1 đôi", "payment": "COD", "payment_quote": "trả COD"},
+                 "vượt hạn mức hả? thôi giảm xuống lấy 1 đôi trả COD")
+        self.assertEqual((self.retry()["qty"], self.retry()["payment"]), (1, "COD"))
+
+    def test_unverified_qty_leaves_the_draft(self):
+        self.say({"qty": 2, "qty_quote": "hai cái"}, "giao giúp anh nhé")                    # trích dẫn không có trong lời khách
+        self.assertEqual(self.retry()["qty"], 3)
+
+
 class RecommitTest(GateBase):
     """DRIVER_RECOMMIT (18/11): đơn nháp đang hỏi thông tin, khách trả lời KÈM lời chốt lại đúng sản phẩm đó → code hỏi bước kế ngay, không qua vòng LLM bị gate chặn."""
     COMMIT = {"order_intent": "commit", "intent_quote": "lên đơn", "recipient_name": "Lan", "name_quote": "cho Lan", "payment": "COD", "payment_quote": "COD"}

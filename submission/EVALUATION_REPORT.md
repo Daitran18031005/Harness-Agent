@@ -27,7 +27,18 @@ Cùng 277 kịch bản, cùng cách chấm như mục 1, chạy **3 lượt** (s
 
 **So với số nộp trước `m1_final7`** (commit `616b3cc`, cùng 277 kịch bản, 3 lượt): TSR 88,6 → 88,0 % (trong độ dao động giữa các lượt của m1_final7: 87,7–89,9), TTFT p95 5,8 → 4,0 s, Total p95 7,5 → 4,8 s, chi phí ~15.000 → ~60.000 VND/lượt. Nhật ký các hướng đã thử: `docs/KE_HOACH_2026-11-17_TTFT.md`.
 
-**So với baseline:** `m1_final8` chỉ chạy cấu hình hệ thống. Baseline không-bộ-nhớ gần nhất là `runs/m1_final3` (2026-11-12, commit cũ hơn): RQR 4,0 %, CCR 10,7 %, TSR 73,6 %, HR 20,9 %. So với số này: RQR giảm ~90 % (đạt ngưỡng ≥ 40 %), CCR 10,7 → 67,8 %, TSR 73,6 → 88,0 %. **Giới hạn:** baseline và hệ thống chưa cùng commit như Phụ lục A.6 yêu cầu; cần chạy lại baseline trên `a31204e` để bảng so sánh đúng chuẩn.
+**So với baseline (Phụ lục A.6, cùng commit `a31204e`, cùng cờ cấu hình):** baseline `baseline_no_memory` chạy 3 lượt × 277 kịch bản ngày 19/11/2026 (`runs/m1_final8_baseline/`, chấm với trace hệ thống `runs/m1_final8/cmp_full/rN/full.jsonl`, bảng từng lượt: `runs/m1_final8_baseline/cmp/rN/report.txt`). Chi phí ≈ 179.000 VND.
+
+| Chỉ số | Baseline (lượt 1 / 2 / 3) | **Baseline TB** | **Hệ thống TB** | Kết luận |
+|---|---|---:|---:|---|
+| Repeat-Question Rate | 3,5 / 2,6 / 2,6 % | **2,9 %** | **0,4 %** | Giảm ~87 % — **đạt** ngưỡng ≥ 40 % (từng lượt: 100 / 85 / 73 %) |
+| Context Carryover Rate | 12,8 / 12,8 / 12,8 % | 12,8 % | 67,8 % | +55 điểm |
+| Task Success Rate | 80,1 / 80,5 / 79,1 % | 79,9 % | 88,0 % | +8,1 điểm |
+| Hallucination giá & KM | 16,8 / 17,1 / 17,9 % | 17,3 % | 16,9 % | Ngang baseline |
+| Số lượt TB / cuộc | 2,38 / 2,39 / 2,38 | 2,38 | 2,37 | Ngang |
+| Vi phạm guardrail (ca) | 12 / 13 / 14 | 13,0 | 12,3 | Ngang |
+
+**Giới hạn:** ở lượt 3 baseline, memory server (`mcp-memory`, stdio) bị treo quá 60 s ở 4 lần gọi (`TimeoutError`; lượt 1–2 không gặp). Kịch bản dở được bỏ trace và chạy lại; riêng SC-GEN-14 treo 2 lần nên bị bỏ (276/277), bộ chấm tính là trượt nên TSR baseline lượt 3 thấp hơn ~0,3 điểm. Chưa tìm ra nguyên nhân treo.
 
 Lịch sử: `m1_final2` TSR 76,5 % → `m1_final3` 79,1 % → `m1_final4` 79,4 % (3 lượt) → `m1_final7` 88,6 % (3 lượt, TTFT p95 5,8 s) → `m1_final8` 88,0 % (3 lượt, TTFT p95 4,0 s). Các mục 1–8 dưới đây giữ số của lần đo `runs/m1_final2` (có baseline cùng commit) để tham chiếu.
 

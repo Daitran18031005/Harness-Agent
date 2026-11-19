@@ -17,6 +17,7 @@ READBACK = "Dạ em đọc lại đơn: 1 giày RunLite 2 Pro size 38 màu đen,
 PHONE_Q = "Dạ em xin xác nhận lại số điện thoại 0986886113, đúng không ạ?"
 NAME_Q = "Mình cho em xin tên người nhận hàng ạ?"
 PAY_Q = "Mình thanh toán COD hay chuyển khoản ạ?"
+COD_LIMIT = "Dạ đơn 3 bộ tổng 14.370.000đ vượt hạn mức COD 10 triệu nên mình chuyển khoản trước giúp em được không ạ?"
 OPEN_Q = "Anh/chị cho em xin tên người nhận, số điện thoại (nếu khác số đang gọi) và địa chỉ giao hàng ạ?"
 
 # (agent, khách, kỳ vọng: stance / affirmed ⊇ / name / payment / only_answers)
@@ -55,6 +56,11 @@ CASES = [
     (PAY_Q, "momo đi", dict(payment="momo")),
     (PAY_Q, "đại, COD", dict(name="Đại", payment="COD")),
     (PAY_Q, "thanh toán sao cũng được, em chọn giúp", dict(payment=None)),
+    # 19/11 (TEST-113): đổi số lượng là qty mới, không phải chuyện giá; cách trả khách chỉ nhắc lại/ngại không phải lựa chọn
+    (COD_LIMIT, "bị chặn COD bắt chuyển khoản trước hả? anh ngại chuyển khoản lắm, giảm xuống lấy 1 bộ trả COD thôi", dict(qty=1, payment="COD", price_topic=False)),
+    (COD_LIMIT, "phải chuyển khoản trước à, chị không quen chuyển khoản đâu", dict(payment=None)),
+    (READBACK, "à thôi lấy 2 đôi nha em", dict(qty=2, price_topic=False, only_answers=False)),
+    (READBACK, "2 đôi thì bớt cho chị chút được không", dict(qty=2, price_topic=True)),
 ]
 
 
@@ -70,6 +76,10 @@ def check(r, exp):
         bad.append(f"name={r.recipient_name}")
     if "payment" in exp and r.payment != exp["payment"]:
         bad.append(f"payment={r.payment}")
+    if "qty" in exp and r.qty != exp["qty"]:
+        bad.append(f"qty={r.qty}")
+    if "price_topic" in exp and r.price_topic != exp["price_topic"]:
+        bad.append(f"price_topic={r.price_topic}")
     return bad
 
 
