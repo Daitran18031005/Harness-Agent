@@ -55,6 +55,24 @@ Ngân sách: 2,5 s − ASR chốt ~0,25 s − TTS ~0,15 s − cụm từ đầu 
 4. **GPU dùng chung:** ASR + reranker + TTS trên RTX 4060, M2 cần ≥ 2 phiên → cân nhắc TTS đường CPU int8.
 A và B của M1 là điều kiện cần cho C.
 
+## 3b. Rà tài liệu (20/11) — OpenAI Latency optimization (7 nguyên tắc), Conveyor (arXiv 2406.00059), LLMCompiler (ICML 2024), Predicted Outputs, Tail at Scale
+- Thời gian bộ đọc (replay 100 câu, Fast): bản gốc ≈ 751 ms + 10,2 ms × token ra; bản gọn ≈ 698 + 6,6 ms/token → phần CỐ ĐỊNH ~0,7 s (mạng + xử lý prompt đã cache + hàng đợi) chiếm phần lớn; ms/token không cố định theo loại token (giả thuyết: giải mã đoán trước phía OpenAI làm token dễ đoán — chép nguyên văn, khóa JSON — rẻ hơn; chưa kiểm chứng).
+- Gửi bản sao bộ đọc khi chậm (hedging, mô phỏng trên phân bố replay): sau 1,2 s p95 2.390 → 2.261 ms nhưng thêm 54 % lời gọi; sau 1,5 s gần như không đổi → đuôi do đầu ra dài, bản sao cũng chậm. Không làm.
+- Tham số tool vòng chọn tool ngắn (search_policy p50 23 ký tự, order.update 112); handoff.transfer dài (624) là do code tự điền brief sau — vòng chuyển máy p50 1.329 ms ≈ lượt khác 1.323. Không có gì để bớt.
+- Chạy tool sớm kiểu Conveyor — ước tính trước khi cài (20/11, trace m1_final10): 75 lượt vòng 1 có ≥ 2 lời gọi (23 lượt > 3 s; 27 là 2 × search_policy). Lợi = thời gian LLM sinh tham số các lời gọi sau (tham số ngắn, ~0,1–0,2 s) → bớt 100–200 ms chỉ gỡ 1–2 lượt (p95 3.055 → 3.048), 400 ms gỡ 5 lượt. Conveyor lợi khi phần giải mã dài (sinh code, kế hoạch) — không phải trường hợp này. **Không cài.**
+- **Predicted Outputs cho bộ đọc (20/11, duyệt ≤ 2.800, chi ≈ 2.460 VND)** — cờ `READER_PREDICT` (mặc định tắt), nháp = lời khách. Thử tương thích: API từ chối `response_format` đi cùng `prediction` (400, không tính tiền) → khi có nháp bỏ chế độ JSON (prompt vẫn đòi JSON; bóc khối ```json```); 100/100 câu vẫn ra JSON hợp lệ. Replay 100 câu, hai bản chạy cùng lúc:
+
+  | | bản gốc | có nháp |
+  |---|---:|---:|
+  | ms p50 / p90 / p95 | 1.176 / 1.978 / 2.258 | 1.188 / 2.196 / 2.448 |
+  | token nháp được nhận / bị loại (tổng 100 câu) | — | **26 / 1.524** |
+  | câu khác bản gốc ở ≥ 1 trường chính | — | 23/100 |
+
+  Nhiễu cùng prompt (bản gốc lần 1 vs lần 2 cùng ngày) là **25/100** → có nháp đọc như bản gốc, nhưng gần như không token nào được nhận (đầu ra là JSON ngắn, trích dẫn vài từ — không trùng thứ tự với lời khách) → không nhanh hơn, p95 chậm hơn, trả tiền thêm cho token bị loại. **Không dùng.** (Nhiễu 25/100 cũng là mốc đúng để đọc lại READER_COMPACT: 61/100 vẫn cao hơn nhiều.)
+- **Tool tra sản phẩm "564 ms" (20/11, offline):** không phải tool chậm — `READ_ONLY_TOOLS` chỉ có inventory.check / pricing.get_quote / catalog.search / search_policy, nên pricing.quote_order (p50 167, tối đa 2.020 ms), order.status (tối đa 6.544 ms), product.shortlist, crm.get_customer phải CHỜ BỘ ĐỌC (sync_gate) dù chỉ đọc. Mock BTC của cả bốn không ghi gì. **Đã sửa:** thêm vào READ_ONLY_TOOLS (1.135 test OK). Mô phỏng: 32 lượt hưởng lợi, 63 → 59 lượt > 3 s, p95 3.055 → 3.037.
+- **LOOKUP_BUNDLE (xem lại 20/11):** 25 lượt ≥ 2 vòng ở m1_final10 (16 lượt > 3 s); dạng hay gặp nhất `catalog.search → pricing.get_quote` (9) vì mặc định chỉ gắn giá/tồn khi tìm ra đúng 1 sản phẩm không biến thể. Bỏ sót: tìm ra 2 sản phẩm (AirPure X + màng lọc; 5 lượt) và sản phẩm có biến thể khách đã nêu size/màu (RunLite 2 Pro size 41 đen…; 6 lượt, có lượt 4,0–4,2 s). LOOKUP_BUNDLE phủ cả hai. Cận trên (bỏ trọn vòng 2 ở 11 lượt) cộng hai sửa trên: **p95 3.022, 57 lượt** (cần ≤ 55). Chưa đo LLM.
+- Còn lại chưa thử: (b) Predicted Outputs cho bộ đọc (không dùng được với tool; chưa rõ hợp json_object), cần probe nhỏ; (c) câu báo tiến độ thật ("Dạ em đang kiểm tra tồn kho") — OpenAI khuyên (nguyên tắc 6) nhưng chủ dự án đã loại vì định nghĩa "token đầu của câu trả lời" của BTC → chỉ làm nếu BTC xác nhận được tính.
+
 ## 4. Không làm / đã loại
 - Câu đệm cố định ("Dạ em kiểm tra…") — chủ dự án loại (sai định nghĩa token đầu).
 - Fine-tune model nhỏ — đề cấm.
@@ -126,6 +144,22 @@ A và B của M1 là điều kiện cần cho C.
     | TSR / CCR / HR / guardrail | 89,5 / 74,1 / 13,3 / 5 | 86,8 / 77,6 / 12,5 / 6 |
 
     Giống lần 18/11: WS nhanh hơn ở trung vị nhưng cache thấp hơn → đuôi vòng chọn tool dài hơn → p95 kém. **Không dùng LLM_WS.** Sửa hủy kết nối vẫn giữ (cờ mặc định tắt).
+  - **Phân tích "lượt bị gate chặn trả lời trong 1 vòng" (20/11, offline, 0 VND)** — 252 lượt bị chặn ở m1_final9 ×3 + m1_final10 (114 lượt > 3 s):
+    - 206/252 lượt khách NÊU trường mới ngay trong lượt (địa chỉ/thanh toán/tên) → câu `say` của gate phụ thuộc thông tin chỉ LLM/bộ đọc trích được trong lượt đó; chỉ **16/252 (6 %)** đoán được câu `say` trước khi gọi LLM (có đơn nháp + không nêu trường mới). 171/252 là lần đầu có ý mua — code chưa biết sản phẩm/ý định (gate_open: intent_not_commit 91, not_evaluated 64, no_product_in_play 41).
+    - Cận trên nếu code tự trả lời ngay khi bộ đọc về (bộ đọc ở các lượt này p50 1.688 ms) cho MỌI lượt bị chặn: p95 3.055 → 3.000, 63 → 54 lượt — và phải bỏ phần LLM trả lời câu hỏi của khách. **Không làm.**
+  - **Bộ đọc nhanh hơn (20/11, offline):** trên trace m1_final10 bộ đọc nằm trên đường găng ở 155 lượt tool ghi/bị gate chặn (20 lượt > 3 s) + 356 lượt code nhận (3 lượt > 3 s). Mô phỏng (đã tính RECEIVED_PREFETCH): bộ đọc nhanh hơn 20 % → p95 2.994 / 51 lượt; 30 % → 2.984 / 48; 50 % → 2.981 / 46. Thời gian bộ đọc gần tuyến tính theo token ĐẦU RA (16/11: 52 token 1,30 s, 103 token 2,35 s ≈ 20 ms/token; rút ngắn PROMPT không giúp, READER_PROMPT_SHORT còn làm đầu ra dài gấp đôi). Hai cách bớt token ra: (a) tên khóa JSON ngắn (`asks_price_promo` → `pp`…, code đổi lại tên cũ); (b) địa chỉ/tên không chép hai lần (giá trị + *_quote). Cần replay 100 câu thật + eval_reply_reader trước khi A/B.
+    - Đã cài `READER_COMPACT` (mặc định tắt): `PROMPT_COMPACT` sinh từ PROMPT (đổi tên khóa, địa chỉ một lần), `expand_compact` đổi về khóa cũ (cả giá trị `affirmed` và `qty` trong `extra_items`) trước verify(). Test `CompactOutputTest`: cùng lời đọc → cùng ReplyReading. 22 test bộ đọc OK.
+    - Replay lần 1 (20/11, duyệt ≤ 2.500, `runs/reader_compact_1120`) **mất trắng ~2.218 VND**: Fast mode ~11 VND/câu → 100 câu chạm trần 1.100/tiến trình ở gần cuối, script cũ chỉ ghi kết quả khi xong cả bộ. Đã sửa script: ghi từng câu, chạm trần thì dừng gửi và giữ kết quả.
+    - Replay lần 2 (20/11, duyệt ≤ 2.800, chi 1.152 + 1.106 + eval 387 = **2.645 VND**), 100 câu, hai bản chạy cùng lúc, Fast mode:
+
+      | | bản gốc | READER_COMPACT |
+      |---|---:|---:|
+      | ms p50 / p90 / p95 | 1.243 / 2.059 / 2.390 | **987 / 1.495 / 1.720** |
+      | token ra p50 / p90 / p95 | 49 / 134 / 167 | 44 / 119 / 140 |
+      | câu khác bản gốc ở ≥ 1 trường chính | — | **61/100** (nhiễu cùng prompt 16/11: 10/100) |
+      | eval_reply_reader (38 câu có đáp án) | 26/38 (19/11, bản prompt sửa đã bỏ) | 21/38 |
+
+      Khác nhiều nhất ở asks_question 16, asks_price_promo 15, claims_prior_contact 14, product_sku 12, recipient_name 10 — đúng các trường gate dùng để quyết định code nhận lượt. Tên khóa ngắn làm mất gợi ý nghĩa → LLM đọc khác. **Không dùng READER_COMPACT** (giữ cờ, mặc định tắt). Nhanh hơn ~20 % dù token ra chỉ bớt ~10 % → thời gian không chỉ do token ra; chưa rõ phần còn lại.
   - Mốc HTTP ở đây (HEAD 3388021, 40 kịch bản) p95 2,90 s — bộ 40 vẫn lạc quan hơn cả bộ 277 (ước ~3,06 s).
   - Giới hạn: bộ 40 kịch bản từng lạc quan hơn cả bộ 277 (18/11: mốc 3,25 s vs 4,0 s cả bộ); lần này mốc 3,60 s. Cần đo 277 kịch bản trước khi nhận "đạt ≤ 3 s". Tool search_policy vẫn ~0,55 s — không phải do GIL của product_mentions; chỗ cắt tiếp theo.
 

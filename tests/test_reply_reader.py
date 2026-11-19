@@ -246,3 +246,29 @@ class RecommitTest(GateBase):
             self.setUp()
             reply, _, _ = self.say({**self.COMMIT, **extra}, "lên đơn cho Lan nhé, COD, thêm đôi tất")
             self.assertIn("LLM_TRẢ_LỜI", reply, extra)
+
+
+class CompactOutputTest(unittest.TestCase):
+    """READER_COMPACT: đầu ra khóa ngắn đổi về khóa cũ rồi qua verify() như thường — cùng một lời đọc cho cùng kết quả."""
+
+    def test_compact_equals_full(self):
+        from src.harness.reply_reader import COMPACT_KEYS, PROMPT, PROMPT_COMPACT, expand_compact
+        text = "ok chốt 2 cái AirPure X nha, giao 14 Trần Phú Hà Đông, tên Thu, hàng tới mới đưa tiền, có tặng gì không"
+        cands = [{"sku": "SKU-AP-X", "name": "Máy lọc không khí AirPure X"}]
+        full = {"stance": "agree", "stance_quote": "ok chốt 2 cái AirPure X nha", "confidence": 0.9, "order_intent": "commit",
+                "intent_quote": "ok chốt 2 cái AirPure X nha", "qty": 2, "qty_quote": "2 cái", "product_sku": "SKU-AP-X", "product_quote": "AirPure X",
+                "address": "14 Trần Phú Hà Đông", "address_quote": "14 Trần Phú Hà Đông", "recipient_name": "Thu", "name_quote": "tên Thu",
+                "payment": "COD", "payment_quote": "hàng tới mới đưa tiền", "asks_question": True, "affirmed": ["recipient_name"], "affirmed_quote": "tên Thu",
+                "extra_items": [{"name": "AirPure X", "qty": 2, "quote": "2 cái AirPure X"}]}
+        compact = {COMPACT_KEYS[k]: v for k, v in full.items() if k != "address_quote"}
+        compact["af"] = ["nm"]
+        compact["ex"] = [{"name": "AirPure X", "qt": 2, "quote": "2 cái AirPure X"}]
+        a, b = verify(full, text, cands), verify(expand_compact(compact), text, cands)
+        self.assertEqual(a.__dict__, b.__dict__)
+        self.assertEqual((b.qty, b.address, b.recipient_name, b.affirmed), (2, "14 Trần Phú Hà Đông", "Thu", ["recipient_name"]))
+        self.assertTrue(all(f'"{k}"' not in PROMPT_COMPACT for k in COMPACT_KEYS))      # không còn tên khóa dài trong prompt gọn
+        self.assertLess(len(PROMPT_COMPACT), len(PROMPT))
+
+    def test_compact_address_must_still_be_verbatim(self):
+        from src.harness.reply_reader import expand_compact
+        self.assertIsNone(verify(expand_compact({"ad": "20 Lê Lợi"}), "giao 14 Trần Phú nhé").address)   # địa chỉ không có trong lời khách → bỏ

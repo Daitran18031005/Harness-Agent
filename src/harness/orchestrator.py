@@ -91,7 +91,8 @@ PARALLEL_TOOLS = os.environ.get("PARALLEL_TOOLS", "").strip().lower() in ("on", 
 EARLY_GATE_TAKEOVER = os.environ.get("EARLY_GATE_TAKEOVER", "on").strip().lower() in ("on", "1", "true")   # MẶC ĐỊNH BẬT từ 18/11 (29 lượt code nhận ~3,2 s/3×277): bộ đọc song song về trước và code nhận lượt → trả câu của code ngay, hủy LLM chính (không chờ LLM viết xong)
 LATE_READ_PARALLEL = not _off("LATE_READ_PARALLEL")   # MẶC ĐỊNH BẬT (18/11): bộ đọc muộn (khách lần đầu nêu biến thể) chạy song song LLM chính thay vì chặn trước
 DRIVER_RECOMMIT = not _off("DRIVER_RECOMMIT")   # MẶC ĐỊNH BẬT (18/11): khách chốt lại đúng đơn nháp kèm thông tin → code hỏi bước kế ngay, không qua vòng LLM bị gate chặn
-READ_ONLY_TOOLS = frozenset({"inventory.check", "pricing.get_quote", "catalog.search", "search_policy"})   # không chờ bộ đọc (xem _tool_executor)
+READ_ONLY_TOOLS = frozenset({"inventory.check", "pricing.get_quote", "catalog.search", "search_policy",   # không chờ bộ đọc (xem _tool_executor)
+                             "pricing.quote_order", "order.status", "product.shortlist", "crm.get_customer"})   # 20/11: cũng chỉ đọc (mock BTC không ghi) — m1_final10: quote_order chờ bộ đọc tới 2 s, order.status 6,5 s
 TOOL_FIRST_PROMPT = os.environ.get("TOOL_FIRST_PROMPT", "").strip().lower() in ("on", "1", "true")   # MẶC ĐỊNH TẮT: system prompt thêm quy tắc gọi tool ngay vòng đầu (giảm vòng nhắc)
 NUDGE_OFF = os.environ.get("NUDGE_OFF", "").strip().lower() in ("on", "1", "true")   # MẶC ĐỊNH TẮT: bỏ vòng nhắc mặc định (17/11: 22–25 lượt bị nhắc/lần chạy, 12–14 vô ích); 11/11 bỏ hẳn từng làm TSR 92,5 → 72,5
 NUDGE_BY_READER = os.environ.get("NUDGE_BY_READER", "").strip().lower() in ("on", "1", "true")   # MẶC ĐỊNH TẮT (đo tách 13/11: không thấy lợi). bộ đọc hiểu khách không yêu cầu gì cần tra/làm → bỏ vòng nhắc gọi tool (đo 2026-11-13: 119/2180 lượt mất trọn 1 vòng LLM cho vòng nhắc vô ích)

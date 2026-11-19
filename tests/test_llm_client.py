@@ -660,3 +660,15 @@ class WebSocketRoundTest(unittest.TestCase):
         self.assertLessEqual(len(read), 1)
         self.assertEqual(dropped, [1])
         self.assertEqual(len(opened), 2)          # kết nối của vòng + kết nối mở sẵn ở nền
+
+
+class PredictionKwargsTest(unittest.TestCase):
+    """READER_PREDICT: lời gọi JSON có bản nháp gửi `prediction` và KHÔNG gửi trần token (API không nhận cùng lúc)."""
+
+    def test_prediction_replaces_token_cap(self):
+        client, _ = make_client([])
+        kw = client._build_kwargs([{"role": "user", "content": "x"}], [], stream=False, json_mode=True, max_tokens=300, prediction="lời khách")
+        self.assertEqual(kw["prediction"], {"type": "content", "content": "lời khách"})
+        self.assertNotIn("max_tokens", kw); self.assertNotIn("max_completion_tokens", kw)
+        kw = client._build_kwargs([{"role": "user", "content": "x"}], [], stream=False, json_mode=True, max_tokens=300)
+        self.assertNotIn("prediction", kw)
