@@ -2333,15 +2333,19 @@ class HarnessOrchestrator:
         m = cls._VARIANT_RE.match(sku or "")
         return m.group(1) if m else sku
 
+    _PRODUCT_INFO: Dict[str, Dict[str, str]] = {}
+
     def _product_info(self, sku: str) -> Dict[str, Any]:
         """Tên + danh mục THẬT của sản phẩm (đọc catalog), có cache — để phân biệt phụ kiện/quà tặng với sản phẩm chính."""
-        cache = self.__dict__.setdefault("_product_cache", {})
-        if sku not in cache:
-            res = self.mcp.execute_tool("catalog.search", {"sku": sku}, caller="ProductInfo")
-            items = res.get("items") or []
-            cache[sku] = {"name": (items[0].get("name") if items else "") or "",
-                          "category": (items[0].get("category") if items else "") or ""}
-        return cache[sku]
+        cache = HarnessOrchestrator._PRODUCT_INFO       # dùng chung mọi phiên: tên/danh mục catalog không đổi trong lần chạy (đo 19/11: ~10 lần catalog.search/lượt trước LLM khi cache theo từng orchestrator)
+        if sku in cache:
+            return cache[sku]
+        res = self.mcp.execute_tool("catalog.search", {"sku": sku}, caller="ProductInfo")
+        items = res.get("items") or []
+        info = {"name": (items[0].get("name") if items else "") or "", "category": (items[0].get("category") if items else "") or ""}
+        if not res.get("error"):                       # lỗi cổng tool không được nằm lại trong cache dùng chung
+            cache[sku] = info
+        return info
 
     _SLOT_LABEL = {"room_area_m2": "diện tích phòng", "has_children": "trẻ nhỏ trong nhà", "budget_vnd": "ngân sách", "has_pets": "thú cưng"}
 

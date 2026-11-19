@@ -72,6 +72,7 @@ def measure_latency(t_start: float, t_end: float, llm_timing: Optional[Dict[str,
     total_ms = int(round((t_end - t_start) * 1000))
     if llm_timing and "ttft_ms" in llm_timing and "started_at" in llm_timing:
         pre_ms = (llm_timing["started_at"] - t_start) * 1000
+        llm_timing["pre_llm_ms"] = int(round(pre_ms))      # phần code trước vòng LLM đầu → latency_detail (monitoring_extras chạy sau hàm này)
         ttft_ms = int(round(pre_ms + llm_timing["ttft_ms"]))
         ttft_ms = min(ttft_ms, total_ms)
     else:
@@ -84,7 +85,7 @@ def monitoring_extras(meta: Dict[str, Any]) -> Dict[str, Any]:
     lt = meta.get("llm_timing") or {}
     out: Dict[str, Any] = {}
     if "rounds_before_first_token" in lt:
-        out["latency_detail"] = {k: lt[k] for k in ("rounds_before_first_token", "round_ms", "tool_ms", "final_round_ttft_ms", "prompt_tokens", "cached_tokens", "reader_ms", "reader_calls", "reader_parallel", "nudged", "hedged_rounds") if k in lt}
+        out["latency_detail"] = {k: lt[k] for k in ("rounds_before_first_token", "round_ms", "tool_ms", "final_round_ttft_ms", "prompt_tokens", "cached_tokens", "reader_ms", "reader_calls", "reader_parallel", "nudged", "hedged_rounds", "pre_llm_ms") if k in lt}
     if meta.get("violation") or meta.get("guardrail_approved") is False:
         out["guardrail"] = {"approved": bool(meta.get("guardrail_approved")), "violation": meta.get("violation")}
     return out

@@ -599,3 +599,30 @@ Phân bố thời gian chờ chữ đầu mỗi vòng (564 vòng, cấu hình t�
 - Phần code đưa qty/payment của bộ đọc vào đơn nháp đã đúng (test `DraftQtyPaymentTest` qua cả trên code cũ) → chỉ sửa PROMPT (cả bản dài và bản rút gọn), quy tắc 7: cách trả khách chỉ nhắc lại/ngại không phải lựa chọn; tăng/giảm số lượng là qty mới, không phải chuyện giá.
 - `scripts/eval_reply_reader.py` thêm 4 mẫu (cách nói khác TEST-113) + kiểm qty/price_topic. 1129 test offline OK.
 - Đo LLM thật (eval_reply_reader, 398 VND): 26/38 đúng; câu kiểu TEST-113 vẫn sai (decline, không qty/payment, price_topic) → BỎ sửa prompt. Giữ test DraftQtyPaymentTest và 4 mẫu đo. Bộ đọc gần như không trích qty; 8 mẫu cũ sai (sửa thông tin bị đọc là decline, "số em đang gọi" không thành affirmed, QR) chưa biết có từ trước không.
+
+## Bỏ vòng LLM chọn tool: chặn search_policy, bộ phân loại nhỏ (19/11, offline, không gọi LLM, trace m1_final9)
+
+Không có router riêng: chính LLM chính chọn tool ở vòng 1 (p50 1,38 s / p90 1,81 s). 447/556 lượt > 3 s có đúng 1 vòng chọn tool rồi mới tới vòng trả lời (cần còn ≤ 163 lượt > 3 s).
+
+**Mô phỏng bỏ trọn vòng 1** (TTFT − vòng 1 − tool): chính sách → p95 3,69 s; + tra sản phẩm → 3,64; + order.update → 3,35; mọi nhóm → 2,70 s. Chỉ bỏ ở gần như mọi lượt mới dưới 3 s.
+
+**Bước 1 — chặn search_policy khi tra trước tự tin.** `POLICY_PREFETCH` chỉ thêm đoạn vào prompt, không bỏ tool; `PREFETCH_HIDE_TOOLS` chỉ ẩn catalog.search / inventory.check / pricing.get_quote → LLM vẫn tự gọi search_policy (giới hạn chưa đủ). Reranker chạy trên máy với 908 câu khách (~0,48 s/câu), so với đoạn LLM nhận được:
+
+| ngưỡng điểm | LLM gọi, đoạn đầu có trong tra trước | tra trước khác (rủi ro) | bỏ được vòng 1 | p95 (không chờ) | p95 nếu chờ tra trước 150 ms mọi lượt |
+|---|---:|---:|---:|---:|---:|
+| 0,8 | 158 | 9 | 117 (80 lượt > 3 s) | 3,72 s | 3,86 s |
+| 0,9 | 143 | 3 | 102 (71) | 3,76 s | 3,90 s |
+| 0,95 | 111 | 1 | 74 (50) | 3,80 s | 3,95 s |
+
+Điểm ≥ 0,8 ở cả 1.723 lượt LLM không cần chính sách → điểm reranker không dùng để phân loại "cần chính sách" được. Lợi tối đa ~0,1 s ở p95, và mất ngay nếu LLM phải chờ tra trước (đo 17/11: chờ 0,3 s làm mọi lượt chậm ~0,28 s). **Không làm.**
+
+**Bước 2 — bộ phân loại nhỏ đoán nhóm tool vòng 1** (học m1_final8, kiểm m1_final9, chia theo kịch bản: ~1.130 lượt học / 1.095 lượt kiểm):
+
+| | độ đúng | chính sách: precision / phủ lượt chậm (p ≥ 0,6) | tra sản phẩm | order |
+|---|---:|---|---|---|
+| TF-IDF ký tự + LR | 65 % | 0,84 / 23/60 | 0,71 / 14/67 | — |
+| Qwen3-Embedding-0.6B + LR (~28 ms/câu theo lô) | 58 % | 0,77 / 23/60 | 0,80 / 0/67 | 0,84 / 41/51 |
+
+LLM tự nhất quán: 93 % câu chọn cùng nhóm giữa r1 và r2 (89 % cả 3 lượt) → bài toán đoán được, bộ phân loại nhỏ thua vì quá ít dữ liệu (138 kịch bản). Lần đầu chia theo lần chạy được 91 % là rò dữ liệu (cùng lời khách). Nhóm order đoán khá nhưng là tool ghi. **Không dùng được trước hạn.**
+
+Script: `scripts/probes/{clf_probe,clf_emb_probe,policy_prefetch_probe,policy_block_sim}.py` (chạy từ thư mục Code; clf_probe chạy từ runs/).

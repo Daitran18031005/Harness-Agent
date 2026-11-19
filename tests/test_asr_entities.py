@@ -38,6 +38,31 @@ class ProductMentionTest(unittest.TestCase):
         self.assertEqual(skus("dạ chị chờ em chút nhé em kiểm tra tồn kho giúp chị"), [])
         self.assertEqual(skus("dạ vâng em ghi nhận mai hoặc ngày kia em gọi lại chị được không ạ"), [])
 
+    def test_fast_filter_matches_plain_ratio(self):
+        """Lọc bằng real_quick_ratio/quick_ratio (19/11, giảm 349 → 46 ms/câu) phải cho y hệt tính ratio() cho mọi cặp cửa sổ × alias."""
+        from difflib import SequenceMatcher
+        from src.channels.asr_entities import _alias_table, _tokens, fold
+        texts = ["máy caro phi chín lõi", "giày rung lai hai pro size bốn mươi", "chị lấy con ka rô phi chín lõi với nồi chiên phi líp sáu lít nhé",
+                 "Dạ mẫu AirPure Y và Xiaomi Smart 4 Pro đều còn hàng ạ, mẫu ít thì rẻ hơn"]
+        for text in texts:
+            toks = [fold(t) for t in _tokens(text)]
+            plain = set()
+            for i in range(len(toks)):
+                for n in range(1, min(7, len(toks) - i) + 1):
+                    w = "".join(toks[i:i + n])
+                    for alias, sku in _alias_table():
+                        if len(alias) > 6 and abs(len(w) - len(alias)) <= 2 and len(w) >= 2 and SequenceMatcher(None, w, alias).ratio() >= 0.84:
+                            plain.add(sku)
+                        elif len(alias) <= 6 and w == alias:
+                            plain.add(sku)
+            self.assertTrue(set(skus(text)) <= plain, text)          # mọi mã trả về đều có cặp khớp thật
+            self.assertTrue(skus(text), text)
+
+    def test_cached_result_is_a_fresh_list(self):
+        a = product_mentions("máy caro phi chín lõi")
+        a.append((99, "X", 0.0))
+        self.assertNotIn((99, "X", 0.0), product_mentions("máy caro phi chín lõi"))
+
     def test_last_mention_wins_for_sku_entity(self):
         e = extract_hypothesis_entities("mẫu e pia y giá năm triệu hai trăm nghìn còn mẫu e pia x thì rẻ hơn")
         self.assertEqual(e["sku"], "SKU-AP-X")
