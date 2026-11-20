@@ -1,0 +1,23 @@
+name: tests
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  unittest:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - run: pip install -r requirements.txt
+      # Không có khóa OpenAI, GPU hay model ASR trên máy CI: test tự dùng nhánh không LLM và bỏ qua test cần model.
+      - run: python -m unittest discover -s tests
+        env:
+          OPENAI_API_KEY: ""
+          PYTHONUTF8: "1"
