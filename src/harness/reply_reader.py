@@ -135,6 +135,46 @@ Ví dụ ĐỊNH DẠNG (không phải dữ liệu cuộc gọi):
 - "ok chốt 2 cái quạt A1 nha, hàng tới mới đưa tiền" (ứng viên "MA-01 — Quạt A1") → {"stance":"agree","stance_quote":"ok chốt 2 cái quạt A1 nha","confidence":0.9,"order_intent":"commit","intent_quote":"ok chốt 2 cái quạt A1 nha","qty":2,"qty_quote":"2 cái","product_sku":"MA-01","product_quote":"quạt A1","payment":"COD","payment_quote":"hàng tới mới đưa tiền"}"""
 READER_PROMPT_SHORT = os.environ.get("READER_PROMPT_SHORT", "").strip().lower() in ("on", "1", "true")
 
+# READER_COMPACT (20/11, MẶC ĐỊNH TẮT tới khi đo xong): cùng PROMPT (định nghĩa + quy tắc 1–9 y hệt), chỉ đổi tên khóa JSON thành tên ngắn và
+# địa chỉ ghi MỘT lần (giá trị nguyên văn = bằng chứng) — thời gian bộ đọc ~20 ms/token đầu ra (đo 16/11). `expand_compact` đổi về tên cũ trước verify().
+READER_COMPACT = os.environ.get("READER_COMPACT", "").strip().lower() in ("on", "1", "true")
+# READER_PREDICT (20/11, MẶC ĐỊNH TẮT tới khi đo xong): Predicted Outputs — gửi lời khách làm bản nháp; LLM vẫn tự quyết từng token,
+# OpenAI kiểm song song phần trùng nháp (giải mã đoán trước). Token nháp bị loại vẫn tính tiền như token ra.
+READER_PREDICT = os.environ.get("READER_PREDICT", "").strip().lower() in ("on", "1", "true")
+COMPACT_KEYS = {"stance": "st", "stance_quote": "stq", "confidence": "cf", "only_answers": "oa", "affirmed": "af", "affirmed_quote": "afq",
+                "recipient_name": "nm", "name_quote": "nmq", "qty": "qt", "qty_quote": "qtq", "address": "ad", "address_quote": "adq",
+                "product_sku": "sku", "product_quote": "skq", "extra_items": "ex", "payment": "pay", "payment_quote": "payq",
+                "order_intent": "oi", "intent_quote": "oiq", "asks_question": "aq", "asks_price_promo": "pp", "price_promo_quote": "ppq",
+                "asks_transfer": "tr", "transfer_quote": "trq", "claims_prior_contact": "pc", "prior_contact_quote": "pcq"}
+
+
+def _compact_prompt(p: str) -> str:
+    p = p.replace('- "address_quote": đoạn nguyên văn chứa địa chỉ đó, hoặc ""\n', "")
+    p = p.replace("chép đúng như khách nói; null", "chép NGUYÊN VĂN đúng như trong lời khách (chính là bằng chứng, không có khóa trích dẫn riêng); null")
+    p = p.replace("riêng address_quote / name_quote / qty_quote phải chứa trọn", "riêng name_quote / qty_quote phải chứa trọn")
+    for long_key in sorted(COMPACT_KEYS, key=len, reverse=True):         # khóa dài trước: "stance_quote" không bị thay thành "st_quote"
+        p = re.sub(rf"(?<![\w*]){long_key}(?!\w)", COMPACT_KEYS[long_key], p)
+    p = p.replace("Mọi *_quote PHẢI", "Mọi khóa trích dẫn (tên kết thúc bằng q: stq, afq, nmq, qtq, skq, payq, oiq, ppq, trq, pcq) PHẢI")
+    return p.replace("Mỗi *_quote là", "Mỗi khóa trích dẫn là")
+
+
+PROMPT_COMPACT = _compact_prompt(PROMPT)
+_EXPAND = {v: k for k, v in COMPACT_KEYS.items()}
+
+
+def expand_compact(raw: Any) -> Any:
+    """Đầu ra READER_COMPACT → tên khóa cũ; địa chỉ nguyên văn dùng luôn làm bằng chứng (verify vẫn kiểm nó nằm trong lời khách)."""
+    if not isinstance(raw, dict):
+        return raw
+    out = {_EXPAND.get(k, k): v for k, v in raw.items()}
+    if isinstance(out.get("affirmed"), list):                          # giá trị của affirmed cũng mang tên khóa (nm, ad, pay) trong prompt gọn
+        out["affirmed"] = [_EXPAND.get(a, a) if isinstance(a, str) else a for a in out["affirmed"]]
+    if isinstance(out.get("extra_items"), list):
+        out["extra_items"] = [{_EXPAND.get(k, k): v for k, v in it.items()} if isinstance(it, dict) else it for it in out["extra_items"]]
+    if isinstance(out.get("address"), str) and "address_quote" not in out:
+        out["address_quote"] = out["address"]
+    return out
+
 VERIFY_PROMPT = """Bạn là chốt kiểm tra độc lập trước khi tạo đơn hàng. Nhân viên đã đọc lại toàn bộ đơn và xin khách xác nhận. Bạn chỉ trả lời MỘT câu hỏi:
 lời khách có phải là sự cho phép rõ ràng, chủ động, không điều kiện để đặt ĐÚNG đơn vừa đọc lại, ngay bây giờ hay không?
 Chỉ trả "authorizes": true khi người nghe không thể hiểu khác. Mọi trường hợp mơ hồ, điều kiện, câu hỏi, sửa/đổi nội dung đơn, hoãn, hay phản hồi chưa mang nội dung chấp nhận đều là false.
@@ -421,9 +461,14 @@ def read_reply(llm: Any, text: str, last_agent: str = "", waiting: Optional[Dict
     ctx = f"Câu cuối của nhân viên: {last_agent or '(chưa có)'}\nSản phẩm ứng viên: {[f"{c['sku']} — {c['name']}" for c in (waiting or {}).get('candidates') or []]}\nĐang chờ khách xác nhận: {(waiting or {}).get('to_confirm') or []}; đang chờ khách cung cấp: {(waiting or {}).get('missing') or []}; giai đoạn đơn: {(waiting or {}).get('stage') or 'chưa có đơn'}"
     llm = _reader_llm(llm)
     try:
-        msgs = [{"role": "system", "content": PROMPT_SHORT if READER_PROMPT_SHORT else PROMPT}, {"role": "user", "content": f"{ctx}\n\nLời khách: {text}"}]
-        takes_cap = "max_tokens" in inspect.signature(llm.complete_json).parameters      # LLM giả trong test không có tham số này
-        raw, usage = llm.complete_json(msgs, max_tokens=READER_MAX_TOKENS) if takes_cap else llm.complete_json(msgs)
+        msgs = [{"role": "system", "content": PROMPT_COMPACT if READER_COMPACT else PROMPT_SHORT if READER_PROMPT_SHORT else PROMPT}, {"role": "user", "content": f"{ctx}\n\nLời khách: {text}"}]
+        params = inspect.signature(llm.complete_json).parameters                       # LLM giả trong test không có các tham số này
+        if READER_PREDICT and "prediction" in params:
+            raw, usage = llm.complete_json(msgs, prediction=text)                      # nháp = lời khách: mọi *_quote chép nguyên văn từ đó (API không nhận trần token cùng nháp)
+        else:
+            raw, usage = llm.complete_json(msgs, max_tokens=READER_MAX_TOKENS) if "max_tokens" in params else llm.complete_json(msgs)
+        if READER_COMPACT:
+            raw = expand_compact(raw)
     except Exception as e:                                     # LLMUnavailable, lỗi mạng… → dự phòng regex, không làm hỏng lượt
         logger.warning("[reply_reader] không đọc được bằng LLM (%s) — dùng regex dự phòng", e)
         return None

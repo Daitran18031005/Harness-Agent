@@ -632,3 +632,43 @@ class WebSocketRoundTest(unittest.TestCase):
         self.assertIsNotNone(first)
         self.assertEqual(sent["tools"][0]["name"], "pricing__get_quote")
         self.assertFalse(sent["store"])
+
+    def test_cancel_drops_connection_without_draining(self):
+        """Lượt bị code nhận (EARLY_GATE_TAKEOVER): không đọc hết câu bị hủy dưới khóa; bỏ kết nối, mở lại ở nền."""
+        from unittest import mock
+        import threading as th
+        import src.llm.client as C
+        read = []
+        def events():
+            for i in range(1000):
+                read.append(i)
+                yield NS(type="response.output_text.delta", delta="x")
+        class Conn:
+            response = NS(create=lambda **kw: None)
+            def __iter__(self):
+                return events()
+        client, _ = make_client([])
+        cancel = th.Event(); cancel.set()
+        opened, dropped = [], []
+        with mock.patch.object(C, "LLM_WS", True), mock.patch.object(type(client), "_ws_conn", lambda self: opened.append(1) or Conn()), \
+                mock.patch.object(type(client), "_ws_drop", lambda self: dropped.append(1)):
+            with self.assertRaises(C.LLMCancelled):
+                client._stream_round_once([{"role": "user", "content": "x"}], [], cancel)
+            for t in th.enumerate():
+                if t is not th.current_thread() and t.daemon:
+                    t.join(timeout=2)
+        self.assertLessEqual(len(read), 1)
+        self.assertEqual(dropped, [1])
+        self.assertEqual(len(opened), 2)          # kết nối của vòng + kết nối mở sẵn ở nền
+
+
+class PredictionKwargsTest(unittest.TestCase):
+    """READER_PREDICT: lời gọi JSON có bản nháp gửi `prediction` và KHÔNG gửi trần token (API không nhận cùng lúc)."""
+
+    def test_prediction_replaces_token_cap(self):
+        client, _ = make_client([])
+        kw = client._build_kwargs([{"role": "user", "content": "x"}], [], stream=False, json_mode=True, max_tokens=300, prediction="lời khách")
+        self.assertEqual(kw["prediction"], {"type": "content", "content": "lời khách"})
+        self.assertNotIn("max_tokens", kw); self.assertNotIn("max_completion_tokens", kw)
+        kw = client._build_kwargs([{"role": "user", "content": "x"}], [], stream=False, json_mode=True, max_tokens=300)
+        self.assertNotIn("prediction", kw)

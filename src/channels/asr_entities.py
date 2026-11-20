@@ -74,7 +74,13 @@ _LETTER_MODEL = {"x": "SKU-AP-X", "ix": "SKU-AP-X", "it": "SKU-AP-X", "ich": "SK
 
 
 def product_mentions(text: str) -> List[Tuple[int, str, float]]:
-    """[(vị trí token đầu, sku, điểm)] theo thứ tự xuất hiện. Khớp mờ trên cửa sổ 1–4 từ đã fold; alias ≤ 6 ký tự phải khớp tuyệt đối (khớp mờ trên chuỗi ngắn gây nhận nhầm, vd "chị chờ" ~ "chicco")."""
+    """[(vị trí token đầu, sku, điểm)] theo thứ tự xuất hiện. Khớp mờ trên cửa sổ 1–4 từ đã fold; alias ≤ 6 ký tự phải khớp tuyệt đối (khớp mờ trên chuỗi ngắn gây nhận nhầm, vd "chị chờ" ~ "chicco").
+    Nhớ kết quả theo văn bản: một lượt dò cùng câu 3–5 lần (bộ đọc, tra trước, F2…), mỗi lần là việc CPU giữ GIL trước vòng LLM đầu."""
+    return list(_product_mentions(text or ""))
+
+
+@lru_cache(maxsize=512)
+def _product_mentions(text: str) -> Tuple[Tuple[int, str, float], ...]:
     toks = [fold(t) for t in _tokens(text)]
     table = _alias_table()
     cands: List[Tuple[float, int, int, str]] = []          # (điểm, số từ, vị trí, sku)
@@ -85,13 +91,18 @@ def product_mentions(text: str) -> List[Tuple[int, str, float]]:
             w = "".join(toks[i:i + n])
             if len(w) < 2:
                 continue
+            sm = SequenceMatcher(None, "", w)              # w cố định ở vế b (bảng b2j tính 1 lần), set_seq1 đổi alias
             for alias, sku in table:
                 if len(alias) <= 6:
                     score = 1.0 if w == alias else 0.0
                 else:
                     if abs(len(w) - len(alias)) > 2:
                         continue
-                    score = SequenceMatcher(None, w, alias).ratio()
+                    sm.set_seq1(alias)
+                    # real_quick_ratio ≥ quick_ratio ≥ ratio: loại sớm bằng cận trên, kết quả y hệt tính ratio() cho mọi cặp (so 4.529 câu trace 19/11: khác 0)
+                    if sm.real_quick_ratio() < 0.84 or sm.quick_ratio() < 0.84:
+                        continue
+                    score = sm.ratio()
                     if score < 0.84:
                         continue
                 if score:
@@ -112,7 +123,7 @@ def product_mentions(text: str) -> List[Tuple[int, str, float]]:
         if t == "mau" and toks[i + 1] in _LETTER_MODEL and not taken[i + 1]:
             if any(s.startswith("SKU-AP-") and p < i for p, s, _ in chosen):
                 out.append((i + 1, _LETTER_MODEL[toks[i + 1]], 0.5))
-    return sorted(out)
+    return tuple(sorted(out))
 
 
 # ------------------------------------------------------------------------------------------------ các trường khác

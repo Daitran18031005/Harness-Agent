@@ -38,7 +38,7 @@ from src.harness.fact_usage import fact_mentioned, used_by_agent
 from src.harness.reask import REASK_LABEL, rewrite_reasks, strip_markdown
 from concurrent.futures import ThreadPoolExecutor, FIRST_COMPLETED, wait as futures_wait
 from src.channels.asr_entities import product_mentions
-from src.harness.reply_reader import ReplyReading, authorize_closing, exact_model_skus, product_candidates, authorize_handoff, read_reply, reading_trace_dict
+from src.harness.reply_reader import ReplyReading, authorize_closing, exact_model_skus, product_candidates, authorize_handoff, read_reply, reading_trace_dict, days_since_received
 from src.harness.order_gate import (OrderGate, OrderDraft, OrderKnown, ProductInfo, with_order_gate_params, detect_payment, GATE_ONLY_ARGS,
                                      extract_recipient_name, is_pure_gate_reply, money as _money)
 from src.memory.memory_extractor import extract_easy_slots, SLOT_TTL, CallFinalizer, HardSlotExtractor, detect_self_honorific, detect_bargain
@@ -59,8 +59,9 @@ def _off(name: str) -> bool:
 
 
 SHORTLIST_FULL_QUOTE = os.environ.get("SHORTLIST_FULL_QUOTE", "").strip().lower() in ("on", "1", "true")   # MẶC ĐỊNH TẮT: product.shortlist gắn luôn KM/quà hôm nay của từng mẫu (bớt chuỗi shortlist → get_quote)
+RECEIVED_PREFETCH = os.environ.get("RECEIVED_PREFETCH", "on").strip().lower() in ("on", "1", "true")   # 19/11: khách có đơn (order_id trong brief) → đọc sẵn "đã nhận hàng mấy ngày" từ đầu lượt; m1_final10: 42 lượt đổi size chờ lời gọi này nối tiếp trong tool (p50 ~0,6–1 s)
 HANDOFF_PREFETCH = os.environ.get("HANDOFF_PREFETCH", "on").strip().lower() in ("on", "1", "true")   # MẶC ĐỊNH BẬT từ 18/11 (m1_final8): kiểm duyệt chuyển máy chạy sẵn từ đầu lượt (+1 lời gọi LLM ngắn mỗi lượt; lượt chuyển máy bớt 0,9–2,8 s)
-LOOKUP_BUNDLE = os.environ.get("LOOKUP_BUNDLE", "").strip().lower() in ("on", "1", "true")   # MẶC ĐỊNH TẮT: tool gộp — catalog.search (≤ 3 sản phẩm) tự gắn tồn kho + giá hôm nay cho từng sản phẩm/biến thể khách nêu, bớt vòng LLM
+LOOKUP_BUNDLE = os.environ.get("LOOKUP_BUNDLE", "on").strip().lower() in ("on", "1", "true")   # MẶC ĐỊNH BẬT từ 20/11 (m1_final11: lượt ≥ 2 vòng 25 → 16, TTFT p95 3,29 → 2,87 s, TSR không đổi): tool gộp — catalog.search (≤ 3 sản phẩm) tự gắn tồn kho + giá hôm nay cho từng sản phẩm/biến thể khách nêu, bớt vòng LLM
 READER_PARALLEL_DRAFT = os.environ.get("READER_PARALLEL_DRAFT", "on").strip().lower() in ("on", "1", "true")   # MẶC ĐỊNH BẬT từ 18/11 (m1_final8): có đơn nháp vẫn cho LLM chính chạy song song bộ đọc; begin_turn + driver của gate dời vào sync_gate (quyết định không đổi, chỉ đổi thời điểm)
 PARALLEL_READER = not _off("PARALLEL_READER")          # đọc hiểu lời khách chạy song song với LLM chính (khi không có đơn nháp đang mở)
 def reading_needs_nothing(r) -> bool:
@@ -87,8 +88,11 @@ def _query_context() -> bool:
 PREFETCH_ORDER_QUOTE = os.environ.get("PREFETCH_ORDER_QUOTE", "").strip().lower() in ("on", "1", "true")   # MẶC ĐỊNH TẮT: hướng 1 — lời khách có địa chỉ (<ADDR_n>) → code báo giá trước sản phẩm đang bàn KÈM địa chỉ (KM theo vùng, freeship)
 PREFETCH_VARIANTS = os.environ.get("PREFETCH_VARIANTS", "").strip().lower() in ("on", "1", "true")   # MẶC ĐỊNH TẮT: hướng 1 — sản phẩm có biến thể vừa tra trước lượt này + khách nêu size/màu → tra trước tồn kho + giá đúng biến thể
 PARALLEL_TOOLS = os.environ.get("PARALLEL_TOOLS", "").strip().lower() in ("on", "1", "true")   # MẶC ĐỊNH TẮT: các tool chỉ đọc trong cùng một vòng LLM chạy đồng thời
-EARLY_GATE_TAKEOVER = os.environ.get("EARLY_GATE_TAKEOVER", "").strip().lower() in ("on", "1", "true")   # MẶC ĐỊNH TẮT: bộ đọc song song về trước và code nhận lượt → trả câu của code ngay, hủy LLM chính (không chờ LLM viết xong)
-READ_ONLY_TOOLS = frozenset({"inventory.check", "pricing.get_quote", "catalog.search", "search_policy"})   # không chờ bộ đọc (xem _tool_executor)
+EARLY_GATE_TAKEOVER = os.environ.get("EARLY_GATE_TAKEOVER", "on").strip().lower() in ("on", "1", "true")   # MẶC ĐỊNH BẬT từ 18/11 (29 lượt code nhận ~3,2 s/3×277): bộ đọc song song về trước và code nhận lượt → trả câu của code ngay, hủy LLM chính (không chờ LLM viết xong)
+LATE_READ_PARALLEL = not _off("LATE_READ_PARALLEL")   # MẶC ĐỊNH BẬT (18/11): bộ đọc muộn (khách lần đầu nêu biến thể) chạy song song LLM chính thay vì chặn trước
+DRIVER_RECOMMIT = not _off("DRIVER_RECOMMIT")   # MẶC ĐỊNH BẬT (18/11): khách chốt lại đúng đơn nháp kèm thông tin → code hỏi bước kế ngay, không qua vòng LLM bị gate chặn
+READ_ONLY_TOOLS = frozenset({"inventory.check", "pricing.get_quote", "catalog.search", "search_policy",   # không chờ bộ đọc (xem _tool_executor)
+                             "pricing.quote_order", "order.status", "product.shortlist", "crm.get_customer"})   # 20/11: cũng chỉ đọc (mock BTC không ghi) — m1_final10: quote_order chờ bộ đọc tới 2 s, order.status 6,5 s
 TOOL_FIRST_PROMPT = os.environ.get("TOOL_FIRST_PROMPT", "").strip().lower() in ("on", "1", "true")   # MẶC ĐỊNH TẮT: system prompt thêm quy tắc gọi tool ngay vòng đầu (giảm vòng nhắc)
 NUDGE_OFF = os.environ.get("NUDGE_OFF", "").strip().lower() in ("on", "1", "true")   # MẶC ĐỊNH TẮT: bỏ vòng nhắc mặc định (17/11: 22–25 lượt bị nhắc/lần chạy, 12–14 vô ích); 11/11 bỏ hẳn từng làm TSR 92,5 → 72,5
 NUDGE_BY_READER = os.environ.get("NUDGE_BY_READER", "").strip().lower() in ("on", "1", "true")   # MẶC ĐỊNH TẮT (đo tách 13/11: không thấy lợi). bộ đọc hiểu khách không yêu cầu gì cần tra/làm → bỏ vòng nhắc gọi tool (đo 2026-11-13: 119/2180 lượt mất trọn 1 vòng LLM cho vòng nhắc vô ích)
@@ -140,7 +144,7 @@ class HarnessOrchestrator:
 
         self._gate_extra_calls: Dict[str, List[Dict[str, Any]]] = {}   # tool cổng tự gọi trong lượt (báo giá để đọc lại đơn) — đưa vào trace
         self.order_gate = OrderGate()             # cổng đặt đơn bằng code (src/harness/order_gate.py)
-        self._pool = ThreadPoolExecutor(max_workers=3, thread_name_prefix="reader")   # bộ đọc + tra trước chính sách + kiểm duyệt chuyển máy
+        self._pool = ThreadPoolExecutor(max_workers=4, thread_name_prefix="reader")   # bộ đọc + tra trước chính sách + kiểm duyệt chuyển máy + số ngày đã nhận hàng
         self._llm_pool = ThreadPoolExecutor(max_workers=2, thread_name_prefix="main-llm")   # EARLY_GATE_TAKEOVER: LLM chính chạy ở luồng riêng để code nhận lượt sớm      # bước đọc hiểu chạy song song với LLM chính
         memory.register_delete_listener(self._forget_customer)  # xóa khách -> xóa cả trạng thái theo cuộc gọi
         # Bước 12: chọn sản phẩm bằng luật slot→thuộc tính (dữ liệu config/slot_rules.json) + chính sách hỏi lại if/else
@@ -479,6 +483,9 @@ class HarnessOrchestrator:
         handoff_check: Dict[str, Any] = {}     # kết quả chốt chuyển máy của lượt này (chỉ có khi LLM định gọi handoff.transfer)
         handoff_future = (self._pool.submit(authorize_handoff, self.llm_client, turn.llm_text, last_agent)
                           if HANDOFF_PREFETCH and (turn.llm_text or "").strip() else None)   # chỉ cần lời khách + câu cuối nhân viên → chạy sẵn, dùng nếu LLM gọi chuyển máy
+        received_texts = self._customer_texts.get(working_session_id, []) + [turn.normalized_text]      # đúng customer_texts_now mà _return_window_expired dùng
+        received_future = (self._pool.submit(days_since_received, self.llm_client, " ".join(t for t in received_texts if t.strip()))
+                           if RECEIVED_PREFETCH and (brief.profile_facts or {}).get("order_id") and self.llm_client is not None and getattr(self.llm_client, "available", False) else None)
 
         shared_state = {
             "customer_id": customer_id,
@@ -518,6 +525,7 @@ class HarnessOrchestrator:
         driver = None if deferred_gate else (self._closing_driver if closing else self._order_driver)(working_session_id, turn, brief, profile, vault, caller_phone, current_date, write_cache)
         gate_open_trace: Dict[str, Any] = {"opened": False, "reason": "not_evaluated"}
         gate_sync: Dict[str, Any] = {"done": reader_future is None, "lock": threading.Lock()}
+        late_parallel: List[Dict[str, Any]] = []   # LATE_READ_PARALLEL: tồn kho code đã tra cho biến thể khách vừa nêu; bộ đọc muộn chạy song song LLM chính
 
         def sync_gate() -> bool:
             """Lấy kết quả đọc hiểu đang chạy song song và làm phần việc của nó (đúng một lần, có khóa: luồng LLM chính và luồng xử lý lượt có thể cùng gọi). Trả True nếu CODE nhận lượt này (khách chốt mua → mở order gate)."""
@@ -533,7 +541,7 @@ class HarnessOrchestrator:
                 if deferred_gate:                      # có đơn nháp: begin_turn TRƯỚC _note_reader_sku như nhánh tuần tự (sản phẩm bộ đọc ghi theo lượt của gate)
                     self.order_gate.begin_turn(working_session_id, working_state.current_turn, turn.normalized_text, reading)
                 self._note_reader_sku(working_session_id, reading)
-                reading_trace = reading_trace_dict(reading)
+                reading_trace = {**reading_trace_dict(reading), **({"late": True} if late_parallel else {})}
                 if deferred_gate:                      # đúng các bước còn lại của nhánh đọc tuần tự, chỉ chạy muộn hơn (sau khi LLM chính đã bắt đầu)
                     if self.order_gate.state(working_session_id).abandoned_turn == working_state.current_turn:
                         self._gate_retry_args.pop(working_session_id, None)
@@ -545,7 +553,8 @@ class HarnessOrchestrator:
                 elif "recipient_phone" in reading.affirmed:
                     self.order_gate.state(working_session_id).phone_ok = True
                 if driver is None:                    # như nhánh tuần tự: chỉ mở gate khi bộ điều khiển đơn nháp không nhận lượt (defer phải còn cho _driver_followup)
-                    driver, gate_open_trace = self._maybe_open_gate(working_session_id, turn, brief, profile, vault, caller_phone, current_date, reading, customer_texts_now)
+                    driver, gate_open_trace = self._maybe_open_gate(working_session_id, turn, brief, profile, vault, caller_phone, current_date, reading, customer_texts_now,
+                                                                    stock=late_parallel or None)
             return driver is not None and driver.get("reply") is not None
 
         if driver is None and reader_future is None:
@@ -553,15 +562,22 @@ class HarnessOrchestrator:
             if reading_trace.get("source") == "skipped" and self.order_gate.enabled:
                 # ĐỌC MUỘN khi có tín hiệu: lượt này lần đầu nhắc một biến thể cụ thể của sản phẩm đang bàn (code xác định) → bây giờ mới đáng đọc ý định/xác nhận.
                 late_stock = self._check_named_variants(customer_texts_now, brief.product_advised, self._call_log.get(working_session_id, []), [], current_date)
-                if late_stock:
+                if late_stock and LATE_READ_PARALLEL and PARALLEL_READER and self.llm_client is not None and getattr(self.llm_client, "available", False) and hasattr(self.llm_client, "complete_json"):
+                    # chạy song song LLM chính như bộ đọc thường (18/11: 92/102 lượt đọc muộn nối tiếp > 3 s); sync_gate() lấy kết quả và mở gate trước tool có tác dụng phụ / sau câu trả lời
+                    reader_future = self._pool.submit(read_reply, self.llm_client, turn.llm_text, last_agent,
+                                                      {"stage": None, "candidates": self._product_candidates(working_session_id, turn.normalized_text)})
+                    late_parallel.extend(late_stock)
+                    gate_sync["done"] = False
+                elif late_stock:
                     reading = read_reply(self.llm_client, turn.llm_text, last_agent, {"stage": None, "candidates": self._product_candidates(working_session_id, turn.normalized_text)})
                     self._readings[working_session_id] = reading
                     self._note_reader_sku(working_session_id, reading)
                     reading_trace = {**reading_trace_dict(reading), "late": True}
                     if reading is not None and "recipient_phone" in reading.affirmed:
                         self.order_gate.state(working_session_id).phone_ok = True
-            driver, gate_open_trace = self._maybe_open_gate(working_session_id, turn, brief, profile, vault, caller_phone, current_date, reading, customer_texts_now,
-                                                            stock=late_stock or None)
+            if not late_parallel:
+                driver, gate_open_trace = self._maybe_open_gate(working_session_id, turn, brief, profile, vault, caller_phone, current_date, reading, customer_texts_now,
+                                                                stock=late_stock or None)
         if driver is not None and driver.get("reply") is not None:
             tool_calls_executed.extend(driver["calls"])
             proposal_text = driver["reply"]
@@ -644,7 +660,8 @@ class HarnessOrchestrator:
                         if same:                           # SC-ULTRA-06: phiếu đổi đã tạo ở cuộc trước; gọi lại = mock tính "đổi lần 2" (60.000đ) sai
                             return ({**same["result"], "already_done": True, "note": "Phiếu đổi này ĐÃ tạo ở cuộc gọi trước (kết quả trên: phí/chênh lệch của lần đổi đó). KHÔNG tạo phiếu mới."},
                                     vault.redact_args_for_trace(exec_args))
-                        late = self._return_window_expired(exec_args, customer_texts_now, current_date, llm_client)
+                        late = self._return_window_expired(exec_args, customer_texts_now, current_date, llm_client,
+                                                           received_future if customer_texts_now == received_texts else None)
                         if late:
                             return late, vault.redact_args_for_trace(exec_args)
 
@@ -1394,7 +1411,7 @@ class HarnessOrchestrator:
         if sku and self._product_info(self._parent_sku(sku)).get("name") and not (isinstance(exec_args.get("lines"), list) and len(exec_args["lines"]) > 1):
             # SKU có thật nhưng KHÁC sản phẩm khách gọi chắc chắn (SC-TV-13: khách "một bộ Spectra S1", LLM đưa combo; TEST-44: khách "combo đó", LLM đưa máy lẻ).
             # Lần nhắc chắc chắn MỚI NHẤT của khách thắng; ở lượt này → ghi đè; chỉ ở lượt cũ (chưa có đơn nháp) → không tạo đơn, hỏi khách một lần.
-            named, current = self._customer_named_product(sid)
+            named, current = self._customer_named_product(sid, prefer=sku)
             if named and self._parent_sku(named) != self._parent_sku(sku):
                 if current or self._gate_retry_args.get(sid):         # đơn nháp đã mở: lời khách gọi chắc chắn mới nhất thắng (TEST-44: "combo đó" sau khi đơn nháp mở với máy lẻ)
                     sku = exec_args["sku"] = args["sku"] = named
@@ -1560,7 +1577,7 @@ class HarnessOrchestrator:
         if st.stage != "collect" or last.get("allow") or last.get("turn") != st.turn - 1 or last.get("action") not in ("ask", "confirm", "ask_confirm"):
             return None
         rd = self._readings.get(sid)
-        if not (rd.only_answers if rd is not None else is_pure_gate_reply(turn.normalized_text)):
+        if not (rd.only_answers if rd is not None else is_pure_gate_reply(turn.normalized_text)) and not self._recommits_same_order(sid, retry, rd, turn):
             return {"defer": True}
         args = self._driver_merge(sid, retry, turn, vault, last)
         exec_args, blocked = self._driver_eval(sid, args, vault, profile, brief, caller_phone, on)
@@ -1568,6 +1585,17 @@ class HarnessOrchestrator:
             return self._driver_create(sid, args, vault, profile, brief, caller_phone, on, write_cache)
         say = blocked["order_gate"]["say"]
         return {"reply": vault.unmask_text(say, caller_phone), "reply_masked": say, "calls": list(self._gate_extra_calls.get(sid, []))}
+
+    def _recommits_same_order(self, sid: str, retry: Dict[str, Any], rd: Any, turn: NormalizedTurn) -> bool:
+        """DRIVER_RECOMMIT: khách trả lời câu hỏi của gate KÈM lời chốt lại đúng đơn nháp ("lên đơn máy X giao COD về …") — không chỉ là câu trả lời nên trước đây nhường LLM,
+        LLM tốn một vòng gọi order.* rồi bị gate chặn hỏi bước kế (m1_final8: 35 lượt > 3 s). Code nhận lượt khi bộ đọc báo commit có trích dẫn, không hỏi/mặc cả/đòi chuyển máy/
+        mua thêm, và mọi sản phẩm khách gọi đúng tên (cả SKU bộ đọc) thuộc đơn nháp; khác thì vẫn để LLM (đổi/thêm sản phẩm)."""
+        if not DRIVER_RECOMMIT or rd is None or not rd.commits or rd.declines or rd.asks_question or rd.price_topic or rd.asks_transfer or rd.extra_items:
+            return False
+        lines = retry.get("lines") if isinstance(retry.get("lines"), list) else []
+        draft = {self._parent_sku(x) for x in [retry.get("sku")] + [l.get("sku") for l in lines if isinstance(l, dict)] if isinstance(x, str) and x}
+        named = {self._parent_sku(x) for x in self._named_all(sid, turn.normalized_text) + ([rd.product_sku] if rd.product_sku else [])}
+        return bool(draft) and named <= draft
 
     def has_open_order(self, customer_id: str, current_date: str) -> bool:
         """Lượt khách CUỐI vừa kết thúc bằng câu hỏi/xác nhận/đọc lại đơn của order gate (khách đã chốt mua, đơn chưa tạo) → cuộc gọi cần lượt chốt."""
@@ -1873,7 +1901,7 @@ class HarnessOrchestrator:
                     seen.append(s_)
         return seen
 
-    def _return_window_expired(self, args: Dict[str, Any], customer_texts: List[str], on: str, llm: Any) -> Optional[Dict[str, Any]]:
+    def _return_window_expired(self, args: Dict[str, Any], customer_texts: List[str], on: str, llm: Any, days_future: Any = None) -> Optional[Dict[str, Any]]:
         """DT-01: đổi size/sản phẩm chỉ trong `return_days` ngày kể từ khi nhận. Mock order.update không kiểm hạn (TEST-111/179/211 cuộc 2: khách nói "12 hôm" mà vẫn được đổi).
         Số ngày = số khách NÓI (LLM đọc, trích dẫn có con số); khách không nói thì ngày tạo đơn + 5 ngày giao (ước lượng có lợi cho khách)."""
         from datetime import date
@@ -1885,7 +1913,7 @@ class HarnessOrchestrator:
         limit = ((items[0].get("attributes") or {}).get("return_days") if items else None)
         if not isinstance(limit, int):
             return None
-        days = days_since_received(llm, " ".join(t for t in customer_texts if t.strip()))
+        days = days_future.result() if days_future is not None else days_since_received(llm, " ".join(t for t in customer_texts if t.strip()))
         if days is None and isinstance(o.get("created_on"), str):
             try:
                 days = (date.fromisoformat(on[:10]) - date.fromisoformat(o["created_on"][:10])).days - 5
@@ -1945,19 +1973,28 @@ class HarnessOrchestrator:
     def _note_reader_sku(self, sid: str, reading: Any) -> None:
         """SKU bộ đọc đã kiểm cho lời khách MỚI NHẤT, lưu theo vị trí lời đó — để lượt sau (vd. lượt chốt) vẫn biết khách đã gọi "combo đó"."""
         if getattr(reading, "product_sku", None):
-            self.__dict__.setdefault("_reader_skus", {}).setdefault(sid, {})[len(self.order_gate.state(sid).texts) - 1] = reading.product_sku
+            self.__dict__.setdefault("_reader_skus", {}).setdefault(sid, {})[len(self.order_gate.state(sid).texts) - 1] = (reading.product_sku, bool(getattr(reading, "commits", False)))
 
-    def _customer_named_product(self, sid: str) -> Tuple[Optional[str], bool]:
+    def _customer_named_product(self, sid: str, prefer: Optional[str] = None) -> Tuple[Optional[str], bool]:
         """(SKU, có phải lượt hiện tại) của lần khách gọi sản phẩm CHẮC CHẮN gần nhất: tên đầy đủ của sản phẩm đã tra → hãng+mẫu khớp tuyệt đối đúng một SKU
-        → SKU bộ đọc đã kiểm của lời đó (lưu theo lượt). Không dùng "sản phẩm tra gần nhất"."""
+        → SKU bộ đọc đã kiểm của lời đó (lưu theo lượt). Không dùng "sản phẩm tra gần nhất".
+        18/11: lời nhắc NHIỀU mẫu ("Joie Pact vẫn hết… chuyển sang Combi Sugocal", SC-TV-16) mà SKU LLM đặt (`prefer`) là một trong số đó → SKU đó (LLM chọn trong các mẫu khách vừa gọi tên);
+        đơn nháp đang mở thì SKU bộ đọc của câu KHÔNG chốt (hỏi quà tặng "có tặng túi trữ sữa không", SC-GEN-06) không đổi sản phẩm của đơn."""
         texts = self.order_gate.state(sid).texts or []
         catalog = getattr(self.retriever, "products", None) or []
         by_turn = self.__dict__.get("_reader_skus", {}).get(sid, {})
+        draft_open = bool(self._gate_retry_args.get(sid))
         for i in range(len(texts) - 1, -1, -1):
             t, latest = texts[i] or "", i == len(texts) - 1
             full = self._named_all(sid, t)
             exact = [s_ for s_ in exact_model_skus(t, catalog) if self._product_info(s_).get("name")] if t.strip() else []
-            sku = full[0] if full else exact[0] if len(exact) == 1 else by_turn.get(i) or (self._reader_product(sid) if latest else None)
+            noted, committed = by_turn.get(i) or (None, False)
+            reader_sku = noted if committed or not draft_open else None
+            if latest and reader_sku is None and (not draft_open or getattr(self._readings.get(sid), "commits", False)):
+                reader_sku = self._reader_product(sid)
+            if latest and prefer and len(exact) > 1 and self._parent_sku(prefer) in {self._parent_sku(e) for e in exact}:
+                return prefer, True
+            sku = full[0] if full else exact[0] if len(exact) == 1 else reader_sku
             if sku:
                 return sku, latest
         return None, False
@@ -2302,15 +2339,19 @@ class HarnessOrchestrator:
         m = cls._VARIANT_RE.match(sku or "")
         return m.group(1) if m else sku
 
+    _PRODUCT_INFO: Dict[str, Dict[str, str]] = {}
+
     def _product_info(self, sku: str) -> Dict[str, Any]:
         """Tên + danh mục THẬT của sản phẩm (đọc catalog), có cache — để phân biệt phụ kiện/quà tặng với sản phẩm chính."""
-        cache = self.__dict__.setdefault("_product_cache", {})
-        if sku not in cache:
-            res = self.mcp.execute_tool("catalog.search", {"sku": sku}, caller="ProductInfo")
-            items = res.get("items") or []
-            cache[sku] = {"name": (items[0].get("name") if items else "") or "",
-                          "category": (items[0].get("category") if items else "") or ""}
-        return cache[sku]
+        cache = HarnessOrchestrator._PRODUCT_INFO       # dùng chung mọi phiên: tên/danh mục catalog không đổi trong lần chạy (đo 19/11: ~10 lần catalog.search/lượt trước LLM khi cache theo từng orchestrator)
+        if sku in cache:
+            return cache[sku]
+        res = self.mcp.execute_tool("catalog.search", {"sku": sku}, caller="ProductInfo")
+        items = res.get("items") or []
+        info = {"name": (items[0].get("name") if items else "") or "", "category": (items[0].get("category") if items else "") or ""}
+        if not res.get("error"):                       # lỗi cổng tool không được nằm lại trong cache dùng chung
+            cache[sku] = info
+        return info
 
     _SLOT_LABEL = {"room_area_m2": "diện tích phòng", "has_children": "trẻ nhỏ trong nhà", "budget_vnd": "ngân sách", "has_pets": "thú cưng"}
 

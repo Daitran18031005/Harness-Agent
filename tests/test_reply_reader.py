@@ -192,3 +192,83 @@ class QtyReadingTest(unittest.TestCase):
         self.assertEqual(verify({"qty": 5, "qty_quote": "5 món"}, t).qty, 5)
         self.assertIsNone(verify({"qty": 3, "qty_quote": "5 món"}, t).qty)             # số không nằm trong trích dẫn
         self.assertEqual(verify({"qty": 3, "qty_quote": "lấy ba bộ"}, "ok lấy ba bộ nhé").qty, 3)
+
+
+class DraftQtyPaymentTest(GateBase):
+    """19/11 (TEST-113): đơn nháp đang mở, khách đổi số lượng/cách trả ở lượt LLM xử lý ("giảm xuống lấy 1 chiếc trả COD") → đơn nháp nhận theo bộ đọc (có trích dẫn).
+    Phần code đã đúng từ trước; lỗi TEST-113 là bộ đọc LLM coi "giảm xuống lấy 1 chiếc" là chuyện giá và lấy "chuyển khoản" khách đang ngại làm lựa chọn (sửa ở PROMPT)."""
+    def setUp(self):
+        super().setUp()
+        self.llm = self.orch.llm_client = ReaderLLM(lambda t: {})
+        burn_early(self)
+        self.turn(NEW_PHONE, "ok lấy 3 đôi 39 đen chuyển khoản", [order(qty=3, payment="bank")])
+        self.retry = lambda: next(iter(self.orch._gate_retry_args.values()))
+        self.assertEqual(self.retry()["qty"], 3)
+
+    def say(self, reader, text):
+        self.llm.reader = lambda t: reader
+        self.turn(NEW_PHONE, text, [], reply="LLM_TRẢ_LỜI")
+
+    def test_changed_qty_and_payment_update_the_open_draft(self):
+        self.say({"asks_question": True, "qty": 1, "qty_quote": "lấy 1 đôi", "payment": "COD", "payment_quote": "trả COD"},
+                 "vượt hạn mức hả? thôi giảm xuống lấy 1 đôi trả COD")
+        self.assertEqual((self.retry()["qty"], self.retry()["payment"]), (1, "COD"))
+
+    def test_unverified_qty_leaves_the_draft(self):
+        self.say({"qty": 2, "qty_quote": "hai cái"}, "giao giúp anh nhé")                    # trích dẫn không có trong lời khách
+        self.assertEqual(self.retry()["qty"], 3)
+
+
+class RecommitTest(GateBase):
+    """DRIVER_RECOMMIT (18/11): đơn nháp đang hỏi thông tin, khách trả lời KÈM lời chốt lại đúng sản phẩm đó → code hỏi bước kế ngay, không qua vòng LLM bị gate chặn."""
+    COMMIT = {"order_intent": "commit", "intent_quote": "lên đơn", "recipient_name": "Lan", "name_quote": "cho Lan", "payment": "COD", "payment_quote": "COD"}
+
+    def setUp(self):
+        super().setUp()
+        self.llm = self.orch.llm_client = ReaderLLM(lambda t: {})
+        burn_early(self)
+        self.turn(NEW_PHONE, "ok lấy 39 đen", [order()])                # LLM mở đơn nháp → gate hỏi thông tin
+
+    def say(self, reader, text="lên đơn cho Lan nhé, COD"):
+        self.llm.reader = lambda t: reader
+        before = self.llm.calls
+        reply, tc, meta = self.turn(NEW_PHONE, text, [], reply="LLM_TRẢ_LỜI")
+        return reply, meta, self.llm.calls - before
+
+    def test_recommit_of_the_same_order_is_answered_by_code(self):
+        reply, meta, _ = self.say(self.COMMIT)
+        self.assertNotIn("LLM_TRẢ_LỜI", reply)
+        self.assertEqual(meta["order_gate"][-1]["fields"]["recipient_name"]["status"], "stated")
+        self.assertIn("address", meta["order_gate"][-1]["missing"])
+
+    def test_question_or_other_product_still_goes_to_the_llm(self):
+        for extra in ({"asks_question": True, "question_quote": "lên đơn"}, {"extra_items": [{"name": "tất", "qty": 1, "quote": "thêm đôi tất"}]}):
+            self.setUp()
+            reply, _, _ = self.say({**self.COMMIT, **extra}, "lên đơn cho Lan nhé, COD, thêm đôi tất")
+            self.assertIn("LLM_TRẢ_LỜI", reply, extra)
+
+
+class CompactOutputTest(unittest.TestCase):
+    """READER_COMPACT: đầu ra khóa ngắn đổi về khóa cũ rồi qua verify() như thường — cùng một lời đọc cho cùng kết quả."""
+
+    def test_compact_equals_full(self):
+        from src.harness.reply_reader import COMPACT_KEYS, PROMPT, PROMPT_COMPACT, expand_compact
+        text = "ok chốt 2 cái AirPure X nha, giao 14 Trần Phú Hà Đông, tên Thu, hàng tới mới đưa tiền, có tặng gì không"
+        cands = [{"sku": "SKU-AP-X", "name": "Máy lọc không khí AirPure X"}]
+        full = {"stance": "agree", "stance_quote": "ok chốt 2 cái AirPure X nha", "confidence": 0.9, "order_intent": "commit",
+                "intent_quote": "ok chốt 2 cái AirPure X nha", "qty": 2, "qty_quote": "2 cái", "product_sku": "SKU-AP-X", "product_quote": "AirPure X",
+                "address": "14 Trần Phú Hà Đông", "address_quote": "14 Trần Phú Hà Đông", "recipient_name": "Thu", "name_quote": "tên Thu",
+                "payment": "COD", "payment_quote": "hàng tới mới đưa tiền", "asks_question": True, "affirmed": ["recipient_name"], "affirmed_quote": "tên Thu",
+                "extra_items": [{"name": "AirPure X", "qty": 2, "quote": "2 cái AirPure X"}]}
+        compact = {COMPACT_KEYS[k]: v for k, v in full.items() if k != "address_quote"}
+        compact["af"] = ["nm"]
+        compact["ex"] = [{"name": "AirPure X", "qt": 2, "quote": "2 cái AirPure X"}]
+        a, b = verify(full, text, cands), verify(expand_compact(compact), text, cands)
+        self.assertEqual(a.__dict__, b.__dict__)
+        self.assertEqual((b.qty, b.address, b.recipient_name, b.affirmed), (2, "14 Trần Phú Hà Đông", "Thu", ["recipient_name"]))
+        self.assertTrue(all(f'"{k}"' not in PROMPT_COMPACT for k in COMPACT_KEYS))      # không còn tên khóa dài trong prompt gọn
+        self.assertLess(len(PROMPT_COMPACT), len(PROMPT))
+
+    def test_compact_address_must_still_be_verbatim(self):
+        from src.harness.reply_reader import expand_compact
+        self.assertIsNone(verify(expand_compact({"ad": "20 Lê Lợi"}), "giao 14 Trần Phú nhé").address)   # địa chỉ không có trong lời khách → bỏ
