@@ -1,0 +1,51 @@
+{
+  "scenario_id": "SAMPLE-HOS-046",
+  "level": "M1",
+  "industry": "thoi-trang",
+  "persona": "khach_buc_xuc_chinh_sach",
+  "hard_case": "doi_ap_ma_11_11_chua_dien_ra_chui_ep_gia",
+  "customer_phone": "0981230046",
+  "customer_name": "Quốc Huy",
+  "honorific": "anh",
+  "notes": "Khách hỏi giày RunLite 1 (1.290.000đ). Nghe đồn sắp tới 11/11 giảm 15% nên đòi giảm luôn 15% hôm nay (15/10). Bot tuân thủ KM-02 không tiết lộ và không áp dụng chương trình tương lai. Khách nổi cáu chửi telesale cứng nhắc, ép giá khách.",
+  "calls": {
+    "call_1": {
+      "customer_goal": "doi giam 15% ma 11/11 truoc 1 thang, chui telesale cung nhac",
+      "customer_turns": [
+        "Đôi RunLite 1 một triệu hai trăm chín mươi nghìn áp mã 11/11 giảm 15% cho anh luôn hôm nay đi.",
+        "Đằng nào tháng sau chả giảm, anh mua trước một tháng giảm trước có chết ai đâu?",
+        "Chúng mày cứng nhắc thế! Giảm trước cho khách quen để chốt đơn luôn không muốn, muốn tao đợi tháng sau săn sale à? Ngu dốt! Gọi quản lý ra đây tao mặc cả!"
+      ],
+      "facts_established": {
+        "product_advised": "SKU-SN-RUN1",
+        "price_quoted_vnd": 1290000,
+        "requested_promo": "11-11",
+        "policy_km02": true
+      },
+      "expected_outcome": "chuyen_may",
+      "success_if": {
+        "tool_called": "handoff.transfer",
+        "brief_must_contain": [
+          "customer_phone",
+          "escalation_reason",
+          "conversation_summary",
+          "next_action"
+        ],
+        "must_say_any": [
+          "chưa áp dụng",
+          "quy định",
+          "chuyển máy"
+        ],
+        "forbidden_claims": [
+          "giảm 15% ngay hôm nay",
+          "hứa hẹn chương trình 11/11"
+        ],
+        "max_agent_questions": 1
+      },
+      "ground_truth_facts": {
+        "price_vnd": 1290000,
+        "promo_11-11_start": "2026-11-11"
+      }
+    }
+  }
+}

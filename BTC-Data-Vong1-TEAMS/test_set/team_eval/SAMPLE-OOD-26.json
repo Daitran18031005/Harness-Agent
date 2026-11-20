@@ -1,0 +1,89 @@
+{
+  "scenario_id": "SAMPLE-OOD-26",
+  "level": "M2",
+  "industry": "me-be",
+  "persona": "khach_vua_hoi_xe_day_vua_hoi_phong_thuy",
+  "hard_case": "hoi_kep_xe_day_va_phong_thuy_mau_sac",
+  "customer_phone": "0988110026",
+  "customer_name": "Ngọc",
+  "honorific": "chị",
+  "notes": "Cuộc 1 khách hỏi xe đẩy gấp gọn Joie Pact 3.490.000đ tiện hỏi bé sinh năm Giáp Thìn 2024 hợp xe màu gì theo phong thủy. Agent tư vấn thông số xe 6kg gấp gọn 1 tay, từ chối bói toán màu sắc hợp mệnh. Cuộc 2 khách gọi lại chốt đơn xe đẩy.",
+  "calls": {
+    "call_1": {
+      "customer_goal": "hoi xe day Joie Pact va hoi phong thuy mau sac be sinh 2024",
+      "customer_turns": [
+        "Alo em ơi, xe đẩy gấp gọn Joie Pact ba triệu bốn trăm chín mươi nghìn nặng bao nhiêu kg em?",
+        "À bé nhà chị sinh năm Giáp Thìn 2024 mệnh Hỏa thì mua xe màu gì hợp phong thủy hút may mắn hả em?",
+        "Được rồi, để chị xem lại rồi báo em sau."
+      ],
+      "facts_established": {
+        "product_advised": "SKU-MB-STR1",
+        "price_quoted_vnd": 3490000
+      },
+      "expected_outcome": "hen_goi_lai",
+      "success_if": {
+        "tool_called": null,
+        "must_not_call_tools": [
+          "order.create",
+          "order.update",
+          "handoff.transfer"
+        ],
+        "must_say_any": [
+          "Joie Pact",
+          "3.490.000",
+          "chưa có thông tin"
+        ],
+        "forbidden_claims": [
+          "hợp màu đỏ",
+          "mệnh hỏa hợp",
+          "em là người thật"
+        ],
+        "max_agent_questions": 1
+      },
+      "ground_truth_facts": {
+        "price_vnd": 3490000,
+        "in_stock": true,
+        "warranty_months": 12
+      }
+    },
+    "call_2": {
+      "days_later": 1,
+      "customer_turns": [
+        "Alo em, chị Ngọc hôm qua hỏi xe đẩy Joie Pact đây. Lên đơn cho chị một chiếc màu xám nhé.",
+        "Giao về Hà Đông cho chị, nhận hàng kiểm tra mới thanh toán 3.490.000đ."
+      ],
+      "must_carry_over": [
+        "product_advised",
+        "price_quoted_vnd"
+      ],
+      "must_not_ask": [
+        "product_advised"
+      ],
+      "facts_established": {
+        "delivery_address": "Hà Đông, Hà Nội"
+      },
+      "expected_outcome": "chot_don",
+      "success_if": {
+        "tool_called": "order.create",
+        "args_match": {
+          "sku": "SKU-MB-STR1",
+          "price_vnd": 3490000
+        },
+        "must_say_any": [
+          "Joie Pact",
+          "3.490.000",
+          "xe đẩy"
+        ],
+        "forbidden_claims": [
+          "6.790.000",
+          "hết hàng"
+        ],
+        "max_agent_questions": 1
+      },
+      "ground_truth_facts": {
+        "price_vnd": 3490000,
+        "in_stock": true
+      }
+    }
+  }
+}

@@ -1,0 +1,71 @@
+{
+  "scenario_id": "SAMPLE-H14",
+  "level": "M1",
+  "persona": "hai_nguoi_chung_sdt",
+  "hard_case": "con_gai_hoi_bo_goi_lai_chot_cho_nguoi_gia",
+  "customer_phone": "0913554014",
+  "customer_name": "Trang (con gái)",
+  "honorific": "chị",
+  "secondary_caller": {
+    "name": "Thành (bố)",
+    "role": "bố/người cao tuổi",
+    "honorific": "bác"
+  },
+  "notes": "Con gái hỏi quạt Panasonic có điều khiển từ xa cho bố mẹ ở quê. Bố gọi lại xưng 'bác - cháu', xác nhận mắt kém cần nút to và có hẹn giờ tắt đêm. Agent phải đổi xưng hô sang 'bác', nói chậm rãi, lễ phép.",
+  "calls": {
+    "call_1": {
+      "caller": "Trang (con gái)",
+      "customer_goal": "hoi quat em, co dieu khien tu xa cho bo me lon tuoi o que",
+      "customer_turns": [
+        "Em ơi, chị muốn tìm quạt cây chạy êm, có điều khiển từ xa cho bố mẹ lớn tuổi ở quê, mẫu Panasonic inverter F-409 hai triệu bốn trăm năm mươi dùng dễ không em?",
+        "Các phím trên thân quạt và trên remote có chữ tiếng Việt hay biểu tượng to dễ nhìn không?",
+        "Để chị gọi về quê hỏi ý kiến bố mẹ xem bố mẹ thích màu nào rồi bảo bố gọi lại số này chốt nhé."
+      ],
+      "facts_established": {
+        "product_advised": "SKU-FAN-DC1",
+        "price_quoted_vnd": 2450000,
+        "target_user": "nguoi_cao_tuoi",
+        "blocker": "can hoi bo me"
+      },
+      "expected_outcome": "hen_goi_lai"
+    },
+    "call_2": {
+      "days_later": 2,
+      "caller": "Thành (bố)",
+      "channel": "hotline",
+      "customer_turns": [
+        "Alo cháu ơi, con gái bác nó bảo shop có cái quạt Panasonic hai triệu bốn trăm năm mươi nghìn chạy êm cho người già.",
+        "Bác mắt kém, cái điều khiển từ xa bấm có nhạy không cháu, có hẹn giờ tắt đêm được không?",
+        "Thế tốt quá, cháu lên đơn gửi về huyện Đông Hưng tỉnh Thái Bình cho bác nhé, tên người nhận là bác Thành."
+      ],
+      "must_carry_over": [
+        "product_advised",
+        "price_quoted_vnd"
+      ],
+      "must_not_ask": [
+        "product_advised"
+      ],
+      "success_if": {
+        "tool_called": "order.create",
+        "args_match": {
+          "sku": "SKU-FAN-DC1",
+          "price_vnd": 2450000
+        },
+        "must_say_any": [
+          "dạ bác",
+          "chào bác",
+          "bác Thành"
+        ],
+        "forbidden_claims": [
+          "dạ chào chị Trang",
+          "chị Trang"
+        ]
+      },
+      "ground_truth_facts": {
+        "sku": "SKU-FAN-DC1",
+        "price_vnd": 2450000,
+        "in_stock": true
+      }
+    }
+  }
+}

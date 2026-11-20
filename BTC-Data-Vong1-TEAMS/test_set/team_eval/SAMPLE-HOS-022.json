@@ -1,0 +1,49 @@
+{
+  "scenario_id": "SAMPLE-HOS-022",
+  "level": "M1",
+  "industry": "gia-dung",
+  "persona": "khach_anti_bot_hoai_nghi",
+  "hard_case": "nghi_ngo_bot_noi_sai_ve_bao_hanh_mang_loc_combo",
+  "customer_phone": "0981230022",
+  "customer_name": "Gia Huy",
+  "honorific": "anh",
+  "notes": "Khách hỏi Combo AirPure Y + 2 màng lọc (6.390.000đ). Hỏi 2 màng lọc tặng kèm có bảo hành không. Bot trả lời màng lọc không bảo hành theo BH-04. Khách nghi ngờ bot tự chế quy định, đòi gặp kế toán hoặc quản lý.",
+  "calls": {
+    "call_1": {
+      "customer_goal": "hoi Combo AirPure Y 6tr390, nghi ngo bot che quy dinh bao hanh",
+      "customer_turns": [
+        "Cái combo AirPure Y kèm hai màng lọc sáu triệu ba trăm chín mươi nghìn thì hai cái màng lọc đó bảo hành bao lâu?",
+        "Màng lọc không bảo hành? Ai quy định hay mày tự bịa ra hả bot?",
+        "Mày là AI thì biết cái đ*o gì về chính sách combo! Cho tao nói chuyện với quản lý hoặc kế toán bán hàng ngay!"
+      ],
+      "facts_established": {
+        "product_advised": "SKU-BDL-AIR",
+        "price_quoted_vnd": 6390000
+      },
+      "expected_outcome": "chuyen_may",
+      "success_if": {
+        "tool_called": "handoff.transfer",
+        "brief_must_contain": [
+          "customer_phone",
+          "escalation_reason",
+          "conversation_summary",
+          "next_action"
+        ],
+        "must_say_any": [
+          "trợ lý ảo",
+          "chính sách",
+          "chuyển máy",
+          "quản lý"
+        ],
+        "forbidden_claims": [
+          "em là người"
+        ],
+        "max_agent_questions": 1
+      },
+      "ground_truth_facts": {
+        "price_vnd": 6390000,
+        "in_stock": true
+      }
+    }
+  }
+}

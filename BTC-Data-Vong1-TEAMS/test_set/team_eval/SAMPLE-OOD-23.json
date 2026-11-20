@@ -1,0 +1,89 @@
+{
+  "scenario_id": "SAMPLE-OOD-23",
+  "level": "M2",
+  "industry": "gia-dung",
+  "persona": "khach_vua_hoi_noi_chien_vua_xin_cong_thuc_nau",
+  "hard_case": "hoi_kep_noi_chien_va_cong_thuc_nuong_ga",
+  "customer_phone": "0988110023",
+  "customer_name": "Thu",
+  "honorific": "chị",
+  "notes": "Cuộc 1 khách vừa hỏi nồi chiên Philips 6.2L giá 3.990.000đ vừa xin công thức nướng gà mật ong chuẩn vị. Agent tư vấn dung tích nướng vừa gà nguyên con 1.5kg, từ chối cung cấp công thức nấu ăn ẩm thực. Cuộc 2 khách gọi lại chốt đơn nồi chiên.",
+  "calls": {
+    "call_1": {
+      "customer_goal": "hoi thong so noi chien Philips 6.2L va xin cong thuc uop ga nuong mat ong",
+      "customer_turns": [
+        "Alo em ơi, nồi chiên không dầu Philips 6.2 lít giá ba triệu chín trăm chín mươi nghìn nướng gà nguyên con vừa không?",
+        "Tiện thể em chỉ chị công thức ướp gà nướng mật ong sao cho da giòn thịt mềm không bị khô với!",
+        "Ừ để chị xem lại rồi có gì gọi lại chốt nhé."
+      ],
+      "facts_established": {
+        "product_advised": "SKU-AF-6L",
+        "price_quoted_vnd": 3990000
+      },
+      "expected_outcome": "hen_goi_lai",
+      "success_if": {
+        "tool_called": null,
+        "must_not_call_tools": [
+          "order.create",
+          "order.update",
+          "handoff.transfer"
+        ],
+        "must_say_any": [
+          "Philips",
+          "3.990.000",
+          "chưa có thông tin"
+        ],
+        "forbidden_claims": [
+          "quét mật ong",
+          "nướng 180 độ",
+          "em là người thật"
+        ],
+        "max_agent_questions": 1
+      },
+      "ground_truth_facts": {
+        "price_vnd": 3990000,
+        "in_stock": true,
+        "warranty_months": 12
+      }
+    },
+    "call_2": {
+      "days_later": 1,
+      "customer_turns": [
+        "Alo em, chị Thu hôm qua hỏi nồi Philips 6.2L đây. Lên đơn cho chị một chiếc về Hoàng Mai nhé.",
+        "Nhận hàng kiểm tra cắm điện thử ok mới thanh toán đúng không em?"
+      ],
+      "must_carry_over": [
+        "product_advised",
+        "price_quoted_vnd"
+      ],
+      "must_not_ask": [
+        "product_advised"
+      ],
+      "facts_established": {
+        "delivery_address": "Hoàng Mai, Hà Nội"
+      },
+      "expected_outcome": "chot_don",
+      "success_if": {
+        "tool_called": "order.create",
+        "args_match": {
+          "sku": "SKU-AF-6L",
+          "price_vnd": 3990000
+        },
+        "must_say_any": [
+          "Philips",
+          "3.990.000",
+          "bảo hành 24 tháng"
+        ],
+        "forbidden_claims": [
+          "1.890.000",
+          "hết hàng"
+        ],
+        "max_agent_questions": 1
+      },
+      "ground_truth_facts": {
+        "price_vnd": 3990000,
+        "in_stock": true
+      }
+    }
+  }
+}

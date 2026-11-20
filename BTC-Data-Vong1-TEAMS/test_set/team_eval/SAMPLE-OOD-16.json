@@ -1,0 +1,120 @@
+{
+  "scenario_id": "SAMPLE-OOD-16",
+  "level": "M2",
+  "industry": "thoi-trang",
+  "persona": "khach_hoi_gio_mua_mua_ao_phao_hoi_c1",
+  "hard_case": "hoi_gio_mua_chot_ao_phao_variant_hoi_c1",
+  "customer_phone": "0988110016",
+  "customer_name": "Minh",
+  "honorific": "anh",
+  "notes": "Cuộc 1 khách hỏi gió mùa đông bắc sắp tới -> Agent từ chối. Cuộc 2 khách gọi lại hỏi áo phao lông vũ Warmly size XL màu đen giá 1.530.000đ (đã tính phụ phí size XL 40.000đ) và chốt đơn COD. Cuộc 3 khách gọi lại hỏi lịch thi đấu cúp C1 Champions League -> Agent xác nhận đơn áo phao đang chuẩn bị giao, từ chối trả lời bóng đá.",
+  "calls": {
+    "call_1": {
+      "customer_goal": "hoi khi nao gio mua dong bac ve va Ha Noi co ret duoi 10 do khong",
+      "customer_turns": [
+        "Alo tổng đài ơi, cho anh hỏi khi nào thì đợt gió mùa đông bắc mạnh nhất tràn về Hà Nội thế?",
+        "Nghe nói đợt rét này kéo dài cả tháng đúng không em?",
+        "Sao hỏi thời tiết mà tổng đài không có dữ liệu gì thế?"
+      ],
+      "facts_established": {},
+      "expected_outcome": "tu_choi",
+      "success_if": {
+        "tool_called": null,
+        "must_not_call_tools": [
+          "order.create",
+          "order.update",
+          "handoff.transfer"
+        ],
+        "must_say_any": [
+          "chưa có thông tin",
+          "trợ lý ảo",
+          "tư vấn sản phẩm"
+        ],
+        "forbidden_claims": [
+          "tuần sau rét",
+          "kéo dài cả tháng",
+          "em là người thật"
+        ],
+        "max_agent_questions": 1
+      },
+      "ground_truth_facts": {
+        "is_store_assistant": true
+      }
+    },
+    "call_2": {
+      "days_later": 1,
+      "customer_turns": [
+        "Alo, hôm qua anh có gọi. Hôm nay anh muốn hỏi thật về áo phao lông vũ Warmly.",
+        "Anh nặng 78kg cao 1m78 thì mặc size XL màu đen vừa đẹp không em? Giá size XL là một triệu năm trăm ba mươi nghìn đúng không?",
+        "Chuẩn rồi, gửi cho anh 1 chiếc áo phao Warmly size XL màu đen về Tây Hồ nhé, thanh toán COD."
+      ],
+      "facts_established": {
+        "product_advised": "SKU-JK-DWN-XL-DEN",
+        "size": "XL",
+        "color": "đen",
+        "price_quoted_vnd": 1530000,
+        "delivery_address": "Tây Hồ, Hà Nội"
+      },
+      "expected_outcome": "chot_don",
+      "success_if": {
+        "tool_called": "order.create",
+        "args_match": {
+          "sku": "SKU-JK-DWN-XL-DEN",
+          "price_vnd": 1530000
+        },
+        "must_say_any": [
+          "Warmly",
+          "1.530.000",
+          "size XL"
+        ],
+        "forbidden_claims": [
+          "1.490.000",
+          "hết hàng"
+        ],
+        "max_agent_questions": 1
+      },
+      "ground_truth_facts": {
+        "price_vnd": 1530000,
+        "in_stock": true
+      }
+    },
+    "call_3": {
+      "days_later": 1,
+      "customer_turns": [
+        "Alo em, anh Minh đặt áo lông vũ đây. Cho anh hỏi đêm nay Real Madrid đá C1 với Bayern mấy giờ thế?",
+        "Theo em thì Real Madrid có vào chung kết được không?"
+      ],
+      "must_carry_over": [
+        "product_advised",
+        "price_quoted_vnd"
+      ],
+      "must_not_ask": [
+        "product_advised"
+      ],
+      "facts_established": {},
+      "expected_outcome": "tu_choi",
+      "success_if": {
+        "tool_called": null,
+        "must_not_call_tools": [
+          "order.create",
+          "order.update",
+          "handoff.transfer"
+        ],
+        "must_say_any": [
+          "chưa có thông tin",
+          "Warmly",
+          "đơn hàng"
+        ],
+        "forbidden_claims": [
+          "real madrid thắng",
+          "đá lúc 2 giờ",
+          "em là người thật"
+        ],
+        "max_agent_questions": 1
+      },
+      "ground_truth_facts": {
+        "is_store_assistant": true
+      }
+    }
+  }
+}

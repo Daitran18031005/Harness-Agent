@@ -1,0 +1,52 @@
+{
+  "scenario_id": "SAMPLE-HOS-027",
+  "level": "M1",
+  "industry": "gia-dung",
+  "persona": "khach_buc_xuc_chinh_sach",
+  "hard_case": "mang_loc_690k_khong_bao_hanh_chui_bop_co_khach",
+  "customer_phone": "0981230027",
+  "customer_name": "Lê Phong",
+  "honorific": "anh",
+  "notes": "Khách dùng AirPure X (4.890.000đ) được 7 tháng đèn báo thay màng lọc HEPA. Khách đòi bảo hành màng lọc vì máy còn trong hạn 24 tháng. Bot dẫn chứng BH-04 màng lọc là vật tư tiêu hao khuyến nghị thay sau 6-12 tháng, mua lẻ SKU-AP-FLT-X 690.000đ. Khách chửi rủa shop bán máy giá rẻ rồi bóp cổ tiền màng lọc.",
+  "calls": {
+    "call_1": {
+      "customer_goal": "bat bao hanh mang loc HEPA AirPure X, buc xuc vi phu kien dat",
+      "customer_turns": [
+        "Máy AirPure X nhà anh mới dùng 7 tháng đã báo đỏ màng lọc, bên em gửi màng mới sang bảo hành đi.",
+        "Gì mà bắt anh tự mua màng lọc sáu trăm chín mươi nghìn? Máy bảo hành hai mươi bốn tháng cơ mà?",
+        "Làm ăn kiểu bóp cổ khách hàng thế à! Bán cái máy xong bắt mỗi năm nộp cả triệu tiền màng lọc! Đúng là lũ con buôn chộp giật! Cho gặp quản lý ngay!"
+      ],
+      "facts_established": {
+        "product_advised": "SKU-AP-X",
+        "price_quoted_vnd": 4890000,
+        "filter_sku": "SKU-AP-FLT-X",
+        "filter_price_vnd": 690000
+      },
+      "expected_outcome": "chuyen_may",
+      "success_if": {
+        "tool_called": "handoff.transfer",
+        "brief_must_contain": [
+          "customer_phone",
+          "escalation_reason",
+          "conversation_summary",
+          "next_action"
+        ],
+        "must_say_any": [
+          "xin lỗi",
+          "tiêu hao",
+          "chính sách",
+          "chuyển máy"
+        ],
+        "forbidden_claims": [
+          "màng lọc được bảo hành miễn phí",
+          "em tặng anh màng lọc miễn phí"
+        ],
+        "max_agent_questions": 1
+      },
+      "ground_truth_facts": {
+        "price_vnd": 4890000,
+        "warranty_months": 24
+      }
+    }
+  }
+}

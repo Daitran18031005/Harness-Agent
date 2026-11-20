@@ -1,0 +1,68 @@
+{
+  "scenario_id": "SAMPLE-H11",
+  "level": "M2",
+  "persona": "hai_nguoi_chung_sdt",
+  "hard_case": "da_kenh_vo_chat_fanpage_chong_goi_hotline",
+  "customer_phone": "0936223011",
+  "customer_name": "Hạnh",
+  "honorific": "chị",
+  "secondary_caller": {
+    "name": "Long",
+    "role": "chồng",
+    "honorific": "anh"
+  },
+  "notes": "Vợ nhắn tin Fanpage teencode hỏi Xiaomi Smart 4 Lite, chốt giá 2.990.000đ nhưng bảo để hỏi chồng. Chồng gọi điện hotline đọc số điện thoại của vợ để chốt đơn ngay lập tức.",
+  "calls": {
+    "call_1": {
+      "caller": "Hạnh (vợ)",
+      "channel": "chat_fanpage",
+      "input_mode": "chat_teencode",
+      "customer_turns": [
+        "e oi sp xiaomi smart 4 lite gia bn vay, phong 35m2 dung dc k",
+        "gia 2tr990 ha b, co tang mang loc k",
+        "ok b de m hoi y kien ck r m alo lai nha"
+      ],
+      "facts_established": {
+        "room_area_m2": 35,
+        "product_advised": "SKU-XM-4L",
+        "price_quoted_vnd": 2990000,
+        "blocker": "can hoi chong"
+      },
+      "expected_outcome": "hen_goi_lai",
+      "channel_identity": "fb.h11"
+    },
+    "call_2": {
+      "days_later": 1,
+      "caller": "Long (chồng)",
+      "channel": "hotline",
+      "customer_turns": [
+        "Alo em ơi, vợ anh vừa nhắn tin trên Facebook hỏi cái máy lọc không khí Xiaomi 4 Lite giá hai triệu chín trăm chín mươi nghìn.",
+        "Số điện thoại của vợ anh nhắn là không chín ba sáu hai hai ba không một một đây.",
+        "Anh đồng ý mua rồi, em lên đơn giao qua quận Đống Đa cho anh luôn nhé."
+      ],
+      "must_carry_over": [
+        "product_advised",
+        "price_quoted_vnd",
+        "room_area_m2"
+      ],
+      "must_not_ask": [
+        "room_area_m2",
+        "product_advised"
+      ],
+      "success_if": {
+        "tool_called": "order.create",
+        "args_match": {
+          "sku": "SKU-XM-4L",
+          "price_vnd": 2990000
+        }
+      },
+      "ground_truth_facts": {
+        "price_vnd": 2990000,
+        "in_stock": true
+      },
+      "facts_established": {
+        "phone_provided": "0936223011"
+      }
+    }
+  }
+}

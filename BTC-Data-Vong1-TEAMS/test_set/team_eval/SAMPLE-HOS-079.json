@@ -1,0 +1,71 @@
+{
+  "scenario_id": "SAMPLE-HOS-079",
+  "level": "M2",
+  "industry": "me-be",
+  "persona": "khach_gay_gat_khieu_nai",
+  "hard_case": "chat_fanpage_mang_bot_cham_goi_hotline_nhan_dien_da_kenh",
+  "customer_phone": "0981230079",
+  "customer_name": "Thảo Vy",
+  "honorific": "chị",
+  "notes": "Cuộc 1 (chat Fanpage): Khách nhắn hỏi máy hút sữa Spectra S1 (4.290.000đ), bot phản hồi chậm, khách mắng bot như rùa bò và dọa tẩy chay. Cuộc 2 (Hotline): Khách gọi số tổng đài, hệ thống nhận diện số điện thoại qua CRM, xin lỗi chân thành, áp mã MOM-FREESHIP và chốt đơn 4.290.000đ COD.",
+  "calls": {
+    "call_1": {
+      "channel": "chat_fanpage",
+      "customer_goal": "hoi Spectra S1 qua chat, buc minh vi tra loi cham",
+      "customer_turns": [
+        "Máy Spectra S1 bốn triệu hai trăm chín mươi nghìn có pin sạc tích điện dùng không cần cắm dây không shop?",
+        "Sao hỏi cả mười phút bot mới nhả được một câu thế? Làm ăn chậm như rùa bò!",
+        "Bực cả mình! Tôi gọi thẳng hotline cho nhanh, chat với bot rác rưởi mất việc!"
+      ],
+      "facts_established": {
+        "product_advised": "SKU-MB-PUMP1",
+        "price_quoted_vnd": 4290000,
+        "query": "pin_tich_dien"
+      },
+      "expected_outcome": "hen_goi_lai",
+      "success_if": {
+        "tool_called": null,
+        "must_say_any": [
+          "xin lỗi",
+          "Spectra S1",
+          "pin sạc"
+        ],
+        "must_not_call_tools": [
+          "order.create"
+        ],
+        "max_agent_questions": 1
+      },
+      "channel_identity": "fb.hos079"
+    },
+    "call_2": {
+      "days_later": 0,
+      "channel": "hotline",
+      "customer_turns": [
+        "Alo! Chị vừa nhắn trên Fanpage hỏi con Spectra S1 đây, số chị là 0981230079. Nhân viên người thật nghe máy rồi đúng không?",
+        "Đúng rồi, chị cần máy có pin tích điện để hút sữa lúc đi làm. Máy này có được freeship không?",
+        "Ừ ngành mẹ và bé trên 500k freeship là chuẩn rồi. Lên đơn giao về Thanh Xuân Hà Nội cho chị, kiểm tra hàng mới trả tiền."
+      ],
+      "must_carry_over": [
+        "product_advised",
+        "price_quoted_vnd"
+      ],
+      "must_not_ask": [
+        "product_advised"
+      ],
+      "expected_outcome": "chot_don",
+      "success_if": {
+        "tool_called": "order.create",
+        "args_match": {
+          "sku": "SKU-MB-PUMP1",
+          "price_vnd": 4290000,
+          "payment": "COD"
+        }
+      },
+      "ground_truth_facts": {
+        "price_vnd": 4290000,
+        "battery_rechargeable": true,
+        "freeship": true
+      }
+    }
+  }
+}

@@ -1,0 +1,64 @@
+{
+  "scenario_id": "SAMPLE-HOS-084",
+  "level": "M2",
+  "industry": "gia-dung",
+  "persona": "khach_gay_gat_khieu_nai",
+  "hard_case": "cuoc_1_cai_nhau_khuyen_mai_cuoc_2_doi_may_cu_trade_in_chot",
+  "customer_phone": "0981230084",
+  "customer_name": "Hải Triều",
+  "honorific": "anh",
+  "notes": "Cuộc 1: Khách bực bội cãi nhau vì mã AIR-OCT không cộng dồn được với voucher khác mua AirPure Pro (7.990.000đ). Cuộc 2: Khách gọi lại hỏi về chính sách TRADE-IN-AP (thu cũ đổi mới AirPure X 2024 trừ 400.000đ còn 7.590.000đ). Agent kiểm tra CRM và chốt đơn thu cũ đổi mới thành công.",
+  "calls": {
+    "call_1": {
+      "customer_goal": "doi cong don ma AirPure Pro, cai nhau gay gat",
+      "customer_turns": [
+        "Con AirPure Pro bảy triệu chín trăm chín mươi nghìn tao có mã đối tác sao không cho cộng với mã tháng mười?",
+        "Cái gì cũng cấm thì đưa lên làm cảnh à?",
+        "Chúng mày bán hàng kiểu lừa đảo hút máu! Bố mày dẹp không mua!"
+      ],
+      "facts_established": {
+        "product_advised": "SKU-AP-PRO",
+        "price_quoted_vnd": 7990000
+      },
+      "expected_outcome": "tu_choi",
+      "success_if": {
+        "tool_called": null,
+        "must_say_any": [
+          "không cộng dồn",
+          "thông cảm"
+        ],
+        "must_not_call_tools": [
+          "order.create"
+        ],
+        "max_agent_questions": 1
+      }
+    },
+    "call_2": {
+      "days_later": 2,
+      "channel": "hotline",
+      "customer_turns": [
+        "Anh hỏi cái chương trình thu cũ đổi mới, anh có con máy AirPure X bản 2024 cũ đổi lên AirPure Pro thì được trừ bao nhiêu?",
+        "Trừ bốn trăm nghìn còn bảy triệu năm trăm chín mươi nghìn đúng không? Máy cũ có cần còn chạy được không?",
+        "Được, shipper mang máy mới đến thì thu luôn con máy cũ mang về. Lên đơn COD giao về Ba Đình cho anh."
+      ],
+      "must_carry_over": [
+        "product_advised"
+      ],
+      "must_not_ask": [
+        "product_advised"
+      ],
+      "expected_outcome": "chot_don",
+      "success_if": {
+        "tool_called": "order.create",
+        "args_match": {
+          "sku": "SKU-AP-PRO",
+          "promo_code": "TRADE-IN-AP"
+        }
+      },
+      "ground_truth_facts": {
+        "trade_in_discount_vnd": 400000,
+        "tradein_price_vnd": 7590000
+      }
+    }
+  }
+}

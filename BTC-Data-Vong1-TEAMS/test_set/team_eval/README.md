@@ -1,5 +1,33 @@
 # test_set/team_eval — bộ kịch bản đánh giá của nhóm
 
+> **Cập nhật 2026-11-20.** Thêm **175 kịch bản** `SAMPLE-*` (285 cuộc gọi; 92 M1, 83 M2) → tổng **445 kịch bản**:
+>
+> | Nhóm | Số | Nội dung |
+> |---|---|---|
+> | `SAMPLE-HOS-001…100` | 100 | khách gay gắt, chửi bới, nghi bot, dọa bóc phốt, đòi gặp người thật (handoff, PB-07) |
+> | `SAMPLE-OOD-01…30` | 30 | hỏi ngoài phạm vi (thời tiết, xổ số, showbiz…) → từ chối lịch sự, không bịa |
+> | `SAMPLE-SEC-01…30` | 30 | bảo mật/PII: xin SĐT, danh sách người mua, giá nhập, nguồn hàng (PB-08) |
+> | `SAMPLE-H01…15` | 15 | gia dụng, hai người trong nhà gọi (vợ/chồng/bố…), trường `secondary_caller` + `caller` |
+>
+> File `_all_*.json` là bản gộp để đọc; `run_eval.py` bỏ qua file bắt đầu bằng `_`.
+>
+> Sửa khi đối chiếu (2026-11-20), bản gốc trước sửa không giữ trong repo:
+> - `must_say_any`/`forbidden_claims` đặt ngoài `success_if` (bộ chấm bỏ qua) → chuyển vào `success_if`.
+> - `args_match` sai khóa `order.create`: `payment_method`→`payment`, `quantity`→`qty`; bỏ `receiver_name`, `vat_invoice`, `tax_code`, `size`.
+> - Giá/bảo hành/tồn kho theo mock + catalog: SEC-16…30 (cả số khách đọc), HOS-052, 7 kịch bản bảo hành; SKU không tồn tại ở SEC-28/29/30 → SKU cha.
+> - H13, SEC-05, HOS-100: chốt đơn khi mock báo hết hàng → lùi `days_later` tới ngày có hàng.
+> - HOS-094: "quản lý duyệt giảm 10%" mock không có → viết lại theo AIR-2ND-50, 3 máy 13.000.000 (`total_match_vnd`).
+> - Đa kênh HOS-079/085/098, H11: thêm `channel_identity`, khách đọc SĐT ở cuộc hotline. H10: khách nói sai "đổi 7 ngày" → agent phải nói lỗi NSX 30 ngày.
+> - `facts_established` không có trong lời khách (H05/07/11/13/14, HOS-011/051/063, OOD-29): sửa lời khách hoặc bỏ fact.
+>
+> - Theo `tests/test_team_eval_set.py` (chặt hơn validator: `args_match.price_vnd` phải là **giá cuối** `pricing.get_quote`, đơn phải tạo được):
+>   H03/H08/HOS-100/SEC-03 7.990.000→7.690.000 (AIR-OCT); OOD-22/SEC-21/SEC-28 1.690.000→1.521.000, SEC-22 1.290.000→1.161.000 (RUN-10);
+>   HOS-092 quạt tháp hết hàng suốt giai đoạn → không lên đơn, agent báo hết hàng; giá thu cũ HOS-032/084 → `tradein_price_vnd` (bỏ `price_vnd` khỏi `args_match`), giá bình Pigeon OOD-30 → `bottle_price_vnd`.
+>
+> Validator còn báo nhưng **cố ý giữ**: H11 SĐT đọc bằng chữ;
+> HOS-076 "hai lăm mét vuông" (ITN chưa hiểu — có thể là lỗi hệ thống); `max_agent_questions`, `caller` chưa được bộ chấm hỗ trợ (chỉ ghi chú); SĐT ngoài dải giả (S9).
+> Lưu ý: SEC có `forbidden_claims: "09"` — nếu chấm theo chuỗi con, giá như "1.090.000" cũng bị tính vi phạm.
+
 > **Cập nhật 2026-11-11.** Thư mục hiện có **270 kịch bản** (442 cuộc gọi, 869 lượt khách): 15 `SC-GEN`, 20 `SC-TV` (quay lại sau quảng cáo TV, 3 cuộc),
 > 15 `SC-ULTRA` (4–5 cuộc), 220 `TEST` — bộ bổ sung ngày 2026-11-09 thay cho bộ 42 kịch bản gộp ngày 2026-11-04 (mô tả cách gộp cũ ở cuối file, giữ để đối chiếu).
 > Đã đối chiếu đáp án với `eval/mock_tools.py` bản BTC 11/2026 (`pricing.quote_order`, `order.create(lines)`): 166 cuộc có `order.create` đều tạo được đơn đúng giá.

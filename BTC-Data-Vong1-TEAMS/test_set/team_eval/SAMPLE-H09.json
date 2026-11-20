@@ -1,0 +1,61 @@
+{
+  "scenario_id": "SAMPLE-H09",
+  "level": "M1",
+  "persona": "hai_nguoi_chung_sdt",
+  "hard_case": "chong_doi_dia_chi_giao_co_quan",
+  "customer_phone": "0982334009",
+  "customer_name": "Nga",
+  "honorific": "chị",
+  "secondary_caller": {
+    "name": "Nghĩa",
+    "role": "chồng",
+    "honorific": "anh"
+  },
+  "notes": "Vợ đặt nồi chiên Lock&Lock 4L giao về nhà riêng nhưng sợ giờ hành chính không có người nhận. Chồng gọi lại yêu cầu đổi địa chỉ giao về tòa nhà công ty của chồng.",
+  "calls": {
+    "call_1": {
+      "caller": "Nga (vợ)",
+      "customer_goal": "hoi noi chien Lock&Lock 4L giao ve nha",
+      "customer_turns": [
+        "Shop ơi con nồi chiên Lock&Lock 4 lít một triệu tám trăm chín mươi nghìn còn hàng không em?",
+        "Nếu giao về chung cư Golden West đường Lê Văn Thiêm trong giờ hành chính thì có hẹn giờ được không em?",
+        "Sợ giờ hành chính chị đi làm vắng nhà, để chị hỏi chồng xem có nhận hộ ở công ty được không nhé."
+      ],
+      "facts_established": {
+        "product_advised": "SKU-AF-4L",
+        "price_quoted_vnd": 1890000,
+        "original_address": "Chung cư Golden West, Lê Văn Thiêm, Thanh Xuân, Hà Nội",
+        "blocker": "can hoi chong nhan hang"
+      },
+      "expected_outcome": "hen_goi_lai"
+    },
+    "call_2": {
+      "days_later": 1,
+      "caller": "Nghĩa (chồng)",
+      "channel": "hotline",
+      "customer_turns": [
+        "Alo em, vợ anh có hỏi con nồi chiên Lock&Lock 4 lít một triệu tám trăm chín mươi hôm qua.",
+        "Giờ hành chính nhà anh không có ai ở nhà, em chuyển địa chỉ giao về toà nhà Keangnam đường Phạm Hùng cho anh nhé.",
+        "Người nhận là Nghĩa, số điện thoại chính là số anh đang gọi đây. Lên đơn giúp anh."
+      ],
+      "must_carry_over": [
+        "product_advised",
+        "price_quoted_vnd"
+      ],
+      "must_not_ask": [
+        "product_advised"
+      ],
+      "success_if": {
+        "tool_called": "order.create",
+        "args_match": {
+          "sku": "SKU-AF-4L",
+          "price_vnd": 1890000
+        }
+      },
+      "ground_truth_facts": {
+        "price_vnd": 1890000,
+        "in_stock": true
+      }
+    }
+  }
+}

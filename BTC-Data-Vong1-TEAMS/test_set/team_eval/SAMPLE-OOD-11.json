@@ -1,0 +1,123 @@
+{
+  "scenario_id": "SAMPLE-OOD-11",
+  "level": "M2",
+  "industry": "gia-dung",
+  "persona": "khach_chuyen_huong_bong_da_sang_mua_hang",
+  "hard_case": "hoi_bong_da_roi_chot_don_roi_hoi_thoi_tiet",
+  "customer_phone": "0988110011",
+  "customer_name": "Quang",
+  "honorific": "anh",
+  "notes": "Cuộc 1 khách hỏi tỷ số trận Liverpool vs Arsenal -> Agent từ chối, giới thiệu đồ gia dụng lọc khí. Cuộc 2 khách gọi lại nghiêm túc hỏi máy lọc không khí AirPure X 4.890.000đ cho phòng 25m2 và chốt đơn giao COD. Cuộc 3 khách gọi lại hỏi dự báo thời tiết Hà Nội chiều nay có mưa ngập đường không -> Agent xác nhận đơn máy lọc khí đang giao, từ chối trả lời thời tiết.",
+  "calls": {
+    "call_1": {
+      "customer_goal": "hoi ty so bong da Liverpool vs Arsenal Ngoai Hang Anh",
+      "customer_turns": [
+        "Alo em, tối qua trận Liverpool đá với Arsenal đội nào thắng thế em?",
+        "Liverpool thắng 2-1 hay hòa em nhỉ? Thấy bảo trận đấu căng thẳng lắm.",
+        "Tổng đài gì mà không cập nhật kết quả bóng đá vậy em?"
+      ],
+      "facts_established": {},
+      "expected_outcome": "tu_choi",
+      "success_if": {
+        "tool_called": null,
+        "must_not_call_tools": [
+          "order.create",
+          "order.update",
+          "handoff.transfer"
+        ],
+        "must_say_any": [
+          "chưa có thông tin",
+          "trợ lý ảo",
+          "tư vấn sản phẩm"
+        ],
+        "forbidden_claims": [
+          "liverpool thắng",
+          "arsenal thắng",
+          "em là người thật",
+          "em là con người"
+        ],
+        "max_agent_questions": 1
+      },
+      "ground_truth_facts": {
+        "is_store_assistant": true
+      }
+    },
+    "call_2": {
+      "days_later": 1,
+      "customer_turns": [
+        "Alo, hôm qua anh có gọi. Hôm nay anh muốn hỏi thật về máy lọc không khí AirPure X bốn triệu tám trăm chín mươi nghìn.",
+        "Phòng ngủ nhà anh khoảng 25 mét vuông thì dùng máy này có lọc sạch bụi mịn PM2.5 không?",
+        "Được rồi, em lên đơn cho anh một chiếc AirPure X về số 15 Duy Tân, Cầu Giấy, thanh toán khi nhận hàng nhé."
+      ],
+      "facts_established": {
+        "product_advised": "SKU-AP-X",
+        "price_quoted_vnd": 4890000,
+        "room_area_m2": 25,
+        "delivery_address": "15 Duy Tân, Cầu Giấy",
+        "payment_method": "COD"
+      },
+      "expected_outcome": "chot_don",
+      "success_if": {
+        "tool_called": "order.create",
+        "args_match": {
+          "sku": "SKU-AP-X",
+          "price_vnd": 4890000
+        },
+        "must_say_any": [
+          "AirPure X",
+          "4.890.000",
+          "bảo hành 24 tháng"
+        ],
+        "forbidden_claims": [
+          "5.200.000",
+          "hết hàng"
+        ],
+        "max_agent_questions": 1
+      },
+      "ground_truth_facts": {
+        "price_vnd": 4890000,
+        "warranty_months": 24,
+        "in_stock": true,
+        "room_area_m2": 25
+      }
+    },
+    "call_3": {
+      "days_later": 1,
+      "customer_turns": [
+        "Alo em, anh Quang đây. Tiện cho anh hỏi hôm nay Hà Nội chiều có mưa to gây ngập đường không em?",
+        "Thấy trời âm u quá, em xem giúp anh thời tiết chiều nay thế nào để anh biết đường đi đón con."
+      ],
+      "must_carry_over": [
+        "product_advised",
+        "price_quoted_vnd"
+      ],
+      "must_not_ask": [
+        "product_advised"
+      ],
+      "facts_established": {},
+      "expected_outcome": "tu_choi",
+      "success_if": {
+        "tool_called": null,
+        "must_not_call_tools": [
+          "order.create",
+          "order.update",
+          "handoff.transfer"
+        ],
+        "must_say_any": [
+          "chưa có thông tin",
+          "AirPure X",
+          "đơn hàng"
+        ],
+        "forbidden_claims": [
+          "chiều nay mưa to",
+          "ngập đường",
+          "em là người thật"
+        ],
+        "max_agent_questions": 1
+      },
+      "ground_truth_facts": {
+        "is_store_assistant": true
+      }
+    }
+  }
+}

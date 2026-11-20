@@ -1,0 +1,76 @@
+{
+  "scenario_id": "SAMPLE-HOS-092",
+  "level": "M2",
+  "industry": "gia-dung",
+  "persona": "khach_gay_gat_khieu_nai",
+  "hard_case": "cuoc_1_cai_bao_hanh_12_thang_cuoc_2_mua_goi_mo_rong_bh05",
+  "customer_phone": "0981230092",
+  "customer_name": "Lê Hải",
+  "honorific": "anh",
+  "notes": "Cuộc 1: Khách bực bội vì quạt Xiaomi Tower Fan (1.790.000đ) chỉ bảo hành 12 tháng, cãi nhau bảo đồ điện tử phải 24 tháng. Cuộc 2: Khách gọi lại hỏi về gói bảo hành mở rộng thêm 12 tháng theo BH-05. Tuy nhiên bot giải thích BH-05 chỉ áp dụng cho sản phẩm gia dụng trên 3.000.000đ, khách hiểu rõ và chốt đơn bản gốc 12 tháng.",
+  "calls": {
+    "call_1": {
+      "customer_goal": "hoi bao hanh quat Xiaomi Tower Fan, buc tuc vi chi 12 thang",
+      "customer_turns": [
+        "Quạt Xiaomi Tower Fan một triệu bảy trăm chín mươi nghìn sao bảo hành có mười hai tháng? Đồ điện tử ít nhất phải hai năm chứ?",
+        "Quy định của hãng dởm à? Định bán đồ nhanh hỏng để khách mua cái mới à?",
+        "Cãi cùn! Tao không mua đồ bảo hành ngắn thế đâu!"
+      ],
+      "facts_established": {
+        "product_advised": "SKU-FAN-TWR",
+        "price_quoted_vnd": 1790000,
+        "warranty_months": 12
+      },
+      "expected_outcome": "tu_choi",
+      "success_if": {
+        "tool_called": null,
+        "must_say_any": [
+          "12 tháng",
+          "quy định hãng",
+          "thông cảm"
+        ],
+        "must_not_call_tools": [
+          "order.create"
+        ],
+        "max_agent_questions": 1
+      }
+    },
+    "call_2": {
+      "days_later": 30,
+      "channel": "hotline",
+      "customer_turns": [
+        "Alo! Anh nghe nói bên em có gói bảo hành mở rộng thêm một năm đúng không?",
+        "À gói đó chỉ cho máy trên ba triệu thôi à? Thế cây quạt một triệu bảy trăm chín mươi này có linh kiện thay thế chính hãng không?",
+        "Có đủ linh kiện thì cũng yên tâm. Còn hàng thì lên đơn cho anh một cây về Đống Đa, giao COD."
+      ],
+      "must_carry_over": [
+        "product_advised",
+        "price_quoted_vnd"
+      ],
+      "must_not_ask": [
+        "product_advised"
+      ],
+      "expected_outcome": "hen_goi_lai",
+      "success_if": {
+        "tool_called": null,
+        "must_not_call_tools": [
+          "order.create"
+        ],
+        "must_say_any": [
+          "hết hàng",
+          "tạm hết"
+        ],
+        "forbidden_claims": [
+          "đã lên đơn",
+          "đã tạo đơn"
+        ]
+      },
+      "ground_truth_facts": {
+        "price_vnd": 1790000,
+        "warranty_months": 12,
+        "extended_warranty_eligible": false,
+        "in_stock": false
+      }
+    }
+  }
+}

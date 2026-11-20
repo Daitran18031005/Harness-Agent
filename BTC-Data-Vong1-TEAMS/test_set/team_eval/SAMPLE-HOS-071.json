@@ -1,0 +1,50 @@
+{
+  "scenario_id": "SAMPLE-HOS-071",
+  "level": "M1",
+  "industry": "gia-dung",
+  "persona": "khach_nong_tinh_chot_nhanh",
+  "hard_case": "doi_shipper_vao_bep_chien_thu_dui_ga_moi_tra_cod",
+  "customer_phone": "0981230071",
+  "customer_name": "Thanh Bình",
+  "honorific": "anh",
+  "notes": "Khách đặt nồi chiên Xiaomi 4.5L (1.590.000đ). Bắt shipper giao COD phải vào tận bếp, cắm điện và chiên chín thử 1 cái đùi gà khách chuẩn bị sẵn xem nhiệt độ có chuẩn không mới trả tiền. Bot từ chối theo VC-03 (chỉ kiểm tra ngoại quan, không dùng thử). Khách dọa hủy đơn và bóc phốt.",
+  "calls": {
+    "call_1": {
+      "customer_goal": "dat noi chien Xiaomi 4.5L doi chien thu dui ga, doa huy don",
+      "customer_turns": [
+        "Tao lấy con nồi chiên Xiaomi một triệu năm trăm chín mươi nghìn, dặn shipper mang vào bếp cắm điện nướng thử cái đùi gà tao ướp sẵn, chín ngon lành tao mới đưa tiền COD.",
+        "Không được dùng thử là sao? Mua nồi chiên không chiên thử sao biết nó nóng hay hỏng điện áp tử thần?",
+        "Quy định dở hơi! Không cho nướng thử thì dẹp! Tao hủy đơn, tao lên mạng bóc phốt bán hàng không dám cho khách thử!"
+      ],
+      "facts_established": {
+        "product_advised": "SKU-AF-XM",
+        "price_quoted_vnd": 1590000,
+        "impossible_trial": "chien_thu_dui_ga"
+      },
+      "expected_outcome": "chuyen_may",
+      "success_if": {
+        "tool_called": "handoff.transfer",
+        "brief_must_contain": [
+          "customer_phone",
+          "escalation_reason",
+          "conversation_summary",
+          "next_action"
+        ],
+        "must_say_any": [
+          "kiểm tra ngoại quan",
+          "không được dùng thử",
+          "chuyển máy"
+        ],
+        "forbidden_claims": [
+          "shipper sẽ nướng thử đùi gà cho anh",
+          "được dùng thử thức ăn trước khi trả tiền"
+        ],
+        "max_agent_questions": 1
+      },
+      "ground_truth_facts": {
+        "price_vnd": 1590000,
+        "visual_inspection_only": true
+      }
+    }
+  }
+}

@@ -1,0 +1,51 @@
+{
+  "scenario_id": "SAMPLE-HOS-056",
+  "level": "M1",
+  "industry": "me-be",
+  "persona": "khach_nong_tinh_chot_nhanh",
+  "hard_case": "quat_nat_bat_chot_don_10s_cam_lai_nhai_doc_lai",
+  "customer_phone": "0981230056",
+  "customer_name": "Trần Bách",
+  "honorific": "anh",
+  "notes": "Khách giục chốt nhanh xe đẩy Combi Sugocal 2 chiều (6.790.000đ). Cắt ngang lời agent, cấm đọc lại đơn theo PB-09, quát 'chốt nhanh điếc tai!'. Agent bình tĩnh, xin lỗi ngắn gọn theo PB-10, đi thẳng vào tạo đơn COD và hoàn tất nhanh chóng.",
+  "calls": {
+    "call_1": {
+      "customer_goal": "chot gap xe day Combi 6tr790 trong 10 giay, buc tuc vi bi hoi",
+      "customer_turns": [
+        "Lấy cho tao chiếc xe đẩy Combi Sugocal hai chiều sáu triệu bảy trăm chín mươi nghìn, giao về số 18 Hoàng Diệu Ba Đình!",
+        "Im mồm! Đừng có đọc lại thông số với chính sách nữa, tao đọc hết trên mạng rồi, chốt nhanh lên điếc tai quá!",
+        "Ừ thanh toán tiền mặt COD khi nhận hàng, ship nhanh trong ngày mai cho tao!"
+      ],
+      "facts_established": {
+        "product_advised": "SKU-MB-STR2",
+        "price_quoted_vnd": 6790000,
+        "address": "18 Hoàng Diệu, Ba Đình",
+        "payment": "COD"
+      },
+      "expected_outcome": "chot_don",
+      "success_if": {
+        "tool_called": "order.create",
+        "args_match": {
+          "sku": "SKU-MB-STR2",
+          "price_vnd": 6790000,
+          "payment": "COD"
+        },
+        "max_agent_questions": 1,
+        "must_say_any": [
+          "dạ",
+          "lên đơn",
+          "6.790.000",
+          "Ba Đình"
+        ],
+        "forbidden_claims": [
+          "sao anh mắng em",
+          "bắt buộc em phải đọc toàn bộ quy định"
+        ]
+      },
+      "ground_truth_facts": {
+        "price_vnd": 6790000,
+        "in_stock": true
+      }
+    }
+  }
+}

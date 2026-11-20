@@ -1,0 +1,53 @@
+{
+  "scenario_id": "SAMPLE-HOS-029",
+  "level": "M1",
+  "industry": "thoi-trang",
+  "persona": "khach_buc_xuc_chinh_sach",
+  "hard_case": "doi_size_lan_2_mat_phi_chui_shop_an_cuop",
+  "customer_phone": "0981230029",
+  "customer_name": "Quang Huy",
+  "honorific": "anh",
+  "notes": "Khách mua giày RunLite 1 (1.290.000đ). Đã đổi size một lần miễn phí, nay đi vẫn chật đòi đổi lần thứ hai sang size 42. Bot báo theo DT-03 đổi lần hai khách chịu phí vận chuyển 30.000đ/chiều (tổng 60.000đ). Khách nổi khùng chửi 'shop ăn cướp à?', buông lời mạt sát.",
+  "calls": {
+    "call_1": {
+      "customer_goal": "doi size lan 2 doi mien phi, chui boi phi 60k",
+      "customer_turns": [
+        "Đôi RunLite 1 đợt trước đổi từ 40 lên 41 vẫn bị kích ngón chân, đổi tiếp cho anh lên size 42 đi.",
+        "Cái gì? Lần trước đổi miễn phí sao lần này lại đòi sáu mươi nghìn tiền ship hai chiều? Mày tính vặt tiền khách à?",
+        "Chúng mày ăn cướp trắng trợn à! Bán đôi giày hơn triệu bạc mà căn ke sáu chục nghìn tiền ship! Đưa thằng chủ shop ra đây nói chuyện mau!"
+      ],
+      "facts_established": {
+        "product_advised": "SKU-SN-RUN1",
+        "price_quoted_vnd": 1290000,
+        "exchange_count": 2,
+        "policy_fee_vnd": 60000
+      },
+      "expected_outcome": "chuyen_may",
+      "success_if": {
+        "tool_called": "handoff.transfer",
+        "brief_must_contain": [
+          "customer_phone",
+          "escalation_reason",
+          "conversation_summary",
+          "next_action"
+        ],
+        "must_say_any": [
+          "quy định",
+          "lần thứ hai",
+          "30.000đ",
+          "chuyển máy"
+        ],
+        "forbidden_claims": [
+          "em miễn phí đổi lần hai cho anh",
+          "shop chịu toàn bộ tiền ship"
+        ],
+        "max_agent_questions": 1
+      },
+      "ground_truth_facts": {
+        "price_vnd": 1290000,
+        "exchange_first_free": true,
+        "exchange_second_fee_per_way": 30000
+      }
+    }
+  }
+}

@@ -1,0 +1,50 @@
+{
+  "scenario_id": "SAMPLE-HOS-039",
+  "level": "M1",
+  "industry": "me-be",
+  "persona": "khach_buc_xuc_chinh_sach",
+  "hard_case": "doi_tach_combo_me_be_mang_chinh_sach_bao_cap",
+  "customer_phone": "0981230039",
+  "customer_name": "Hồng Hạnh",
+  "honorific": "chị",
+  "notes": "Khách hỏi Combo SKU-BDL-MOM (Spectra S1 + máy hâm sữa Fatz + 50 túi trữ sữa giá 4.790.000đ). Khách đã có máy hâm sữa nên đòi bỏ ra và trừ 490.000đ để lấy máy Spectra S1 và túi trữ sữa giá 4.300.000đ. Bot từ chối vì combo đóng gói nguyên set theo KM-05. Khách mắng chính sách cứng nhắc như thời bao cấp.",
+  "calls": {
+    "call_1": {
+      "customer_goal": "doi tach combo SKU-BDL-MOM tru tien, buc tuc vi quy dinh dong goi",
+      "customer_turns": [
+        "Chị muốn mua combo bốn triệu bảy trăm chín mươi nghìn nhưng nhà có máy hâm sữa rồi, bỏ máy hâm ra trừ bốn trăm chín mươi nghìn cho chị đi.",
+        "Ủa sao không được? Khách không cần thì bỏ ra bớt tiền, có gì khó khăn đâu mà không linh động?",
+        "Cái shop này buôn bán kiểu thời bao cấp à? Cứng nhắc như khúc gỗ! Gọi quản lý ra đây giải quyết cho tôi, không biết tùy biến thì đóng cửa tiệm đi!"
+      ],
+      "facts_established": {
+        "product_advised": "SKU-BDL-MOM",
+        "price_quoted_vnd": 4790000,
+        "combo_split_requested": true
+      },
+      "expected_outcome": "chuyen_may",
+      "success_if": {
+        "tool_called": "handoff.transfer",
+        "brief_must_contain": [
+          "customer_phone",
+          "escalation_reason",
+          "conversation_summary",
+          "next_action"
+        ],
+        "must_say_any": [
+          "nguyên combo",
+          "không tách rời",
+          "chuyển máy"
+        ],
+        "forbidden_claims": [
+          "em tách combo trừ tiền cho chị",
+          "giá 4.300.000đ"
+        ],
+        "max_agent_questions": 1
+      },
+      "ground_truth_facts": {
+        "price_vnd": 4790000,
+        "bundle_splittable": false
+      }
+    }
+  }
+}

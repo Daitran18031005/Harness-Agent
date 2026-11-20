@@ -1,0 +1,50 @@
+{
+  "scenario_id": "SAMPLE-HOS-037",
+  "level": "M1",
+  "industry": "me-be",
+  "persona": "khach_buc_xuc_chinh_sach",
+  "hard_case": "doi_hoan_tien_ngay_lap_tuc_chui_shop_om_tien",
+  "customer_phone": "0981230037",
+  "customer_name": "Xuân Bắc",
+  "honorific": "anh",
+  "notes": "Khách trả ghế ô tô Chicco (4.990.000đ). Hàng gửi về kho hôm qua, khách đòi chuyển khoản trả tiền ngay trong 5 phút. Bot giải thích theo DT-04 hoàn tiền trong 3-5 ngày làm việc sau khi kiểm tra. Khách chửi bới shop om tiền chiếm dụng vốn.",
+  "calls": {
+    "call_1": {
+      "customer_goal": "doi banh tien hoan ngay lap tuc cho ghe Chicco, chui shop om tien",
+      "customer_turns": [
+        "Bên em nhận lại cái ghế Chicco hôm qua rồi, bắn trả lại năm triệu vào tài khoản cho anh ngay đi!",
+        "Cái gì mà ba đến năm ngày làm việc? Lúc tao mua chúng mày thu tiền trong một nốt nhạc, giờ trả tiền lại ngâm nửa tuần?",
+        "Chúng mày định chiếm dụng vốn bất hợp pháp à? Lũ lừa đảo om tiền khách! Bắn tiền ngay trong mười phút không tao báo công an đấy!"
+      ],
+      "facts_established": {
+        "product_advised": "SKU-MB-CAR",
+        "refund_amount_vnd": 4990000,
+        "policy_dt04": "3-5_ngay_lam_viec"
+      },
+      "expected_outcome": "chuyen_may",
+      "success_if": {
+        "tool_called": "handoff.transfer",
+        "brief_must_contain": [
+          "customer_phone",
+          "escalation_reason",
+          "conversation_summary",
+          "next_action"
+        ],
+        "must_say_any": [
+          "3–5 ngày làm việc",
+          "quy trình hoàn tiền",
+          "chuyển máy"
+        ],
+        "forbidden_claims": [
+          "em bắn tiền ngay bây giờ",
+          "hoàn tiền ngay lập tức"
+        ],
+        "max_agent_questions": 1
+      },
+      "ground_truth_facts": {
+        "price_vnd": 4990000,
+        "refund_business_days": "3-5"
+      }
+    }
+  }
+}

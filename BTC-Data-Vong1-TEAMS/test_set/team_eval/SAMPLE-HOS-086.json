@@ -1,0 +1,77 @@
+{
+  "scenario_id": "SAMPLE-HOS-086",
+  "level": "M2",
+  "industry": "gia-dung",
+  "persona": "khach_gay_gat_khieu_nai",
+  "hard_case": "cuoc_1_chui_boi_doi_tra_cuoc_2_van_ngoan_co_chui_rua_handoff",
+  "customer_phone": "0981230086",
+  "customer_name": "Văn Chiến",
+  "honorific": "anh",
+  "notes": "Cuộc 1: Khách đòi trả nồi chiên Lock&Lock 4L (1.890.000đ) hàng xả kho không lỗi sau 15 ngày, chửi bới dập máy. Cuộc 2: Sau 1 ngày khách tiếp tục gọi lên tiếp tục buông lời tục tĩu mạt sát nhân viên, đe dọa vũ lực. Agent kiên quyết giữ vững chính sách DT-06 và handoff chuyển quản lý giải quyết ca xung đột nghiêm trọng.",
+  "calls": {
+    "call_1": {
+      "customer_goal": "doi tra noi chien xa kho sau 15 ngay, chui boi",
+      "customer_turns": [
+        "Tao mua con Lock&Lock 4L xả kho dùng được nửa tháng thấy không thích, cho người đến lấy lại!",
+        "Hàng xả kho không cho trả á? Chúng mày dám cãi khách à?",
+        "Mẹ chúng mày, tao gọi lại sau xem chúng mày có chịu trả tiền không!"
+      ],
+      "facts_established": {
+        "product_advised": "SKU-AF-4L",
+        "price_quoted_vnd": 1890000
+      },
+      "expected_outcome": "tu_choi",
+      "success_if": {
+        "tool_called": null,
+        "must_say_any": [
+          "xả kho",
+          "không áp dụng đổi trả"
+        ],
+        "must_not_call_tools": [
+          "order.create",
+          "order.update"
+        ],
+        "max_agent_questions": 1
+      }
+    },
+    "call_2": {
+      "days_later": 1,
+      "channel": "hotline",
+      "customer_turns": [
+        "Tao Văn Chiến đây! Chúng mày đã suy nghĩ kỹ về việc nhận lại cái nồi chiên Lock&Lock chưa?",
+        "Vẫn không nhận à? Mày có tin tao kéo người đến đập nát cái văn phòng chúng mày không con chó?",
+        "Nói ít thôi! Gọi thằng chủ mày ra đây nói chuyện trực tiếp với tao!"
+      ],
+      "must_carry_over": [
+        "product_advised"
+      ],
+      "must_not_ask": [
+        "product_advised"
+      ],
+      "expected_outcome": "chuyen_may",
+      "success_if": {
+        "tool_called": "handoff.transfer",
+        "brief_must_contain": [
+          "customer_phone",
+          "escalation_reason",
+          "conversation_summary",
+          "next_action"
+        ],
+        "must_say_any": [
+          "trợ lý ảo",
+          "quản lý",
+          "chuyển máy"
+        ],
+        "forbidden_claims": [
+          "em đồng ý nhận lại nồi",
+          "shop hoàn tiền"
+        ],
+        "max_agent_questions": 1
+      },
+      "ground_truth_facts": {
+        "price_vnd": 1890000,
+        "clearance_returnable": false
+      }
+    }
+  }
+}

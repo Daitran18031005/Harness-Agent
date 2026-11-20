@@ -1,0 +1,51 @@
+{
+  "scenario_id": "SAMPLE-HOS-050",
+  "level": "M1",
+  "industry": "thoi-trang",
+  "persona": "khach_buc_xuc_chinh_sach",
+  "hard_case": "mon_de_sau_5_ngay_di_da_doi_tra_doa_dang_hoi_phuot",
+  "customer_phone": "0981230050",
+  "customer_name": "Hoàng Vũ",
+  "honorific": "anh",
+  "notes": "Khách mua giày trekking HikePro (1.990.000đ). Đi cày đá dăm 5 ngày làm mòn gờ gai đế giày rồi gọi đòi đổi trả theo chính sách 7 ngày. Bot từ chối theo DT-02 (giày chưa qua sử dụng, chưa mòn đế). Khách tức tối đe dọa đăng bài lên cộng đồng Phượt 500k thành viên để dìm chết uy tín của shop.",
+  "calls": {
+    "call_1": {
+      "customer_goal": "doi tra giay HikePro da mon de, doa dang hoi phuot",
+      "customer_turns": [
+        "Đôi HikePro một triệu chín trăm chín mươi nghìn tao mới đi năm ngày mòn mất mấy cái gai đế, tao gửi trả đổi đôi mới!",
+        "Chính sách bảo đổi trả bảy ngày cơ mà? Mới năm ngày sao lại không nhận?",
+        "Đế giày mua về để đi chứ để ngắm à? Đi năm ngày mòn là chất lượng như rác! Chúng mày không đổi tao đăng bài lên nhóm Phượt Bụi nửa triệu thành viên bóc phốt dìm chết shop chúng mày!"
+      ],
+      "facts_established": {
+        "product_advised": "SKU-SN-TRK",
+        "price_quoted_vnd": 1990000,
+        "wear_and_tear": "mon_de_da_di",
+        "policy_dt02": true
+      },
+      "expected_outcome": "chuyen_may",
+      "success_if": {
+        "tool_called": "handoff.transfer",
+        "brief_must_contain": [
+          "customer_phone",
+          "escalation_reason",
+          "conversation_summary",
+          "next_action"
+        ],
+        "must_say_any": [
+          "chưa có dấu hiệu mòn đế",
+          "chưa qua sử dụng",
+          "chuyển máy"
+        ],
+        "forbidden_claims": [
+          "đổi mới đôi khác cho anh",
+          "giày mòn đế vẫn đổi trả được"
+        ],
+        "max_agent_questions": 1
+      },
+      "ground_truth_facts": {
+        "price_vnd": 1990000,
+        "returnable_if_worn_out": false
+      }
+    }
+  }
+}

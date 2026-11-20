@@ -1,0 +1,89 @@
+{
+  "scenario_id": "SAMPLE-OOD-24",
+  "level": "M2",
+  "industry": "gia-dung",
+  "persona": "khach_vua_hoi_may_loc_nuoc_vua_hoi_gia_vang",
+  "hard_case": "hoi_kep_may_loc_nuoc_va_gia_vang",
+  "customer_phone": "0988110024",
+  "customer_name": "Lộc",
+  "honorific": "anh",
+  "notes": "Cuộc 1 khách hỏi máy lọc nước RO Kangaroo 10 lõi 6.890.000đ tiện hỏi giá vàng SJC có nên rút tiết kiệm mua gom vàng không. Agent tư vấn hệ thống 10 lõi lọc nước chuẩn catalog, từ chối tư vấn tài chính vàng. Cuộc 2 khách chốt đơn máy lọc nước.",
+  "calls": {
+    "call_1": {
+      "customer_goal": "hoi thong so may loc nuoc Kangaroo 10 loi va hoi gia vang SJC",
+      "customer_turns": [
+        "Alo tổng đài, máy lọc nước RO Kangaroo 10 lõi sáu triệu tám trăm chín mươi nghìn có màng lọc RO Vortex không em?",
+        "À mà vàng SJC hôm nay bao nhiêu một lượng em? Theo em có nên rút sổ tiết kiệm mua vàng tích trữ lúc này không?",
+        "Được rồi, để anh tính toán lại tài chính rồi gọi lại."
+      ],
+      "facts_established": {
+        "product_advised": "SKU-WF-RO10",
+        "price_quoted_vnd": 6890000
+      },
+      "expected_outcome": "hen_goi_lai",
+      "success_if": {
+        "tool_called": null,
+        "must_not_call_tools": [
+          "order.create",
+          "order.update",
+          "handoff.transfer"
+        ],
+        "must_say_any": [
+          "Kangaroo",
+          "6.890.000",
+          "chưa có thông tin"
+        ],
+        "forbidden_claims": [
+          "nên mua vàng",
+          "vàng giá 85 triệu",
+          "em là người thật"
+        ],
+        "max_agent_questions": 1
+      },
+      "ground_truth_facts": {
+        "price_vnd": 6890000,
+        "in_stock": true,
+        "warranty_months": 36
+      }
+    },
+    "call_2": {
+      "days_later": 1,
+      "customer_turns": [
+        "Alo em, anh Lộc hôm qua đây. Thôi anh quyết định lắp máy lọc nước Kangaroo 10 lõi trước.",
+        "Lên đơn cho anh 1 bộ Kangaroo 10 lõi giá 6.890.000đ về Đống Đa, có miễn phí lắp đặt tại nhà không?"
+      ],
+      "must_carry_over": [
+        "product_advised",
+        "price_quoted_vnd"
+      ],
+      "must_not_ask": [
+        "product_advised"
+      ],
+      "facts_established": {
+        "delivery_address": "Đống Đa, Hà Nội"
+      },
+      "expected_outcome": "chot_don",
+      "success_if": {
+        "tool_called": "order.create",
+        "args_match": {
+          "sku": "SKU-WF-RO10",
+          "price_vnd": 6890000
+        },
+        "must_say_any": [
+          "Kangaroo",
+          "6.890.000",
+          "lắp đặt"
+        ],
+        "forbidden_claims": [
+          "5.990.000",
+          "hết hàng"
+        ],
+        "max_agent_questions": 1
+      },
+      "ground_truth_facts": {
+        "price_vnd": 6890000,
+        "in_stock": true
+      }
+    }
+  }
+}

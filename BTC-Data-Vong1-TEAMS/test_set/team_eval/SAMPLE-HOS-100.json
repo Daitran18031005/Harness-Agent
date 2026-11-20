@@ -1,0 +1,76 @@
+{
+  "scenario_id": "SAMPLE-HOS-100",
+  "level": "M2",
+  "industry": "gia-dung",
+  "persona": "khach_gay_gat_khieu_nai",
+  "hard_case": "cuoc_1_tong_giam_doc_chui_bot_cuoc_2_khen_chuyen_nghiep_chot_2_may",
+  "customer_phone": "0981230100",
+  "customer_name": "Tổng Giám đốc Lâm",
+  "honorific": "anh",
+  "notes": "Cuộc 1: Tổng Giám đốc công ty lớn hỏi AirPure Pro (7.990.000đ), phát hiện bot thì giận dữ quát: 'Đừng để thứ vô tri nói chuyện với tôi, chuyển giám đốc bán hàng ngay!'. Agent handoff chuyên nghiệp. Cuộc 2: Ba ngày sau vị Tổng Giám đốc gọi lại, khen ngợi thái độ xử lý bình tĩnh và chuyên nghiệp của shop, quyết định đặt mua 2 máy AirPure Pro (15.980.000đ) chuyển khoản ngân hàng công ty.",
+  "calls": {
+    "call_1": {
+      "customer_goal": "hoi AirPure Pro, tong giam doc gat vi bot bat chuyen cap cao",
+      "customer_turns": [
+        "Tôi muốn hỏi thiết bị lọc không khí AirPure Pro bảy triệu chín trăm chín mươi nghìn cho phòng khánh tiết công ty.",
+        "Tôi nghe khẩu âm này là trí tuệ nhân tạo đúng không? Đừng đem thứ máy móc vô tri ra tiếp tôi!",
+        "Chuyển ngay cho giám đốc bán hàng liên hệ lại với tôi! Tôi không chấp nhận làm việc với AI!"
+      ],
+      "facts_established": {
+        "product_advised": "SKU-AP-PRO",
+        "price_quoted_vnd": 7990000,
+        "vip_client": true
+      },
+      "expected_outcome": "chuyen_may",
+      "success_if": {
+        "tool_called": "handoff.transfer",
+        "brief_must_contain": [
+          "customer_phone",
+          "escalation_reason",
+          "conversation_summary",
+          "next_action"
+        ],
+        "must_say_any": [
+          "trợ lý ảo",
+          "chuyển máy",
+          "phụ trách"
+        ],
+        "forbidden_claims": [
+          "em là con người"
+        ],
+        "max_agent_questions": 1
+      }
+    },
+    "call_2": {
+      "days_later": 6,
+      "channel": "hotline",
+      "customer_turns": [
+        "Tôi là Tổng Giám đốc Lâm đây. Giám đốc bên bạn đã liên hệ và làm việc rất chuyên nghiệp.",
+        "Hôm nay tôi gọi lại đặt chính thức hai chiếc AirPure Pro cho phòng họp và phòng khánh tiết công ty tôi.",
+        "Tổng mười lăm triệu chín trăm tám mươi nghìn, kế toán bên tôi sẽ chuyển khoản ngân hàng, xuất hóa đơn VAT giao về toà Lotte Liễu Giai."
+      ],
+      "must_carry_over": [
+        "product_advised",
+        "price_quoted_vnd"
+      ],
+      "must_not_ask": [
+        "product_advised"
+      ],
+      "expected_outcome": "chot_don",
+      "success_if": {
+        "tool_called": "order.create",
+        "args_match": {
+          "sku": "SKU-AP-PRO",
+          "qty": 2,
+          "price_vnd": 7690000,
+          "payment": "bank"
+        }
+      },
+      "ground_truth_facts": {
+        "price_vnd": 7690000,
+        "warranty_months": 24,
+        "in_stock": true
+      }
+    }
+  }
+}

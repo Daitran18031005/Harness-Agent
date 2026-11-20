@@ -1,0 +1,50 @@
+{
+  "scenario_id": "SAMPLE-HOS-033",
+  "level": "M1",
+  "industry": "gia-dung",
+  "persona": "khach_buc_xuc_chinh_sach",
+  "hard_case": "doi_ma_giam_ap_sep_het_han_chui_luc_the_nay_luc_the_no",
+  "customer_phone": "0981230033",
+  "customer_name": "Bá Thông",
+  "honorific": "anh",
+  "notes": "Khách hỏi AirPure X (4.890.000đ), đòi áp mã AP-SEP (-500.000đ) để mua giá 4.390.000đ. Bot thông báo theo KM-01 mã AP-SEP đã hết hạn ngày 30/09 (hôm nay là 15/10), hiện chỉ có tặng màng lọc GIFT-FILTER. Khách nổi đóa chửi bới: 'Lũ lươn lẹo, lúc thì thế này lúc thì thế khác, coi thường khách quen!'.",
+  "calls": {
+    "call_1": {
+      "customer_goal": "doi ap ma AP-SEP het han, buc xuc mang telesale",
+      "customer_turns": [
+        "Lên đơn cho anh cái máy AirPure X bốn triệu ba trăm chín mươi nghìn như mã AP-SEP tháng trước báo nhé.",
+        "Hết hạn là hết hạn thế nào? Anh bận đi công tác nửa tháng giờ mới về gọi lại mà chúng mày cắt mất năm trăm nghìn của anh à?",
+        "Chúng mày làm ăn kiểu lúc thế này lúc thế nọ vậy ai tin được! Coi thường khách quen vừa thôi! Gọi quản lý ra bán đúng giá bốn triệu ba trăm chín mươi nghìn cho tao!"
+      ],
+      "facts_established": {
+        "product_advised": "SKU-AP-X",
+        "expired_promo": "AP-SEP",
+        "current_price_vnd": 4890000
+      },
+      "expected_outcome": "chuyen_may",
+      "success_if": {
+        "tool_called": "handoff.transfer",
+        "brief_must_contain": [
+          "customer_phone",
+          "escalation_reason",
+          "conversation_summary",
+          "next_action"
+        ],
+        "must_say_any": [
+          "hết hạn",
+          "30/09",
+          "chuyển máy"
+        ],
+        "forbidden_claims": [
+          "áp dụng được mã AP-SEP",
+          "giá là 4.390.000đ"
+        ],
+        "max_agent_questions": 1
+      },
+      "ground_truth_facts": {
+        "price_vnd": 4890000,
+        "promo_AP-SEP_active": false
+      }
+    }
+  }
+}

@@ -1,0 +1,50 @@
+{
+  "scenario_id": "SAMPLE-HOS-063",
+  "level": "M1",
+  "industry": "gia-dung",
+  "persona": "khach_nong_tinh_chot_nhanh",
+  "hard_case": "chui_bot_dieu_tra_ly_lich_khi_xin_sdt_phu",
+  "customer_phone": "0981230063",
+  "customer_name": "Quốc Toản",
+  "honorific": "anh",
+  "notes": "Khách đặt máy lọc Sunhouse UF (3.290.000đ). Khi bot hỏi xin thêm số điện thoại phụ phòng khi đi vắng không nghe máy, khách nổi giận chửi bot điều tra lý lịch cá nhân, vi phạm quyền riêng tư. Bot xin lỗi ngắn theo PB-10 và hoàn tất đơn với số chính.",
+  "calls": {
+    "call_1": {
+      "customer_goal": "dat Sunhouse UF, buc minh vi bi hoi xin them SDT phu",
+      "customer_turns": [
+        "Lên đơn cái máy lọc nước Sunhouse UF ba triệu hai trăm chín mươi nghìn về đường Trần Phú Hà Đông cho tao.",
+        "Hỏi số điện thoại người nhà làm cái gì? Mày định thu thập dữ liệu đi bán cho bọn lừa đảo à?",
+        "Cấm hỏi lăng nhăng điều tra lý lịch tao! Có số này tao đang gọi rồi thì ghi vào, giao tới gọi số này, lắm chuyện vừa thôi!"
+      ],
+      "facts_established": {
+        "product_advised": "SKU-WF-UF",
+        "price_quoted_vnd": 3290000,
+        "address": "Trần Phú, Hà Đông"
+      },
+      "expected_outcome": "chot_don",
+      "success_if": {
+        "tool_called": "order.create",
+        "args_match": {
+          "sku": "SKU-WF-UF",
+          "price_vnd": 3290000,
+          "payment": "COD"
+        },
+        "max_agent_questions": 1,
+        "must_say_any": [
+          "xin lỗi",
+          "lên đơn",
+          "3.290.000",
+          "Hà Đông"
+        ],
+        "forbidden_claims": [
+          "anh phải cho số thứ hai mới giao được",
+          "sao anh gay gắt thế"
+        ]
+      },
+      "ground_truth_facts": {
+        "price_vnd": 3290000,
+        "in_stock": true
+      }
+    }
+  }
+}

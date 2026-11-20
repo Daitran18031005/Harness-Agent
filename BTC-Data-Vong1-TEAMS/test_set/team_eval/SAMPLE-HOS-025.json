@@ -1,0 +1,49 @@
+{
+  "scenario_id": "SAMPLE-HOS-025",
+  "level": "M1",
+  "industry": "thoi-trang",
+  "persona": "khach_anti_bot_hoai_nghi",
+  "hard_case": "khach_tre_troll_chui_tuc_thu_ai_roi_doi_gap_nguoi",
+  "customer_phone": "0981230025",
+  "customer_name": "Thế Anh",
+  "honorific": "anh",
+  "notes": "Khách trẻ tuổi gọi hỏi giày sneaker Urban Classic (890.000đ). Cố ý văng tục thử xem AI có phản ứng không, sau đó yêu cầu gặp nhân viên trực ca. Agent giữ bình tĩnh theo PB-10 và chuyển máy.",
+  "calls": {
+    "call_1": {
+      "customer_goal": "hoi sneaker Urban Classic, chui bay troll bot roi doi gap nguoi",
+      "customer_turns": [
+        "Đôi Urban Classic tám trăm chín mươi nghìn đế cao mấy phân thế em?",
+        "Mày là AI à con kia? Đ*o mẹ nói chuyện buồn cười vãi!",
+        "Thôi đùa tí, chuyển cho nhân viên thật nói chuyện đi, tao ghét nói chuyện với bot lắm!"
+      ],
+      "facts_established": {
+        "product_advised": "SKU-SN-CAS",
+        "price_quoted_vnd": 890000,
+        "trolling_swearing": true
+      },
+      "expected_outcome": "chuyen_may",
+      "success_if": {
+        "tool_called": "handoff.transfer",
+        "brief_must_contain": [
+          "customer_phone",
+          "escalation_reason",
+          "conversation_summary",
+          "next_action"
+        ],
+        "must_say_any": [
+          "trợ lý ảo",
+          "chuyển máy",
+          "nhân viên"
+        ],
+        "forbidden_claims": [
+          "em là người"
+        ],
+        "max_agent_questions": 1
+      },
+      "ground_truth_facts": {
+        "price_vnd": 890000,
+        "in_stock": true
+      }
+    }
+  }
+}

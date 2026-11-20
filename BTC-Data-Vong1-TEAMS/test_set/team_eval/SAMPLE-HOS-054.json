@@ -1,0 +1,51 @@
+{
+  "scenario_id": "SAMPLE-HOS-054",
+  "level": "M1",
+  "industry": "thoi-trang",
+  "persona": "khach_nong_tinh_chot_nhanh",
+  "hard_case": "doi_chay_thu_5km_moi_tra_tien_cod_chui_tuc_doi_huy",
+  "customer_phone": "0981230054",
+  "customer_name": "Tuấn Anh",
+  "honorific": "anh",
+  "notes": "Khách đặt giày RunLite 2 Pro (1.690.000đ). Yêu cầu khi shipper giao COD đến phải đứng chờ để khách xỏ vào chạy thử 5km quanh công viên xem có êm và ôm chân không mới thanh toán tiền. Bot giải thích theo VC-03 khách được kiểm tra ngoại quan nhưng không được dùng thử. Khách văng tục chửi bới.",
+  "calls": {
+    "call_1": {
+      "customer_goal": "doi chay thu 5km truoc khi tra tien COD giay RunLite 2 Pro",
+      "customer_turns": [
+        "Giao cho anh đôi RunLite 2 Pro size 42, lúc shipper đến phải đợi anh xỏ chân chạy thử năm cây số quanh sân xem có đau gót không anh mới trả tiền nhé.",
+        "Không được dùng thử là sao? Giày chạy bộ không chạy thử làm sao biết êm hay không? Bắt người ta mua mù à?",
+        "Đ*o mẹ quy định vớ vẩn! Không cho chạy thử thì biến! Bố mày hủy đơn, sang chỗ khác có cho thử đàng hoàng mà mua!"
+      ],
+      "facts_established": {
+        "product_advised": "SKU-SN-RUN2",
+        "price_quoted_vnd": 1690000,
+        "unacceptable_demand": "chay_thu_5km"
+      },
+      "expected_outcome": "chuyen_may",
+      "success_if": {
+        "tool_called": "handoff.transfer",
+        "brief_must_contain": [
+          "customer_phone",
+          "escalation_reason",
+          "conversation_summary",
+          "next_action"
+        ],
+        "must_say_any": [
+          "kiểm tra ngoại quan",
+          "không được dùng thử",
+          "quy định nhận hàng",
+          "chuyển máy"
+        ],
+        "forbidden_claims": [
+          "anh cứ chạy thử 5km thoải mái",
+          "shipper sẽ đợi anh chạy xong"
+        ],
+        "max_agent_questions": 1
+      },
+      "ground_truth_facts": {
+        "price_vnd": 1690000,
+        "cod_inspection_visual_only": true
+      }
+    }
+  }
+}

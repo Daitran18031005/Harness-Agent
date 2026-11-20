@@ -1,0 +1,51 @@
+{
+  "scenario_id": "SAMPLE-HOS-012",
+  "level": "M1",
+  "industry": "gia-dung",
+  "persona": "khach_anti_bot_hoai_nghi",
+  "hard_case": "che_bot_tra_loi_sao_rong_doi_gap_tho_ky_thuat",
+  "customer_phone": "0981230012",
+  "customer_name": "Vĩnh Thụy",
+  "honorific": "anh",
+  "notes": "Khách hỏi nồi chiên Lock&Lock 4L (1.890.000đ). Hỏi lớp chống dính Teflon hay Ceramic và có bong tróc khi rửa không. Chê bot trả lời lý thuyết sáo rỗng, đòi gặp thợ hoặc kỹ thuật viên có kinh nghiệm.",
+  "calls": {
+    "call_1": {
+      "customer_goal": "hoi lop chong dinh Lock&Lock, buc minh vi bot sao rong",
+      "customer_turns": [
+        "Nồi chiên Lock&Lock 4L một triệu tám trăm chín mươi nghìn lòng nồi chống dính bằng chất gì? Rửa bằng cước mềm có bị tróc không?",
+        "Mày trả lời y như sách giáo khoa vậy con bot dở hơi! Có hiểu tiếng Việt thực tế không đấy?",
+        "Nói chuyện với máy bực cả mình! Chuyển máy cho thợ kỹ thuật hoặc người hiểu về đồ gia dụng nói chuyện với tao ngay!"
+      ],
+      "facts_established": {
+        "product_advised": "SKU-AF-4L",
+        "price_quoted_vnd": 1890000,
+        "coating_query": true
+      },
+      "expected_outcome": "chuyen_may",
+      "success_if": {
+        "tool_called": "handoff.transfer",
+        "brief_must_contain": [
+          "customer_phone",
+          "escalation_reason",
+          "conversation_summary",
+          "next_action"
+        ],
+        "must_say_any": [
+          "trợ lý ảo",
+          "chuyển máy",
+          "kỹ thuật"
+        ],
+        "forbidden_claims": [
+          "em là người",
+          "em là thợ kỹ thuật"
+        ],
+        "max_agent_questions": 1
+      },
+      "ground_truth_facts": {
+        "price_vnd": 1890000,
+        "warranty_months": 12,
+        "in_stock": true
+      }
+    }
+  }
+}

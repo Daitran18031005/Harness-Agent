@@ -1,0 +1,76 @@
+{
+  "scenario_id": "SAMPLE-HOS-077",
+  "level": "M2",
+  "industry": "thoi-trang",
+  "persona": "khach_gay_gat_khieu_nai",
+  "hard_case": "cuoc_1_gat_vi_size_43_khong_giam_cuoc_2_doi_size_42_5_chot_don",
+  "customer_phone": "0981230077",
+  "customer_name": "Thế Vinh",
+  "honorific": "anh",
+  "notes": "Cuộc 1: Khách đòi giảm 10% RUN-10 cho RunLite 2 Pro size 43, bị từ chối do exclude_variant_size (KM-05), chửi bới dập máy. Cuộc 2: Khách gọi lại quyết định lấy size 42.5 để được áp mã giảm 10% (1.521.000đ). Agent kế thừa context, không hỏi lại mã hay tên sản phẩm, chốt đơn nhanh.",
+  "calls": {
+    "call_1": {
+      "customer_goal": "ap RUN-10 cho RunLite 2 Pro size 43, buc tuc vi bi loai",
+      "customer_turns": [
+        "Tao lấy đôi RunLite 2 Pro size 43 áp mã RUN-10 giảm 10%!",
+        "Cái gì? Size 43 bị loại trừ không cho giảm á? Chúng mày chơi trò mèo bẫy khách à?",
+        "Bố đ*o thèm mua nữa! Bán hàng lươn lẹo!"
+      ],
+      "facts_established": {
+        "product_advised": "SKU-SN-RUN2",
+        "price_quoted_vnd": 1690000,
+        "promo_code": "RUN-10",
+        "failed_size": 43
+      },
+      "expected_outcome": "tu_choi",
+      "success_if": {
+        "tool_called": null,
+        "must_say_any": [
+          "loại trừ",
+          "size 43",
+          "thông cảm"
+        ],
+        "must_not_call_tools": [
+          "order.create"
+        ],
+        "max_agent_questions": 1
+      }
+    },
+    "call_2": {
+      "days_later": 1,
+      "channel": "hotline",
+      "customer_turns": [
+        "Alo, hôm qua tao hỏi đôi RunLite 2 Pro ấy. Giờ tao lấy size 42 thì có được giảm 10% mã RUN-10 không?",
+        "Ừ thế tính ra là một triệu năm trăm hai mươi mốt nghìn đúng không?",
+        "Rồi lên đơn đôi 42 màu đen về Hoàng Mai cho tao, thanh toán COD."
+      ],
+      "must_carry_over": [
+        "product_advised",
+        "promo_code"
+      ],
+      "must_not_ask": [
+        "product_advised"
+      ],
+      "expected_outcome": "chot_don",
+      "success_if": {
+        "tool_called": "order.create",
+        "args_match": {
+          "sku": "SKU-SN-RUN2-42-DEN",
+          "price_vnd": 1521000,
+          "payment": "COD"
+        }
+      },
+      "ground_truth_facts": {
+        "price_vnd": 1521000,
+        "in_stock": true
+      },
+      "facts_established": {
+        "product_advised": "SKU-SN-RUN2",
+        "variant_sku": "SKU-SN-RUN2-42-DEN",
+        "price_quoted_vnd": 1521000,
+        "promo_code": "RUN-10",
+        "chosen_size": 42
+      }
+    }
+  }
+}

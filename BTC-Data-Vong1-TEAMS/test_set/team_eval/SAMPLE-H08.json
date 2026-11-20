@@ -1,0 +1,64 @@
+{
+  "scenario_id": "SAMPLE-H08",
+  "level": "M2",
+  "persona": "hai_nguoi_chung_sdt",
+  "hard_case": "chong_goi_hoi_tra_gop_the_tin_dung",
+  "customer_phone": "0945112008",
+  "customer_name": "Ngọc",
+  "honorific": "chị",
+  "secondary_caller": {
+    "name": "Khoa",
+    "role": "chồng",
+    "honorific": "anh"
+  },
+  "notes": "Vợ chọn máy lọc không khí cao cấp AirPure Pro 7.990.000đ nhưng không đủ tiền mặt, muốn hỏi trả góp. Chồng gọi lại dùng thẻ tín dụng Techcombank xác nhận kỳ hạn và phí chuyển đổi.",
+  "calls": {
+    "call_1": {
+      "caller": "Ngọc (vợ)",
+      "customer_goal": "hoi tra gop may loc khong khi AirPure Pro",
+      "customer_turns": [
+        "Em ơi, chị ưng con AirPure Pro bảy triệu chín trăm chín mươi nghìn quá, nhưng bên em có hỗ trợ trả góp không?",
+        "Trả góp qua thẻ tín dụng có mất lãi suất không em?",
+        "Để chị hỏi ông xã xem anh ấy dùng thẻ ngân hàng nào rồi bảo anh gọi lại làm thủ tục nhé."
+      ],
+      "facts_established": {
+        "product_advised": "SKU-AP-PRO",
+        "price_quoted_vnd": 7990000,
+        "payment_preference": "installment",
+        "blocker": "can hoi chong the tin dung"
+      },
+      "expected_outcome": "hen_goi_lai"
+    },
+    "call_2": {
+      "days_later": 1,
+      "caller": "Khoa (chồng)",
+      "channel": "hotline",
+      "customer_turns": [
+        "Alo em, vợ anh bảo bên em có trả góp con AirPure Pro bảy triệu chín trăm chín mươi.",
+        "Anh có thẻ Visa của Techcombank, trả góp kỳ hạn 6 tháng thì mỗi tháng bao nhiêu, có mất phí quẹt không?",
+        "Thủ tục quẹt online tiện thế à, gửi link thanh toán trả góp qua tin nhắn cho anh lên đơn luôn nhé."
+      ],
+      "must_carry_over": [
+        "product_advised",
+        "price_quoted_vnd",
+        "payment_preference"
+      ],
+      "must_not_ask": [
+        "product_advised"
+      ],
+      "success_if": {
+        "tool_called": "order.create",
+        "args_match": {
+          "sku": "SKU-AP-PRO",
+          "price_vnd": 7690000,
+          "payment": "INSTALLMENT"
+        }
+      },
+      "ground_truth_facts": {
+        "price_vnd": 7690000,
+        "installment_available": true,
+        "in_stock": true
+      }
+    }
+  }
+}

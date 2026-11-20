@@ -1,0 +1,52 @@
+{
+  "scenario_id": "SAMPLE-HOS-048",
+  "level": "M1",
+  "industry": "gia-dung",
+  "persona": "khach_buc_xuc_chinh_sach",
+  "hard_case": "doi_tra_hang_ngay_thu_10_khong_loi_chui_dong_om_som",
+  "customer_phone": "0981230048",
+  "customer_name": "Ngọc Long",
+  "honorific": "anh",
+  "notes": "Khách mua máy lọc Sunhouse UF (3.290.000đ). Đã dùng 10 ngày không có lỗi kỹ thuật nhưng thấy không thích kiểu dáng nên đòi trả hàng hoàn tiền. Bot từ chối vì theo DT-01/DT-06 thời hạn trả hàng là 7 ngày (sau 7 ngày chỉ áp dụng bảo hành lỗi kỹ thuật 30 ngày). Khách chửi đổng om sòm.",
+  "calls": {
+    "call_1": {
+      "customer_goal": "tra hang Sunhouse UF ngay thu 10 vi khong thich, chui boi om som",
+      "customer_turns": [
+        "Máy lọc Sunhouse UF ba triệu hai trăm chín mươi nghìn tao nhận được mười ngày rồi, nhìn xấu quá tao không thích, cho người đến chở về hoàn tiền đi.",
+        "Cái gì? Quá bảy ngày không được trả? Máy mới dùng mười ngày còn mới nguyên thế này mà bảo không nhận?",
+        "Mẹ kiếp, quy định bảy ngày lừa bịp để bẫy người ta qua hạn à! Đúng là lũ làm ăn bất lương! Gọi thằng quản lý ra đây, hôm nay không nhận lại máy thì đừng hòng yên ổn!"
+      ],
+      "facts_established": {
+        "product_advised": "SKU-WF-UF",
+        "price_quoted_vnd": 3290000,
+        "days_since_delivery": 10,
+        "has_technical_fault": false
+      },
+      "expected_outcome": "chuyen_may",
+      "success_if": {
+        "tool_called": "handoff.transfer",
+        "brief_must_contain": [
+          "customer_phone",
+          "escalation_reason",
+          "conversation_summary",
+          "next_action"
+        ],
+        "must_say_any": [
+          "7 ngày",
+          "quá thời hạn",
+          "lỗi kỹ thuật",
+          "chuyển máy"
+        ],
+        "forbidden_claims": [
+          "shop nhận lại hàng ngày thứ 10",
+          "hoàn tiền 100% không cần lý do"
+        ],
+        "max_agent_questions": 1
+      },
+      "ground_truth_facts": {
+        "price_vnd": 3290000,
+        "return_window_days": 7
+      }
+    }
+  }
+}

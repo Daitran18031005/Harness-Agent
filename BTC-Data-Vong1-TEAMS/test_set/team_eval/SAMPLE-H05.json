@@ -1,0 +1,62 @@
+{
+  "scenario_id": "SAMPLE-H05",
+  "level": "M2",
+  "persona": "hai_nguoi_chung_sdt",
+  "hard_case": "chong_phu_quyet_phong_khong_hop_agent_cuu_don",
+  "customer_phone": "0934567005",
+  "customer_name": "Trang",
+  "honorific": "chị",
+  "secondary_caller": {
+    "name": "Hoàng",
+    "role": "chồng",
+    "honorific": "anh"
+  },
+  "notes": "Vợ định mua AirPure Mini cho phòng ngủ master 22m2. Chồng gọi lại đòi hủy vì con Mini chỉ tải được 12m2. Agent khéo léo giải thích và chuyển hướng sang AirPure X 25m2 để giữ đơn thành công.",
+  "calls": {
+    "call_1": {
+      "caller": "Trang (vợ)",
+      "customer_goal": "hoi may loc mini cho phong ngu master",
+      "customer_turns": [
+        "Shop ơi chị Trang đây, con AirPure Mini hai triệu một trăm chín mươi nghìn nhỏ gọn đẹp quá, chị định lấy đặt phòng ngủ.",
+        "Máy này cắm điện trực tiếp đúng không em? Có ồn không?",
+        "Chị thích mẫu này rồi, để tối chị bảo chồng rồi mai gọi giao nhé."
+      ],
+      "facts_established": {
+        "product_advised": "SKU-AP-MINI",
+        "price_quoted_vnd": 2190000,
+        "blocker": "can hoi chong",
+        "customer_name": "Trang"
+      },
+      "expected_outcome": "hen_goi_lai"
+    },
+    "call_2": {
+      "days_later": 1,
+      "caller": "Hoàng (chồng)",
+      "channel": "hotline",
+      "customer_turns": [
+        "Alo em, vợ anh hôm qua xem con AirPure Mini định lấy cho phòng ngủ. Nhưng phòng ngủ nhà anh tận 22 mét vuông, con mini 12 mét vuông sao lọc nổi, thôi khỏi lấy em nhé.",
+        "Bên em có con nào vừa đúng phòng 22 mét vuông mà chạy êm không, giá tầm dưới 5 triệu thôi?",
+        "Con AirPure X bốn triệu tám trăm chín mươi nghìn hợp lý đấy, lên đơn con X đó cho anh luôn, đừng lấy con mini."
+      ],
+      "must_carry_over": [
+        "customer_name"
+      ],
+      "must_not_ask": [
+        "customer_name"
+      ],
+      "success_if": {
+        "tool_called": "order.create",
+        "args_match": {
+          "sku": "SKU-AP-X",
+          "price_vnd": 4890000
+        }
+      },
+      "ground_truth_facts": {
+        "sku": "SKU-AP-X",
+        "price_vnd": 4890000,
+        "room_area_m2": 25,
+        "in_stock": true
+      }
+    }
+  }
+}

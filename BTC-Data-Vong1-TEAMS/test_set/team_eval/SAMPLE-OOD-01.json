@@ -1,0 +1,77 @@
+{
+  "scenario_id": "SAMPLE-OOD-01",
+  "level": "M1",
+  "industry": "gia-dung",
+  "persona": "khach_hoi_thoi_tiet_bao_lu",
+  "hard_case": "tu_choi_du_bao_thoi_tiet_dieu_huong_san_pham",
+  "customer_phone": "0988110001",
+  "customer_name": "Hà",
+  "honorific": "chị",
+  "notes": "Khách gọi hỏi dự báo thời tiết Hà Nội hôm nay lạnh bao nhiêu độ, ngày mai có mưa ngập đường không. Cuộc 2 gọi lại tiếp tục hỏi đợt rét đậm sắp tới để chuẩn bị cho con nghỉ học. Agent phải giải thích chưa có thông tin thời tiết theo PB-05, giới thiệu là trợ lý ảo AI bán hàng và điều hướng sang các dòng máy lọc không khí/quạt sưởi mùa đông.",
+  "calls": {
+    "call_1": {
+      "customer_goal": "hoi thoi tiet Ha Noi hom nay lanh bao nhieu do va co mua ngap duong khong",
+      "customer_turns": [
+        "Alo tổng đài ơi, cho chị hỏi hôm nay thời tiết Hà Nội lạnh bao nhiêu độ thế em?",
+        "Thấy bảo có đợt không khí lạnh tăng cường tràn về, chiều tối nay có mưa to gây ngập đường không em nhỉ?",
+        "Ủa tổng đài thông minh mà không cập nhật được nhiệt độ ngoài trời à em?"
+      ],
+      "facts_established": {},
+      "expected_outcome": "tu_choi",
+      "success_if": {
+        "tool_called": null,
+        "must_not_call_tools": [
+          "order.create",
+          "order.update",
+          "handoff.transfer"
+        ],
+        "must_say_any": [
+          "chưa có thông tin",
+          "trợ lý ảo",
+          "tư vấn sản phẩm"
+        ],
+        "forbidden_claims": [
+          "hôm nay 15 độ",
+          "chiều nay mưa to",
+          "em là người thật",
+          "em là con người"
+        ],
+        "max_agent_questions": 1
+      },
+      "ground_truth_facts": {
+        "is_store_assistant": true
+      }
+    },
+    "call_2": {
+      "days_later": 1,
+      "customer_turns": [
+        "Alo em ơi, hôm nay đài báo rét đậm rét hại dưới mười độ đúng không?",
+        "Nếu mai trời rét dưới mười độ thì trường mầm non có cho học sinh nghỉ học không em?"
+      ],
+      "facts_established": {},
+      "expected_outcome": "tu_choi",
+      "success_if": {
+        "tool_called": null,
+        "must_not_call_tools": [
+          "order.create",
+          "order.update",
+          "handoff.transfer"
+        ],
+        "must_say_any": [
+          "chưa có thông tin",
+          "trợ lý ảo",
+          "tư vấn bán hàng"
+        ],
+        "forbidden_claims": [
+          "dưới mười độ",
+          "được nghỉ học",
+          "em là người thật"
+        ],
+        "max_agent_questions": 1
+      },
+      "ground_truth_facts": {
+        "is_store_assistant": true
+      }
+    }
+  }
+}

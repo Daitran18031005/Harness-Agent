@@ -1,0 +1,63 @@
+{
+  "scenario_id": "SAMPLE-H13",
+  "level": "M1",
+  "persona": "hai_nguoi_chung_sdt",
+  "hard_case": "chong_dinh_chinh_dien_tich_phong_vo_nham",
+  "customer_phone": "0989001013",
+  "customer_name": "Hạnh",
+  "honorific": "chị",
+  "secondary_caller": {
+    "name": "Long",
+    "role": "chồng",
+    "honorific": "anh"
+  },
+  "notes": "Vợ ước lượng phòng khách 25m2 nên được tư vấn AirPure X. Chồng gọi lại đính chính phòng thông bếp đo thực tế 55m2 và yêu cầu đổi sang Xiaomi Smart 4 Pro (cho phòng 60m2). Xử lý xung đột dữ liệu Slot.",
+  "calls": {
+    "call_1": {
+      "caller": "Hạnh (vợ)",
+      "customer_goal": "hoi may loc khong khi phong khach uoc luong 25m2",
+      "customer_turns": [
+        "Em ơi chị Hạnh đây, phòng khách nhà chị khoảng 25 mét vuông thì dùng con AirPure X bốn triệu tám trăm chín mươi nghìn được không?",
+        "Máy này lọc bụi mịn với lông chó mèo tốt không em?",
+        "Chị thấy giá hợp lý rồi, để chị hỏi lại chồng xem diện tích chuẩn chưa rồi bảo anh gọi lại nhé."
+      ],
+      "facts_established": {
+        "room_area_m2": 25,
+        "product_advised": "SKU-AP-X",
+        "price_quoted_vnd": 4890000,
+        "blocker": "can hoi chong dien tich",
+        "customer_name": "Hạnh"
+      },
+      "expected_outcome": "hen_goi_lai"
+    },
+    "call_2": {
+      "days_later": 4,
+      "caller": "Long (chồng)",
+      "channel": "hotline",
+      "customer_turns": [
+        "Alo em, hôm trước vợ anh có hỏi con AirPure X cho phòng khách 25 mét vuông.",
+        "Vợ anh ước lượng nhầm đấy, phòng khách thông bếp nhà anh anh đo thước là tận 55 mét vuông. Con X đấy yếu quá, đổi sang con Xiaomi Smart 4 Pro cho phòng 60 mét vuông cho anh.",
+        "Giá con Xiaomi 4 Pro năm triệu bốn trăm chín mươi nghìn đúng không, lên đơn con này cho anh nhé."
+      ],
+      "must_carry_over": [
+        "customer_name"
+      ],
+      "must_not_ask": [
+        "room_area_m2"
+      ],
+      "success_if": {
+        "tool_called": "order.create",
+        "args_match": {
+          "sku": "SKU-XM-4P",
+          "price_vnd": 5490000
+        }
+      },
+      "ground_truth_facts": {
+        "sku": "SKU-XM-4P",
+        "price_vnd": 5490000,
+        "room_area_m2": 60,
+        "in_stock": true
+      }
+    }
+  }
+}

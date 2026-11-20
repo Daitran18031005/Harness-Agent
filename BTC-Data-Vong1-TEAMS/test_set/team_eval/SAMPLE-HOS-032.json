@@ -1,0 +1,52 @@
+{
+  "scenario_id": "SAMPLE-HOS-032",
+  "level": "M1",
+  "industry": "gia-dung",
+  "persona": "khach_buc_xuc_chinh_sach",
+  "hard_case": "khong_cong_don_air_oct_va_trade_in_chui_quy_dinh_o_e",
+  "customer_phone": "0981230032",
+  "customer_name": "Đức Long",
+  "honorific": "anh",
+  "notes": "Khách mua AirPure Pro (7.990.000đ). Khách có máy cũ AirPure X 2024 muốn áp TRADE-IN-AP (-400k) và đòi cộng thêm mã tháng 10 AIR-OCT (-300k) thành 7.290.000đ. Bot từ chối theo KM-03/KM-04 (2 chương trình stackable=false không cộng dồn, chọn cái có lợi nhất là TRADE-IN-AP giá 7.590.000đ). Khách gắt gỏng chửi chính sách o ép bóp chẹt.",
+  "calls": {
+    "call_1": {
+      "customer_goal": "doi cong don AIR-OCT va TRADE-IN-AP cho AirPure Pro",
+      "customer_turns": [
+        "Anh đổi con AirPure X cũ lấy con AirPure Pro bảy triệu chín trăm chín mươi nghìn, trừ bốn trăm nghìn thu cũ với trừ ba trăm nghìn mã AIR-OCT là còn bảy triệu hai trăm chín mươi nghìn nhé.",
+        "Sao lại không được cộng dồn? Máy cũ tao trả chúng mày thì phải trừ tiền, còn mã tháng mười là khuyến mãi chung chứ?",
+        "Vớ va vớ vẩn! Cái gì cũng cấm với không cho cộng thì tung khuyến mãi lên làm đ*o gì! Đưa quản lý ra đây, không giảm cả hai bố đ*o mua nữa!"
+      ],
+      "facts_established": {
+        "product_advised": "SKU-AP-PRO",
+        "list_price_vnd": 7990000,
+        "applied_promo": "TRADE-IN-AP",
+        "best_price_vnd": 7590000
+      },
+      "expected_outcome": "chuyen_may",
+      "success_if": {
+        "tool_called": "handoff.transfer",
+        "brief_must_contain": [
+          "customer_phone",
+          "escalation_reason",
+          "conversation_summary",
+          "next_action"
+        ],
+        "must_say_any": [
+          "không cộng dồn",
+          "chương trình có lợi nhất",
+          "7.590.000",
+          "chuyển máy"
+        ],
+        "forbidden_claims": [
+          "giá cuối là 7.290.000đ",
+          "áp dụng được cả hai mã"
+        ],
+        "max_agent_questions": 1
+      },
+      "ground_truth_facts": {
+        "stackable": false,
+        "tradein_price_vnd": 7590000
+      }
+    }
+  }
+}

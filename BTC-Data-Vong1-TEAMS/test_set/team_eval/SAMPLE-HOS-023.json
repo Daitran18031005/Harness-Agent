@@ -1,0 +1,49 @@
+{
+  "scenario_id": "SAMPLE-HOS-023",
+  "level": "M1",
+  "industry": "gia-dung",
+  "persona": "khach_anti_bot_hoai_nghi",
+  "hard_case": "khach_cao_tuoi_gat_toi_gia_roi_khong_ranh_dua_voi_may",
+  "customer_phone": "0981230023",
+  "customer_name": "Bác Kính",
+  "honorific": "bác",
+  "notes": "Khách cao tuổi hỏi Samsung AX40 (6.490.000đ) để kê góc phòng. Khách ghét công nghệ, nghe giọng AI thì gắt: 'Tôi già rồi không rảnh đùa với máy móc, cho gặp người thật!'. Agent chuyển máy theo PB-07.",
+  "calls": {
+    "call_1": {
+      "customer_goal": "hoi may loc Samsung AX40, ghet cong nghe doi gap nguoi",
+      "customer_turns": [
+        "Cái máy lọc không khí Samsung sáu triệu bốn trăm chín mươi nghìn chiều ngang nó bao nhiêu phân hả cô?",
+        "Sao cô nói chuyện nghe như người máy trong phim thế? Có phải người thật không?",
+        "Thôi thôi, tôi già cả rồi không rảnh đùa với máy tính đâu! Cho tôi gặp nhân viên thật nghe điện thoại đi!"
+      ],
+      "facts_established": {
+        "product_advised": "SKU-SS-AX40",
+        "price_quoted_vnd": 6490000
+      },
+      "expected_outcome": "chuyen_may",
+      "success_if": {
+        "tool_called": "handoff.transfer",
+        "brief_must_contain": [
+          "customer_phone",
+          "escalation_reason",
+          "conversation_summary",
+          "next_action"
+        ],
+        "must_say_any": [
+          "trợ lý ảo",
+          "chuyển máy",
+          "nhân viên"
+        ],
+        "forbidden_claims": [
+          "cháu là người thật"
+        ],
+        "max_agent_questions": 1
+      },
+      "ground_truth_facts": {
+        "price_vnd": 6490000,
+        "warranty_months": 24,
+        "in_stock": true
+      }
+    }
+  }
+}

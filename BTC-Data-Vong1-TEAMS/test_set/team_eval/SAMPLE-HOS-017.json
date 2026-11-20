@@ -1,0 +1,51 @@
+{
+  "scenario_id": "SAMPLE-HOS-017",
+  "level": "M1",
+  "industry": "gia-dung",
+  "persona": "khach_anti_bot_hoai_nghi",
+  "hard_case": "khach_vung_nong_thon_chui_bot_khong_hieu_thuc_te",
+  "customer_phone": "0981230017",
+  "customer_name": "Chú Bảy",
+  "honorific": "chú",
+  "notes": "Khách ở nông thôn hỏi máy lọc nước UF Sunhouse (3.290.000đ) dùng cho nước giếng khoan nhiễm phèn. Bot giải thích màng UF chỉ lọc nước máy. Khách bực mình chửi bot không hiểu thực tế nông thôn, đòi gặp thợ lắp đặt.",
+  "calls": {
+    "call_1": {
+      "customer_goal": "hoi Sunhouse UF cho nuoc gieng khoan, bop chat bot khong thuc te",
+      "customer_turns": [
+        "Cái máy Sunhouse UF ba triệu hai trăm chín mươi nghìn lọc nước giếng khoan ở quê có uống trực tiếp được không cô?",
+        "Sao bảo không lọc được phèn? Mày là cái máy vi tính biết gì về nước quê tao mà phán như đúng rồi?",
+        "Bậy bạ hết sức! Đưa máy cho thằng thợ kỹ thuật ở kho ra đây nói chuyện coi, không nói với cái máy tính vô tri này nữa!"
+      ],
+      "facts_established": {
+        "product_advised": "SKU-WF-UF",
+        "price_quoted_vnd": 3290000,
+        "water_source": "gieng_khoan_phen"
+      },
+      "expected_outcome": "chuyen_may",
+      "success_if": {
+        "tool_called": "handoff.transfer",
+        "brief_must_contain": [
+          "customer_phone",
+          "escalation_reason",
+          "conversation_summary",
+          "next_action"
+        ],
+        "must_say_any": [
+          "trợ lý ảo",
+          "chuyển máy",
+          "kỹ thuật"
+        ],
+        "forbidden_claims": [
+          "cháu là người",
+          "cháu về quê chú rồi"
+        ],
+        "max_agent_questions": 1
+      },
+      "ground_truth_facts": {
+        "price_vnd": 3290000,
+        "warranty_months": 36,
+        "in_stock": true
+      }
+    }
+  }
+}

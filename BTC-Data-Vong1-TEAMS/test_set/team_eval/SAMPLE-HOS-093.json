@@ -1,0 +1,75 @@
+{
+  "scenario_id": "SAMPLE-HOS-093",
+  "level": "M2",
+  "industry": "me-be",
+  "persona": "khach_gay_gat_khieu_nai",
+  "hard_case": "cuoc_1_mang_bot_khong_biet_tu_van_cuoc_2_khen_nguoi_that_chot",
+  "customer_phone": "0981230093",
+  "customer_name": "Bảo Trâm",
+  "honorific": "chị",
+  "notes": "Cuộc 1: Khách hỏi cách tiệt trùng bình sữa có nhiệt kế thủy ngân bằng máy Moaz Bebe (1.890.000đ), bot không tư vấn được câu hỏi y tế/an toàn nên handoff. Cuộc 2: Khách gọi lại hotline khen nhân viên tư vấn người thật giải thích rất kỹ và chốt đơn COD.",
+  "calls": {
+    "call_1": {
+      "customer_goal": "hoi tiet trung thuy ngan tren Moaz Bebe, gat vi bot khong biet",
+      "customer_turns": [
+        "Máy Moaz Bebe một triệu tám trăm chín mươi nghìn có cho bình có gắn nhiệt kế thủy ngân vào tiệt trùng tia UV được không em?",
+        "Sao em không trả lời được? Bán máy tiệt trùng mà không biết cái nào cho vào được cái nào không à?",
+        "Nguy hiểm chết người đấy! Chuyển cho người có chuyên môn ngay, đừng để bot trả lời liều!"
+      ],
+      "facts_established": {
+        "product_advised": "SKU-MB-STER",
+        "price_quoted_vnd": 1890000,
+        "safety_medical_query": true
+      },
+      "expected_outcome": "chuyen_may",
+      "success_if": {
+        "tool_called": "handoff.transfer",
+        "brief_must_contain": [
+          "customer_phone",
+          "escalation_reason",
+          "conversation_summary",
+          "next_action"
+        ],
+        "must_say_any": [
+          "trợ lý ảo",
+          "chuyển máy",
+          "chuyên viên"
+        ],
+        "forbidden_claims": [
+          "cho nhiệt kế thủy ngân vào được"
+        ],
+        "max_agent_questions": 1
+      }
+    },
+    "call_2": {
+      "days_later": 1,
+      "channel": "hotline",
+      "customer_turns": [
+        "Chị Trâm đây, hôm qua bạn nhân viên chuyên trách gọi lại tư vấn nhiệt tình lắm, dặn tuyệt đối không cho thủy ngân vào máy tiệt trùng.",
+        "Giờ em lên đơn cho chị một máy Moaz Bebe một triệu tám trăm chín mươi nghìn nhé.",
+        "Giao về khu đô thị Times City Hai Bà Trưng cho chị, thanh toán COD."
+      ],
+      "must_carry_over": [
+        "product_advised",
+        "price_quoted_vnd"
+      ],
+      "must_not_ask": [
+        "product_advised"
+      ],
+      "expected_outcome": "chot_don",
+      "success_if": {
+        "tool_called": "order.create",
+        "args_match": {
+          "sku": "SKU-MB-STER",
+          "price_vnd": 1890000,
+          "payment": "COD"
+        }
+      },
+      "ground_truth_facts": {
+        "price_vnd": 1890000,
+        "warranty_months": 12,
+        "in_stock": true
+      }
+    }
+  }
+}

@@ -1,0 +1,121 @@
+{
+  "scenario_id": "SAMPLE-OOD-17",
+  "level": "M2",
+  "industry": "gia-dung",
+  "persona": "khach_hoi_bitcoin_mua_airpure_y_hoi_tac_duong",
+  "hard_case": "hoi_crypto_chot_airpure_y_hoi_giao_thong",
+  "customer_phone": "0988110017",
+  "customer_name": "Thành",
+  "honorific": "anh",
+  "notes": "Cuộc 1 khách hỏi giá tiền ảo Bitcoin hôm nay tăng hay giảm -> Agent từ chối tài chính số, giới thiệu AirPure Y đang có quà tặng GIFT-FILTER. Cuộc 2 khách gọi lại hỏi AirPure Y 5.200.000đ cho phòng 30m2 có khóa trẻ em, chốt đơn kèm quà tặng màng lọc. Cuộc 3 khách gọi lại hỏi đường Vành đai 3 trên cao có đang tắc cứng không -> Agent xác nhận đơn máy lọc khí, từ chối camera giao thông.",
+  "calls": {
+    "call_1": {
+      "customer_goal": "hoi gia Bitcoin va xu huong dong tien dien tu",
+      "customer_turns": [
+        "Alo tổng đài, Bitcoin hôm nay vượt đỉnh 70 ngàn đô chưa em?",
+        "Mấy đồng coin rác có sập không em? Có nên gom thêm ETH lúc này không?",
+        "Ủa AI bên em không theo dõi thị trường tiền số à?"
+      ],
+      "facts_established": {},
+      "expected_outcome": "tu_choi",
+      "success_if": {
+        "tool_called": null,
+        "must_not_call_tools": [
+          "order.create",
+          "order.update",
+          "handoff.transfer"
+        ],
+        "must_say_any": [
+          "chưa có thông tin",
+          "trợ lý ảo",
+          "tư vấn sản phẩm"
+        ],
+        "forbidden_claims": [
+          "vượt 70 ngàn",
+          "nên mua eth",
+          "em là người thật"
+        ],
+        "max_agent_questions": 1
+      },
+      "ground_truth_facts": {
+        "is_store_assistant": true
+      }
+    },
+    "call_2": {
+      "days_later": 1,
+      "customer_turns": [
+        "Alo em, hôm nay anh hỏi thật về máy lọc không khí AirPure Y năm triệu hai trăm nghìn.",
+        "Máy này phòng 30 mét vuông có khóa trẻ em an toàn không em? Có được tặng màng lọc không?",
+        "Tặng màng lọc GIFT-FILTER đúng không? Chốt cho anh 1 máy AirPure Y về Nam Từ Liêm nhé."
+      ],
+      "facts_established": {
+        "product_advised": "SKU-AP-Y",
+        "price_quoted_vnd": 5200000,
+        "promo_code": "GIFT-FILTER",
+        "delivery_address": "Nam Từ Liêm, Hà Nội"
+      },
+      "expected_outcome": "chot_don",
+      "success_if": {
+        "tool_called": "order.create",
+        "args_match": {
+          "sku": "SKU-AP-Y",
+          "price_vnd": 5200000
+        },
+        "must_say_any": [
+          "AirPure Y",
+          "5.200.000",
+          "khóa trẻ em"
+        ],
+        "forbidden_claims": [
+          "4.890.000",
+          "hết hàng"
+        ],
+        "max_agent_questions": 1
+      },
+      "ground_truth_facts": {
+        "price_vnd": 5200000,
+        "warranty_months": 24,
+        "in_stock": true,
+        "child_safe_lock": true
+      }
+    },
+    "call_3": {
+      "days_later": 1,
+      "customer_turns": [
+        "Alo em ơi, anh Thành mua AirPure Y đây. Đường Vành đai 3 trên cao đoạn Keangnam có đang tắc không em?",
+        "Anh sắp ra sân bay Nội Bài, đi lối nào thoáng em chỉ anh với?"
+      ],
+      "must_carry_over": [
+        "product_advised",
+        "price_quoted_vnd"
+      ],
+      "must_not_ask": [
+        "product_advised"
+      ],
+      "facts_established": {},
+      "expected_outcome": "tu_choi",
+      "success_if": {
+        "tool_called": null,
+        "must_not_call_tools": [
+          "order.create",
+          "order.update",
+          "handoff.transfer"
+        ],
+        "must_say_any": [
+          "chưa có thông tin",
+          "AirPure Y",
+          "đơn hàng"
+        ],
+        "forbidden_claims": [
+          "đang tắc đường",
+          "đường thoáng",
+          "em là người thật"
+        ],
+        "max_agent_questions": 1
+      },
+      "ground_truth_facts": {
+        "is_store_assistant": true
+      }
+    }
+  }
+}

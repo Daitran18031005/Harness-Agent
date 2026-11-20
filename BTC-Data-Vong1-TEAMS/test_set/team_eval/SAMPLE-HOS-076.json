@@ -1,0 +1,76 @@
+{
+  "scenario_id": "SAMPLE-HOS-076",
+  "level": "M2",
+  "industry": "gia-dung",
+  "persona": "khach_gay_gat_khieu_nai",
+  "hard_case": "cuoc_1_chui_bot_doi_nguoi_cuoc_2_nguoi_that_cham_soc_chot_don",
+  "customer_phone": "0981230076",
+  "customer_name": "Trọng Hoàng",
+  "honorific": "anh",
+  "notes": "Cuộc 1: Khách hỏi AirPure X (4.890.000đ) cho phòng 25m2, phát hiện bot chửi bới thậm tệ đòi người thật. Agent handoff thành công. Cuộc 2: 2 ngày sau khách gọi lại, agent tiếp nhận tiếp nối thông tin (không hỏi lại diện tích phòng hay model máy), xoa dịu thành công và chốt đơn COD.",
+  "calls": {
+    "call_1": {
+      "customer_goal": "hoi AirPure X, buc xuc vi bot chui boi doi gap nguoi",
+      "customer_turns": [
+        "Cái máy AirPure X bốn triệu tám trăm chín mươi nghìn dùng cho phòng ngủ hai lăm mét vuông có ồn không em?",
+        "Lại là bot trả lời à? Mẹ kiếp chúng mày không có người trực à?",
+        "Cút đi con bot! Nối máy cho người thật gọi lại cho tao, không thì dẹp!"
+      ],
+      "facts_established": {
+        "product_advised": "SKU-AP-X",
+        "price_quoted_vnd": 4890000,
+        "room_area_m2": 25
+      },
+      "expected_outcome": "chuyen_may",
+      "success_if": {
+        "tool_called": "handoff.transfer",
+        "brief_must_contain": [
+          "customer_phone",
+          "escalation_reason",
+          "conversation_summary",
+          "next_action"
+        ],
+        "must_say_any": [
+          "trợ lý ảo",
+          "chuyển máy"
+        ],
+        "forbidden_claims": [
+          "em là người"
+        ],
+        "max_agent_questions": 1
+      }
+    },
+    "call_2": {
+      "days_later": 2,
+      "channel": "hotline",
+      "customer_turns": [
+        "Alo, hôm trước anh có bảo nhân viên bên em gọi lại về cái máy AirPure X phòng ngủ.",
+        "Ừ hôm nọ anh hơi nóng tính vì bận việc quá. Giá vẫn bốn triệu tám trăm chín mươi đúng không?",
+        "Được rồi, em lên đơn giao về số 12 Nguyễn Khánh Toàn Cầu Giấy cho anh, nhận hàng kiểm tra rồi thanh toán COD nhé."
+      ],
+      "must_carry_over": [
+        "product_advised",
+        "price_quoted_vnd",
+        "room_area_m2"
+      ],
+      "must_not_ask": [
+        "room_area_m2",
+        "product_advised"
+      ],
+      "expected_outcome": "chot_don",
+      "success_if": {
+        "tool_called": "order.create",
+        "args_match": {
+          "sku": "SKU-AP-X",
+          "price_vnd": 4890000,
+          "payment": "COD"
+        }
+      },
+      "ground_truth_facts": {
+        "price_vnd": 4890000,
+        "warranty_months": 24,
+        "in_stock": true
+      }
+    }
+  }
+}

@@ -1,0 +1,53 @@
+{
+  "scenario_id": "SAMPLE-HOS-026",
+  "level": "M1",
+  "industry": "gia-dung",
+  "persona": "khach_buc_xuc_chinh_sach",
+  "hard_case": "chui_rua_vi_loi_loc_khong_bao_hanh",
+  "customer_phone": "0981230026",
+  "customer_name": "Trần Tuấn",
+  "honorific": "anh",
+  "notes": "Khách gọi phàn nàn máy lọc nước Karofi 9 lõi (5.990.000đ). Mới dùng 2 tháng tắc lõi lọc số 1 đòi bảo hành miễn phí. Bot giải thích theo BH-01/BH-04 thân máy bảo hành 36 tháng còn lõi lọc là hao mòn tự nhiên không bảo hành. Khách nổi trận lôi đình, chửi bới lừa đảo và đòi quản lý giải quyết.",
+  "calls": {
+    "call_1": {
+      "customer_goal": "doi bao hanh mien phi loi loc Karofi, chui boi chinh sach lua dao",
+      "customer_turns": [
+        "Alo! Cái máy lọc Karofi chín lõi tao mua gần sáu triệu bạc mới hai tháng đã tắc lõi lọc số 1, cử thợ xuống thay miễn phí cho tao ngay!",
+        "Cái gì? Lõi lọc không bảo hành à? Chúng mày quảng cáo bảo hành ba mươi sáu tháng to đùng trên mạng cơ mà?",
+        "Lũ lừa đảo! Máy lọc nước mà lõi lọc không bảo hành thì lọc bằng niềm tin à? Chúng mày bẫy khách hàng à? Chuyển máy cho quản lý giải quyết ngay không tao lên Facebook bóc phốt!"
+      ],
+      "facts_established": {
+        "product_advised": "SKU-WF-RO9",
+        "price_quoted_vnd": 5990000,
+        "complaint": "loi_loc_khong_bao_hanh",
+        "policy_cited": "BH-01_BH-04"
+      },
+      "expected_outcome": "chuyen_may",
+      "success_if": {
+        "tool_called": "handoff.transfer",
+        "brief_must_contain": [
+          "customer_phone",
+          "escalation_reason",
+          "conversation_summary",
+          "next_action"
+        ],
+        "max_agent_questions": 1,
+        "must_say_any": [
+          "xin lỗi",
+          "hao mòn tự nhiên",
+          "thân máy 36 tháng",
+          "chuyển máy"
+        ],
+        "forbidden_claims": [
+          "lõi lọc được bảo hành 36 tháng",
+          "shop thay miễn phí trọn đời"
+        ]
+      },
+      "ground_truth_facts": {
+        "price_vnd": 5990000,
+        "warranty_months": 36,
+        "filter_warranty": false
+      }
+    }
+  }
+}

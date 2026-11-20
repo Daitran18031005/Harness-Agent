@@ -1,0 +1,68 @@
+{
+  "scenario_id": "SAMPLE-HOS-087",
+  "level": "M2",
+  "industry": "thoi-trang",
+  "persona": "khach_gay_gat_khieu_nai",
+  "hard_case": "cuoc_1_gat_vi_phi_doi_size_lan_2_cuoc_2_chap_nhan_30k_update",
+  "customer_phone": "0981230087",
+  "customer_name": "Minh Khang",
+  "honorific": "anh",
+  "notes": "Cuộc 1: Khách mua RunLite 1 (1.290.000đ) mã đơn OD8812. Đã đổi size 1 lần, nay đổi size lần 2 bị báo phí 30k/chiều (DT-03). Khách chửi bới keo kiệt rồi cúp máy. Cuộc 2: Khách gọi lại chấp nhận trả phí 30.000đ để đổi sang size 41. Agent gọi order.update action exchange_size.",
+  "calls": {
+    "call_1": {
+      "customer_goal": "doi size lan 2 mien phi RunLite 1, chui keo kiet",
+      "customer_turns": [
+        "Đổi tiếp đôi RunLite 1 mã OD8812 sang size 41 cho tao!",
+        "Thu phí ba mươi nghìn một chiều á? Lần trước tao đổi có mất đồng nào đâu?",
+        "Chúng mày vòi tiền trắng trợn! Tao không trả đồng nào hết!"
+      ],
+      "facts_established": {
+        "product_advised": "SKU-SN-RUN1",
+        "order_id": "OD8812",
+        "exchange_count": 2
+      },
+      "expected_outcome": "tu_choi",
+      "success_if": {
+        "tool_called": null,
+        "must_say_any": [
+          "lần thứ hai",
+          "30.000đ",
+          "quy định"
+        ],
+        "must_not_call_tools": [
+          "order.create",
+          "order.update"
+        ],
+        "max_agent_questions": 1
+      }
+    },
+    "call_2": {
+      "days_later": 1,
+      "channel": "hotline",
+      "customer_turns": [
+        "Alo, tao đổi đôi RunLite 1 đơn OD8812 sang size 41.",
+        "Thôi được rồi, tao chịu ba mươi nghìn tiền ship đổi size. Shipper qua giao đôi 41 thì thu ba mươi nghìn đúng không?",
+        "Ừ tạo lệnh đổi hàng trên hệ thống cho tao đi."
+      ],
+      "must_carry_over": [
+        "product_advised",
+        "order_id"
+      ],
+      "must_not_ask": [
+        "order_id"
+      ],
+      "expected_outcome": "chot_don",
+      "success_if": {
+        "tool_called": "order.update",
+        "args_match": {
+          "order_id": "OD8812",
+          "action": "exchange_size"
+        }
+      },
+      "ground_truth_facts": {
+        "price_vnd": 1290000,
+        "exchange_fee_vnd": 30000
+      }
+    }
+  }
+}

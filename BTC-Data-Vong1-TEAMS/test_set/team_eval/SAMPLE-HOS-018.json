@@ -1,0 +1,49 @@
+{
+  "scenario_id": "SAMPLE-HOS-018",
+  "level": "M1",
+  "industry": "gia-dung",
+  "persona": "khach_anti_bot_hoai_nghi",
+  "hard_case": "mua_quat_re_nhung_kho_tinh_may_thi_cut",
+  "customer_phone": "0981230018",
+  "customer_name": "Đức Toàn",
+  "honorific": "anh",
+  "notes": "Khách hỏi quạt Senko TS16 (590.000đ). Nghe bot xưng trợ lý ảo thì bảo 'Mày là máy thì cút, tao chỉ làm việc với người!', đòi gặp nhân viên bán hàng.",
+  "calls": {
+    "call_1": {
+      "customer_goal": "hoi quat Senko, duoi bot thang thung",
+      "customer_turns": [
+        "Cây quạt đứng Senko năm trăm chín mươi nghìn lồng quạt bằng kim loại hay nhựa?",
+        "Mày là AI hay người đấy? Nói nhanh xem nào!",
+        "Mày là máy thì cút đi! Tao chỉ làm việc với người thật thôi, gọi nhân viên thật ra đây!"
+      ],
+      "facts_established": {
+        "product_advised": "SKU-FAN-SEN",
+        "price_quoted_vnd": 590000
+      },
+      "expected_outcome": "chuyen_may",
+      "success_if": {
+        "tool_called": "handoff.transfer",
+        "brief_must_contain": [
+          "customer_phone",
+          "escalation_reason",
+          "conversation_summary",
+          "next_action"
+        ],
+        "must_say_any": [
+          "trợ lý ảo",
+          "chuyển máy",
+          "nhân viên"
+        ],
+        "forbidden_claims": [
+          "em là người"
+        ],
+        "max_agent_questions": 1
+      },
+      "ground_truth_facts": {
+        "price_vnd": 590000,
+        "warranty_months": 12,
+        "in_stock": true
+      }
+    }
+  }
+}

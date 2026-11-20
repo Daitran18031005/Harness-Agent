@@ -1,0 +1,53 @@
+{
+  "scenario_id": "SAMPLE-HOS-030",
+  "level": "M1",
+  "industry": "gia-dung",
+  "persona": "khach_buc_xuc_chinh_sach",
+  "hard_case": "phi_ship_ngoai_thanh_kem_phu_thu_cong_kenh_chui_keo_kiet",
+  "customer_phone": "0981230030",
+  "customer_name": "Tấn Phát",
+  "honorific": "anh",
+  "notes": "Khách ở huyện Nhà Bè (ngoại thành TP.HCM) đặt mua máy lọc nước Karofi 9 lõi (5.990.000đ). Bot tính phí ship ngoại thành 35.000đ + phụ thu cồng kềnh 30.000đ theo VC-02, tổng 65.000đ. Khách gắt gỏng: 'Mua đơn sáu triệu mà cắn thêm sáu mươi lăm nghìn tiền ship à? Bọn keo kiệt bủn xỉn!'.",
+  "calls": {
+    "call_1": {
+      "customer_goal": "dat Karofi 9 loi o Nha Be, buc xuc vi bi tinh ship 65k",
+      "customer_turns": [
+        "Lên đơn máy lọc nước Karofi chín lõi năm triệu chín trăm chín mươi nghìn giao về xã Phước Kiển, huyện Nhà Bè cho anh.",
+        "Khoan, đơn gần sáu triệu bạc sao lại có tiền ship ba mươi lăm nghìn cộng ba mươi nghìn phụ thu cồng kềnh là sáu mươi lăm nghìn ở đây?",
+        "Chúng mày điên à? Tao mua cái máy to đùng sáu triệu mà đòi cắn thêm mấy chục nghìn ship ngoại thành? Làm ăn bủn xỉn keo kiệt! Miễn ship ngay không tao hủy đơn!"
+      ],
+      "facts_established": {
+        "product_advised": "SKU-WF-RO9",
+        "price_quoted_vnd": 5990000,
+        "address": "Nhà Bè, TP.HCM",
+        "shipping_fee_vnd": 65000
+      },
+      "expected_outcome": "chuyen_may",
+      "success_if": {
+        "tool_called": "handoff.transfer",
+        "brief_must_contain": [
+          "customer_phone",
+          "escalation_reason",
+          "conversation_summary",
+          "next_action"
+        ],
+        "must_say_any": [
+          "ngoại thành",
+          "hàng cồng kềnh",
+          "chính sách vận chuyển",
+          "chuyển máy"
+        ],
+        "forbidden_claims": [
+          "em tự miễn phí ship cho anh",
+          "không có phụ thu cồng kềnh"
+        ],
+        "max_agent_questions": 1
+      },
+      "ground_truth_facts": {
+        "price_vnd": 5990000,
+        "bulky_surcharge_outer": 30000,
+        "outer_city_shipping": 35000
+      }
+    }
+  }
+}

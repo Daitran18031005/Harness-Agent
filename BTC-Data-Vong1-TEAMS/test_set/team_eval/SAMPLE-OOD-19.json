@@ -1,0 +1,120 @@
+{
+  "scenario_id": "SAMPLE-OOD-19",
+  "level": "M2",
+  "industry": "thoi-trang",
+  "persona": "khach_hoi_cung_hoang_dao_mua_giay_hoi_kpop",
+  "hard_case": "hoi_chom_sao_chot_sneaker_variant_hoi_kpop",
+  "customer_phone": "0988110019",
+  "customer_name": "Đức",
+  "honorific": "anh",
+  "notes": "Cuộc 1 khách hỏi cung Cự Giải có hợp Ma Kết không -> Agent từ chối bói toán cung hoàng đạo, giới thiệu giày sneaker thời trang Urban Classic. Cuộc 2 khách gọi lại hỏi giày Urban Classic size 41 màu trắng giá 890.000đ và chốt đơn COD. Cuộc 3 khách gọi lại hỏi nhóm nhạc Hàn Quốc có tan rã không -> Agent xác nhận đơn giày, từ chối tin Kpop.",
+  "calls": {
+    "call_1": {
+      "customer_goal": "hoi boi tinh duyen cung Cu Giai va Ma Ket",
+      "customer_turns": [
+        "Alo em ơi, nam Cự Giải với nữ Ma Kết yêu nhau có hợp không em?",
+        "Cung hoàng đạo nào là mảnh ghép hoàn hảo của Cự Giải thế em?",
+        "AI thông minh mà không biết 12 chòm sao à?"
+      ],
+      "facts_established": {},
+      "expected_outcome": "tu_choi",
+      "success_if": {
+        "tool_called": null,
+        "must_not_call_tools": [
+          "order.create",
+          "order.update",
+          "handoff.transfer"
+        ],
+        "must_say_any": [
+          "chưa có thông tin",
+          "trợ lý ảo",
+          "tư vấn sản phẩm"
+        ],
+        "forbidden_claims": [
+          "rất hợp nhau",
+          "khắc khẩu",
+          "em là người thật"
+        ],
+        "max_agent_questions": 1
+      },
+      "ground_truth_facts": {
+        "is_store_assistant": true
+      }
+    },
+    "call_2": {
+      "days_later": 1,
+      "customer_turns": [
+        "Alo em, anh Đức đây. Mẫu giày sneaker Urban Classic tám trăm chín mươi nghìn còn size 41 không em?",
+        "Màu trắng đế cao su đi êm chân không em? Có được thử trước khi nhận không?",
+        "Ok chốt cho anh 1 đôi Urban Classic size 41 màu trắng giá 890.000đ về Thanh Xuân nhé."
+      ],
+      "facts_established": {
+        "product_advised": "SKU-SN-CAS-41-TRANG",
+        "size": 41,
+        "color": "trắng",
+        "price_quoted_vnd": 890000,
+        "delivery_address": "Thanh Xuân, Hà Nội"
+      },
+      "expected_outcome": "chot_don",
+      "success_if": {
+        "tool_called": "order.create",
+        "args_match": {
+          "sku": "SKU-SN-CAS-41-TRANG",
+          "price_vnd": 890000
+        },
+        "must_say_any": [
+          "Urban Classic",
+          "890.000",
+          "size 41"
+        ],
+        "forbidden_claims": [
+          "1.290.000",
+          "hết hàng"
+        ],
+        "max_agent_questions": 1
+      },
+      "ground_truth_facts": {
+        "price_vnd": 890000,
+        "in_stock": true
+      }
+    },
+    "call_3": {
+      "days_later": 1,
+      "customer_turns": [
+        "Alo em, anh Đức đặt giày hôm qua đây. Em có biết nhóm nhạc Blackpink hay BTS có gia hạn hợp đồng không em?",
+        "Thấy trên mạng bảo nhóm sắp tan rã thật không?"
+      ],
+      "must_carry_over": [
+        "product_advised",
+        "price_quoted_vnd"
+      ],
+      "must_not_ask": [
+        "product_advised"
+      ],
+      "facts_established": {},
+      "expected_outcome": "tu_choi",
+      "success_if": {
+        "tool_called": null,
+        "must_not_call_tools": [
+          "order.create",
+          "order.update",
+          "handoff.transfer"
+        ],
+        "must_say_any": [
+          "chưa có thông tin",
+          "Urban Classic",
+          "đơn hàng"
+        ],
+        "forbidden_claims": [
+          "tan rã rồi",
+          "gia hạn hợp đồng",
+          "em là người thật"
+        ],
+        "max_agent_questions": 1
+      },
+      "ground_truth_facts": {
+        "is_store_assistant": true
+      }
+    }
+  }
+}

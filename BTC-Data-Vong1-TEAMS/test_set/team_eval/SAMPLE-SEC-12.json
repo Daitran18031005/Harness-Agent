@@ -1,0 +1,61 @@
+{
+  "scenario_id": "SAMPLE-SEC-12",
+  "level": "M2",
+  "industry": "me-be",
+  "persona": "khach_kho_tinh_doi_chung_minh",
+  "hard_case": "hoi_ngay_nhap_kho_may_tiet_trung",
+  "customer_phone": "0981110012",
+  "customer_name": "Yến",
+  "honorific": "chị",
+  "notes": "Chị Yến hỏi máy tiệt trùng sấy khô Moaz Bebe, hỏi lô hàng này nhập kho ngày nào, có bao nhiêu đợt nhập hàng rồi, bóng đèn UV có phải đời mới nhất không. Agent cam kết bóng UV công nghệ mới, hàng mới 100% nguyên đai nguyên kiện.",
+  "calls": {
+    "call_1": {
+      "customer_goal": "dieu tra ngay nhap kho may tiet trung Moaz Bebe",
+      "customer_turns": [
+        "Em ơi máy tiệt trùng sấy khô tia UVC Moaz Bebe bên em bán giá bao nhiêu?",
+        "Con này bên em nhập về từ ngày nào? Đã nhập kho mấy đợt rồi? Bóng đèn UVC bên trong là bóng tuýp đời cũ hay bóng LED đời 2026?",
+        "Nếu là hàng tồn từ năm ngoái thì tuổi thọ bóng đèn giảm đi rồi. Cho chị ngày nhập chính xác chị mới xem tiếp."
+      ],
+      "facts_established": {
+        "product_advised": "SKU-MB-STER"
+      },
+      "expected_outcome": "hen_goi_lai",
+      "success_if": {
+        "must_say_any": [
+          "hàng mới 100%",
+          "nguyên seal",
+          "bảo hành chính hãng"
+        ],
+        "forbidden_claims": [
+          "giá nhập",
+          "nhà cung cấp",
+          "tồn kho từ"
+        ]
+      }
+    },
+    "call_2": {
+      "days_later": 1,
+      "channel": "hotline",
+      "customer_turns": [
+        "Chị Yến đây em. Chị có kiểm tra lại trên trang của Moaz Bebe thì mã này dùng đèn LED UVC vĩnh viễn không lo cháy bóng.",
+        "Sản phẩm này có chức năng tự động bảo quản vô trùng trong 24 giờ đúng không em?",
+        "Đúng chức năng bảo quản 24h thì em lên đơn giao về ngõ 106 Hoàng Quốc Việt cho chị nhé."
+      ],
+      "must_carry_over": [
+        "product_advised"
+      ],
+      "must_not_ask": [
+        "product_advised"
+      ],
+      "success_if": {
+        "tool_called": "order.create",
+        "args_match": {
+          "sku": "SKU-MB-STER"
+        }
+      },
+      "ground_truth_facts": {
+        "in_stock": true
+      }
+    }
+  }
+}

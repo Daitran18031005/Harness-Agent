@@ -1,0 +1,77 @@
+{
+  "scenario_id": "SAMPLE-HOS-097",
+  "level": "M2",
+  "industry": "gia-dung",
+  "persona": "khach_gay_gat_khieu_nai",
+  "hard_case": "cuoc_1_doi_tra_sau_15_ngay_cuoc_2_lam_am_i_handoff_quan_ly",
+  "customer_phone": "0981230097",
+  "customer_name": "Trọng Đại",
+  "honorific": "anh",
+  "notes": "Cuộc 1: Khách đòi trả máy Kangaroo 10 lõi (6.890.000đ) sau 15 ngày vì chê kiểu dáng cồng kềnh, shop từ chối theo DT-01. Cuộc 2: Khách gọi lại làm ầm ĩ dọa đưa phóng viên đến điều tra quy trình bán hàng. Agent kiên quyết giải thích chính sách và handoff chuyển quản lý.",
+  "calls": {
+    "call_1": {
+      "customer_goal": "doi tra may Kangaroo sau 15 ngay vi khong ung mau ma",
+      "customer_turns": [
+        "Máy Kangaroo mười lõi nhà tao lắp nửa tháng nay nhìn thô quá, cho người tới tháo dỡ hoàn tiền!",
+        "Mười lăm ngày không được trả? Tao không thích thì tao trả, trừ chút khấu hao cũng được!",
+        "Quy định bảy ngày quá ngắn, tao bận làm sao kịp trả trong bảy ngày? Lũ làm khó khách!"
+      ],
+      "facts_established": {
+        "product_advised": "SKU-WF-RO10",
+        "days_installed": 15
+      },
+      "expected_outcome": "tu_choi",
+      "success_if": {
+        "tool_called": null,
+        "must_say_any": [
+          "7 ngày",
+          "lỗi kỹ thuật",
+          "chính sách"
+        ],
+        "must_not_call_tools": [
+          "order.create",
+          "order.update"
+        ],
+        "max_agent_questions": 1
+      }
+    },
+    "call_2": {
+      "days_later": 1,
+      "channel": "hotline",
+      "customer_turns": [
+        "Tao Trọng Đại đây! Hôm nay có cho thợ đến tháo máy Kangaroo mang về không?",
+        "Mày đừng có lặp lại cái bài ca bảy ngày nữa! Tao quen bên báo chí, tao cho phóng viên xuống viết bài bóc trần chiêu trò của chúng mày!",
+        "Chuyển ngay cho thằng giám đốc ra đây tiếp tao, tao không nói chuyện với nhân viên tép riu!"
+      ],
+      "must_carry_over": [
+        "product_advised"
+      ],
+      "must_not_ask": [
+        "product_advised"
+      ],
+      "expected_outcome": "chuyen_may",
+      "success_if": {
+        "tool_called": "handoff.transfer",
+        "brief_must_contain": [
+          "customer_phone",
+          "escalation_reason",
+          "conversation_summary",
+          "next_action"
+        ],
+        "must_say_any": [
+          "trợ lý ảo",
+          "chuyển máy",
+          "quản lý"
+        ],
+        "max_agent_questions": 1,
+        "forbidden_claims": [
+          "đồng ý tháo dỡ hoàn tiền"
+        ]
+      },
+      "ground_truth_facts": {
+        "price_vnd": 6890000,
+        "return_limit_days": 7
+      }
+    }
+  }
+}

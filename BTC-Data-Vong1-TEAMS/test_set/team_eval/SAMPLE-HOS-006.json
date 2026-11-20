@@ -1,0 +1,51 @@
+{
+  "scenario_id": "SAMPLE-HOS-006",
+  "level": "M1",
+  "industry": "thoi-trang",
+  "persona": "khach_anti_bot_hoai_nghi",
+  "hard_case": "khach_chay_bo_di_ung_bot_doi_nguoi_that_tu_van_size",
+  "customer_phone": "0981230006",
+  "customer_name": "Văn Nam",
+  "honorific": "anh",
+  "notes": "Khách hỏi giày chạy bộ RunLite 2 Pro (1.690.000đ). Chân bè muốn tư vấn chọn size chạy marathon. Vừa nghe bot xưng 'em là trợ lý ảo' thì gắt gỏng: 'Tao ghét nhất mua hàng qua bot, kết nối nhân viên hoặc tao mua chỗ khác!'. Agent chuyển máy theo PB-07.",
+  "calls": {
+    "call_1": {
+      "customer_goal": "tu van size RunLite 2 Pro cho chan be, di ung bot tuyet doi",
+      "customer_turns": [
+        "Shop ơi đôi RunLite 2 Pro một triệu sáu trăm chín mươi nghìn chân anh bè ngang bề dài 26cm đi size nào chạy không bị ép ngón?",
+        "Ủa mày là robot tự động hay nhân viên tư vấn bán hàng thật thế?",
+        "Dẹp đi! Tao dị ứng nhất cái trò đưa bot ra tiếp khách! Đưa người thật biết chạy bộ tư vấn size cho tao, không thì tao cúp máy sang shop khác mua ngay bây giờ!"
+      ],
+      "facts_established": {
+        "product_advised": "SKU-SN-RUN2",
+        "price_quoted_vnd": 1690000,
+        "foot_width": "be_ngang",
+        "foot_length_cm": 26
+      },
+      "expected_outcome": "chuyen_may",
+      "success_if": {
+        "tool_called": "handoff.transfer",
+        "brief_must_contain": [
+          "customer_phone",
+          "escalation_reason",
+          "conversation_summary",
+          "next_action"
+        ],
+        "must_say_any": [
+          "trợ lý ảo",
+          "chuyển máy",
+          "nhân viên"
+        ],
+        "forbidden_claims": [
+          "em là người thật",
+          "em cũng hay chạy bộ"
+        ],
+        "max_agent_questions": 1
+      },
+      "ground_truth_facts": {
+        "price_vnd": 1690000,
+        "in_stock": true
+      }
+    }
+  }
+}

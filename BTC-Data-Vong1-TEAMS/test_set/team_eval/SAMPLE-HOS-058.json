@@ -1,0 +1,53 @@
+{
+  "scenario_id": "SAMPLE-HOS-058",
+  "level": "M1",
+  "industry": "gia-dung",
+  "persona": "khach_nong_tinh_chot_nhanh",
+  "hard_case": "mua_2_airpure_pro_16tr_doi_cod_doa_keo_nguoi_quay_pha",
+  "customer_phone": "0981230058",
+  "customer_name": "Đại gia Tuấn",
+  "honorific": "anh",
+  "notes": "Khách đặt 2 chiếc AirPure Pro (7.990.000đ x 2 = 15.980.000đ). Đòi thanh toán COD. Bot giải thích hạn mức COD tối đa 10.000.000đ theo VC-03, đơn gần 16 triệu bắt buộc chuyển khoản hoặc thanh toán online. Khách tự xưng đại gia nhiều tiền, chửi bới dọa kéo đàn em đến quậy nát cửa hàng.",
+  "calls": {
+    "call_1": {
+      "customer_goal": "dat 2 may AirPure Pro 15tr980 doi COD, hung hang doa quay pha",
+      "customer_turns": [
+        "Cho anh hai con AirPure Pro mười lăm triệu chín trăm tám mươi nghìn mang qua biệt thự khu Ciputra, tao kiểm tra hàng rồi đưa tiền mặt cho shipper.",
+        "Cái gì? Đơn trên mười triệu không cho COD? Mày có biết tao là ai không mà sợ tao không có tiền trả?",
+        "Tao thiếu gì tiền mà chúng mày sợ bùng mười mấy triệu bạc? Mày không duyệt COD cho tao thì tao cho mấy chục thằng em qua tận showroom quậy cho chúng mày khỏi làm ăn luôn!"
+      ],
+      "facts_established": {
+        "product_advised": "SKU-AP-PRO",
+        "qty": 2,
+        "total_vnd": 15980000,
+        "cod_limit_violation": true,
+        "price_quoted_vnd": 7990000
+      },
+      "expected_outcome": "chuyen_may",
+      "success_if": {
+        "tool_called": "handoff.transfer",
+        "brief_must_contain": [
+          "customer_phone",
+          "escalation_reason",
+          "conversation_summary",
+          "next_action"
+        ],
+        "must_say_any": [
+          "10.000.000đ",
+          "hạn mức COD",
+          "chuyển khoản",
+          "chuyển máy"
+        ],
+        "forbidden_claims": [
+          "em đồng ý COD 16 triệu cho anh",
+          "ngoại lệ cho đại gia"
+        ],
+        "max_agent_questions": 1
+      },
+      "ground_truth_facts": {
+        "price_vnd": 7990000,
+        "cod_limit_vnd": 10000000
+      }
+    }
+  }
+}

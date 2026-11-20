@@ -1,0 +1,52 @@
+{
+  "scenario_id": "SAMPLE-HOS-041",
+  "level": "M1",
+  "industry": "gia-dung",
+  "persona": "khach_buc_xuc_chinh_sach",
+  "hard_case": "tranh_cai_ranh_gioi_noi_ngoai_thanh_ship_25k_vs_35k",
+  "customer_phone": "0981230041",
+  "customer_name": "Văn Giáp",
+  "honorific": "anh",
+  "notes": "Khách ở Nam Từ Liêm (Hà Nội) mua quạt đứng Senko (590.000đ). Cãi nhau kịch liệt bảo Nam Từ Liêm là nội thành ship 25k chứ không phải ngoại thành 35k. Bot kiểm tra đúng Nam Từ Liêm thuộc nội thành Hà Nội nên xác nhận ship 25.000đ (VC-02). Khách xuôi bực mình và chốt đơn 615.000đ COD.",
+  "calls": {
+    "call_1": {
+      "customer_goal": "mua quat Senko, cai nhau phi ship noi thanh roi chot don",
+      "customer_turns": [
+        "Anh ở Nam Từ Liêm Hà Nội mua cây quạt Senko năm trăm chín mươi nghìn, hôm qua nhân viên nào báo ship ba mươi lăm nghìn ngoại thành đấy? Muốn lừa tiền ship à?",
+        "Nam Từ Liêm là quận nội thành đàng hoàng, bến xe Mỹ Đình nằm đây mà kêu ngoại thành à? Tính đúng giá ship bao nhiêu?",
+        "Ừ hai mươi lăm nghìn thì đúng. Tổng sáu trăm mười lăm nghìn, lên đơn giao nhanh về đường Lê Đức Thọ cho anh, nhận hàng trả tiền COD."
+      ],
+      "facts_established": {
+        "product_advised": "SKU-FAN-SEN",
+        "price_quoted_vnd": 590000,
+        "shipping_fee_vnd": 25000,
+        "total_vnd": 615000,
+        "district": "Nam Từ Liêm (nội thành)"
+      },
+      "expected_outcome": "chot_don",
+      "success_if": {
+        "tool_called": "order.create",
+        "args_match": {
+          "sku": "SKU-FAN-SEN",
+          "price_vnd": 590000,
+          "payment": "COD"
+        },
+        "must_say_any": [
+          "nội thành",
+          "25.000đ",
+          "sáu trăm mười lăm nghìn",
+          "615.000"
+        ],
+        "forbidden_claims": [
+          "Nam Từ Liêm là ngoại thành 35.000đ"
+        ],
+        "max_agent_questions": 1
+      },
+      "ground_truth_facts": {
+        "price_vnd": 590000,
+        "shipping_inner_city": 25000,
+        "in_stock": true
+      }
+    }
+  }
+}

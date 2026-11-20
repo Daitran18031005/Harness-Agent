@@ -1,0 +1,62 @@
+{
+  "scenario_id": "SAMPLE-H06",
+  "level": "M1",
+  "persona": "hai_nguoi_chung_sdt",
+  "hard_case": "chong_goi_mac_ca_mua_combo_2_chiec",
+  "customer_phone": "0968999006",
+  "customer_name": "Quỳnh",
+  "honorific": "chị",
+  "secondary_caller": {
+    "name": "Sơn",
+    "role": "chồng",
+    "honorific": "anh"
+  },
+  "notes": "Vợ hỏi quạt đứng Panasonic F-409 chê đắt. Chồng gọi lại đề xuất mua 2 chiếc (1 cho nhà, 1 biếu bố mẹ) để xin chính sách combo/freeship. Agent áp dụng chính sách chuẩn, chốt 2 chiếc.",
+  "calls": {
+    "call_1": {
+      "caller": "Quỳnh (vợ)",
+      "customer_goal": "hoi quat dung Panasonic F-409, che dat",
+      "customer_turns": [
+        "Em ơi quạt đứng Panasonic inverter F-409 giá bao nhiêu?",
+        "Hai triệu bốn trăm năm mươi nghìn một cái quạt cơ à, sao đắt thế em?",
+        "Để chị hỏi ông xã xem anh ấy có đồng ý chi tiền mua quạt đắt thế này không đã nhé."
+      ],
+      "facts_established": {
+        "product_advised": "SKU-FAN-DC1",
+        "price_quoted_vnd": 2450000,
+        "objection": "gia_cao",
+        "blocker": "can hoi chong"
+      },
+      "expected_outcome": "hen_goi_lai"
+    },
+    "call_2": {
+      "days_later": 2,
+      "caller": "Sơn (chồng)",
+      "channel": "hotline",
+      "customer_turns": [
+        "Alo em, vợ anh có hỏi quạt Panasonic hai triệu bốn trăm năm mươi hôm nọ.",
+        "Nếu anh lấy liền 2 chiếc, một chiếc dùng ở nhà và một chiếc gửi về quê thì bên em có giảm giá thêm hay tặng kèm quà gì không?",
+        "Được freeship và giảm thêm 100k chiếc thứ 2 à. Lên đơn cho anh 2 cái quạt Panasonic F-409 luôn nhé."
+      ],
+      "must_carry_over": [
+        "product_advised",
+        "price_quoted_vnd"
+      ],
+      "must_not_ask": [
+        "product_advised"
+      ],
+      "success_if": {
+        "tool_called": "order.create",
+        "args_match": {
+          "sku": "SKU-FAN-DC1",
+          "qty": 2
+        }
+      },
+      "ground_truth_facts": {
+        "sku": "SKU-FAN-DC1",
+        "price_vnd": 2450000,
+        "in_stock": true
+      }
+    }
+  }
+}

@@ -1,0 +1,69 @@
+{
+  "scenario_id": "SAMPLE-HOS-098",
+  "level": "M2",
+  "industry": "gia-dung",
+  "persona": "khach_gay_gat_khieu_nai",
+  "hard_case": "cuoc_1_zalo_che_dat_doa_tay_chay_cuoc_2_hotline_chot_combo",
+  "customer_phone": "0981230098",
+  "customer_name": "Phương Nam",
+  "honorific": "anh",
+  "notes": "Cuộc 1 (Zalo OA): Khách nhắn chê Combo AirPure Y + 2 màng lọc (6.390.000đ) quá đắt, dọa tẩy chay và kêu gọi bạn bè không mua. Cuộc 2 (Hotline): Khách gọi số tổng đài hỏi lại chương trình khuyến mãi tháng 10, agent tư vấn quà tặng kèm và chính sách freeship, khách đổi ý chốt đơn COD.",
+  "calls": {
+    "call_1": {
+      "channel": "zalo_oa",
+      "customer_goal": "che dat combo AirPure Y, doa tay chay qua Zalo",
+      "customer_turns": [
+        "Cai combo AirPure Y sau trieu ba tram chin muoi nghin dat nhu quy! Ben ngoai ban co hon 5 trieu!",
+        "Shop lam an chat chem the ma cung co nguoi mua a? Toi keo ca cong ty toi tay chay!",
+        "Khoi can tu van, bot bien di!"
+      ],
+      "facts_established": {
+        "product_advised": "SKU-BDL-AIR",
+        "price_quoted_vnd": 6390000
+      },
+      "expected_outcome": "tu_choi",
+      "success_if": {
+        "tool_called": null,
+        "must_say_any": [
+          "combo",
+          "2 màng lọc",
+          "chính hãng"
+        ],
+        "must_not_call_tools": [
+          "order.create"
+        ],
+        "max_agent_questions": 1
+      },
+      "channel_identity": "zalo.hos098"
+    },
+    "call_2": {
+      "days_later": 2,
+      "channel": "hotline",
+      "customer_turns": [
+        "Alo! Anh số 0981230098, anh hỏi cái combo AirPure Y kèm hai màng lọc sáu triệu ba trăm chín mươi nghìn.",
+        "Tính ra là có sẵn máy với hai màng lọc thay thế dùng được ba năm đúng không em?",
+        "Ừ thế thì cũng hợp lý, chia ra mỗi màng lọc mua lẻ cũng gần bảy trăm nghìn rồi. Lên đơn COD giao về Thanh Xuân cho anh."
+      ],
+      "must_carry_over": [
+        "product_advised",
+        "price_quoted_vnd"
+      ],
+      "must_not_ask": [
+        "product_advised"
+      ],
+      "expected_outcome": "chot_don",
+      "success_if": {
+        "tool_called": "order.create",
+        "args_match": {
+          "sku": "SKU-BDL-AIR",
+          "price_vnd": 6390000,
+          "payment": "COD"
+        }
+      },
+      "ground_truth_facts": {
+        "price_vnd": 6390000,
+        "in_stock": true
+      }
+    }
+  }
+}

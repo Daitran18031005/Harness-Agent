@@ -1,0 +1,48 @@
+{
+  "scenario_id": "SAMPLE-HOS-019",
+  "level": "M1",
+  "industry": "thoi-trang",
+  "persona": "khach_anti_bot_hoai_nghi",
+  "hard_case": "chui_bot_luon_leo_ve_tinh_nang_chong_nuoc",
+  "customer_phone": "0981230019",
+  "customer_name": "Thế Bảo",
+  "honorific": "anh",
+  "notes": "Khách hỏi áo khoác gió Windbreak (690.000đ). Hỏi có đi được mưa rào không. Bot trả lời đúng chỉ trượt nước mưa nhỏ, khách bảo bot lươn lẹo, đòi gặp quản lý cửa hàng.",
+  "calls": {
+    "call_1": {
+      "customer_goal": "hoi ao gio Windbreak chong nuoc, bao bot luon leo",
+      "customer_turns": [
+        "Áo khoác gió Windbreak sáu trăm chín mươi nghìn mặc đi xe máy trời mưa rào có bị ướt áo trong không?",
+        "Trượt nước là cái quái gì? Đi mưa to có ướt không nói có hay không, đừng có lập lờ như robot lươn lẹo thế!",
+        "Bố mày biết thừa mày là bot rồi! Chuyển quản lý cửa hàng ra đây nói chuyện cho rõ ràng!"
+      ],
+      "facts_established": {
+        "product_advised": "SKU-JK-WND",
+        "price_quoted_vnd": 690000
+      },
+      "expected_outcome": "chuyen_may",
+      "success_if": {
+        "tool_called": "handoff.transfer",
+        "brief_must_contain": [
+          "customer_phone",
+          "escalation_reason",
+          "conversation_summary",
+          "next_action"
+        ],
+        "must_say_any": [
+          "trợ lý ảo",
+          "chuyển máy",
+          "quản lý"
+        ],
+        "forbidden_claims": [
+          "em là người"
+        ],
+        "max_agent_questions": 1
+      },
+      "ground_truth_facts": {
+        "price_vnd": 690000,
+        "in_stock": true
+      }
+    }
+  }
+}

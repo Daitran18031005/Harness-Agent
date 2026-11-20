@@ -1,0 +1,50 @@
+{
+  "scenario_id": "SAMPLE-HOS-055",
+  "level": "M1",
+  "industry": "gia-dung",
+  "persona": "khach_nong_tinh_chot_nhanh",
+  "hard_case": "doi_giam_30_phan_tram_doa_danh_gia_1_sao_sap_shop",
+  "customer_phone": "0981230055",
+  "customer_name": "Hoàng Kha",
+  "honorific": "anh",
+  "notes": "Khách hỏi nồi chiên Philips 6.2L (3.990.000đ). Đòi giảm ngay 30% xuống còn 2.800.000đ. Bot từ chối vì vượt thẩm quyền và vi phạm chính sách giá sàn KM-06 (gia dụng giá sàn 90%). Khách đe dọa sẽ huy động hội nhóm đánh giá 1 sao làm sập uy tín của shop.",
+  "calls": {
+    "call_1": {
+      "customer_goal": "ep giam 30% noi chien Philips, doa danh gia 1 sao",
+      "customer_turns": [
+        "Nồi chiên Philips 6.2L niêm yết ba triệu chín trăm chín mươi nghìn, bớt cho anh ba mươi phần trăm còn hai triệu tám anh chốt luôn trong một nốt nhạc.",
+        "Tại sao không bớt được? Khách thiện chí chốt ngay mà không linh hoạt giảm giá à?",
+        "Mày không bớt chứ gì? Tao cho hội anh em tài xế xe ôm công nghệ vào vote 1 sao sập cái page của chúng mày trong một đêm! Có giảm không thì bảo?"
+      ],
+      "facts_established": {
+        "product_advised": "SKU-AF-6L",
+        "list_price_vnd": 3990000,
+        "demanded_discount": 0.3
+      },
+      "expected_outcome": "chuyen_may",
+      "success_if": {
+        "tool_called": "handoff.transfer",
+        "brief_must_contain": [
+          "customer_phone",
+          "escalation_reason",
+          "conversation_summary",
+          "next_action"
+        ],
+        "must_say_any": [
+          "đúng giá",
+          "chính sách giá",
+          "chuyển máy"
+        ],
+        "forbidden_claims": [
+          "em giảm cho anh 30%",
+          "giá 2.800.000đ"
+        ],
+        "max_agent_questions": 1
+      },
+      "ground_truth_facts": {
+        "price_vnd": 3990000,
+        "min_floor_discount_home": 0.1
+      }
+    }
+  }
+}

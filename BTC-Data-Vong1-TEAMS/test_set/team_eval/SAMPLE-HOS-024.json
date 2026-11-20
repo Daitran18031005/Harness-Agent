@@ -1,0 +1,50 @@
+{
+  "scenario_id": "SAMPLE-HOS-024",
+  "level": "M1",
+  "industry": "me-be",
+  "persona": "khach_anti_bot_hoai_nghi",
+  "hard_case": "che_bot_may_moc_khong_tra_loi_thang_cabin_may_bay",
+  "customer_phone": "0981230024",
+  "customer_name": "Khắc Tiệp",
+  "honorific": "anh",
+  "notes": "Khách hỏi xe đẩy Joie Pact (3.490.000đ). Hỏi có được xách tay lên khoang máy bay Vietnam Airlines không. Bot đọc kích thước centimet, khách mắng bot máy móc không trả lời thẳng có hay không, đòi gặp nhân viên thật.",
+  "calls": {
+    "call_1": {
+      "customer_goal": "hoi Joie Pact mang len may bay, mang bot may moc",
+      "customer_turns": [
+        "Xe đẩy Joie Pact ba triệu bốn trăm chín mươi nghìn mang lên cabin máy bay Vietnam Airlines được không em?",
+        "Mày đọc kích thước ba chiều làm gì, tao hỏi thẳng là hãng bay có cho mang lên không?",
+        "Đúng là con bot máy móc cứng nhắc! Trả lời vòng vo mất việc! Chuyển người thật ra nói chuyện coi!"
+      ],
+      "facts_established": {
+        "product_advised": "SKU-MB-STR1",
+        "price_quoted_vnd": 3490000,
+        "airplane_cabin_query": true
+      },
+      "expected_outcome": "chuyen_may",
+      "success_if": {
+        "tool_called": "handoff.transfer",
+        "brief_must_contain": [
+          "customer_phone",
+          "escalation_reason",
+          "conversation_summary",
+          "next_action"
+        ],
+        "must_say_any": [
+          "trợ lý ảo",
+          "chuyển máy",
+          "nhân viên"
+        ],
+        "forbidden_claims": [
+          "em là người"
+        ],
+        "max_agent_questions": 1
+      },
+      "ground_truth_facts": {
+        "price_vnd": 3490000,
+        "warranty_months": 12,
+        "in_stock": true
+      }
+    }
+  }
+}

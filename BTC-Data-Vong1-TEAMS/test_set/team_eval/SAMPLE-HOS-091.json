@@ -1,0 +1,78 @@
+{
+  "scenario_id": "SAMPLE-HOS-091",
+  "level": "M2",
+  "industry": "thoi-trang",
+  "persona": "khach_gay_gat_khieu_nai",
+  "hard_case": "cuoc_1_ep_giao_chu_nhat_vang_tuc_cuoc_2_giao_gio_hanh_chinh",
+  "customer_phone": "0981230091",
+  "customer_name": "Vũ Cường",
+  "honorific": "anh",
+  "notes": "Cuộc 1: Khách đặt áo phao Warmly (1.490.000đ) chiều thứ Bảy, ép giao Chủ nhật để đi chơi. Bot từ chối theo VC-01, khách văng tục dập máy. Cuộc 2: Sáng thứ Hai khách gọi lại đồng ý nhận vào giờ hành chính thứ Ba. Agent tiếp nối thông tin và tạo đơn COD.",
+  "calls": {
+    "call_1": {
+      "customer_goal": "dat ao phao Warmly bat giao Chu nhat, vang tuc khi bi tu choi",
+      "customer_turns": [
+        "Lấy cái áo phao Warmly một triệu bốn trăm chín mươi nghìn size L, đúng trưa mai Chủ nhật mang qua cho tao đi du lịch.",
+        "Chủ nhật không giao thì tao mặc cái gì đi du lịch hả lũ ngu?",
+        "Cút mẹ chúng mày đi! Làm ăn như dở hơi!"
+      ],
+      "facts_established": {
+        "product_advised": "SKU-JK-DWN",
+        "price_quoted_vnd": 1490000,
+        "variant_size": "L"
+      },
+      "expected_outcome": "tu_choi",
+      "success_if": {
+        "tool_called": null,
+        "must_say_any": [
+          "Chủ nhật",
+          "ngày làm việc",
+          "thông cảm"
+        ],
+        "must_not_call_tools": [
+          "order.create"
+        ],
+        "max_agent_questions": 1
+      }
+    },
+    "call_2": {
+      "days_later": 2,
+      "call_date": "2026-10-19",
+      "channel": "hotline",
+      "customer_turns": [
+        "Alo! Cái áo phao Warmly size L màu đen hôm thứ Bảy tao gọi ấy.",
+        "Giờ thứ Hai rồi, giao trong giờ hành chính ngày mai về công ty tao ở đường Duy Tân Cầu Giấy được chưa?",
+        "Ừ một triệu bốn trăm chín mươi nghìn, lên đơn COD nhanh cho tao."
+      ],
+      "must_carry_over": [
+        "product_advised",
+        "variant_size",
+        "price_quoted_vnd"
+      ],
+      "must_not_ask": [
+        "product_advised",
+        "variant_size"
+      ],
+      "expected_outcome": "chot_don",
+      "success_if": {
+        "tool_called": "order.create",
+        "args_match": {
+          "sku": "SKU-JK-DWN-L-DEN",
+          "price_vnd": 1490000,
+          "payment": "COD"
+        }
+      },
+      "ground_truth_facts": {
+        "price_vnd": 1490000,
+        "in_stock": true
+      },
+      "facts_established": {
+        "product_advised": "SKU-JK-DWN",
+        "variant_sku": "SKU-JK-DWN-L-DEN",
+        "price_quoted_vnd": 1490000,
+        "variant_size": "L",
+        "variant_color": "den"
+      }
+    }
+  }
+}

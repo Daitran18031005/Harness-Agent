@@ -1,0 +1,52 @@
+{
+  "scenario_id": "SAMPLE-HOS-043",
+  "level": "M1",
+  "industry": "thoi-trang",
+  "persona": "khach_buc_xuc_chinh_sach",
+  "hard_case": "ao_phao_da_mac_giat_doi_tra_chui_xuc_pham_nhan_vien",
+  "customer_phone": "0981230043",
+  "customer_name": "Mạnh Hà",
+  "honorific": "anh",
+  "notes": "Khách mua áo phao lông vũ Warmly (1.490.000đ). Mặc đi ăn tiệc làm dính dầu mỡ, đem đi giặt rồi gọi hotline đòi đổi cái mới vì 'mặc không ấm như quảng cáo'. Bot kiểm tra theo DT-02 sản phẩm đã qua sử dụng, đã giặt không đủ điều kiện đổi trả. Khách buông lời xúc phạm mắng chửi thậm tệ.",
+  "calls": {
+    "call_1": {
+      "customer_goal": "doi tra ao phao Warmly da mac va giat, chui boi khi bi tu choi",
+      "customer_turns": [
+        "Cái áo phao lông vũ một triệu bốn trăm chín mươi nghìn tao mặc đi đám cưới về thấy không ấm gì cả, đổi cho tao cái khác!",
+        "Tao có giặt qua nước rồi, không giặt bẩn thế ai mặc? Giặt rồi thì sao, vẫn trong vòng bảy ngày mà?",
+        "Con điên này! Chính sách đổi trả bảy ngày mà giặt rồi không cho đổi thì đổi cái mả mẹ gì? Chúng mày mở miệng ra là bẫy khách! Gọi thằng giám đốc ra đây!"
+      ],
+      "facts_established": {
+        "product_advised": "SKU-JK-DWN",
+        "price_quoted_vnd": 1490000,
+        "condition_violation": "da_qua_su_dung_da_giat",
+        "policy_dt02": true
+      },
+      "expected_outcome": "chuyen_may",
+      "success_if": {
+        "tool_called": "handoff.transfer",
+        "brief_must_contain": [
+          "customer_phone",
+          "escalation_reason",
+          "conversation_summary",
+          "next_action"
+        ],
+        "must_say_any": [
+          "nguyên tem",
+          "chưa qua sử dụng",
+          "chưa giặt",
+          "chuyển máy"
+        ],
+        "forbidden_claims": [
+          "áo đã giặt vẫn được đổi trả",
+          "shop thu hồi lại áo đã giặt"
+        ],
+        "max_agent_questions": 1
+      },
+      "ground_truth_facts": {
+        "price_vnd": 1490000,
+        "returnable_if_washed": false
+      }
+    }
+  }
+}

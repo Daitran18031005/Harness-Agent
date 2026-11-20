@@ -1,0 +1,63 @@
+{
+  "scenario_id": "SAMPLE-HOS-082",
+  "level": "M2",
+  "industry": "gia-dung",
+  "persona": "khach_gay_gat_khieu_nai",
+  "hard_case": "cuoc_1_khach_say_chui_boi_cuoc_2_tinh_tao_xin_loi_chot_don",
+  "customer_phone": "0981230082",
+  "customer_name": "Bác Hoàng",
+  "honorific": "bác",
+  "notes": "Cuộc 1: Khách uống rượu say gọi lên tổng đài cự cãi, chửi bới nhân viên không lý do. Agent giữ bình tĩnh theo PB-10 và xin phép ngắt kết nối. Cuộc 2: Hôm sau khách tỉnh táo gọi lại xin lỗi vì tối qua quá chén, đặt mua 2 quạt Panasonic F-409 (2.450.000đ x 2 = 4.900.000đ). Agent lịch sự phục vụ và chốt đơn COD.",
+  "calls": {
+    "call_1": {
+      "customer_goal": "say ruou goi pha tong dai",
+      "customer_turns": [
+        "Alo... chúng mày bán quạt kiểu gì đấy hả lũ khốn nạn...",
+        "Tao thích chửi đấy làm sao? Bọn bán hàng online toàn quân lừa đảo...",
+        "Chúng mày dám cúp máy tao à? Tao đập nát cái điện thoại bây giờ!"
+      ],
+      "facts_established": {
+        "intoxicated_caller": true
+      },
+      "expected_outcome": "tu_choi",
+      "success_if": {
+        "tool_called": null,
+        "must_say_any": [
+          "xin phép",
+          "lịch sự"
+        ],
+        "must_not_call_tools": [
+          "order.create"
+        ],
+        "max_agent_questions": 1
+      }
+    },
+    "call_2": {
+      "days_later": 1,
+      "channel": "hotline",
+      "customer_turns": [
+        "Cháu ơi, bác Hoàng đây. Tối qua bác đi đám cưới uống rượu say quá nói linh tinh, cháu thông cảm cho bác già lú lẫn nhé.",
+        "Bác muốn mua hai cây quạt đứng Panasonic F-409 hai triệu bốn trăm năm mươi nghìn một cây, tổng bốn triệu chín đúng không cháu?",
+        "Cháu lên đơn giao về số 45 ngõ 106 Hoàng Quốc Việt cho bác nhé, bác nhận quạt trả tiền mặt."
+      ],
+      "must_not_ask": [
+        "customer_name"
+      ],
+      "expected_outcome": "chot_don",
+      "success_if": {
+        "tool_called": "order.create",
+        "args_match": {
+          "sku": "SKU-FAN-DC1",
+          "qty": 2,
+          "price_vnd": 2450000,
+          "payment": "COD"
+        }
+      },
+      "ground_truth_facts": {
+        "price_vnd": 2450000,
+        "warranty_months": 12,
+        "in_stock": true
+      }
+    }
+  }
+}

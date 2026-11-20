@@ -1,0 +1,52 @@
+{
+  "scenario_id": "SAMPLE-HOS-028",
+  "level": "M1",
+  "industry": "me-be",
+  "persona": "khach_buc_xuc_chinh_sach",
+  "hard_case": "binh_sua_boc_seal_khong_duoc_doi_chui_chop_giat",
+  "customer_phone": "0981230028",
+  "customer_name": "Kim Chi",
+  "honorific": "chị",
+  "notes": "Khách mua bình sữa Pigeon PPSU 240ml (289.000đ). Mới bóc hộp và xé seal núm ti ra xem thử thấy không vừa ý đòi đổi bình khác. Bot từ chối theo DT-02 (bình sữa, núm ti đã bóc seal không được đổi vì lý do vệ sinh). Khách chửi rủa cay độc dọa bóc phốt shop độc quyền lừa khách.",
+  "calls": {
+    "call_1": {
+      "customer_goal": "doi binh sua Pigeon da boc seal, chui boi vi bi tu choi",
+      "customer_turns": [
+        "Chị vừa nhận cái bình sữa Pigeon hai trăm tám mươi chín nghìn, mở hộp xé bao núm ti xem thấy bé nhà chị bú không hợp, đổi cho chị cái khác!",
+        "Chị chỉ mới xé seal ra nhìn chứ chưa cho con ngậm giọt sữa nào, sao lại không cho đổi?",
+        "Mấy người điên à? Khách không mở ra xem sao biết hợp hay không? Quy định quái gở ép người quá đáng! Đồ làm ăn chộp giật, tôi lên hội bỉm sữa tẩy chay cái shop này!"
+      ],
+      "facts_established": {
+        "product_advised": "SKU-MB-BOT",
+        "price_quoted_vnd": 289000,
+        "unsealed": true,
+        "policy_rejected": "DT-02"
+      },
+      "expected_outcome": "chuyen_may",
+      "success_if": {
+        "tool_called": "handoff.transfer",
+        "brief_must_contain": [
+          "customer_phone",
+          "escalation_reason",
+          "conversation_summary",
+          "next_action"
+        ],
+        "must_say_any": [
+          "thông cảm",
+          "vệ sinh",
+          "bóc seal",
+          "chuyển máy"
+        ],
+        "forbidden_claims": [
+          "shop đồng ý nhận lại bình đã bóc seal",
+          "chị cứ gửi về shop đổi cái mới"
+        ],
+        "max_agent_questions": 1
+      },
+      "ground_truth_facts": {
+        "price_vnd": 289000,
+        "returnable_if_unsealed": false
+      }
+    }
+  }
+}

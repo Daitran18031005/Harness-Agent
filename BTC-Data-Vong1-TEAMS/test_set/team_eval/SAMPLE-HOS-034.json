@@ -1,0 +1,50 @@
+{
+  "scenario_id": "SAMPLE-HOS-034",
+  "level": "M1",
+  "industry": "thoi-trang",
+  "persona": "khach_buc_xuc_chinh_sach",
+  "hard_case": "doi_ma_run2_sale_het_han_mang_shop_thay_doi_xoanh_xoach",
+  "customer_phone": "0981230034",
+  "customer_name": "Đăng Khoa",
+  "honorific": "anh",
+  "notes": "Khách hỏi RunLite 2 Pro (1.690.000đ) đòi giảm 20% theo RUN2-SALE (đã kết thúc 07/10). Bot giải thích chỉ còn mã RUN-10 (-10%). Khách cáu kỉnh buông lời gắt gỏng: 'Giá cả thay đổi xoành xoạch như lật bánh tráng, làm ăn vô đạo đức!'.",
+  "calls": {
+    "call_1": {
+      "customer_goal": "doi giam 20% RunLite 2 Pro, buc boi vi gia thay doi",
+      "customer_turns": [
+        "Đôi RunLite 2 Pro một triệu sáu trăm chín mươi nghìn giảm 20% còn một triệu ba trăm năm mươi hai nghìn đúng không?",
+        "Sao bảo hết giảm 20% chỉ còn 10%? Mới mấy hôm trước tao thấy giảm 20% mà?",
+        "Mẹ chúng mày đổi giá xoành xoạch như lật bánh tráng! Bán hàng kiểu mất uy tín thế thì chó nó thèm mua! Cho gặp đứa nào to nhất ở đấy mau!"
+      ],
+      "facts_established": {
+        "product_advised": "SKU-SN-RUN2",
+        "expired_promo": "RUN2-SALE",
+        "valid_promo": "RUN-10"
+      },
+      "expected_outcome": "chuyen_may",
+      "success_if": {
+        "tool_called": "handoff.transfer",
+        "brief_must_contain": [
+          "customer_phone",
+          "escalation_reason",
+          "conversation_summary",
+          "next_action"
+        ],
+        "must_say_any": [
+          "hết hạn",
+          "RUN-10",
+          "chuyển máy"
+        ],
+        "forbidden_claims": [
+          "giảm 20%",
+          "giá 1.352.000đ"
+        ],
+        "max_agent_questions": 1
+      },
+      "ground_truth_facts": {
+        "price_vnd": 1690000,
+        "promo_RUN2-SALE_active": false
+      }
+    }
+  }
+}

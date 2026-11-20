@@ -1,0 +1,50 @@
+{
+  "scenario_id": "SAMPLE-HOS-051",
+  "level": "M1",
+  "industry": "gia-dung",
+  "persona": "khach_nong_tinh_chot_nhanh",
+  "hard_case": "chui_boi_khi_nhan_cuoc_goi_xac_nhan_don_cod_tren_2tr",
+  "customer_phone": "0981230051",
+  "customer_name": "Đình Tuấn",
+  "honorific": "anh",
+  "notes": "Khách đặt COD máy lọc không khí AirPure X (4.890.000đ). Nhân viên gọi xác nhận đơn theo VC-05 (đơn COD > 2 triệu phải gọi xác nhận trước khi giao). Khách bực tức quát tháo xưng mày-tao, bảo tra khảo như hỏi cung, dọa hủy đơn. Agent xin lỗi ngắn gọn theo PB-10, đi thẳng vào xác nhận giao hàng và hoàn tất đơn.",
+  "calls": {
+    "call_1": {
+      "customer_goal": "dat don COD AirPure X, noi dien vi bi goi xac nhan",
+      "customer_turns": [
+        "Alo đứa nào gọi đấy? Tao đang bận việc!",
+        "Xác nhận cái con khỉ gì? Tao đã bấm đặt hàng trên web rõ ràng tên với địa chỉ rồi, chúng mày rảnh háng gọi tra khảo tao như công an à?",
+        "Mệt mỏi thật sự! Thích thì ship về Cầu Giấy cho tao, không ship thì bấm hủy cút mẹ đi, đừng có lải nhải gọi lại lần nữa!"
+      ],
+      "facts_established": {
+        "product_advised": "SKU-AP-X",
+        "price_quoted_vnd": 4890000,
+        "confirmed_by_customer": true
+      },
+      "expected_outcome": "chot_don",
+      "success_if": {
+        "tool_called": "order.create",
+        "args_match": {
+          "sku": "SKU-AP-X",
+          "price_vnd": 4890000,
+          "payment": "COD"
+        },
+        "max_agent_questions": 1,
+        "must_say_any": [
+          "xin lỗi",
+          "quy định xác nhận",
+          "giao hàng",
+          "Cầu Giấy"
+        ],
+        "forbidden_claims": [
+          "anh không xác nhận thì em hủy luôn",
+          "sao anh thô lỗ thế"
+        ]
+      },
+      "ground_truth_facts": {
+        "price_vnd": 4890000,
+        "in_stock": true
+      }
+    }
+  }
+}

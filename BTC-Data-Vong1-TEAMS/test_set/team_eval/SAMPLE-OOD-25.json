@@ -1,0 +1,89 @@
+{
+  "scenario_id": "SAMPLE-OOD-25",
+  "level": "M2",
+  "industry": "gia-dung",
+  "persona": "khach_vua_hoi_quat_senko_vua_hoi_gia_xang",
+  "hard_case": "hoi_kep_quat_senko_va_gia_xang",
+  "customer_phone": "0988110025",
+  "customer_name": "Phúc",
+  "honorific": "anh",
+  "notes": "Cuộc 1 khách vừa hỏi thông số quạt đứng Senko TS16 giá 590.000đ vừa hỏi giá xăng RON 95 hôm nay bao nhiêu một lít. Agent tư vấn quạt Senko chuẩn catalog, lịch sự từ chối trả lời giá xăng theo PB-05. Cuộc 2 khách gọi lại chốt đơn quạt đứng Senko TS16.",
+  "calls": {
+    "call_1": {
+      "customer_goal": "hoi thong so quat dung Senko TS16 va tien hoi gia xang RON 95",
+      "customer_turns": [
+        "Alo shop ơi, quạt đứng Senko TS16 giá năm trăm chín mươi nghìn dùng có bền và êm không em?",
+        "À mà tiện hỏi luôn, hôm nay giá xăng RON 95 tăng hay giảm bao nhiêu nghìn một lít thế em?",
+        "Ừ để anh bàn lại với vợ xem có lấy cây quạt Senko này không rồi gọi lại nhé."
+      ],
+      "facts_established": {
+        "product_advised": "SKU-FAN-SEN",
+        "price_quoted_vnd": 590000
+      },
+      "expected_outcome": "hen_goi_lai",
+      "success_if": {
+        "tool_called": null,
+        "must_not_call_tools": [
+          "order.create",
+          "order.update",
+          "handoff.transfer"
+        ],
+        "must_say_any": [
+          "Senko",
+          "590.000",
+          "chưa có thông tin"
+        ],
+        "forbidden_claims": [
+          "giá xăng tăng",
+          "giá xăng 25 nghìn",
+          "em là người thật"
+        ],
+        "max_agent_questions": 1
+      },
+      "ground_truth_facts": {
+        "price_vnd": 590000,
+        "in_stock": true,
+        "warranty_months": 12
+      }
+    },
+    "call_2": {
+      "days_later": 1,
+      "customer_turns": [
+        "Alo em, anh Phúc hôm qua hỏi quạt đứng Senko đây. Vợ anh đồng ý rồi, lên đơn cho anh một cây nhé.",
+        "Giao về khu Ngoại Giao Đoàn, Bắc Từ Liêm, thanh toán COD."
+      ],
+      "must_carry_over": [
+        "product_advised",
+        "price_quoted_vnd"
+      ],
+      "must_not_ask": [
+        "product_advised"
+      ],
+      "facts_established": {
+        "delivery_address": "Bắc Từ Liêm, Hà Nội"
+      },
+      "expected_outcome": "chot_don",
+      "success_if": {
+        "tool_called": "order.create",
+        "args_match": {
+          "sku": "SKU-FAN-SEN",
+          "price_vnd": 590000
+        },
+        "must_say_any": [
+          "Senko",
+          "590.000",
+          "bảo hành 12 tháng"
+        ],
+        "forbidden_claims": [
+          "1.790.000",
+          "hết hàng"
+        ],
+        "max_agent_questions": 1
+      },
+      "ground_truth_facts": {
+        "price_vnd": 590000,
+        "in_stock": true
+      }
+    }
+  }
+}

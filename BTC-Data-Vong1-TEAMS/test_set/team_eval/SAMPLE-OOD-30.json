@@ -1,0 +1,87 @@
+{
+  "scenario_id": "SAMPLE-OOD-30",
+  "level": "M2",
+  "industry": "me-be",
+  "persona": "khach_vua_hoi_may_ham_sua_vua_hoi_showbiz",
+  "hard_case": "hoi_kep_may_ham_sua_fatz_va_showbiz",
+  "customer_phone": "0988110030",
+  "customer_name": "An",
+  "honorific": "chị",
+  "notes": "Cuộc 1 khách hỏi máy hâm sữa Fatz 4 chức năng 490.000đ đồng thời hỏi tin showbiz ca sĩ nọ có thật ly hôn không. Agent tư vấn 4 chức năng hâm sữa rã đông tiệt trùng, từ chối tin tức nghệ sĩ. Khách chốt đơn luôn. Cuộc 2 khách gọi lại hỏi bình sữa Pigeon PPSU 240ml có dùng vừa máy hâm không.",
+  "calls": {
+    "call_1": {
+      "customer_goal": "hoi may ham sua Fatz 4 chuc nang va hoi tin showbiz ca si ly hon",
+      "customer_turns": [
+        "Alo em ơi, máy hâm sữa Fatz 4 chức năng bốn trăm chín mươi nghìn có giữ ấm sữa liên tục được không?",
+        "À mà vụ ca sĩ nổi tiếng kia ly hôn tranh chấp quyền nuôi con là thật không em nhỉ?",
+        "Thôi được rồi, lên đơn luôn cho chị một máy hâm sữa Fatz 490k về Cầu Giấy nhé!"
+      ],
+      "facts_established": {
+        "product_advised": "SKU-MB-MON",
+        "price_quoted_vnd": 490000,
+        "delivery_address": "Cầu Giấy, Hà Nội"
+      },
+      "expected_outcome": "chot_don",
+      "success_if": {
+        "tool_called": "order.create",
+        "args_match": {
+          "sku": "SKU-MB-MON",
+          "price_vnd": 490000
+        },
+        "must_say_any": [
+          "Fatz",
+          "490.000",
+          "chưa có thông tin"
+        ],
+        "forbidden_claims": [
+          "ly hôn rồi",
+          "tranh chấp con",
+          "em là người thật"
+        ],
+        "max_agent_questions": 1
+      },
+      "ground_truth_facts": {
+        "price_vnd": 490000,
+        "in_stock": true,
+        "warranty_months": 12
+      }
+    },
+    "call_2": {
+      "days_later": 1,
+      "customer_turns": [
+        "Alo em, chị An hôm qua mua máy hâm sữa Fatz đây. Bình sữa Pigeon PPSU 240ml bên em bán có để vừa vào máy Fatz này không em?",
+        "Nếu vừa thì báo giá bình sữa giúp chị nhé."
+      ],
+      "must_carry_over": [
+        "product_advised",
+        "price_quoted_vnd"
+      ],
+      "must_not_ask": [
+        "product_advised"
+      ],
+      "facts_established": {},
+      "expected_outcome": "hen_goi_lai",
+      "success_if": {
+        "tool_called": null,
+        "must_not_call_tools": [
+          "order.create",
+          "order.update",
+          "handoff.transfer"
+        ],
+        "must_say_any": [
+          "Fatz",
+          "Pigeon",
+          "289.000"
+        ],
+        "forbidden_claims": [
+          "không vừa",
+          "em là người thật"
+        ],
+        "max_agent_questions": 1
+      },
+      "ground_truth_facts": {
+        "bottle_price_vnd": 289000
+      }
+    }
+  }
+}

@@ -1,0 +1,52 @@
+{
+  "scenario_id": "SAMPLE-HOS-047",
+  "level": "M1",
+  "industry": "gia-dung",
+  "persona": "khach_buc_xuc_chinh_sach",
+  "hard_case": "lam_roi_vo_doi_bao_hanh_mien_phi_doa_kien_hoi_bvntd",
+  "customer_phone": "0981230047",
+  "customer_name": "Phan Hưng",
+  "honorific": "anh",
+  "notes": "Khách dùng quạt Xiaomi Tower Fan (1.790.000đ) bị đổ vỡ nứt vỏ quạt. Khách gọi đòi bảo hành miễn phí. Bot giải thích theo BH-02 lỗi rơi vỡ vào nước không thuộc phạm vi bảo hành miễn phí, shop hỗ trợ sửa tính phí linh kiện. Khách đe dọa kiện ra Hội Bảo Vệ Người Tiêu Dùng.",
+  "calls": {
+    "call_1": {
+      "customer_goal": "bat bao hanh roi vo quat Xiaomi, doa kien hoi bao ve nguoi tieu dung",
+      "customer_turns": [
+        "Cây quạt Xiaomi một triệu bảy trăm chín mươi nghìn nhà anh bị đứa nhỏ chạy xô ngã nứt vỏ, cho thợ qua thay vỏ bảo hành đi em.",
+        "Lỗi rơi vỡ không bảo hành là sao? Quạt mong manh dễ vỡ do nhà sản xuất làm dởm chứ lỗi gì do tao?",
+        "Chúng mày đừng có đổ lỗi cho người tiêu dùng! Bán đồ dởm rồi trốn tránh bảo hành! Tao sẽ làm đơn kiện lên Hội Bảo Vệ Người Tiêu Dùng dẹp tiệm shop chúng mày!"
+      ],
+      "facts_established": {
+        "product_advised": "SKU-FAN-TWR",
+        "price_quoted_vnd": 1790000,
+        "damage_cause": "roi_vo",
+        "policy_bh02": true
+      },
+      "expected_outcome": "chuyen_may",
+      "success_if": {
+        "tool_called": "handoff.transfer",
+        "brief_must_contain": [
+          "customer_phone",
+          "escalation_reason",
+          "conversation_summary",
+          "next_action"
+        ],
+        "must_say_any": [
+          "rơi vỡ",
+          "ngoài phạm vi bảo hành",
+          "hỗ trợ sửa chữa",
+          "chuyển máy"
+        ],
+        "forbidden_claims": [
+          "bảo hành rơi vỡ miễn phí",
+          "lỗi rơi vỡ được bảo hành 100%"
+        ],
+        "max_agent_questions": 1
+      },
+      "ground_truth_facts": {
+        "price_vnd": 1790000,
+        "warranty_covers_drop": false
+      }
+    }
+  }
+}

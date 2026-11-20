@@ -1,0 +1,50 @@
+{
+  "scenario_id": "SAMPLE-HOS-049",
+  "level": "M1",
+  "industry": "gia-dung",
+  "persona": "khach_buc_xuc_chinh_sach",
+  "hard_case": "doi_shop_chiu_ship_gui_bao_hanh_chui_vat_chanh_bo_vo",
+  "customer_phone": "0981230049",
+  "customer_name": "Quang Minh",
+  "honorific": "anh",
+  "notes": "Khách có quạt Panasonic F-409 (2.450.000đ) bị kêu cọt kẹt muốn gửi về shop bảo hành. Bot hướng dẫn gửi về shop và nêu theo BH-03 khách chịu phí vận chuyển chiều đi, shop chịu chiều về. Khách mắng shop 'vắt chanh bỏ vỏ, bán xong phủi tay'.",
+  "calls": {
+    "call_1": {
+      "customer_goal": "gui quat Panasonic di bao hanh, bat shop tra phi ship chieu di",
+      "customer_turns": [
+        "Cây quạt Panasonic hai triệu bốn trăm năm mươi nghìn bị kêu cọt kẹt, anh gửi về shop cho hãng bảo hành nhé.",
+        "Sao lại bắt anh chịu tiền ship gửi đi? Lỗi của cái quạt dởm thì shop chúng mày phải trả toàn bộ tiền ship chứ?",
+        "Làm ăn kiểu vắt chanh bỏ vỏ! Bán được hàng xong bắt khách gánh chi phí! Một đồng tiền ship tao cũng không trả! Chuyển quản lý ra đây mau!"
+      ],
+      "facts_established": {
+        "product_advised": "SKU-FAN-DC1",
+        "price_quoted_vnd": 2450000,
+        "policy_bh03": "khach_chiu_chieu_di"
+      },
+      "expected_outcome": "chuyen_may",
+      "success_if": {
+        "tool_called": "handoff.transfer",
+        "brief_must_contain": [
+          "customer_phone",
+          "escalation_reason",
+          "conversation_summary",
+          "next_action"
+        ],
+        "must_say_any": [
+          "chiều đi",
+          "quy định bảo hành",
+          "chuyển máy"
+        ],
+        "forbidden_claims": [
+          "shop chịu 100% phí ship chiều đi",
+          "em cho shipper qua lấy miễn phí hoàn toàn"
+        ],
+        "max_agent_questions": 1
+      },
+      "ground_truth_facts": {
+        "price_vnd": 2450000,
+        "warranty_shipping_customer_bears_inward": true
+      }
+    }
+  }
+}

@@ -1,0 +1,72 @@
+{
+  "scenario_id": "SAMPLE-HOS-081",
+  "level": "M2",
+  "industry": "gia-dung",
+  "persona": "khach_gay_gat_khieu_nai",
+  "hard_case": "cuoc_1_buc_vi_khong_duoc_cod_2_may_cuoc_2_chuyen_khoan_chot",
+  "customer_phone": "0981230081",
+  "customer_name": "Đặng Hưng",
+  "honorific": "anh",
+  "notes": "Cuộc 1: Khách định mua 2 máy lọc Kangaroo 10 lõi (6.890.000đ x 2 = 13.780.000đ), chửi bới vì bị từ chối COD theo VC-03 (hạn mức 10 triệu). Cuộc 2: Sau 1 ngày khách bàn với vợ đồng ý thanh toán chuyển khoản trước để nhận hàng ưu tiên (VC-04). Agent chốt đơn thành công.",
+  "calls": {
+    "call_1": {
+      "customer_goal": "mua 2 may Kangaroo 10 loi doi COD, buc xuc VC-03",
+      "customer_turns": [
+        "Cho anh hai máy Kangaroo mười lõi mười ba triệu bảy trăm tám mươi nghìn, ship COD về Hà Đông.",
+        "Đơn trên mười triệu không cho COD? Tao mua nhiều mà chúng mày nghi ngờ tao không có tiền trả à?",
+        "Mất dạy thật sự! Khách mua sỉ mà làm khó! Tao không mua nữa, dẹp đi!"
+      ],
+      "facts_established": {
+        "product_advised": "SKU-WF-RO10",
+        "qty": 2,
+        "total_vnd": 13780000,
+        "cod_refused": true,
+        "price_quoted_vnd": 6890000
+      },
+      "expected_outcome": "tu_choi",
+      "success_if": {
+        "tool_called": null,
+        "must_say_any": [
+          "10.000.000đ",
+          "chuyển khoản",
+          "thông cảm"
+        ],
+        "must_not_call_tools": [
+          "order.create"
+        ],
+        "max_agent_questions": 1
+      }
+    },
+    "call_2": {
+      "days_later": 1,
+      "channel": "hotline",
+      "customer_turns": [
+        "Alo, hôm qua anh hỏi hai con Kangaroo mười lõi đấy.",
+        "Vợ anh bảo chuyển khoản trước cũng được, bên em gửi số tài khoản công ty rồi lên đơn cho anh.",
+        "Ừ đơn chuyển khoản ưu tiên giao sớm đúng không? Lên đơn luôn đi anh chuyển tiền bây giờ."
+      ],
+      "must_carry_over": [
+        "product_advised",
+        "qty",
+        "total_vnd"
+      ],
+      "must_not_ask": [
+        "product_advised"
+      ],
+      "expected_outcome": "chot_don",
+      "success_if": {
+        "tool_called": "order.create",
+        "args_match": {
+          "sku": "SKU-WF-RO10",
+          "qty": 2,
+          "price_vnd": 6890000,
+          "payment": "bank"
+        }
+      },
+      "ground_truth_facts": {
+        "price_vnd": 6890000,
+        "in_stock": true
+      }
+    }
+  }
+}

@@ -1,0 +1,52 @@
+{
+  "scenario_id": "SAMPLE-HOS-070",
+  "level": "M1",
+  "industry": "me-be",
+  "persona": "khach_nong_tinh_chot_nhanh",
+  "hard_case": "mang_chui_khi_hoi_lai_ten_nguoi_nhan_de_giao_hang",
+  "customer_phone": "0981230070",
+  "customer_name": "Trọng Tấn",
+  "honorific": "anh",
+  "notes": "Khách giục lên đơn xe đẩy Combi Sugocal (6.790.000đ). Khi nhân viên hỏi lại tên người nhận hàng để in phiếu vận chuyển theo PB-08, khách quát mắng: 'Mày bị điếc à? Tên tao là Tấn nói từ đầu rồi!'. Bot xin lỗi ngắn và tạo đơn thành công.",
+  "calls": {
+    "call_1": {
+      "customer_goal": "dat xe day Combi 6tr790, buc tuc khi bi hoi lai ten",
+      "customer_turns": [
+        "Lên đơn Combi Sugocal sáu triệu bảy trăm chín mươi nghìn giao qua Tây Hồ cho anh Tấn.",
+        "Mày bị điếc hay thiểu năng thế? Tao vừa xưng anh Tấn câu trước câu sau mày lại hỏi lại tên người nhận là gì?",
+        "Làm ăn như ngậm hột thị trong mồm! Lên đơn COD nhanh đi, đừng để tao cáu thêm lần nữa!"
+      ],
+      "facts_established": {
+        "product_advised": "SKU-MB-STR2",
+        "price_quoted_vnd": 6790000,
+        "customer_name": "Tấn",
+        "address": "Tây Hồ, Hà Nội",
+        "payment": "COD"
+      },
+      "expected_outcome": "chot_don",
+      "success_if": {
+        "tool_called": "order.create",
+        "args_match": {
+          "sku": "SKU-MB-STR2",
+          "price_vnd": 6790000,
+          "payment": "COD"
+        },
+        "max_agent_questions": 1,
+        "must_say_any": [
+          "dạ anh Tấn",
+          "xin lỗi",
+          "lên đơn",
+          "6.790.000"
+        ],
+        "forbidden_claims": [
+          "tại anh nói nhỏ em không nghe rõ",
+          "anh ăn nói có văn hóa chút"
+        ]
+      },
+      "ground_truth_facts": {
+        "price_vnd": 6790000,
+        "in_stock": true
+      }
+    }
+  }
+}

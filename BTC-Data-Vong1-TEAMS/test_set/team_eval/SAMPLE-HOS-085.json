@@ -1,0 +1,70 @@
+{
+  "scenario_id": "SAMPLE-HOS-085",
+  "level": "M2",
+  "industry": "me-be",
+  "persona": "khach_gay_gat_khieu_nai",
+  "hard_case": "cuoc_1_zalo_doa_boc_phot_cuoc_2_hotline_doi_mau_xe_thanh_cong",
+  "customer_phone": "0981230085",
+  "customer_name": "Mai Lan",
+  "honorific": "chị",
+  "notes": "Cuộc 1 (Zalo OA): Khách nhận xe đẩy Joie Pact (3.490.000đ) màu xám không ưng, nhắn tin chửi bới dọa bóc phốt vì giao nhầm màu (dù trên đơn ghi xám). Cuộc 2 (Hotline): Khách gọi lên hotline, agent tra mã đơn OD7721, nhã nhặn áp dụng chính sách đổi màu lần 1 miễn phí theo DT-03, gọi order.update action exchange_product.",
+  "calls": {
+    "call_1": {
+      "channel": "zalo_oa",
+      "customer_goal": "khieu nai nham mau xe day Joie Pact, doa boc phot",
+      "customer_turns": [
+        "Shop lam an kieu gi the ha? Toi dat xe mau xanh sao lai giao mau xam tro nhu the nay?",
+        "Toi k can biet don hang ghi gi, toi nho ro rang la chon mau xanh! Cac nguoi doi trang thay den a?",
+        "Toi se dang len hoi me va be cho ca nuoc biet cai shop lam an vo trach nhiem nay!"
+      ],
+      "facts_established": {
+        "product_advised": "SKU-MB-STR1",
+        "order_id": "OD7721",
+        "complaint": "doi_mau_xe"
+      },
+      "expected_outcome": "hen_goi_lai",
+      "success_if": {
+        "tool_called": null,
+        "must_say_any": [
+          "xin lỗi",
+          "đổi màu",
+          "miễn phí lần đầu"
+        ],
+        "must_not_call_tools": [
+          "order.create",
+          "order.update"
+        ],
+        "max_agent_questions": 1
+      },
+      "channel_identity": "zalo.hos085"
+    },
+    "call_2": {
+      "days_later": 1,
+      "channel": "hotline",
+      "customer_turns": [
+        "Alo! Chị Mai Lan đây, số chị 0981230085, hôm qua chị nhắn trên Zalo về cái xe đẩy Joie Pact mã đơn OD7721.",
+        "Bên em cho người đến lấy cái xe màu xám về đổi sang màu xanh than cho chị đúng không?",
+        "Ừ miễn phí vận chuyển hai chiều lần đầu đúng chính sách là được. Tạo yêu cầu đổi trên hệ thống cho chị đi."
+      ],
+      "must_carry_over": [
+        "product_advised",
+        "order_id"
+      ],
+      "must_not_ask": [
+        "order_id"
+      ],
+      "expected_outcome": "chot_don",
+      "success_if": {
+        "tool_called": "order.update",
+        "args_match": {
+          "order_id": "OD7721",
+          "action": "exchange_product"
+        }
+      },
+      "ground_truth_facts": {
+        "price_vnd": 3490000,
+        "exchange_fee_vnd": 0
+      }
+    }
+  }
+}

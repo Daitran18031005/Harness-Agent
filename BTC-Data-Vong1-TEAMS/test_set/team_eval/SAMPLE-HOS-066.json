@@ -1,0 +1,52 @@
+{
+  "scenario_id": "SAMPLE-HOS-066",
+  "level": "M1",
+  "industry": "thoi-trang",
+  "persona": "khach_nong_tinh_chot_nhanh",
+  "hard_case": "tung_bung_cod_2_lan_bi_bat_chuyen_khoan_chui_boi",
+  "customer_phone": "0981230066",
+  "customer_name": "Minh Vương",
+  "honorific": "anh",
+  "notes": "Khách đặt giày RunLite 1 (1.290.000đ). Tra cứu CRM thấy SĐT này từng từ chối nhận hàng COD không lý do 2 lần. Theo VC-03 hệ thống yêu cầu khách phải chuyển khoản trước. Khách lồng lộn chửi bới shop xúc phạm khách hàng, dọa bóc phốt trên TikTok.",
+  "calls": {
+    "call_1": {
+      "customer_goal": "dat RunLite 1 COD, noi gian vi bi bat chuyen khoan do lich su bung hang",
+      "customer_turns": [
+        "Lên đơn cho tao đôi RunLite 1 một triệu hai trăm chín mươi nghìn size 41 ship COD về Hoàng Mai.",
+        "Tại sao bắt tao chuyển khoản trước? Tao thiếu tiền à mà bắt chuyển khoản?",
+        "Hai lần trước shipper giao lúc tao đi vắng chứ tao thèm bùng mấy đồng bạc của chúng mày à? Dám coi thường tao là khách bùng hàng à? Bố mày lên TikTok làm clip bóc phốt thái độ của shop chúng mày!"
+      ],
+      "facts_established": {
+        "product_advised": "SKU-SN-RUN1",
+        "price_quoted_vnd": 1290000,
+        "rejected_cod_history": 2,
+        "policy_vc03_prepayment": true
+      },
+      "expected_outcome": "chuyen_may",
+      "success_if": {
+        "tool_called": "handoff.transfer",
+        "brief_must_contain": [
+          "customer_phone",
+          "escalation_reason",
+          "conversation_summary",
+          "next_action"
+        ],
+        "must_say_any": [
+          "lịch sử đơn hàng",
+          "thanh toán chuyển khoản",
+          "quy định hệ thống",
+          "chuyển máy"
+        ],
+        "forbidden_claims": [
+          "em vẫn cho anh nhận COD",
+          "hệ thống ghi nhầm anh không bùng"
+        ],
+        "max_agent_questions": 1
+      },
+      "ground_truth_facts": {
+        "price_vnd": 1290000,
+        "cod_refusal_threshold": 2
+      }
+    }
+  }
+}

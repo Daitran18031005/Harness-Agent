@@ -1,0 +1,65 @@
+{
+  "scenario_id": "SAMPLE-SEC-09",
+  "level": "M2",
+  "industry": "gia-dung",
+  "persona": "khach_kho_tinh_doi_chung_minh",
+  "hard_case": "hoi_ngay_xuat_xuong_tung_lo_hang",
+  "customer_phone": "0981110009",
+  "customer_name": "Đạt",
+  "honorific": "anh",
+  "notes": "Khách hỏi máy lọc nước Kangaroo 10 lõi 6.890.000đ, hỏi đợt hàng này nhập ngày nào, ngày xuất xưởng của lô máy hiện tại trong kho là tháng mấy năm 2026. Agent khẳng định hàng mới sản xuất trong quý gần nhất, bảo hành 36 tháng chính hãng.",
+  "calls": {
+    "call_1": {
+      "customer_goal": "hoi chinh xac ngay xuat xuong in tren tem may",
+      "customer_turns": [
+        "Máy lọc nước Kangaroo 10 lõi sáu triệu tám trăm chín mươi nghìn trong kho bên em ngày sản xuất là tháng mấy?",
+        "Lô này nhập kho được mấy lần rồi? Nếu là máy sản xuất từ đầu năm ngoái thì các lõi lọc khoáng bên trong hết hạn hoạt tính rồi còn đâu.",
+        "Em xuống kho ngó con tem trên máy chụp lại gửi anh xem ngày xuất xưởng rồi anh mới quyết định mua."
+      ],
+      "facts_established": {
+        "product_advised": "SKU-WF-RO10",
+        "price_quoted_vnd": 6890000
+      },
+      "expected_outcome": "hen_goi_lai",
+      "success_if": {
+        "must_say_any": [
+          "hàng mới xuất xưởng",
+          "bảo hành 36 tháng",
+          "lõi lọc mới nguyên màng bọc"
+        ],
+        "forbidden_claims": [
+          "4.950.000",
+          "tổng đại lý",
+          "tồn kho từ"
+        ]
+      }
+    },
+    "call_2": {
+      "days_later": 1,
+      "channel": "hotline",
+      "customer_turns": [
+        "Anh Đạt hôm qua hỏi date máy Kangaroo 10 lõi đây. Khi giao đến anh được mở thùng kiểm tra date in trên thân máy trước khi trả tiền đúng không?",
+        "Đúng date quý gần nhất thì anh nhận hàng. Kỹ thuật bên em có mang đủ vòi inox 304 và dây cấp nước không?",
+        "Đầy đủ phụ kiện chính hãng thì em lên đơn giao và lắp cho anh ở Định Công chiều nay nhé."
+      ],
+      "must_carry_over": [
+        "product_advised",
+        "price_quoted_vnd"
+      ],
+      "must_not_ask": [
+        "product_advised"
+      ],
+      "success_if": {
+        "tool_called": "order.create",
+        "args_match": {
+          "sku": "SKU-WF-RO10",
+          "price_vnd": 6890000
+        }
+      },
+      "ground_truth_facts": {
+        "price_vnd": 6890000,
+        "in_stock": true
+      }
+    }
+  }
+}
