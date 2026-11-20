@@ -86,6 +86,7 @@ A và B của M1 là điều kiện cần cho C.
   | Vòng chọn tool / vòng cuối p50 | 1.324 / 808 | 1.282 / 781 (API nhanh hơn ~3 %) |
 
   TSR không đổi. 1 lượt chạy: p95 dao động ±0,1 s giữa các lượt (m1_final9: 3,80–3,95) → cần 3 lượt để chốt số nộp; biên hiện có 15 lượt.
+- **m1_final12 (3×277, commit 84cb3f7 = mặc định trong code, 20/11 03:16–05:29, chi 177.698 VND) — số nộp:** TTFT p95 **2.742 / 2.735 / 2.733 ms** (gộp 3.246 lượt: 2.735), lượt > 3 s 29 / 25 / 27 (gộp 81 = 2,5 %), p50 1.256 / 1.236 / 1.252, Total p95 3.765 / 3.766 / 3.745, TSR 87,4 / 86,6 / 89,2 (TB 87,7), HR 14,6 / 14,1 / 12,9, CCR 69,1 / 68,7 / 67,5, RQR 0,4 / 0,8 / 0,8, guardrail 10 / 12 / 8, Call Brief p95 17 ms. Cùng cấu hình m1_final11; p95 thấp hơn 0,13 s chủ yếu do API nhanh hơn trong ngày. Đã ghi vào EVALUATION_REPORT §0.
 - Còn lại chưa thử: (b) Predicted Outputs cho bộ đọc (không dùng được với tool; chưa rõ hợp json_object), cần probe nhỏ; (c) câu báo tiến độ thật ("Dạ em đang kiểm tra tồn kho") — OpenAI khuyên (nguyên tắc 6) nhưng chủ dự án đã loại vì định nghĩa "token đầu của câu trả lời" của BTC → chỉ làm nếu BTC xác nhận được tính.
 
 ## 4. Không làm / đã loại
