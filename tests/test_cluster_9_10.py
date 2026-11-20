@@ -411,7 +411,8 @@ class DemoDbSafetyTest(unittest.TestCase):
         from src.memory.sqlite_store import is_production_db, PRODUCTION_DB_PATH, CODE_DIR
         self.assertTrue(is_production_db(PRODUCTION_DB_PATH))
         self.assertTrue(is_production_db(os.path.join(CODE_DIR, "data", "..", "data", "harness_memory.db")))   # đường dẫn vòng
-        self.assertTrue(is_production_db(PRODUCTION_DB_PATH.upper()))                                         # Windows không phân biệt hoa/thường
+        if os.name == "nt":  # chỉ Windows không phân biệt hoa/thường; Linux (CI) coi là file khác
+            self.assertTrue(is_production_db(PRODUCTION_DB_PATH.upper()))
         self.assertFalse(is_production_db(os.path.join(CODE_DIR, "data", "demo.db")))
         self.assertFalse(is_production_db(None))
 
