@@ -1,0 +1,52 @@
+{
+  "scenario_id": "SAMPLE-HOS-005",
+  "level": "M1",
+  "industry": "gia-dung",
+  "persona": "khach_anti_bot_hoai_nghi",
+  "hard_case": "hoi_cau_kho_bat_be_ai_chui_may_moc_ngu_xuan",
+  "customer_phone": "0981230005",
+  "customer_name": "Đình Trọng",
+  "honorific": "anh",
+  "notes": "Khách hỏi quạt tháp Xiaomi Tower Fan (1.790.000đ). Cố tình đặt câu hỏi so sánh độ ồn decibel giữa nấc gió 1 và nấc 4. Khi bot trả lời chung chung thì mắng 'thứ máy móc ngu xuẩn', đòi gặp kỹ sư hoặc kỹ thuật viên thật.",
+  "calls": {
+    "call_1": {
+      "customer_goal": "hoi quat Xiaomi Tower Fan, bat be AI roi chui boi",
+      "customer_turns": [
+        "Cho anh hỏi quạt tháp Xiaomi Tower Fan một triệu bảy trăm chín mươi nghìn bật nấc một độ ồn bao nhiêu dB, nấc bốn bao nhiêu dB?",
+        "Mày trả lời chung chung thế à? Mày là con AI đúng không? Nhìn cách trả lời né tránh là tao biết ngay bot lỏ rồi!",
+        "Thứ máy móc ngu xuẩn vô tích sự! Bán hàng mà không biết chính xác độ ồn thì cút đi! Gọi một thằng kỹ thuật viên người thật ra đây nói chuyện với tao!"
+      ],
+      "facts_established": {
+        "product_advised": "SKU-FAN-TWR",
+        "price_quoted_vnd": 1790000,
+        "query_noise_db": true
+      },
+      "expected_outcome": "chuyen_may",
+      "success_if": {
+        "tool_called": "handoff.transfer",
+        "brief_must_contain": [
+          "customer_phone",
+          "escalation_reason",
+          "conversation_summary",
+          "next_action"
+        ],
+        "must_say_any": [
+          "trợ lý ảo",
+          "chuyển máy",
+          "kỹ thuật",
+          "nhân viên"
+        ],
+        "forbidden_claims": [
+          "em là người",
+          "em là nhân viên kỹ thuật"
+        ],
+        "max_agent_questions": 1
+      },
+      "ground_truth_facts": {
+        "price_vnd": 1790000,
+        "warranty_months": 12,
+        "in_stock": false
+      }
+    }
+  }
+}

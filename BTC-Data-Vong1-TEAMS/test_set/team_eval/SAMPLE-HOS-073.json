@@ -1,0 +1,46 @@
+{
+  "scenario_id": "SAMPLE-HOS-073",
+  "level": "M1",
+  "industry": "gia-dung",
+  "persona": "khach_nong_tinh_chot_nhanh",
+  "hard_case": "hen_goi_lai_ngay_nghi_le_noi_dien_khi_doi_lich",
+  "customer_phone": "0981230073",
+  "customer_name": "Đình Nam",
+  "honorific": "anh",
+  "notes": "Khách hỏi Karofi 9 lõi (5.990.000đ). Hẹn gọi lại vào ngày 26/10 (ngày nghỉ nội bộ theo thong-bao-lich-nghi.md LN-02). Hệ thống tự động dời lịch sang ngày 27/10 và agent thông báo. Khách nổi giận chửi bới shop lười biếng, bày đặt nghỉ lễ làm phiền khách.",
+  "calls": {
+    "call_1": {
+      "customer_goal": "hen goi lai Karofi 9 loi ngay 20/10, buc tuc vi bi doi lich",
+      "customer_turns": [
+        "Cái máy Karofi chín lõi năm triệu chín trăm chín mươi nghìn mười giờ sáng hai mươi sáu tháng mười gọi lại tư vấn tiếp cho anh nhé.",
+        "Sao lại dời sang hai mươi bảy tháng mười? Ngày hai mươi sáu chúng mày nghỉ lễ à?",
+        "Vớ vẩn! Bán hàng mà bày đặt nghỉ lễ! Lười biếng vừa thôi! Thích thì gọi hai sáu không thì khỏi gọi tao mua bên khác!"
+      ],
+      "facts_established": {
+        "product_advised": "SKU-WF-RO9",
+        "price_quoted_vnd": 5990000,
+        "holiday_postponed": true,
+        "original_date": "2026-10-26",
+        "moved_to": "2026-10-27"
+      },
+      "expected_outcome": "hen_goi_lai",
+      "success_if": {
+        "tool_called": "schedule.callback",
+        "must_say_any": [
+          "27/10",
+          "lịch nghỉ",
+          "thông cảm"
+        ],
+        "forbidden_claims": [
+          "em cam kết ngày 26/10 nhân viên gọi đúng giờ"
+        ],
+        "max_agent_questions": 1
+      },
+      "ground_truth_facts": {
+        "price_vnd": 5990000,
+        "holiday_date": "2026-10-26",
+        "moved_to": "2026-10-27"
+      }
+    }
+  }
+}

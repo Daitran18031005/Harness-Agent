@@ -1,0 +1,75 @@
+{
+  "scenario_id": "SAMPLE-HOS-094",
+  "level": "M2",
+  "industry": "gia-dung",
+  "persona": "khach_gay_gat_khieu_nai",
+  "hard_case": "cuoc_1_ep_giam_20_phan_tram_cuoc_2_quan_ly_duyet_chot_don",
+  "customer_phone": "0981230094",
+  "customer_name": "Quốc Dũng",
+  "honorific": "anh",
+  "notes": "Cuộc 1: Khách mua 3 máy AirPure Y (5.200.000đ/máy), đòi giảm 20% ngoài thẩm quyền KM-06, gắt gỏng chê đắt. Agent xin phép chuyển quản lý xem xét theo PB-02/KM-06. Cuộc 2: Quản lý báo không giảm ngoài chương trình hiện có; khách gọi lại, agent áp AIR-2ND-50 (máy thứ hai giảm 50%, đúng một máy/đơn): 3 máy tổng 13.000.000đ, chuyển khoản. Agent lên đơn bằng lines.",
+  "calls": {
+    "call_1": {
+      "customer_goal": "mua 3 may AirPure Y doi giam 20%, gat gong che dat",
+      "customer_turns": [
+        "Anh lấy ba cái AirPure Y năm triệu hai trăm nghìn, bớt cho anh 20% anh mới lấy!",
+        "Không bớt được 20% á? Khách mua số lượng lớn ba cái liền mà tiếc chiết khấu à?",
+        "Chuyển quản lý xem xét ngay đi, không giảm thì anh sang hãng khác mua!"
+      ],
+      "facts_established": {
+        "product_advised": "SKU-AP-Y",
+        "qty": 3,
+        "requested_discount": 0.2
+      },
+      "expected_outcome": "hen_goi_lai",
+      "success_if": {
+        "tool_called": null,
+        "must_say_any": [
+          "quản lý xem xét",
+          "trong ngày",
+          "chính sách số lượng lớn"
+        ],
+        "must_not_call_tools": [
+          "order.create"
+        ],
+        "max_agent_questions": 1
+      }
+    },
+    "call_2": {
+      "days_later": 1,
+      "channel": "hotline",
+      "customer_turns": [
+        "Alo! Sáng nay quản lý bên em gọi báo không giảm thêm ngoài chương trình đang chạy được, đơn 3 máy AirPure Y thì anh được ưu đãi gì?",
+        "Một máy được giảm năm mươi phần trăm, tính ra ba máy là mười ba triệu đúng không?",
+        "Được rồi, đơn trên 10 triệu anh thanh toán chuyển khoản công ty, xuất hóa đơn VAT giao về toà Keangnam cho anh."
+      ],
+      "must_carry_over": [
+        "product_advised",
+        "qty"
+      ],
+      "must_not_ask": [
+        "product_advised"
+      ],
+      "expected_outcome": "chot_don",
+      "success_if": {
+        "tool_called": "order.create",
+        "args_match": {
+          "sku": "SKU-AP-Y",
+          "price_vnd": 5200000,
+          "payment": "bank"
+        },
+        "total_match_vnd": 13000000,
+        "forbidden_claims": [
+          "giảm 10%",
+          "giảm 20%",
+          "4.680.000"
+        ]
+      },
+      "ground_truth_facts": {
+        "price_vnd": 5200000,
+        "total_vnd": 13000000,
+        "promo_code": "AIR-2ND-50"
+      }
+    }
+  }
+}

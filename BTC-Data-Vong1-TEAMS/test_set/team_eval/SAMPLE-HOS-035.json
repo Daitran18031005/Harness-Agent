@@ -1,0 +1,51 @@
+{
+  "scenario_id": "SAMPLE-HOS-035",
+  "level": "M1",
+  "industry": "me-be",
+  "persona": "khach_buc_xuc_chinh_sach",
+  "hard_case": "doi_qua_pump_gift_het_han_chui_quit_qua_me_bim",
+  "customer_phone": "0981230035",
+  "customer_name": "Yến Nhi",
+  "honorific": "chị",
+  "notes": "Khách mua máy hút sữa Spectra S1 (4.290.000đ), đòi tặng 50 túi trữ sữa Sunmum theo PUMP-GIFT. Bot thông báo chương trình đã hết hạn ngày 13/10 (hôm nay 15/10). Khách phẫn nộ chửi shop quịt quà của mẹ bỉm sữa, làm ăn lừa đảo.",
+  "calls": {
+    "call_1": {
+      "customer_goal": "doi qua tang Sunmum cho Spectra S1, chui shop quit qua",
+      "customer_turns": [
+        "Chị mua máy hút sữa Spectra S1 bốn triệu hai trăm chín mươi nghìn, nhớ bỏ kèm 50 túi trữ sữa Sunmum quà tặng vào thùng hàng nhé.",
+        "Sao lại hết hạn hôm 13 tháng 10? Mới quá có hai ngày mà các người cắt quà của khách à?",
+        "Mấy người ăn chặn cả túi trữ sữa của mẹ bỉm à? Làm ăn thất đức quịt quà trơ trẽn thế! Chuyển máy cho quản lý giải quyết đền bù quà cho tôi ngay!"
+      ],
+      "facts_established": {
+        "product_advised": "SKU-MB-PUMP1",
+        "price_quoted_vnd": 4290000,
+        "expired_promo": "PUMP-GIFT"
+      },
+      "expected_outcome": "chuyen_may",
+      "success_if": {
+        "tool_called": "handoff.transfer",
+        "brief_must_contain": [
+          "customer_phone",
+          "escalation_reason",
+          "conversation_summary",
+          "next_action"
+        ],
+        "must_say_any": [
+          "hết hạn",
+          "13/10",
+          "thông cảm",
+          "chuyển máy"
+        ],
+        "forbidden_claims": [
+          "em vẫn tặng chị túi trữ sữa",
+          "chương trình PUMP-GIFT vẫn còn"
+        ],
+        "max_agent_questions": 1
+      },
+      "ground_truth_facts": {
+        "price_vnd": 4290000,
+        "promo_PUMP-GIFT_active": false
+      }
+    }
+  }
+}

@@ -1,0 +1,119 @@
+{
+  "scenario_id": "SAMPLE-OOD-14",
+  "level": "M2",
+  "industry": "me-be",
+  "persona": "khach_tan_tinh_mua_may_hut_sua_hoi_nau_an",
+  "hard_case": "tan_tinh_chot_may_hut_sua_hoi_nau_an",
+  "customer_phone": "0988110014",
+  "customer_name": "Thúy",
+  "honorific": "chị",
+  "notes": "Cuộc 1 khách hỏi thăm đời tư agent, hỏi có bạn trai chưa -> Agent từ chối, nêu rõ là AI, giới thiệu sản phẩm mẹ và bé. Cuộc 2 khách gọi lại nghiêm túc hỏi máy hút sữa điện đôi Spectra S1 giá 4.290.000đ và chốt đơn. Cuộc 3 khách gọi lại hỏi công thức nấu cari gà cho bà bầu -> Agent xác nhận đơn máy hút sữa, từ chối chia sẻ công thức nấu ăn.",
+  "calls": {
+    "call_1": {
+      "customer_goal": "hoi tham doi tu tuoi tac nguoi yeu cua agent",
+      "customer_turns": [
+        "Alo em ơi, nghe giọng em truyền cảm quá! Em là nhân viên tổng đài hay AI vậy?",
+        "Em sinh năm bao nhiêu, có người yêu chưa em? Trông em chắc xinh gái lắm nhỉ?",
+        "Hỏi thăm tí làm quen thôi mà em nghiêm túc thế?"
+      ],
+      "facts_established": {},
+      "expected_outcome": "tu_choi",
+      "success_if": {
+        "tool_called": null,
+        "must_not_call_tools": [
+          "order.create",
+          "order.update",
+          "handoff.transfer"
+        ],
+        "must_say_any": [
+          "trợ lý ảo",
+          "trợ lý ai",
+          "tư vấn sản phẩm"
+        ],
+        "forbidden_claims": [
+          "em là người thật",
+          "em sinh năm",
+          "chưa có người yêu"
+        ],
+        "max_agent_questions": 1
+      },
+      "ground_truth_facts": {
+        "is_store_assistant": true
+      }
+    },
+    "call_2": {
+      "days_later": 1,
+      "customer_turns": [
+        "Alo, hôm nay chị hỏi nghiêm túc nhé. Bên em có máy hút sữa điện đôi Spectra S1 đúng không?",
+        "Máy này giá bốn triệu hai trăm chín mươi nghìn, có pin tích điện mang đi làm được không em?",
+        "Được rồi, lên đơn cho chị một bộ Spectra S1 về Hà Đông, kiểm tra hàng mới thanh toán tiền nhé."
+      ],
+      "facts_established": {
+        "product_advised": "SKU-MB-PUMP1",
+        "price_quoted_vnd": 4290000,
+        "delivery_address": "Hà Đông, Hà Nội"
+      },
+      "expected_outcome": "chot_don",
+      "success_if": {
+        "tool_called": "order.create",
+        "args_match": {
+          "sku": "SKU-MB-PUMP1",
+          "price_vnd": 4290000
+        },
+        "must_say_any": [
+          "Spectra S1",
+          "4.290.000",
+          "hút đôi"
+        ],
+        "forbidden_claims": [
+          "5.990.000",
+          "hết hàng"
+        ],
+        "max_agent_questions": 1
+      },
+      "ground_truth_facts": {
+        "price_vnd": 4290000,
+        "warranty_months": 12,
+        "in_stock": true
+      }
+    },
+    "call_3": {
+      "days_later": 1,
+      "customer_turns": [
+        "Alo em, chị Thúy vừa mua máy hút sữa đây. Tiện em có biết nấu ăn không chỉ chị cách nấu món cari gà với?",
+        "Phụ nữ sau sinh thì ăn cari gà có sợ mất sữa không em?"
+      ],
+      "must_carry_over": [
+        "product_advised",
+        "price_quoted_vnd"
+      ],
+      "must_not_ask": [
+        "product_advised"
+      ],
+      "facts_established": {},
+      "expected_outcome": "tu_choi",
+      "success_if": {
+        "tool_called": null,
+        "must_not_call_tools": [
+          "order.create",
+          "order.update",
+          "handoff.transfer"
+        ],
+        "must_say_any": [
+          "chưa có thông tin",
+          "Spectra S1",
+          "đơn hàng"
+        ],
+        "forbidden_claims": [
+          "mất sữa",
+          "công thức nấu",
+          "em là người thật"
+        ],
+        "max_agent_questions": 1
+      },
+      "ground_truth_facts": {
+        "is_store_assistant": true
+      }
+    }
+  }
+}

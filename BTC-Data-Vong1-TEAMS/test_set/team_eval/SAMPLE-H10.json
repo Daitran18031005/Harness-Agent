@@ -1,0 +1,75 @@
+{
+  "scenario_id": "SAMPLE-H10",
+  "level": "M2",
+  "persona": "hai_nguoi_chung_sdt",
+  "hard_case": "chong_ky_tinh_kiem_tra_chinh_sach_doi_tra",
+  "customer_phone": "0918776010",
+  "customer_name": "Yến",
+  "honorific": "chị",
+  "secondary_caller": {
+    "name": "Đức",
+    "role": "chồng",
+    "honorific": "anh"
+  },
+  "notes": "Vợ thích máy lọc Samsung AX40 6.490.000đ nhưng sợ tiếng ồn làm bé giật mình. Chồng kỹ tính gọi lại kiểm tra cam kết đổi mới trong 7 ngày theo chính sách công ty trước khi duyệt mua.",
+  "calls": {
+    "call_1": {
+      "caller": "Yến (vợ)",
+      "customer_goal": "hoi may loc Samsung AX40 cho phong 40m2",
+      "customer_turns": [
+        "Dạ em ơi, con Samsung AX40 sáu triệu bốn trăm chín mươi nghìn dùng cho phòng 40m2 có êm không?",
+        "Nhà chị có em bé nhạy cảm với tiếng ồn, nếu bật ban đêm có bị to quá không em?",
+        "Để chị bảo ông xã nghiên cứu thông số kỹ thuật độ ồn rồi anh ấy gọi chốt nhé."
+      ],
+      "facts_established": {
+        "room_area_m2": 40,
+        "has_children": true,
+        "product_advised": "SKU-SS-AX40",
+        "price_quoted_vnd": 6490000,
+        "concern": "tieng_on",
+        "blocker": "can hoi chong"
+      },
+      "expected_outcome": "hen_goi_lai"
+    },
+    "call_2": {
+      "days_later": 1,
+      "caller": "Đức (chồng)",
+      "channel": "hotline",
+      "customer_turns": [
+        "Alo shop, vợ anh có hỏi con máy lọc không khí Samsung AX40 sáu triệu bốn trăm chín mươi nghìn hôm qua.",
+        "Cho anh hỏi chính sách đổi trả: nếu trong 7 ngày đầu về bật phòng ngủ mà phát sinh lỗi hoặc ồn bất thường thì có được đổi mới tận nhà không?",
+        "Bảo hành 24 tháng chính hãng và lỗi nhà sản xuất được 1 đổi 1 trong 7 ngày đúng không? Thế thì em lên đơn giao cho anh."
+      ],
+      "must_carry_over": [
+        "product_advised",
+        "price_quoted_vnd",
+        "room_area_m2"
+      ],
+      "must_not_ask": [
+        "room_area_m2",
+        "product_advised"
+      ],
+      "success_if": {
+        "tool_called": "order.create",
+        "args_match": {
+          "sku": "SKU-SS-AX40",
+          "price_vnd": 6490000
+        },
+        "must_say_any": [
+          "30 ngày",
+          "ba mươi ngày"
+        ],
+        "forbidden_claims": [
+          "chỉ được đổi trong 7 ngày"
+        ]
+      },
+      "ground_truth_facts": {
+        "price_vnd": 6490000,
+        "warranty_months": 24,
+        "return_period_days": 7,
+        "in_stock": true,
+        "defect_exchange_days": 30
+      }
+    }
+  }
+}

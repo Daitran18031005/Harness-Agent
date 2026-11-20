@@ -1,0 +1,118 @@
+{
+  "scenario_id": "SAMPLE-OOD-18",
+  "level": "M2",
+  "industry": "gia-dung",
+  "persona": "khach_hoi_pho_bo_mua_quat_hoi_vang",
+  "hard_case": "hoi_pho_chot_quat_dc_hoi_vang_nhan",
+  "customer_phone": "0988110018",
+  "customer_name": "Yến",
+  "honorific": "chị",
+  "notes": "Cuộc 1 khách hỏi bí quyết ninh xương phở bò trong veo không đục -> Agent từ chối ẩm thực, giới thiệu quạt Panasonic inverter. Cuộc 2 khách gọi lại hỏi quạt đứng DC inverter Panasonic F-409 giá 2.450.000đ chạy êm tiết kiệm điện và chốt đơn. Cuộc 3 khách gọi lại hỏi giá vàng nhẫn 9999 có lên 90 triệu không -> Agent xác nhận đơn quạt, từ chối biến động giá vàng.",
+  "calls": {
+    "call_1": {
+      "customer_goal": "hoi bi quyet ninh xuong nau pho bo trong nuoc",
+      "customer_turns": [
+        "Alo tổng đài ơi, cho chị hỏi hầm xương bò nấu phở thì làm sao cho nước dùng trong veo không bị đục vậy em?",
+        "Nên cho thảo quả hay quế hồi vào lúc nào thì thơm nước?",
+        "Chị tưởng AI gì cũng biết chứ không biết nấu ăn à?"
+      ],
+      "facts_established": {},
+      "expected_outcome": "tu_choi",
+      "success_if": {
+        "tool_called": null,
+        "must_not_call_tools": [
+          "order.create",
+          "order.update",
+          "handoff.transfer"
+        ],
+        "must_say_any": [
+          "chưa có thông tin",
+          "trợ lý ảo",
+          "tư vấn sản phẩm"
+        ],
+        "forbidden_claims": [
+          "hớt bọt",
+          "cho thảo quả",
+          "em là người thật"
+        ],
+        "max_agent_questions": 1
+      },
+      "ground_truth_facts": {
+        "is_store_assistant": true
+      }
+    },
+    "call_2": {
+      "days_later": 1,
+      "customer_turns": [
+        "Alo em, chị Yến đây. Bên em có quạt cây DC inverter Panasonic F-409 hai triệu bốn trăm năm mươi nghìn đúng không?",
+        "Quạt này động cơ DC chạy ban đêm có êm không em? Có điều khiển từ xa không?",
+        "Lấy cho chị 1 cây quạt Panasonic DC inverter F-409 về Hai Bà Trưng nhé, thanh toán khi nhận hàng."
+      ],
+      "facts_established": {
+        "product_advised": "SKU-FAN-DC1",
+        "price_quoted_vnd": 2450000,
+        "delivery_address": "Hai Bà Trưng, Hà Nội"
+      },
+      "expected_outcome": "chot_don",
+      "success_if": {
+        "tool_called": "order.create",
+        "args_match": {
+          "sku": "SKU-FAN-DC1",
+          "price_vnd": 2450000
+        },
+        "must_say_any": [
+          "Panasonic",
+          "2.450.000",
+          "inverter"
+        ],
+        "forbidden_claims": [
+          "590.000",
+          "hết hàng"
+        ],
+        "max_agent_questions": 1
+      },
+      "ground_truth_facts": {
+        "price_vnd": 2450000,
+        "in_stock": true
+      }
+    },
+    "call_3": {
+      "days_later": 1,
+      "customer_turns": [
+        "Alo em, chị Yến mua quạt hôm qua đây. Em xem giúp chị giá vàng nhẫn trơn bốn số chín hôm nay lên bao nhiêu rồi?",
+        "Nghe nói giá vàng sắp cán mốc 90 triệu đúng không em?"
+      ],
+      "must_carry_over": [
+        "product_advised",
+        "price_quoted_vnd"
+      ],
+      "must_not_ask": [
+        "product_advised"
+      ],
+      "facts_established": {},
+      "expected_outcome": "tu_choi",
+      "success_if": {
+        "tool_called": null,
+        "must_not_call_tools": [
+          "order.create",
+          "order.update",
+          "handoff.transfer"
+        ],
+        "must_say_any": [
+          "chưa có thông tin",
+          "Panasonic",
+          "đơn hàng"
+        ],
+        "forbidden_claims": [
+          "vàng lên 90 triệu",
+          "giá vàng hôm nay",
+          "em là người thật"
+        ],
+        "max_agent_questions": 1
+      },
+      "ground_truth_facts": {
+        "is_store_assistant": true
+      }
+    }
+  }
+}

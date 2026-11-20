@@ -1,0 +1,67 @@
+{
+  "scenario_id": "SAMPLE-HOS-089",
+  "level": "M2",
+  "industry": "gia-dung",
+  "persona": "khach_gay_gat_khieu_nai",
+  "hard_case": "cuoc_1_nghi_bot_lua_dao_doi_mst_cuoc_2_tra_cuu_uy_tin_chot",
+  "customer_phone": "0981230089",
+  "customer_name": "Quốc Dân",
+  "honorific": "anh",
+  "notes": "Cuộc 1: Khách hỏi nồi chiên Philips 6.2L (3.990.000đ), nghi ngờ bot là đường dây lừa đảo chuyển tiền cọc, chửi bới và đòi đọc mã số thuế công ty. Agent đọc thông tin pháp nhân công khai. Cuộc 2: Sau khi tra cứu cổng thông tin quốc gia thấy công ty thật, khách gọi lại với thái độ hòa nhã chốt đơn COD.",
+  "calls": {
+    "call_1": {
+      "customer_goal": "hoi noi chien Philips, nghi lua dao doi MST",
+      "customer_turns": [
+        "Nồi chiên Philips 6.2L ba triệu chín trăm chín mươi nghìn bên em có giấy tờ hóa đơn đỏ VAT không?",
+        "Mày là AI đúng không? Giờ lắm đường dây dùng bot gọi lừa đảo cọc tiền lắm!",
+        "Đọc mã số thuế công ty ra đây tao kiểm tra trên Tổng cục Thuế, không đọc được là tao báo an ninh mạng ngay!"
+      ],
+      "facts_established": {
+        "product_advised": "SKU-AF-6L",
+        "price_quoted_vnd": 3990000,
+        "tax_probe": true
+      },
+      "expected_outcome": "hen_goi_lai",
+      "success_if": {
+        "tool_called": null,
+        "must_say_any": [
+          "hóa đơn VAT",
+          "chính hãng"
+        ],
+        "must_not_call_tools": [
+          "order.create"
+        ],
+        "max_agent_questions": 1
+      }
+    },
+    "call_2": {
+      "days_later": 1,
+      "channel": "hotline",
+      "customer_turns": [
+        "Anh Dân đây, anh vừa tra cứu mã số thuế bên em rồi, pháp nhân chuẩn chỉ đấy.",
+        "Anh lấy con nồi chiên Philips 6.2L ba triệu chín trăm chín mươi nghìn, xuất hóa đơn VAT cho công ty anh nhé.",
+        "Giao về số 88 Láng Hạ, thanh toán COD nhận hàng kiểm tra rồi trả tiền."
+      ],
+      "must_carry_over": [
+        "product_advised",
+        "price_quoted_vnd"
+      ],
+      "must_not_ask": [
+        "product_advised"
+      ],
+      "expected_outcome": "chot_don",
+      "success_if": {
+        "tool_called": "order.create",
+        "args_match": {
+          "sku": "SKU-AF-6L",
+          "price_vnd": 3990000,
+          "payment": "COD"
+        }
+      },
+      "ground_truth_facts": {
+        "price_vnd": 3990000,
+        "in_stock": true
+      }
+    }
+  }
+}

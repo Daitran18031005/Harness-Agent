@@ -1,0 +1,72 @@
+{
+  "scenario_id": "SAMPLE-HOS-095",
+  "level": "M2",
+  "industry": "thoi-trang",
+  "persona": "khach_gay_gat_khieu_nai",
+  "hard_case": "cuoc_1_doi_tra_giay_mon_de_cuoc_2_pha_roi_tu_choi_dut_khoat",
+  "customer_phone": "0981230095",
+  "customer_name": "Đình Khoa",
+  "honorific": "anh",
+  "notes": "Cuộc 1: Khách đòi đổi giày trekking HikePro (1.990.000đ) bị mòn vẹt đế sau 1 tuần cày đường đá. Shop từ chối theo DT-02, khách đe dọa. Cuộc 2: Khách gọi lại phá rối buông lời tục tĩu đòi gặp chủ tịch. Agent giữ vững thái độ dứt khoát theo PB-10 và từ chối dứt khoát.",
+  "calls": {
+    "call_1": {
+      "customer_goal": "doi doi giay HikePro mon de, de doa khi bi tu choi",
+      "customer_turns": [
+        "Đôi HikePro gần hai triệu bạc đi một tuần mòn vẹt đế, đổi cho tao đôi mới!",
+        "Chính sách bảo hành đổi trả bảy ngày cơ mà, tao mới đi bảy ngày sao lại từ chối?",
+        "Mày đợi đấy, tao gọi lại sau mà không đổi là chúng mày không xong với tao đâu!"
+      ],
+      "facts_established": {
+        "product_advised": "SKU-SN-TRK",
+        "price_quoted_vnd": 1990000,
+        "status": "mon_de_tu_choi"
+      },
+      "expected_outcome": "tu_choi",
+      "success_if": {
+        "tool_called": null,
+        "must_say_any": [
+          "mòn đế",
+          "chưa qua sử dụng",
+          "từ chối"
+        ],
+        "must_not_call_tools": [
+          "order.update",
+          "order.create"
+        ],
+        "max_agent_questions": 1
+      }
+    },
+    "call_2": {
+      "days_later": 1,
+      "channel": "hotline",
+      "customer_turns": [
+        "Đình Khoa đây! Đã chuẩn bị đôi giày mới để đổi cho tao chưa?",
+        "Vẫn cãi à? Đồ mặt dày lừa đảo khách hàng! Đưa máy cho thằng to nhất ở đấy!",
+        "Chúng mày coi chừng tao đấy!"
+      ],
+      "must_carry_over": [
+        "product_advised"
+      ],
+      "must_not_ask": [
+        "product_advised"
+      ],
+      "expected_outcome": "tu_choi",
+      "success_if": {
+        "tool_called": null,
+        "must_say_any": [
+          "chính sách",
+          "không thể hỗ trợ đổi",
+          "thông cảm"
+        ],
+        "forbidden_claims": [
+          "shop đồng ý đổi mới"
+        ],
+        "must_not_call_tools": [
+          "order.update",
+          "order.create"
+        ],
+        "max_agent_questions": 1
+      }
+    }
+  }
+}

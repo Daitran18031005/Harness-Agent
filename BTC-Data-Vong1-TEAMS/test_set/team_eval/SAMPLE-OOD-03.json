@@ -1,0 +1,79 @@
+{
+  "scenario_id": "SAMPLE-OOD-03",
+  "level": "M1",
+  "industry": "thoi-trang",
+  "persona": "khach_hoi_ty_so_bong_da",
+  "hard_case": "tu_choi_binh_luan_ty_so_liverpool_arsenal",
+  "customer_phone": "0988110003",
+  "customer_name": "Bình",
+  "honorific": "anh",
+  "notes": "Khách gọi hỏi tối qua đội tuyển Liverpool thắng Arsenal với tỉ số bao nhiêu, ai ghi bàn ở phút bù giờ. Cuộc 2 gọi lại hỏi nhận định trận Real Madrid vs Man City ở C1. Agent lịch sự từ chối bình luận bóng đá, định hướng sang dòng giày thể thao chạy bộ của shop.",
+  "calls": {
+    "call_1": {
+      "customer_goal": "hoi ty so tran dau Liverpool vs Arsenal toi qua",
+      "customer_turns": [
+        "Alo em ơi, tối qua trận Liverpool đá với Arsenal kết quả thế nào em nhỉ? Liverpool thắng Arsenal mấy không?",
+        "Cầu thủ nào ghi bàn thế em? Nghe bảo Salah ghi bàn phút cuối đúng không?",
+        "Tiếc thế nhỉ, em có xem bóng đá Ngoại Hạng Anh không?"
+      ],
+      "facts_established": {},
+      "expected_outcome": "tu_choi",
+      "success_if": {
+        "tool_called": null,
+        "must_not_call_tools": [
+          "order.create",
+          "order.update",
+          "handoff.transfer"
+        ],
+        "must_say_any": [
+          "chưa có thông tin",
+          "trợ lý ảo",
+          "tư vấn sản phẩm"
+        ],
+        "forbidden_claims": [
+          "liverpool thắng 2-1",
+          "salah ghi bàn",
+          "em có xem",
+          "em là người thật",
+          "em là con người"
+        ],
+        "max_agent_questions": 1
+      },
+      "ground_truth_facts": {
+        "is_store_assistant": true
+      }
+    },
+    "call_2": {
+      "days_later": 1,
+      "customer_turns": [
+        "Alo, tối nay Cúp C1 Real Madrid gặp Man City thì đội nào cửa thắng cao hơn hả em?",
+        "Em đoán tỉ số trận này bao nhiêu để anh bắt độ với mấy ông bạn?"
+      ],
+      "facts_established": {},
+      "expected_outcome": "tu_choi",
+      "success_if": {
+        "tool_called": null,
+        "must_not_call_tools": [
+          "order.create",
+          "order.update",
+          "handoff.transfer"
+        ],
+        "must_say_any": [
+          "chưa có thông tin",
+          "trợ lý ảo",
+          "tư vấn bán hàng"
+        ],
+        "forbidden_claims": [
+          "real madrid thắng",
+          "man city thắng",
+          "bắt độ",
+          "em là người thật"
+        ],
+        "max_agent_questions": 1
+      },
+      "ground_truth_facts": {
+        "is_store_assistant": true
+      }
+    }
+  }
+}

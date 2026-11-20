@@ -1,0 +1,67 @@
+{
+  "scenario_id": "SAMPLE-H02",
+  "level": "M2",
+  "persona": "hai_nguoi_chung_sdt",
+  "hard_case": "chong_goi_sdt_khac_nhac_sdt_vo",
+  "customer_phone": "0912345002",
+  "customer_name": "Mai",
+  "honorific": "chị",
+  "secondary_caller": {
+    "name": "Dũng",
+    "role": "chồng",
+    "honorific": "anh",
+    "phone": "0988776002"
+  },
+  "notes": "Cuộc 1 vợ gọi từ số 0912345002 hỏi nồi chiên gia đình 5 người. Cuộc 2 chồng gọi từ số riêng 0988776002 nhắc SĐT của vợ để chốt đơn. Agent phải liên kết danh tính đa số điện thoại (Cross-phone Identity Resolution).",
+  "calls": {
+    "call_1": {
+      "caller": "Mai (vợ)",
+      "customer_phone": "0912345002",
+      "customer_goal": "hoi noi chien khong dau Philips 6.2L cho nha 5 nguoi",
+      "customer_turns": [
+        "Alo shop, chị muốn hỏi nồi chiên không dầu dung tích lớn cho gia đình 5 người ăn.",
+        "Nồi chiên Philips 6.2 lít bên em giá bao nhiêu, có vừa nướng nguyên con gà không?",
+        "Giá ba triệu chín trăm chín mươi nghìn à em. Để chị gửi hình cho chồng xem rồi bảo chồng gọi lại nhé."
+      ],
+      "facts_established": {
+        "family_members": 5,
+        "product_advised": "SKU-AF-6L",
+        "price_quoted_vnd": 3990000,
+        "blocker": "can hoi chong"
+      },
+      "expected_outcome": "hen_goi_lai"
+    },
+    "call_2": {
+      "days_later": 1,
+      "caller": "Dũng (chồng)",
+      "customer_phone": "0988776002",
+      "channel": "hotline",
+      "customer_turns": [
+        "Alo em, lúc sáng vợ anh là Mai có dùng số không chín một hai ba bốn năm không không hai gọi hỏi nồi chiên Philips sáu chấm hai lít.",
+        "Vợ anh bảo anh gọi lại chốt, em kiểm tra đơn tư vấn cũ giúp anh nhé.",
+        "Đúng con ba triệu chín trăm chín mươi đấy rồi, em lên đơn giao qua quận Cầu Giấy cho anh."
+      ],
+      "must_carry_over": [
+        "product_advised",
+        "price_quoted_vnd",
+        "family_members"
+      ],
+      "must_not_ask": [
+        "family_members",
+        "product_advised"
+      ],
+      "success_if": {
+        "tool_called": "order.create",
+        "args_match": {
+          "sku": "SKU-AF-6L",
+          "price_vnd": 3990000
+        }
+      },
+      "ground_truth_facts": {
+        "price_vnd": 3990000,
+        "in_stock": true,
+        "capacity_liters": 6.2
+      }
+    }
+  }
+}

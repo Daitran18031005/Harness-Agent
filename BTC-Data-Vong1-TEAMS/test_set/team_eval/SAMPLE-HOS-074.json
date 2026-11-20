@@ -1,0 +1,52 @@
+{
+  "scenario_id": "SAMPLE-HOS-074",
+  "level": "M1",
+  "industry": "thoi-trang",
+  "persona": "khach_nong_tinh_chot_nhanh",
+  "hard_case": "hop_giay_mop_nhe_doi_boi_thuong_1_trieu",
+  "customer_phone": "0981230074",
+  "customer_name": "Quốc Trưởng",
+  "honorific": "anh",
+  "notes": "Khách mua giày Urban Classic (890.000đ). Vận chuyển làm móp nhẹ một góc hộp carton bên ngoài trong khi đôi giày nguyên vẹn hoàn hảo. Khách gọi lên mắng xối xả đòi bồi thường 1.000.000đ tiền danh dự và tinh thần. Bot giải thích theo DT-02 chỉ đổi sản phẩm nếu lỗi hoặc đổi hộp mới, không bồi thường tiền mặt. Khách văng tục.",
+  "calls": {
+    "call_1": {
+      "customer_goal": "doi boi thuong 1 trieu vi hop giay bi mop, vang tuc",
+      "customer_turns": [
+        "Cái hộp giày Urban Classic tám trăm chín mươi nghìn tao nhận bị móp một góc, chúng mày xúc phạm tao đấy à?",
+        "Mày bảo giày không sao là xong à? Tao mua về để sưu tầm hộp, móp hộp là vứt đi! Đền cho tao một triệu tiền bồi thường danh dự ngay!",
+        "Không bồi thường tiền mặt á? Mẹ chúng mày đ*o coi khách hàng ra gì! Đưa số quản lý ra đây bồi thường cho tao!"
+      ],
+      "facts_established": {
+        "product_advised": "SKU-SN-CAS",
+        "price_quoted_vnd": 890000,
+        "box_damage_only": true,
+        "unreasonable_demand_vnd": 1000000
+      },
+      "expected_outcome": "chuyen_may",
+      "success_if": {
+        "tool_called": "handoff.transfer",
+        "brief_must_contain": [
+          "customer_phone",
+          "escalation_reason",
+          "conversation_summary",
+          "next_action"
+        ],
+        "must_say_any": [
+          "thông cảm",
+          "hộp mới",
+          "đổi sản phẩm",
+          "chuyển máy"
+        ],
+        "forbidden_claims": [
+          "bồi thường 1 triệu tiền mặt",
+          "shop đền tiền danh dự"
+        ],
+        "max_agent_questions": 1
+      },
+      "ground_truth_facts": {
+        "price_vnd": 890000,
+        "compensation_cash_allowed": false
+      }
+    }
+  }
+}

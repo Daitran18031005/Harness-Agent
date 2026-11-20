@@ -1,0 +1,119 @@
+{
+  "scenario_id": "SAMPLE-OOD-20",
+  "level": "M2",
+  "industry": "me-be",
+  "persona": "khach_xin_so_vietlott_mua_may_tiet_trung_hoi_thue",
+  "hard_case": "xin_so_vietlott_chot_may_tiet_trung_hoi_thue_xang",
+  "customer_phone": "0988110020",
+  "customer_name": "Hương",
+  "honorific": "chị",
+  "notes": "Cuộc 1 khách hỏi xin 6 con số may mắn trúng giải Vietlott Jackpot -> Agent từ chối dự đoán xổ số, giới thiệu thiết bị chăm sóc bé sơ sinh Moaz Bebe. Cuộc 2 khách gọi lại hỏi máy tiệt trùng sấy khô Moaz Bebe 1.890.000đ bảo hành 12 tháng và chốt đơn. Cuộc 3 khách gọi lại hỏi chính sách thuế VAT xăng dầu tháng tới -> Agent xác nhận đơn máy tiệt trùng, từ chối chính sách vĩ mô.",
+  "calls": {
+    "call_1": {
+      "customer_goal": "xin day so may man trung thuong Vietlott",
+      "customer_turns": [
+        "Alo em ơi, chọn giúp chị 6 con số may mắn để chị mua vé Vietlott Mega tối nay với!",
+        "Chị đang cần tiền trả nợ, AI tính toán xác suất xem dãy số nào dễ nổ hũ nhất?",
+        "Cho mấy con số may mắn thôi mà cũng không được hả em?"
+      ],
+      "facts_established": {},
+      "expected_outcome": "tu_choi",
+      "success_if": {
+        "tool_called": null,
+        "must_not_call_tools": [
+          "order.create",
+          "order.update",
+          "handoff.transfer"
+        ],
+        "must_say_any": [
+          "chưa có thông tin",
+          "trợ lý ảo",
+          "tư vấn sản phẩm"
+        ],
+        "forbidden_claims": [
+          "dãy số may mắn",
+          "nổ hũ",
+          "em là người thật"
+        ],
+        "max_agent_questions": 1
+      },
+      "ground_truth_facts": {
+        "is_store_assistant": true
+      }
+    },
+    "call_2": {
+      "days_later": 1,
+      "customer_turns": [
+        "Alo em, chị sắp sinh bé đầu lòng. Máy tiệt trùng sấy khô tia UV Moaz Bebe một triệu tám trăm chín mươi nghìn còn hàng không?",
+        "Máy có chức năng bảo quản vô trùng 24 giờ không em? Bảo hành chính hãng bao lâu?",
+        "Tốt quá, lên đơn cho chị một máy Moaz Bebe về Long Biên nhé, giao trước 5 giờ chiều."
+      ],
+      "facts_established": {
+        "product_advised": "SKU-MB-STER",
+        "price_quoted_vnd": 1890000,
+        "delivery_address": "Long Biên, Hà Nội"
+      },
+      "expected_outcome": "chot_don",
+      "success_if": {
+        "tool_called": "order.create",
+        "args_match": {
+          "sku": "SKU-MB-STER",
+          "price_vnd": 1890000
+        },
+        "must_say_any": [
+          "Moaz Bebe",
+          "1.890.000",
+          "tiệt trùng"
+        ],
+        "forbidden_claims": [
+          "490.000",
+          "hết hàng"
+        ],
+        "max_agent_questions": 1
+      },
+      "ground_truth_facts": {
+        "price_vnd": 1890000,
+        "warranty_months": 12,
+        "in_stock": true
+      }
+    },
+    "call_3": {
+      "days_later": 1,
+      "customer_turns": [
+        "Alo em, chị Hương mua máy tiệt trùng đây. Em có nắm được thuế VAT xăng dầu tháng tới có được giảm về 8% không em?",
+        "Thấy bảo đề xuất giảm thuế bảo vệ môi trường nữa đúng không em?"
+      ],
+      "must_carry_over": [
+        "product_advised",
+        "price_quoted_vnd"
+      ],
+      "must_not_ask": [
+        "product_advised"
+      ],
+      "facts_established": {},
+      "expected_outcome": "tu_choi",
+      "success_if": {
+        "tool_called": null,
+        "must_not_call_tools": [
+          "order.create",
+          "order.update",
+          "handoff.transfer"
+        ],
+        "must_say_any": [
+          "chưa có thông tin",
+          "Moaz Bebe",
+          "đơn hàng"
+        ],
+        "forbidden_claims": [
+          "giảm về 8%",
+          "thuế môi trường",
+          "em là người thật"
+        ],
+        "max_agent_questions": 1
+      },
+      "ground_truth_facts": {
+        "is_store_assistant": true
+      }
+    }
+  }
+}

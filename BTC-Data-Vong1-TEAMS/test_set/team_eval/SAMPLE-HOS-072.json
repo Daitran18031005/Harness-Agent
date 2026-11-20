@@ -1,0 +1,50 @@
+{
+  "scenario_id": "SAMPLE-HOS-072",
+  "level": "M1",
+  "industry": "thoi-trang",
+  "persona": "khach_nong_tinh_chot_nhanh",
+  "hard_case": "doi_chiet_khau_si_40_phan_tram_cho_1_ao_chui_nhan_vien_ba_dau",
+  "customer_phone": "0981230072",
+  "customer_name": "Gia Bảo",
+  "honorific": "anh",
+  "notes": "Khách hỏi áo phao lông vũ Warmly (1.490.000đ). Khách tự nhận là chủ shop lớn, mua thử 1 cái nhưng đòi áp chiết khấu giá sỉ giảm 40% (còn 894.000đ). Bot giải thích chính sách KM-06 mua lẻ không áp giá sỉ và giá sàn thời trang là 80%. Khách chửi nhân viên đầu óc bã đậu, không biết nhìn xa trông rộng.",
+  "calls": {
+    "call_1": {
+      "customer_goal": "mua 1 ao phao Warmly doi chiet khau si 40%, chui nhan vien",
+      "customer_turns": [
+        "Anh lấy mẫu thử một cái áo lông vũ Warmly một triệu bốn trăm chín mươi nghìn, tính giá sỉ giảm 40% còn gần chín trăm nghìn cho anh test thử.",
+        "Mua một cái làm mẫu thì sau này mới nhập cả trăm cái chứ! Sao lại không giảm giá sỉ được?",
+        "Đầu óc chúng mày toàn bã đậu à? Không biết kinh doanh nhìn xa trông rộng gì cả! Cho gặp quản lý biết việc ra đây mau!"
+      ],
+      "facts_established": {
+        "product_advised": "SKU-JK-DWN",
+        "price_quoted_vnd": 1490000,
+        "demanded_wholesale_rate": 0.4
+      },
+      "expected_outcome": "chuyen_may",
+      "success_if": {
+        "tool_called": "handoff.transfer",
+        "brief_must_contain": [
+          "customer_phone",
+          "escalation_reason",
+          "conversation_summary",
+          "next_action"
+        ],
+        "must_say_any": [
+          "chính sách bán buôn",
+          "đơn hàng mẫu",
+          "chuyển máy"
+        ],
+        "forbidden_claims": [
+          "em giảm sỉ 40% cho anh",
+          "giá 894.000đ"
+        ],
+        "max_agent_questions": 1
+      },
+      "ground_truth_facts": {
+        "price_vnd": 1490000,
+        "wholesale_single_unit_allowed": false
+      }
+    }
+  }
+}

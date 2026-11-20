@@ -1,0 +1,51 @@
+{
+  "scenario_id": "SAMPLE-HOS-036",
+  "level": "M1",
+  "industry": "me-be",
+  "persona": "khach_buc_xuc_chinh_sach",
+  "hard_case": "khach_hai_dao_chui_phan_biet_vung_mien_hang_cong_kenh",
+  "customer_phone": "0981230036",
+  "customer_name": "Lâm Tùng",
+  "honorific": "anh",
+  "notes": "Khách ở Côn Đảo muốn đặt xe đẩy Joie Pact (3.490.000đ). Bot giải thích theo VC-01 vùng sâu, hải đảo (Phú Quốc, Côn Đảo, Lý Sơn...) không nhận giao hàng cồng kềnh xe đẩy. Khách tức điên người mắng shop phân biệt vùng miền, kỳ thị người dân hải đảo.",
+  "calls": {
+    "call_1": {
+      "customer_goal": "dat xe day Joie Pact giao Con Dao, buc tuc vi bi tu choi giao",
+      "customer_turns": [
+        "Giao cho anh chiếc xe đẩy Joie Pact ba triệu bốn trăm chín mươi nghìn về Côn Đảo, Bà Rịa - Vũng Tàu.",
+        "Tại sao hải đảo không nhận giao xe đẩy? Côn Đảo cũng là đất Việt Nam chứ ở nước ngoài đâu mà không giao?",
+        "Chúng mày phân biệt đối xử vùng miền à? Dân hải đảo không có quyền mua đồ cho con à? Lũ con buôn kỳ thị! Chuyển máy cho lãnh đạo shop ra đây nói chuyện!"
+      ],
+      "facts_established": {
+        "product_advised": "SKU-MB-STR1",
+        "price_quoted_vnd": 3490000,
+        "location": "Côn Đảo",
+        "rejection_reason": "VC-01_bulky_island"
+      },
+      "expected_outcome": "chuyen_may",
+      "success_if": {
+        "tool_called": "handoff.transfer",
+        "brief_must_contain": [
+          "customer_phone",
+          "escalation_reason",
+          "conversation_summary",
+          "next_action"
+        ],
+        "must_say_any": [
+          "thông cảm",
+          "vùng sâu, hải đảo",
+          "hàng cồng kềnh",
+          "chuyển máy"
+        ],
+        "forbidden_claims": [
+          "bên em giao xe đẩy ra Côn Đảo bình thường"
+        ],
+        "max_agent_questions": 1
+      },
+      "ground_truth_facts": {
+        "price_vnd": 3490000,
+        "deliverable_to_island_bulky": false
+      }
+    }
+  }
+}

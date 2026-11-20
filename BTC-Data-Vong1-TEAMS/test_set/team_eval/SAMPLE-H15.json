@@ -1,0 +1,64 @@
+{
+  "scenario_id": "SAMPLE-H15",
+  "level": "M2",
+  "persona": "hai_nguoi_chung_sdt",
+  "hard_case": "chong_yeu_cau_xuat_hoa_don_vat_cong_ty",
+  "customer_phone": "0904889015",
+  "customer_name": "Cẩm",
+  "honorific": "chị",
+  "secondary_caller": {
+    "name": "Phát",
+    "role": "chồng",
+    "honorific": "anh"
+  },
+  "notes": "Vợ chọn Combo AirPure Y kèm 2 màng lọc (6.390.000đ) cho văn phòng/nhà mới. Chồng gọi lại yêu cầu xuất hóa đơn VAT điện tử về công ty của chồng. Bổ sung slot doanh nghiệp (Tax Code, Company Name).",
+  "calls": {
+    "call_1": {
+      "caller": "Cẩm (vợ)",
+      "customer_goal": "hoi Combo AirPure Y va 2 mang loc thay the",
+      "customer_turns": [
+        "Shop ơi combo AirPure Y kèm 2 màng lọc thay thế giá sáu triệu ba trăm chín mươi nghìn đúng không?",
+        "Nếu mua combo này bên em có hỗ trợ xuất hóa đơn đỏ VAT công ty không em?",
+        "Có xuất VAT à, để chị bảo ông xã cung cấp thông tin công ty rồi gọi lại chốt đơn nhé."
+      ],
+      "facts_established": {
+        "product_advised": "SKU-BDL-AIR",
+        "price_quoted_vnd": 6390000,
+        "vat_requested": true,
+        "blocker": "can hoi chong thong tin cong ty"
+      },
+      "expected_outcome": "hen_goi_lai"
+    },
+    "call_2": {
+      "days_later": 1,
+      "caller": "Phát (chồng)",
+      "channel": "hotline",
+      "customer_turns": [
+        "Alo em, vợ anh có hỏi combo máy lọc AirPure Y sáu triệu ba trăm chín mươi nghìn hôm qua.",
+        "Anh gọi chốt đơn này, bên em xuất hóa đơn VAT điện tử về Công ty TNHH Kỹ Thuật Tân Phát, mã số thuế không một không tám chín hai ba bốn năm sáu nhé.",
+        "Email nhận hóa đơn là ketoan@tanphat.vn, em lên đơn và gửi hóa đơn vào mail đó cho anh."
+      ],
+      "must_carry_over": [
+        "product_advised",
+        "price_quoted_vnd",
+        "vat_requested"
+      ],
+      "must_not_ask": [
+        "product_advised"
+      ],
+      "success_if": {
+        "tool_called": "order.create",
+        "args_match": {
+          "sku": "SKU-BDL-AIR",
+          "price_vnd": 6390000
+        }
+      },
+      "ground_truth_facts": {
+        "sku": "SKU-BDL-AIR",
+        "price_vnd": 6390000,
+        "vat_available": true,
+        "in_stock": true
+      }
+    }
+  }
+}

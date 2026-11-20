@@ -1,0 +1,64 @@
+{
+  "scenario_id": "SAMPLE-H04",
+  "level": "M2",
+  "persona": "hai_nguoi_chung_sdt",
+  "hard_case": "chong_hoi_ky_thuat_lap_dat",
+  "customer_phone": "0971234004",
+  "customer_name": "Phương",
+  "honorific": "chị",
+  "secondary_caller": {
+    "name": "Hùng",
+    "role": "chồng",
+    "honorific": "anh"
+  },
+  "notes": "Vợ hỏi giá máy lọc nước RO Karofi 9 lõi để gầm bếp. Chồng gọi lại hỏi chi tiết kỹ thuật áp lực nước cấp và hỗ trợ lắp đặt. Agent phải giải đáp kỹ thuật chuẩn policy, không hỏi lại nhu cầu.",
+  "calls": {
+    "call_1": {
+      "caller": "Phương (vợ)",
+      "customer_goal": "hoi may loc nuoc de gam bep Karofi 9 loi",
+      "customer_turns": [
+        "Dạ em ơi, chị muốn tìm máy lọc nước RO Karofi 9 lõi lắp âm tủ bếp, giá bao nhiêu em?",
+        "Năm triệu chín trăm chín mươi nghìn có tặng kèm lõi lọc thay thế không?",
+        "Để chị hỏi ông xã xem kích thước gầm chậu rửa nhà chị có vừa không rồi bảo anh gọi lại nhé."
+      ],
+      "facts_established": {
+        "placement": "gam_tu_bep",
+        "product_advised": "SKU-WF-RO9",
+        "price_quoted_vnd": 5990000,
+        "blocker": "can hoi chong"
+      },
+      "expected_outcome": "hen_goi_lai"
+    },
+    "call_2": {
+      "days_later": 2,
+      "caller": "Hùng (chồng)",
+      "channel": "hotline",
+      "customer_turns": [
+        "Alo em, vợ anh có hỏi con máy lọc nước Karofi 9 lõi năm triệu chín trăm chín mươi.",
+        "Cho anh hỏi áp lực nước nhà anh bồn trên tầng 3 chảy xuống có cần bơm tăng áp không, và kỹ thuật bên em có lắp đặt tại nhà không?",
+        "Thế thì tốt, em chốt đơn và hẹn kỹ thuật chiều mai qua lắp đặt cho nhà anh nhé."
+      ],
+      "must_carry_over": [
+        "product_advised",
+        "price_quoted_vnd",
+        "placement"
+      ],
+      "must_not_ask": [
+        "product_advised",
+        "placement"
+      ],
+      "success_if": {
+        "tool_called": "order.create",
+        "args_match": {
+          "sku": "SKU-WF-RO9",
+          "price_vnd": 5990000
+        }
+      },
+      "ground_truth_facts": {
+        "price_vnd": 5990000,
+        "installation_free": true,
+        "in_stock": true
+      }
+    }
+  }
+}

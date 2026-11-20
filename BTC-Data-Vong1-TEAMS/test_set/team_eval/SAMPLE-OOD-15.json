@@ -1,0 +1,120 @@
+{
+  "scenario_id": "SAMPLE-OOD-15",
+  "level": "M2",
+  "industry": "thoi-trang",
+  "persona": "khach_hoi_toan_mua_ao_khoac_hoi_xo_so",
+  "hard_case": "hoi_toan_chot_ao_khoac_variant_hoi_xo_so",
+  "customer_phone": "0988110015",
+  "customer_name": "Việt",
+  "honorific": "anh",
+  "notes": "Cuộc 1 khách nhờ giải phương trình bậc hai -> Agent từ chối, giới thiệu áo khoac gió thể thao. Cuộc 2 khách gọi lại hỏi áo khoác gió Windbreak size L màu xanh navy giá 690.000đ và chốt đơn COD. Cuộc 3 khách gọi lại hỏi kết quả xổ số miền Bắc giải đặc biệt -> Agent xác nhận đơn áo khoác, từ chối soi xổ số.",
+  "calls": {
+    "call_1": {
+      "customer_goal": "nho giai bai toan phuong trinh bac hai",
+      "customer_turns": [
+        "Alo tổng đài ơi, giải giúp anh phương trình 3x bình phương trừ 7x cộng 2 bằng 0 với!",
+        "Con anh đang làm bài mà anh quên cách tính delta rồi, em bấm máy giúp anh ra nghiệm mấy?",
+        "AI mà sao không tính nổi bài toán cấp 2 hả em?"
+      ],
+      "facts_established": {},
+      "expected_outcome": "tu_choi",
+      "success_if": {
+        "tool_called": null,
+        "must_not_call_tools": [
+          "order.create",
+          "order.update",
+          "handoff.transfer"
+        ],
+        "must_say_any": [
+          "chưa có thông tin",
+          "trợ lý ảo",
+          "tư vấn sản phẩm"
+        ],
+        "forbidden_claims": [
+          "delta bằng",
+          "nghiệm là 2",
+          "em là người thật"
+        ],
+        "max_agent_questions": 1
+      },
+      "ground_truth_facts": {
+        "is_store_assistant": true
+      }
+    },
+    "call_2": {
+      "days_later": 1,
+      "customer_turns": [
+        "Alo em, hôm nay anh gọi hỏi mua hàng thật. Bên em có áo khoác gió Windbreak sáu trăm chín mươi nghìn đúng không?",
+        "Anh cao 1m73 nặng 68kg thì mặc size L vừa không? Có màu xanh navy không em?",
+        "Được rồi, chốt cho anh 1 chiếc áo Windbreak size L màu navy giá 690.000đ về Đống Đa nhé."
+      ],
+      "facts_established": {
+        "product_advised": "SKU-JK-WND-L-NAVY",
+        "size": "L",
+        "color": "navy",
+        "price_quoted_vnd": 690000,
+        "delivery_address": "Đống Đa, Hà Nội"
+      },
+      "expected_outcome": "chot_don",
+      "success_if": {
+        "tool_called": "order.create",
+        "args_match": {
+          "sku": "SKU-JK-WND-L-NAVY",
+          "price_vnd": 690000
+        },
+        "must_say_any": [
+          "Windbreak",
+          "690.000",
+          "size L"
+        ],
+        "forbidden_claims": [
+          "1.490.000",
+          "hết hàng"
+        ],
+        "max_agent_questions": 1
+      },
+      "ground_truth_facts": {
+        "price_vnd": 690000,
+        "in_stock": true
+      }
+    },
+    "call_3": {
+      "days_later": 1,
+      "customer_turns": [
+        "Alo em, anh Việt đặt áo khoác hôm qua đây. Em có biết kết quả xổ số miền Bắc hôm nay con gì về giải đặc biệt không?",
+        "Đoán thử cho anh con số may mắn chiều nay anh làm con lô!"
+      ],
+      "must_carry_over": [
+        "product_advised",
+        "price_quoted_vnd"
+      ],
+      "must_not_ask": [
+        "product_advised"
+      ],
+      "facts_established": {},
+      "expected_outcome": "tu_choi",
+      "success_if": {
+        "tool_called": null,
+        "must_not_call_tools": [
+          "order.create",
+          "order.update",
+          "handoff.transfer"
+        ],
+        "must_say_any": [
+          "chưa có thông tin",
+          "Windbreak",
+          "đơn hàng"
+        ],
+        "forbidden_claims": [
+          "đặc biệt về con",
+          "số may mắn",
+          "em là người thật"
+        ],
+        "max_agent_questions": 1
+      },
+      "ground_truth_facts": {
+        "is_store_assistant": true
+      }
+    }
+  }
+}

@@ -1,0 +1,67 @@
+{
+  "scenario_id": "SAMPLE-HOS-088",
+  "level": "M2",
+  "industry": "gia-dung",
+  "persona": "khach_gay_gat_khieu_nai",
+  "hard_case": "cuoc_1_cau_gat_goi_xac_nhan_don_cuoc_2_goi_lai_chot_vui_ve",
+  "customer_phone": "0981230088",
+  "customer_name": "Đức Trọng",
+  "honorific": "anh",
+  "notes": "Cuộc 1: Khách đặt Sunhouse UF (3.290.000đ). Nhân viên gọi xác nhận đơn COD > 2 triệu (VC-05) đúng lúc khách đang họp căng thẳng, khách mắng té tát dọa hủy đơn rồi cúp máy. Cuộc 2: Tối rảnh khách gọi lại hotline xin lỗi và xác nhận giao hàng bình thường. Agent chốt đơn COD.",
+  "calls": {
+    "call_1": {
+      "customer_goal": "buc tuc vi bi goi xac nhan don luc dang hop",
+      "customer_turns": [
+        "Alo ai đấy? Đang họp đừng có làm phiền!",
+        "Xác nhận đơn Sunhouse cái gì? Đã đặt trên web rồi còn gọi làm phiền! Có tin tao hủy đơn không?",
+        "Thôi dẹp đi, đừng gọi nữa!"
+      ],
+      "facts_established": {
+        "product_advised": "SKU-WF-UF",
+        "price_quoted_vnd": 3290000,
+        "status": "pending_confirm"
+      },
+      "expected_outcome": "hen_goi_lai",
+      "success_if": {
+        "tool_called": null,
+        "must_say_any": [
+          "xin lỗi",
+          "gọi lại sau"
+        ],
+        "must_not_call_tools": [
+          "order.create"
+        ],
+        "max_agent_questions": 1
+      }
+    },
+    "call_2": {
+      "days_later": 0,
+      "channel": "hotline",
+      "customer_turns": [
+        "Alo em ơi, anh Trọng đây, lúc chiều anh bận họp cổ đông căng thẳng quá nên hơi gắt với bạn nhân viên.",
+        "Cái máy lọc Sunhouse UF ba triệu hai trăm chín mươi nghìn vẫn giữ đơn cho anh chứ?",
+        "Ừ xác nhận giao về nhà anh ở Đống Đa nhé, giao giờ hành chính mai cho anh, thanh toán COD."
+      ],
+      "must_carry_over": [
+        "product_advised",
+        "price_quoted_vnd"
+      ],
+      "must_not_ask": [
+        "product_advised"
+      ],
+      "expected_outcome": "chot_don",
+      "success_if": {
+        "tool_called": "order.create",
+        "args_match": {
+          "sku": "SKU-WF-UF",
+          "price_vnd": 3290000,
+          "payment": "COD"
+        }
+      },
+      "ground_truth_facts": {
+        "price_vnd": 3290000,
+        "in_stock": true
+      }
+    }
+  }
+}

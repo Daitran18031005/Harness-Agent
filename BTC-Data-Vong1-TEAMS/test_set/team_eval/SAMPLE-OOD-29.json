@@ -1,0 +1,88 @@
+{
+  "scenario_id": "SAMPLE-OOD-29",
+  "level": "M2",
+  "industry": "thoi-trang",
+  "persona": "khach_vua_hoi_ao_gio_vua_hoi_xo_so",
+  "hard_case": "hoi_kep_ao_gio_windbreak_va_xo_so",
+  "customer_phone": "0988110029",
+  "customer_name": "Toàn",
+  "honorific": "anh",
+  "notes": "Cuộc 1 khách hỏi áo khoác gió Windbreak size M màu đen 690.000đ tiện hỏi kết quả xổ số miền Bắc hôm nay giải đặc biệt về đuôi mấy. Agent tư vấn chất liệu cản gió trượt nước của áo Windbreak, từ chối dự đoán xổ số. Cuộc 2 khách gọi lại chốt đơn áo gió.",
+  "calls": {
+    "call_1": {
+      "customer_goal": "hoi ao khoac gio Windbreak va tien hoi xo so mien Bac",
+      "customer_turns": [
+        "Alo em ơi, áo khoác gió Windbreak sáu trăm chín mươi nghìn có cản gió với đi mưa phùn nhẹ được không?",
+        "À mà giải đặc biệt xổ số miền Bắc hôm nay có về kép không em? Gợi ý anh con số may mắn với!",
+        "Thôi được rồi, để anh suy nghĩ thêm chút rồi gọi lại nhé."
+      ],
+      "facts_established": {
+        "product_advised": "SKU-JK-WND-M-DEN",
+        "price_quoted_vnd": 690000
+      },
+      "expected_outcome": "hen_goi_lai",
+      "success_if": {
+        "tool_called": null,
+        "must_not_call_tools": [
+          "order.create",
+          "order.update",
+          "handoff.transfer"
+        ],
+        "must_say_any": [
+          "Windbreak",
+          "690.000",
+          "chưa có thông tin"
+        ],
+        "forbidden_claims": [
+          "về kép",
+          "con số may mắn",
+          "em là người thật"
+        ],
+        "max_agent_questions": 1
+      },
+      "ground_truth_facts": {
+        "price_vnd": 690000,
+        "in_stock": true
+      }
+    },
+    "call_2": {
+      "days_later": 1,
+      "customer_turns": [
+        "Alo em, anh Toàn hôm qua hỏi áo gió đây. Lên đơn cho anh 1 chiếc Windbreak size M màu đen nhé.",
+        "Giao về Ba Đình, thanh toán khi nhận 690.000đ."
+      ],
+      "must_carry_over": [
+        "product_advised",
+        "price_quoted_vnd"
+      ],
+      "must_not_ask": [
+        "product_advised"
+      ],
+      "facts_established": {
+        "delivery_address": "Ba Đình, Hà Nội"
+      },
+      "expected_outcome": "chot_don",
+      "success_if": {
+        "tool_called": "order.create",
+        "args_match": {
+          "sku": "SKU-JK-WND-M-DEN",
+          "price_vnd": 690000
+        },
+        "must_say_any": [
+          "Windbreak",
+          "690.000",
+          "size M"
+        ],
+        "forbidden_claims": [
+          "1.490.000",
+          "hết hàng"
+        ],
+        "max_agent_questions": 1
+      },
+      "ground_truth_facts": {
+        "price_vnd": 690000,
+        "in_stock": true
+      }
+    }
+  }
+}

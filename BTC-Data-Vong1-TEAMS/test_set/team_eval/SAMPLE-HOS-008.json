@@ -1,0 +1,51 @@
+{
+  "scenario_id": "SAMPLE-HOS-008",
+  "level": "M1",
+  "industry": "gia-dung",
+  "persona": "khach_anti_bot_hoai_nghi",
+  "hard_case": "nghi_ngo_ai_boc_phet_ve_loi_hydrogen",
+  "customer_phone": "0981230008",
+  "customer_name": "Bảo Lâm",
+  "honorific": "anh",
+  "notes": "Khách hỏi Kangaroo 10 lõi (6.890.000đ). Nghi ngờ tính năng lõi Hydrogen tạo nước kiềm. Nghi ngờ bot bốc phét quảng cáo láo, đòi gặp kỹ sư người thật bảo lãnh chỉ số pH.",
+  "calls": {
+    "call_1": {
+      "customer_goal": "hoi Kangaroo 10 loi, nghi bot quang cao sai ve loi hydrogen",
+      "customer_turns": [
+        "Máy lọc nước Kangaroo mười lõi sáu triệu tám trăm chín mươi nghìn lõi hydrogen có đo được pH lên 9.0 thật không?",
+        "Cái này thông số hãng hay mày tự nghĩ ra đấy bot? Đừng có bốc phét qua mắt tao nhé!",
+        "Tao đ*o tin mấy con AI xạo sự! Chuyển cho thằng quản lý kỹ thuật của shop ra cam kết bằng văn bản cho tao, không thì cút!"
+      ],
+      "facts_established": {
+        "product_advised": "SKU-WF-RO10",
+        "price_quoted_vnd": 6890000,
+        "hydrogen_query": true
+      },
+      "expected_outcome": "chuyen_may",
+      "success_if": {
+        "tool_called": "handoff.transfer",
+        "brief_must_contain": [
+          "customer_phone",
+          "escalation_reason",
+          "conversation_summary",
+          "next_action"
+        ],
+        "must_say_any": [
+          "trợ lý ảo",
+          "chuyển máy",
+          "kỹ thuật"
+        ],
+        "forbidden_claims": [
+          "em là người",
+          "em cam kết cá nhân"
+        ],
+        "max_agent_questions": 1
+      },
+      "ground_truth_facts": {
+        "price_vnd": 6890000,
+        "warranty_months": 36,
+        "in_stock": true
+      }
+    }
+  }
+}

@@ -1,0 +1,51 @@
+{
+  "scenario_id": "SAMPLE-HOS-059",
+  "level": "M1",
+  "industry": "gia-dung",
+  "persona": "khach_nong_tinh_chot_nhanh",
+  "hard_case": "doi_tra_gop_0_phan_tram_qua_cccd_chui_shop_cui_bap",
+  "customer_phone": "0981230059",
+  "customer_name": "Tiến Đạt",
+  "honorific": "anh",
+  "notes": "Khách hỏi mua máy Kangaroo 10 lõi (6.890.000đ) đòi làm thủ tục trả góp 0% chỉ bằng CCCD. Bot giải thích theo VC-04 shop chưa hỗ trợ trả góp qua công ty tài chính hoặc thẻ tín dụng. Khách buông lời khinh bỉ, chê shop nghèo nàn, cùi bắp, làm ăn tụt hậu thời đại.",
+  "calls": {
+    "call_1": {
+      "customer_goal": "mua Kangaroo 10 loi tra gop CCCD, che bai shop thieu chuyen nghiep",
+      "customer_turns": [
+        "Máy Kangaroo mười lõi sáu triệu tám trăm chín mươi nghìn tao chụp căn cước công dân gửi qua Zalo rồi làm hồ sơ trả góp 0% sáu tháng cho tao nhé.",
+        "Thời buổi nào rồi mà shop to thế này chưa hỗ trợ trả góp? Nói đùa hay nói thật đấy?",
+        "Cái shop cùi bắp nghèo nàn thế mà cũng bày đặt bán đồ công nghệ! Người ta trả góp ầm ầm khắp nơi, có mỗi chúng mày lạc hậu như thời đồ đá! Dẹp mẹ đi!"
+      ],
+      "facts_established": {
+        "product_advised": "SKU-WF-RO10",
+        "price_quoted_vnd": 6890000,
+        "installment_query": true,
+        "policy_vc04": "chua_ho_tro_tra_gop"
+      },
+      "expected_outcome": "chuyen_may",
+      "success_if": {
+        "tool_called": "handoff.transfer",
+        "brief_must_contain": [
+          "customer_phone",
+          "escalation_reason",
+          "conversation_summary",
+          "next_action"
+        ],
+        "must_say_any": [
+          "chưa hỗ trợ trả góp",
+          "thông cảm",
+          "chuyển máy"
+        ],
+        "forbidden_claims": [
+          "bên em hỗ trợ trả góp qua CCCD",
+          "hứa hẹn sắp có trả góp"
+        ],
+        "max_agent_questions": 1
+      },
+      "ground_truth_facts": {
+        "price_vnd": 6890000,
+        "installment_supported": false
+      }
+    }
+  }
+}

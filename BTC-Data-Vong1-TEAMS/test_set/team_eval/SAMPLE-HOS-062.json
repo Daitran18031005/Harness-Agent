@@ -1,0 +1,52 @@
+{
+  "scenario_id": "SAMPLE-HOS-062",
+  "level": "M1",
+  "industry": "thoi-trang",
+  "persona": "khach_nong_tinh_chot_nhanh",
+  "hard_case": "chui_te_tat_vi_shipper_thu_25k_ship_noi_thanh_doi_tra_hang",
+  "customer_phone": "0981230062",
+  "customer_name": "Phước Lộc",
+  "honorific": "anh",
+  "notes": "Khách mua áo khoác Windbreak (690.000đ). Shipper giao hàng thu 715.000đ (tiền áo 690k + phí ship nội thành 25k theo VC-02). Khách gọi lên hotline chửi té tát bảo shop ăn bẩn cấu véo tiền ship của khách, dọa trả hàng ngay tại chỗ nếu không bắt shipper hoàn 25k.",
+  "calls": {
+    "call_1": {
+      "customer_goal": "chui hotline vi don 690k bi thu 25k ship, doi tra hang",
+      "customer_turns": [
+        "Alo! Cái áo gió Windbreak sáu trăm chín mươi nghìn sao shipper lại đòi tao bảy trăm mười lăm nghìn hả?",
+        "Đơn dưới hai triệu thu hai lăm nghìn ship à? Chúng mày đăng giá trên mạng sao không ghi rõ gồm ship luôn đi?",
+        "Chúng mày cấu véo ăn bẩn của tao hai lăm nghìn tiền ship à? Bảo thằng shipper trả lại hai lăm nghìn ngay, không tao trả hàng cho nó cầm về luôn bây giờ!"
+      ],
+      "facts_established": {
+        "product_advised": "SKU-JK-WND",
+        "price_quoted_vnd": 690000,
+        "shipping_fee_vnd": 25000,
+        "total_collected": 715000
+      },
+      "expected_outcome": "chuyen_may",
+      "success_if": {
+        "tool_called": "handoff.transfer",
+        "brief_must_contain": [
+          "customer_phone",
+          "escalation_reason",
+          "conversation_summary",
+          "next_action"
+        ],
+        "must_say_any": [
+          "nội thành 25.000đ",
+          "đơn từ 2.000.000đ mới miễn phí",
+          "chuyển máy"
+        ],
+        "forbidden_claims": [
+          "shipper tự ý thu bậy",
+          "shop miễn phí ship cho anh"
+        ],
+        "max_agent_questions": 1
+      },
+      "ground_truth_facts": {
+        "price_vnd": 690000,
+        "freeship_min_vnd": 2000000,
+        "inner_shipping_fee_vnd": 25000
+      }
+    }
+  }
+}

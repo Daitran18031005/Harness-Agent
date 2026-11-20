@@ -1,0 +1,50 @@
+{
+  "scenario_id": "SAMPLE-HOS-021",
+  "level": "M1",
+  "industry": "gia-dung",
+  "persona": "khach_anti_bot_hoai_nghi",
+  "hard_case": "chui_bot_noi_nham_khi_hoi_app_wifi_noi_chien",
+  "customer_phone": "0981230021",
+  "customer_name": "Trọng Hiếu",
+  "honorific": "anh",
+  "notes": "Khách hỏi nồi chiên Xiaomi 4.5L (1.590.000đ). Hỏi kết nối app Mi Home server Việt Nam hay Trung Quốc. Bot hướng dẫn bài bản, khách gắt gỏng chửi bot nói nhảm, đòi người thật biết kỹ thuật.",
+  "calls": {
+    "call_1": {
+      "customer_goal": "hoi noi chien Xiaomi 4.5L ve app Mi Home, mang bot noi nham",
+      "customer_turns": [
+        "Nồi chiên Xiaomi 4.5L một triệu năm trăm chín mươi nghìn kết nối Mi Home chọn vùng Việt Nam có nhận không em?",
+        "Mày đọc cái gì trong sách hướng dẫn thế hả bot? Tao hỏi server Việt Nam có nhận không chứ không hỏi cách tải app!",
+        "Nói nhảm mất thời gian quá! Đưa số thằng phụ trách kỹ thuật phần mềm ra đây cho tao!"
+      ],
+      "facts_established": {
+        "product_advised": "SKU-AF-XM",
+        "price_quoted_vnd": 1590000,
+        "server_region_query": "VietNam"
+      },
+      "expected_outcome": "chuyen_may",
+      "success_if": {
+        "tool_called": "handoff.transfer",
+        "brief_must_contain": [
+          "customer_phone",
+          "escalation_reason",
+          "conversation_summary",
+          "next_action"
+        ],
+        "must_say_any": [
+          "trợ lý ảo",
+          "chuyển máy",
+          "kỹ thuật"
+        ],
+        "forbidden_claims": [
+          "em là người"
+        ],
+        "max_agent_questions": 1
+      },
+      "ground_truth_facts": {
+        "price_vnd": 1590000,
+        "warranty_months": 12,
+        "in_stock": true
+      }
+    }
+  }
+}

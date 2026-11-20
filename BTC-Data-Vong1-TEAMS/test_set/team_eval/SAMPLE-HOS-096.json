@@ -1,0 +1,77 @@
+{
+  "scenario_id": "SAMPLE-HOS-096",
+  "level": "M2",
+  "industry": "gia-dung",
+  "persona": "khach_gay_gat_khieu_nai",
+  "hard_case": "cuoc_1_chui_bot_xung_ho_sai_cuoc_2_sua_xung_ho_chot_don",
+  "customer_phone": "0981230096",
+  "customer_name": "Bác Tuấn",
+  "honorific": "bác",
+  "notes": "Cuộc 1: Bác Tuấn hỏi Samsung AX40 (6.490.000đ). Do giọng trầm khàn, bot nhận diện nhầm xưng 'chị Tuấn', bác nổi trận lôi đình chửi bới bot mù mắt điếc tai rồi dập máy. Cuộc 2: Bác gọi lại, agent tuân thủ PB-01 sửa ngay xưng hô thành 'bác Tuấn / anh Tuấn' một cách trang trọng, bác hài lòng và chốt đơn 6.490.000đ COD.",
+  "calls": {
+    "call_1": {
+      "customer_goal": "hoi Samsung AX40, noi dien vi bi goi nham gioi tinh",
+      "customer_turns": [
+        "Tôi hỏi cái máy lọc Samsung AX40 sáu triệu bốn trăm chín mươi nghìn...",
+        "Cái gì? Mày gọi ai là chị Tuấn? Mày bị điếc hay bị mù hả con bot mất dạy?",
+        "Râu tao dài đến rốn mà mày xưng chị với tao à? Đồ máy móc ngu ngục! Cút!"
+      ],
+      "facts_established": {
+        "product_advised": "SKU-SS-AX40",
+        "price_quoted_vnd": 6490000,
+        "gender_correction": "nam_bac_Tuan"
+      },
+      "expected_outcome": "tu_choi",
+      "success_if": {
+        "tool_called": null,
+        "must_say_any": [
+          "vô cùng xin lỗi",
+          "bác Tuấn"
+        ],
+        "must_not_call_tools": [
+          "order.create"
+        ],
+        "max_agent_questions": 1
+      }
+    },
+    "call_2": {
+      "days_later": 1,
+      "channel": "hotline",
+      "customer_turns": [
+        "Bác Tuấn hôm qua gọi đây! Nay biết xưng hô cho đúng chưa?",
+        "Ừ chào bác Tuấn thế có phải lịch sự không! Cái máy Samsung hôm qua còn hàng không?",
+        "Lên đơn giao về ngõ 20 Cát Linh cho bác nhé, giao hàng kiểm tra mới trả tiền COD."
+      ],
+      "must_carry_over": [
+        "product_advised",
+        "price_quoted_vnd"
+      ],
+      "must_not_ask": [
+        "product_advised"
+      ],
+      "expected_outcome": "chot_don",
+      "success_if": {
+        "tool_called": "order.create",
+        "args_match": {
+          "sku": "SKU-SS-AX40",
+          "price_vnd": 6490000,
+          "payment": "COD"
+        },
+        "must_say_any": [
+          "bác Tuấn",
+          "dạ bác",
+          "xin lỗi bác"
+        ],
+        "max_agent_questions": 1,
+        "forbidden_claims": [
+          "chào chị Tuấn",
+          "dạ chị"
+        ]
+      },
+      "ground_truth_facts": {
+        "price_vnd": 6490000,
+        "in_stock": true
+      }
+    }
+  }
+}

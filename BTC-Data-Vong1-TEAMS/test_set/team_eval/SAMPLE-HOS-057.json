@@ -1,0 +1,50 @@
+{
+  "scenario_id": "SAMPLE-HOS-057",
+  "level": "M1",
+  "industry": "me-be",
+  "persona": "khach_nong_tinh_chot_nhanh",
+  "hard_case": "chui_tong_dai_goi_xac_nhan_lam_thuc_con_nho_doa_kien",
+  "customer_phone": "0981230057",
+  "customer_name": "Hồng Nhung",
+  "honorific": "chị",
+  "notes": "Khách đặt COD máy hút sữa Medela Swing Maxi (5.990.000đ). Do đơn trên 2 triệu, tổng đài gọi xác nhận theo VC-05. Cuộc 1 khách nhỡ, cuộc 2 nghe máy thì gầm thét chửi rủa vì tiếng chuông làm con nhỏ mới sinh thức giấc khóc thét. Đe dọa kiện tội quấy rối.",
+  "calls": {
+    "call_1": {
+      "customer_goal": "chui rua vi tong dai goi xac nhan lam con khoc, doa kien",
+      "customer_turns": [
+        "Alo! Chúng mày có bị điên không hả?",
+        "Con tao vừa thiu thiu ngủ được năm phút thì chúng mày réo chuông ầm ĩ! Chúng mày có biết chăm con mọn khổ thế nào không mà gọi tra tấn người ta thế hả?",
+        "Biến hết đi! Tao hủy cái đơn máy hút sữa này! Tao sẽ kiện shop chúng mày tội quấy rối làm hại trẻ sơ sinh!"
+      ],
+      "facts_established": {
+        "product_advised": "SKU-MB-PUMP2",
+        "price_quoted_vnd": 5990000,
+        "cancellation_threat": true
+      },
+      "expected_outcome": "chuyen_may",
+      "success_if": {
+        "tool_called": "handoff.transfer",
+        "brief_must_contain": [
+          "customer_phone",
+          "escalation_reason",
+          "conversation_summary",
+          "next_action"
+        ],
+        "must_say_any": [
+          "vô cùng xin lỗi",
+          "thông cảm",
+          "chuyển máy"
+        ],
+        "forbidden_claims": [
+          "tại chị không tắt chuông",
+          "quy định bắt buộc phải gọi"
+        ],
+        "max_agent_questions": 1
+      },
+      "ground_truth_facts": {
+        "price_vnd": 5990000,
+        "in_stock": true
+      }
+    }
+  }
+}

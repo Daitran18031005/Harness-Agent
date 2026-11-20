@@ -1,0 +1,64 @@
+{
+  "scenario_id": "SAMPLE-HOS-099",
+  "level": "M2",
+  "industry": "gia-dung",
+  "persona": "khach_gay_gat_khieu_nai",
+  "hard_case": "cuoc_1_buc_vi_ship_25k_cuoc_2_gom_don_tren_2tr_freeship",
+  "customer_phone": "0981230099",
+  "customer_name": "Anh Quân",
+  "honorific": "anh",
+  "notes": "Cuộc 1: Mua quạt Senko TS16 (590.000đ), chửi bới vì bị tính 25k ship nội thành, bảo mua cái quạt mấy trăm nghìn cũng vặt ship. Cuộc 2: Khách gọi lại quyết định mua thêm nồi chiên Lock&Lock 4L (1.890.000đ) để tổng đơn đạt 2.480.000đ (> 2 triệu) được miễn phí ship toàn quốc theo VC-02. Agent chốt đơn COD freeship.",
+  "calls": {
+    "call_1": {
+      "customer_goal": "mua quat Senko 590k, chui boi vi bi thu ship 25k",
+      "customer_turns": [
+        "Cây quạt Senko năm trăm chín mươi nghìn sao lại thu hai lăm nghìn tiền ship? Cái quạt rẻ rúng thế cũng vặt tiền ship à?",
+        "Đơn nào chả là đơn? Khách mua ủng hộ mà làm trò vặt vãnh!",
+        "Tao không mua nữa! Biến!"
+      ],
+      "facts_established": {
+        "product_advised": "SKU-FAN-SEN",
+        "price_quoted_vnd": 590000,
+        "shipping_fee_vnd": 25000
+      },
+      "expected_outcome": "tu_choi",
+      "success_if": {
+        "tool_called": null,
+        "must_say_any": [
+          "25.000đ",
+          "2.000.000đ",
+          "thông cảm"
+        ],
+        "must_not_call_tools": [
+          "order.create"
+        ],
+        "max_agent_questions": 1
+      }
+    },
+    "call_2": {
+      "days_later": 1,
+      "channel": "hotline",
+      "customer_turns": [
+        "Alo! Hôm qua em bảo đơn từ hai triệu là được miễn phí vận chuyển đúng không?",
+        "Thế anh lấy cây quạt Senko năm trăm chín mươi nghìn với cái nồi chiên Lock&Lock 4L một triệu tám trăm chín mươi nghìn, tổng hai triệu bốn trăm tám mươi nghìn là freeship đúng chưa?",
+        "Tốt! Lên đơn hai món này giao chung về Cầu Giấy cho anh, thanh toán COD."
+      ],
+      "must_carry_over": [
+        "product_advised"
+      ],
+      "expected_outcome": "chot_don",
+      "success_if": {
+        "tool_called": "order.create",
+        "args_match": {
+          "sku": "SKU-FAN-SEN",
+          "price_vnd": 590000,
+          "payment": "COD"
+        }
+      },
+      "ground_truth_facts": {
+        "price_vnd": 590000,
+        "freeship": true
+      }
+    }
+  }
+}

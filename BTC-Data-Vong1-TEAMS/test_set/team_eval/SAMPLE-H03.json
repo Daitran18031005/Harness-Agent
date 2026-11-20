@@ -1,0 +1,63 @@
+{
+  "scenario_id": "SAMPLE-H03",
+  "level": "M1",
+  "persona": "hai_nguoi_chung_sdt",
+  "hard_case": "chong_doi_len_model_cao_cap",
+  "customer_phone": "0903456003",
+  "customer_name": "Hương",
+  "honorific": "chị",
+  "secondary_caller": {
+    "name": "Nam",
+    "role": "chồng",
+    "honorific": "anh"
+  },
+  "notes": "Vợ hỏi máy AirPure X cho phòng khách 45m2, agent báo phòng to nên cân nhắc Pro. Vợ bảo hỏi chồng. Cuộc 2 chồng gọi lại quyết định nâng cấp lên AirPure Pro. Slot diện tích phòng khách giữ nguyên.",
+  "calls": {
+    "call_1": {
+      "caller": "Hương (vợ)",
+      "customer_goal": "hoi may loc khong khi phong khach 45m2",
+      "customer_turns": [
+        "Em ơi, chị đang xem máy lọc không khí AirPure X bốn triệu tám trăm chín mươi, phòng khách nhà chị 45 mét vuông dùng ổn không?",
+        "Nếu phòng 45m2 mà dùng dòng Pro thì giá bao nhiêu vậy em?",
+        "Bảy triệu chín trăm chín mươi thì hơi quá ngân sách chị tính, để chị bàn lại với chồng xem anh ấy chịu chi không nhé."
+      ],
+      "facts_established": {
+        "room_area_m2": 45,
+        "product_advised": "SKU-AP-X",
+        "alt_suggested": "SKU-AP-PRO",
+        "price_quoted_vnd": 4890000,
+        "alt_price_vnd": 7990000,
+        "blocker": "can hoi chong"
+      },
+      "expected_outcome": "hen_goi_lai"
+    },
+    "call_2": {
+      "days_later": 1,
+      "caller": "Nam (chồng)",
+      "channel": "hotline",
+      "customer_turns": [
+        "Alo em, vợ anh có gọi hỏi máy lọc không khí phòng khách 45 mét vuông hôm qua đó.",
+        "Anh thấy phòng rộng thì lấy luôn con AirPure Pro bảy triệu chín trăm chín mươi cho mạnh, khỏi lấy con X.",
+        "Lên đơn con AirPure Pro cho anh luôn nhé, thanh toán chuyển khoản."
+      ],
+      "must_carry_over": [
+        "room_area_m2"
+      ],
+      "must_not_ask": [
+        "room_area_m2"
+      ],
+      "success_if": {
+        "tool_called": "order.create",
+        "args_match": {
+          "sku": "SKU-AP-PRO",
+          "price_vnd": 7690000
+        }
+      },
+      "ground_truth_facts": {
+        "price_vnd": 7690000,
+        "in_stock": true,
+        "room_area_m2": 45
+      }
+    }
+  }
+}

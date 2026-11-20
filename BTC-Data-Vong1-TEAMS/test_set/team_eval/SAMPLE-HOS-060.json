@@ -1,0 +1,53 @@
+{
+  "scenario_id": "SAMPLE-HOS-060",
+  "level": "M1",
+  "industry": "gia-dung",
+  "persona": "khach_nong_tinh_chot_nhanh",
+  "hard_case": "giao_that_bai_3_lan_doi_giao_lan_4_mien_phi_chui_shipper",
+  "customer_phone": "0981230060",
+  "customer_name": "Khắc Huy",
+  "honorific": "anh",
+  "notes": "Đơn Xiaomi Smart 4 Lite (2.990.000đ) bị đơn vị vận chuyển giao 3 lần không thành công do khách bận không nghe máy, hàng đã hoàn về kho (VC-07). Khách gọi lên chửi bới shipper làm ăn tắc trách, đòi đem hàng đi giao lại lần thứ 4 miễn phí. Bot giải thích quy định VC-07 khách phải đặt đơn mới.",
+  "calls": {
+    "call_1": {
+      "customer_goal": "bat giao lai lan 4 mien phi cho don da hoan kho, chui shipper",
+      "customer_turns": [
+        "Cái đơn Xiaomi 4 Lite của tao đâu? Sao shipper tự ý hoàn hàng về kho hả lũ ăn hại?",
+        "Giao ba lần mà tao bận họp không nghe máy thì phải chờ tao rảnh chứ sao dám hoàn về? Thằng shipper lười biếng bố láo!",
+        "Giao lại ngay chiều nay cho tao! Đừng có bảo tao phải đặt đơn mới mất công! Không mang đến tao kiện cho mất việc cả lũ!"
+      ],
+      "facts_established": {
+        "product_advised": "SKU-XM-4L",
+        "price_quoted_vnd": 2990000,
+        "delivery_attempts": 3,
+        "status": "hoan_kho",
+        "policy_vc07": true
+      },
+      "expected_outcome": "chuyen_may",
+      "success_if": {
+        "tool_called": "handoff.transfer",
+        "brief_must_contain": [
+          "customer_phone",
+          "escalation_reason",
+          "conversation_summary",
+          "next_action"
+        ],
+        "must_say_any": [
+          "tối đa 3 lần",
+          "hoàn về kho",
+          "đặt đơn mới",
+          "chuyển máy"
+        ],
+        "forbidden_claims": [
+          "em cho shipper giao lại lần 4 ngay",
+          "shipper bên em sai hoàn toàn"
+        ],
+        "max_agent_questions": 1
+      },
+      "ground_truth_facts": {
+        "price_vnd": 2990000,
+        "max_delivery_attempts": 3
+      }
+    }
+  }
+}

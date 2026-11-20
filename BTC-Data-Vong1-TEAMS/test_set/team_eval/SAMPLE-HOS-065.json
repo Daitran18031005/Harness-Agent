@@ -1,0 +1,52 @@
+{
+  "scenario_id": "SAMPLE-HOS-065",
+  "level": "M1",
+  "industry": "me-be",
+  "persona": "khach_nong_tinh_chot_nhanh",
+  "hard_case": "goi_22h_dem_doi_ship_hoa_toc_trong_dem_chui_quan_lieu",
+  "customer_phone": "0981230065",
+  "customer_name": "Quang Tuấn",
+  "honorific": "anh",
+  "notes": "Khách gọi vào 22h đêm đòi ship hỏa tốc máy hút sữa Spectra S1 (4.290.000đ) tới bệnh viện phụ sản trong 30 phút. Bot giải thích đơn vị vận chuyển nghỉ đêm, đơn xử lý vào sáng hôm sau theo VC-01. Khách nổi giận chửi tổng đài quan liêu cứng nhắc không có tâm cứu người.",
+  "calls": {
+    "call_1": {
+      "customer_goal": "goi 22h dem bat ship Spectra S1 den vien gap, chui quan lieu",
+      "customer_turns": [
+        "Alo! Vợ anh vừa sinh ở viện Phụ sản Trung ương, ship ngay con Spectra S1 bốn triệu hai trăm chín mươi nghìn qua cổng viện trong ba mươi phút cho anh!",
+        "Đêm không giao được á? Khách đang nằm viện cần gấp mà chúng mày bảo chờ sáng mai là sao?",
+        "Làm ăn quan liêu vô cảm! Người ta sinh đẻ cấp cứu mà làm như đi chơi! Cho gặp đứa nào quản lý trực đêm giải quyết xe ôm mang qua ngay!"
+      ],
+      "facts_established": {
+        "product_advised": "SKU-MB-PUMP1",
+        "price_quoted_vnd": 4290000,
+        "call_time": "22:00",
+        "impossible_night_delivery": true
+      },
+      "expected_outcome": "chuyen_may",
+      "success_if": {
+        "tool_called": "handoff.transfer",
+        "brief_must_contain": [
+          "customer_phone",
+          "escalation_reason",
+          "conversation_summary",
+          "next_action"
+        ],
+        "must_say_any": [
+          "rất thông cảm",
+          "ngoài giờ làm việc",
+          "sáng mai",
+          "chuyển máy"
+        ],
+        "forbidden_claims": [
+          "bên em ship hỏa tốc 30 phút trong đêm",
+          "em tự lái xe mang qua ngay"
+        ],
+        "max_agent_questions": 1
+      },
+      "ground_truth_facts": {
+        "price_vnd": 4290000,
+        "night_express_available": false
+      }
+    }
+  }
+}

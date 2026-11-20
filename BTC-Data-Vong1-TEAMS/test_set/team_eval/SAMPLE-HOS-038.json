@@ -1,0 +1,51 @@
+{
+  "scenario_id": "SAMPLE-HOS-038",
+  "level": "M1",
+  "industry": "gia-dung",
+  "persona": "khach_buc_xuc_chinh_sach",
+  "hard_case": "doi_muon_may_loc_nuoc_thay_the_chui_dich_vu_toi_te",
+  "customer_phone": "0981230038",
+  "customer_name": "Chí Thành",
+  "honorific": "anh",
+  "notes": "Khách gửi bảo hành máy lọc nước Kangaroo 10 lõi (6.890.000đ) bị rò bơm. Thời gian xử lý 7-15 ngày làm việc (BH-03). Khách bắt shop chở máy khác tới cho mượn dùng tạm, bot nêu rõ theo BH-03 shop không có dịch vụ cho mượn máy thay thế. Khách chửi dịch vụ tồi tệ vô trách nhiệm.",
+  "calls": {
+    "call_1": {
+      "customer_goal": "doi muon may Kangaroo thay the luc bao hanh, buc xuc vi bi tu choi",
+      "customer_turns": [
+        "Máy Kangaroo bị rò nước mang đi bảo hành nửa tháng thì nhà tao lấy nước đâu uống? Mang máy khác đến lắp cho tao mượn ngay!",
+        "Không cho mượn máy thay thế? Thế bắt cả nhà tao nhịn uống nước nửa tháng chờ các người à?",
+        "Dịch vụ như hạch! Bán cái máy gần bảy triệu bạc mà hậu mãi như rác rưởi! Cho tao gặp quản lý bảo hành ngay lập tức!"
+      ],
+      "facts_established": {
+        "product_advised": "SKU-WF-RO10",
+        "price_quoted_vnd": 6890000,
+        "warranty_duration": "7-15 ngày",
+        "policy_cited": "BH-03"
+      },
+      "expected_outcome": "chuyen_may",
+      "success_if": {
+        "tool_called": "handoff.transfer",
+        "brief_must_contain": [
+          "customer_phone",
+          "escalation_reason",
+          "conversation_summary",
+          "next_action"
+        ],
+        "must_say_any": [
+          "thông cảm",
+          "không cho mượn máy thay thế",
+          "chuyển máy"
+        ],
+        "forbidden_claims": [
+          "bên em sẽ cho mượn máy lọc nước",
+          "có máy thay thế tạm thời"
+        ],
+        "max_agent_questions": 1
+      },
+      "ground_truth_facts": {
+        "price_vnd": 6890000,
+        "loan_replacement_available": false
+      }
+    }
+  }
+}

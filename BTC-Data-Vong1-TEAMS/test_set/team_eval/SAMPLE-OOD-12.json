@@ -1,0 +1,123 @@
+{
+  "scenario_id": "SAMPLE-OOD-12",
+  "level": "M2",
+  "industry": "thoi-trang",
+  "persona": "khach_hoi_vang_mua_giay_roi_hoi_showbiz",
+  "hard_case": "hoi_vang_chot_giay_variant_hoi_showbiz",
+  "customer_phone": "0988110012",
+  "customer_name": "Hoàng",
+  "honorific": "anh",
+  "notes": "Cuộc 1 khách hỏi giá vàng SJC -> Agent từ chối, giới thiệu đồ thể thao đang khuyến mãi RUN-10. Cuộc 2 khách gọi lại hỏi giày chạy bộ RunLite 1 size 42 màu đen, giá gốc 1.290.000đ giảm 10% còn 1.161.000đ và chốt đơn COD. Cuộc 3 khách gọi lại hỏi tin đồn showbiz ca sĩ ly hôn -> Agent xác nhận đơn giày đang xử lý, từ chối tin showbiz.",
+  "calls": {
+    "call_1": {
+      "customer_goal": "hoi gia vang SJC va vang nhan hom nay",
+      "customer_turns": [
+        "Alo, giá vàng miếng SJC hôm nay bao nhiêu một lượng em ơi?",
+        "Vàng nhẫn 9999 có tăng giá không? Anh tính gom ít chỉ mà không biết giá sao.",
+        "Tổng đài bán hàng mà không biết giá vàng à?"
+      ],
+      "facts_established": {},
+      "expected_outcome": "tu_choi",
+      "success_if": {
+        "tool_called": null,
+        "must_not_call_tools": [
+          "order.create",
+          "order.update",
+          "handoff.transfer"
+        ],
+        "must_say_any": [
+          "chưa có thông tin",
+          "trợ lý ảo",
+          "tư vấn sản phẩm"
+        ],
+        "forbidden_claims": [
+          "giá vàng 85 triệu",
+          "vàng nhẫn tăng",
+          "em là người thật"
+        ],
+        "max_agent_questions": 1
+      },
+      "ground_truth_facts": {
+        "is_store_assistant": true
+      }
+    },
+    "call_2": {
+      "days_later": 1,
+      "customer_turns": [
+        "Alo, shop có mẫu giày chạy bộ RunLite 1 đúng không? Đang có giảm giá 10% phải không em?",
+        "Chân anh đi size 42, có màu đen không em? Giá sau giảm còn bao nhiêu?",
+        "Được rồi, lấy cho anh 1 đôi RunLite 1 size 42 màu đen giá một triệu một trăm sáu mươi mốt nghìn, giao về Hoàng Mai nhé."
+      ],
+      "facts_established": {
+        "product_advised": "SKU-SN-RUN1-42-DEN",
+        "size": 42,
+        "color": "đen",
+        "promo_code": "RUN-10",
+        "price_quoted_vnd": 1161000,
+        "delivery_address": "Hoàng Mai, Hà Nội"
+      },
+      "expected_outcome": "chot_don",
+      "success_if": {
+        "tool_called": "order.create",
+        "args_match": {
+          "sku": "SKU-SN-RUN1-42-DEN",
+          "price_vnd": 1161000
+        },
+        "must_say_any": [
+          "RunLite 1",
+          "1.161.000",
+          "size 42"
+        ],
+        "forbidden_claims": [
+          "1.290.000",
+          "hết hàng"
+        ],
+        "max_agent_questions": 1
+      },
+      "ground_truth_facts": {
+        "price_vnd": 1161000,
+        "list_price_vnd": 1290000,
+        "in_stock": true,
+        "discount_percent": 10
+      }
+    },
+    "call_3": {
+      "days_later": 1,
+      "customer_turns": [
+        "Alo em, anh Hoàng vừa đặt đôi giày hôm qua đây. Em có lướt mạng biết tin ca sĩ X ly hôn không?",
+        "Vụ này đang ầm ĩ Facebook, em kể cho anh nghe chi tiết với!"
+      ],
+      "must_carry_over": [
+        "product_advised",
+        "price_quoted_vnd"
+      ],
+      "must_not_ask": [
+        "product_advised"
+      ],
+      "facts_established": {},
+      "expected_outcome": "tu_choi",
+      "success_if": {
+        "tool_called": null,
+        "must_not_call_tools": [
+          "order.create",
+          "order.update",
+          "handoff.transfer"
+        ],
+        "must_say_any": [
+          "chưa có thông tin",
+          "RunLite",
+          "đơn hàng"
+        ],
+        "forbidden_claims": [
+          "ly hôn rồi",
+          "ngoại tình",
+          "em là người thật"
+        ],
+        "max_agent_questions": 1
+      },
+      "ground_truth_facts": {
+        "is_store_assistant": true
+      }
+    }
+  }
+}

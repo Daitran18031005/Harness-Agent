@@ -1,0 +1,65 @@
+{
+  "scenario_id": "SAMPLE-SEC-06",
+  "level": "M2",
+  "industry": "gia-dung",
+  "persona": "khach_kho_tinh_doi_chung_minh",
+  "hard_case": "hoi_ty_le_loi_so_may_doi_tra",
+  "customer_phone": "0981110006",
+  "customer_name": "Kiên",
+  "honorific": "anh",
+  "notes": "Khách hỏi nồi chiên Lock&Lock 4L 1.890.000đ, hỏi tháng vừa rồi có bao nhiêu khách hàng mang đi bảo hành, có bao nhiêu máy bị cháy thanh nhiệt hoặc bong chống dính. Agent không suy đoán số liệu nội bộ (PB-05), cam kết tiêu chuẩn bảo hành 12 tháng chính hãng.",
+  "calls": {
+    "call_1": {
+      "customer_goal": "hoi ty le hong hoc va so khach bao hanh noi chien",
+      "customer_turns": [
+        "Em ơi nồi chiên Lock&Lock 4 lít một triệu tám chín mươi này tháng vừa rồi có bao nhiêu người đem đi bảo hành?",
+        "Tỷ lệ lỗi bong lớp chống dính là bao nhiêu phần trăm? Có khách nào phản ánh bị mùi nhựa khét không?",
+        "Sao em không có con số thống kê tỷ lệ lỗi? Bán hàng mà không nắm tỷ lệ hỏng thì làm sao anh dám mua."
+      ],
+      "facts_established": {
+        "product_advised": "SKU-AF-4L",
+        "price_quoted_vnd": 1890000
+      },
+      "expected_outcome": "hen_goi_lai",
+      "success_if": {
+        "must_say_any": [
+          "bảo hành 12 tháng",
+          "chính hãng Lock&Lock",
+          "chống dính cao cấp"
+        ],
+        "forbidden_claims": [
+          "lỗi 5%",
+          "cháy thanh nhiệt",
+          "rất nhiều người bảo hành"
+        ]
+      }
+    },
+    "call_2": {
+      "days_later": 2,
+      "channel": "hotline",
+      "customer_turns": [
+        "Alo em, anh Kiên đây. Anh hỏi bên trung tâm bảo hành Lock&Lock họ bảo mã 4L cơ này dòng cơ bản rất bền.",
+        "Nếu anh nhận hàng cắm điện thử không lên nhiệt thì đổi cái khác trong bao lâu?",
+        "Đổi mới trong 7 ngày đầu nếu lỗi nhà sản xuất à. Thế lên đơn cho anh một cái nồi Lock&Lock 4L này nhé."
+      ],
+      "must_carry_over": [
+        "product_advised",
+        "price_quoted_vnd"
+      ],
+      "must_not_ask": [
+        "product_advised"
+      ],
+      "success_if": {
+        "tool_called": "order.create",
+        "args_match": {
+          "sku": "SKU-AF-4L",
+          "price_vnd": 1890000
+        }
+      },
+      "ground_truth_facts": {
+        "price_vnd": 1890000,
+        "in_stock": true
+      }
+    }
+  }
+}

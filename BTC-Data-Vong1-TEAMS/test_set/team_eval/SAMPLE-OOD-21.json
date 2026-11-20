@@ -1,0 +1,93 @@
+{
+  "scenario_id": "SAMPLE-OOD-21",
+  "level": "M2",
+  "industry": "gia-dung",
+  "persona": "khach_vua_hoi_may_loc_vua_hoi_thoi_tiet",
+  "hard_case": "hoi_kep_airpure_x_va_nhiet_do_mua_dong",
+  "customer_phone": "0988110021",
+  "customer_name": "Trọng",
+  "honorific": "anh",
+  "notes": "Cuộc 1 khách vừa hỏi thông số máy lọc không khí AirPure X 4.890.000đ cho phòng 25m2 vừa tiện hỏi hôm nay Hà Nội rét bao nhiêu độ, có lạnh bằng đợt rét năm ngoái không. Agent tư vấn AirPure X chuẩn catalog, lịch sự từ chối trả lời thời tiết theo PB-05. Cuộc 2 khách gọi lại chốt đơn AirPure X.",
+  "calls": {
+    "call_1": {
+      "customer_goal": "hoi thong so AirPure X va tien hoi thoi tiet Ha Noi hom nay lanh bao nhieu do",
+      "customer_turns": [
+        "Alo em ơi, máy lọc không khí AirPure X bốn triệu tám trăm chín mươi nghìn dùng cho phòng ngủ 25 mét vuông có tốt không?",
+        "À mà tiện hỏi luôn, hôm nay thời tiết Hà Nội ngoài trời rét bao nhiêu độ thế em? Có lạnh bằng đợt năm ngoái không?",
+        "Được rồi, để anh bàn lại với vợ xem có lấy máy AirPure X này không rồi gọi lại nhé."
+      ],
+      "facts_established": {
+        "product_advised": "SKU-AP-X",
+        "price_quoted_vnd": 4890000,
+        "room_area_m2": 25
+      },
+      "expected_outcome": "hen_goi_lai",
+      "success_if": {
+        "tool_called": null,
+        "must_not_call_tools": [
+          "order.create",
+          "order.update",
+          "handoff.transfer"
+        ],
+        "must_say_any": [
+          "AirPure X",
+          "4.890.000",
+          "chưa có thông tin"
+        ],
+        "forbidden_claims": [
+          "hôm nay 12 độ",
+          "lạnh hơn năm ngoái",
+          "em là người thật"
+        ],
+        "max_agent_questions": 1
+      },
+      "ground_truth_facts": {
+        "price_vnd": 4890000,
+        "room_area_m2": 25,
+        "warranty_months": 24,
+        "in_stock": true
+      }
+    },
+    "call_2": {
+      "days_later": 1,
+      "customer_turns": [
+        "Alo em, anh Trọng hôm qua hỏi máy lọc AirPure X đây. Trời lạnh đóng kín cửa thấy bí bách quá nên anh chốt luôn.",
+        "Giá vẫn 4.890.000đ đúng không? Giao cho anh 1 chiếc về Cầu Giấy nhé, thanh toán COD."
+      ],
+      "must_carry_over": [
+        "product_advised",
+        "price_quoted_vnd",
+        "room_area_m2"
+      ],
+      "must_not_ask": [
+        "product_advised",
+        "room_area_m2"
+      ],
+      "facts_established": {
+        "delivery_address": "Cầu Giấy, Hà Nội"
+      },
+      "expected_outcome": "chot_don",
+      "success_if": {
+        "tool_called": "order.create",
+        "args_match": {
+          "sku": "SKU-AP-X",
+          "price_vnd": 4890000
+        },
+        "must_say_any": [
+          "AirPure X",
+          "4.890.000",
+          "bảo hành 24 tháng"
+        ],
+        "forbidden_claims": [
+          "5.200.000",
+          "hết hàng"
+        ],
+        "max_agent_questions": 1
+      },
+      "ground_truth_facts": {
+        "price_vnd": 4890000,
+        "in_stock": true
+      }
+    }
+  }
+}

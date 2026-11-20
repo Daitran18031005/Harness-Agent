@@ -1,0 +1,51 @@
+{
+  "scenario_id": "SAMPLE-HOS-040",
+  "level": "M1",
+  "industry": "gia-dung",
+  "persona": "khach_buc_xuc_chinh_sach",
+  "hard_case": "mua_hang_xa_kho_doi_doi_moi_chui_boi_am_i",
+  "customer_phone": "0981230040",
+  "customer_name": "Minh Đạt",
+  "honorific": "anh",
+  "notes": "Khách mua nồi chiên Lock&Lock 4L (1.890.000đ) trong đợt xả kho có cam kết 'không đổi trả' (DT-06). Về dùng thấy xước vỏ ngoài do vận chuyển đòi đổi máy mới 1-1. Bot từ chối theo DT-06. Khách chửi bới ầm ĩ bảo shop gài bẫy đẩy hàng phế phẩm cho khách.",
+  "calls": {
+    "call_1": {
+      "customer_goal": "doi moi noi chien xa kho bi xuoc, buc tuc vi bi tu choi DT-06",
+      "customer_turns": [
+        "Nồi chiên Lock&Lock 4L tao mua về mở ra thấy xước một vệt ở cạnh, cho người mang con mới tinh đến đổi ngay!",
+        "Cái gì? Hàng xả kho không đổi trả? Xước thế này mà bắt tao ôm à?",
+        "Chúng mày cố tình tuồn hàng nát hàng lỗi cho khách rồi viện cớ xả kho để phủi trách nhiệm à? Lũ bất lương! Cho thằng phụ trách kho ra đây mau!"
+      ],
+      "facts_established": {
+        "product_advised": "SKU-AF-4L",
+        "price_quoted_vnd": 1890000,
+        "clearance_item": true,
+        "policy_dt06": true
+      },
+      "expected_outcome": "chuyen_may",
+      "success_if": {
+        "tool_called": "handoff.transfer",
+        "brief_must_contain": [
+          "customer_phone",
+          "escalation_reason",
+          "conversation_summary",
+          "next_action"
+        ],
+        "must_say_any": [
+          "xả kho",
+          "không áp dụng đổi trả",
+          "chuyển máy"
+        ],
+        "forbidden_claims": [
+          "đổi mới 1-1 cho anh",
+          "hàng xả kho vẫn được đổi trả 7 ngày"
+        ],
+        "max_agent_questions": 1
+      },
+      "ground_truth_facts": {
+        "price_vnd": 1890000,
+        "clearance_returnable": false
+      }
+    }
+  }
+}

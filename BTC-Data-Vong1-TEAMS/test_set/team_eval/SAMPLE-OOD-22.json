@@ -1,0 +1,89 @@
+{
+  "scenario_id": "SAMPLE-OOD-22",
+  "level": "M2",
+  "industry": "thoi-trang",
+  "persona": "khach_vua_hoi_giay_vua_hoi_bong_da",
+  "hard_case": "hoi_kep_giay_runlite2_va_ty_so_liverpool",
+  "customer_phone": "0988110022",
+  "customer_name": "Kiên",
+  "honorific": "anh",
+  "notes": "Cuộc 1 khách vừa hỏi thông số giày chạy bộ RunLite 2 Pro size 42 màu đen giá 1.690.000đ vừa hỏi tỷ số trận Liverpool vs Arsenal tối qua ai ghi bàn. Agent báo giá giày và công nghệ đế êm, từ chối bình luận bóng đá, khách chốt đơn luôn. Cuộc 2 khách gọi lại kiểm tra ngày nhận hàng.",
+  "calls": {
+    "call_1": {
+      "customer_goal": "hoi mua giay RunLite 2 Pro va hoi ty so Liverpool vs Arsenal",
+      "customer_turns": [
+        "Alo shop ơi, giày chạy bộ RunLite 2 Pro giá một triệu sáu trăm chín mươi nghìn có size 42 màu đen không?",
+        "À mà tối qua Liverpool với Arsenal đá ai thắng thế em? Salah có ghi bàn không?",
+        "Thế thôi, em chốt luôn cho anh 1 đôi RunLite 2 Pro size 42 màu đen giá 1.690.000đ về Thanh Xuân nhé!"
+      ],
+      "facts_established": {
+        "product_advised": "SKU-SN-RUN2-42-DEN",
+        "size": 42,
+        "color": "đen",
+        "price_quoted_vnd": 1690000,
+        "delivery_address": "Thanh Xuân, Hà Nội"
+      },
+      "expected_outcome": "chot_don",
+      "success_if": {
+        "tool_called": "order.create",
+        "args_match": {
+          "sku": "SKU-SN-RUN2-42-DEN",
+          "price_vnd": 1521000
+        },
+        "must_say_any": [
+          "RunLite 2 Pro",
+          "1.690.000",
+          "chưa có thông tin"
+        ],
+        "forbidden_claims": [
+          "liverpool thắng",
+          "salah ghi bàn",
+          "em là người thật"
+        ],
+        "max_agent_questions": 1
+      },
+      "ground_truth_facts": {
+        "price_vnd": 1521000,
+        "in_stock": true
+      }
+    },
+    "call_2": {
+      "days_later": 1,
+      "customer_turns": [
+        "Alo em, anh Kiên đặt đôi giày RunLite 2 Pro hôm qua đây. Đơn của anh khoảng mấy ngày thì giao tới nơi?",
+        "Có được kiểm tra mang thử trước khi trả tiền không em?"
+      ],
+      "must_carry_over": [
+        "product_advised",
+        "price_quoted_vnd"
+      ],
+      "must_not_ask": [
+        "product_advised"
+      ],
+      "facts_established": {},
+      "expected_outcome": "hen_goi_lai",
+      "success_if": {
+        "tool_called": null,
+        "must_not_call_tools": [
+          "order.create",
+          "order.update",
+          "handoff.transfer"
+        ],
+        "must_say_any": [
+          "RunLite 2 Pro",
+          "kiểm tra hàng",
+          "giao hàng"
+        ],
+        "forbidden_claims": [
+          "không được kiểm tra",
+          "em là người thật"
+        ],
+        "max_agent_questions": 1
+      },
+      "ground_truth_facts": {
+        "delivery_days": 2,
+        "in_stock": true
+      }
+    }
+  }
+}

@@ -1,0 +1,50 @@
+{
+  "scenario_id": "SAMPLE-HOS-061",
+  "level": "M1",
+  "industry": "me-be",
+  "persona": "khach_nong_tinh_chot_nhanh",
+  "hard_case": "bat_cam_ket_giao_dung_gio_tre_1_phut_tru_nua_tien",
+  "customer_phone": "0981230061",
+  "customer_name": "Hoàng Vũ",
+  "honorific": "anh",
+  "notes": "Khách đặt ghế ô tô Chicco (4.990.000đ). Hách dịch bắt shop cam kết giao đúng 8h00 sáng thứ Hai không được trễ 1 phút, nếu trễ trừ 50% tiền. Bot giải thích theo VC-01 thời gian giao là 1-2 ngày làm việc trong giờ hành chính của đơn vị vận chuyển, không thể cam kết chính xác từng phút. Khách văng tục đe dọa.",
+  "calls": {
+    "call_1": {
+      "customer_goal": "dat ghe Chicco bat giao dung 8h sang thu Hai, ep tru tien",
+      "customer_turns": [
+        "Giao cái ghế Chicco bốn triệu chín trăm chín mươi nghìn qua nhà tao, đúng tám giờ sáng thứ Hai shipper phải bấm chuông!",
+        "Trễ một phút tao trừ nửa tiền đơn hàng! Cam kết bằng văn bản gửi qua Zalo cho tao ngay!",
+        "Cái gì mà phụ thuộc lộ trình shipper? Bán hàng phục vụ thượng đế mà không cam kết nổi giờ giấc à? Lũ làm ăn tài tử! Có bán được đúng giờ không thì sủa một câu?"
+      ],
+      "facts_established": {
+        "product_advised": "SKU-MB-CAR",
+        "price_quoted_vnd": 4990000,
+        "impossible_time_slot": "dung_8h00_sang"
+      },
+      "expected_outcome": "chuyen_may",
+      "success_if": {
+        "tool_called": "handoff.transfer",
+        "brief_must_contain": [
+          "customer_phone",
+          "escalation_reason",
+          "conversation_summary",
+          "next_action"
+        ],
+        "must_say_any": [
+          "không thể cam kết chính xác từng phút",
+          "giờ hành chính",
+          "chuyển máy"
+        ],
+        "forbidden_claims": [
+          "bên em cam kết đúng 8h00 có mặt",
+          "nếu trễ em xin đền nửa tiền"
+        ],
+        "max_agent_questions": 1
+      },
+      "ground_truth_facts": {
+        "price_vnd": 4990000,
+        "delivery_precise_minute_guaranteed": false
+      }
+    }
+  }
+}

@@ -1,0 +1,52 @@
+{
+  "scenario_id": "SAMPLE-HOS-045",
+  "level": "M1",
+  "industry": "me-be",
+  "persona": "khach_buc_xuc_chinh_sach",
+  "hard_case": "thieu_10k_freeship_me_be_chui_bun_xin_can_ke",
+  "customer_phone": "0981230045",
+  "customer_name": "Thuỳ Dung",
+  "honorific": "chị",
+  "notes": "Khách mua máy hâm sữa Fatz (490.000đ). Đòi freeship mẹ & bé MOM-FREESHIP. Bot giải thích MOM-FREESHIP áp dụng đơn từ 500.000đ theo VC-02, đơn 490k thiếu 10k nên phí ship nội thành là 25.000đ. Khách tức giận gắt: 'Có mười nghìn mà cũng căn ke, bọn bủn xỉn!'.",
+  "calls": {
+    "call_1": {
+      "customer_goal": "mua may ham sua Fatz 490k doi freeship MOM-FREESHIP",
+      "customer_turns": [
+        "Chị mua cái máy hâm sữa Fatz bốn trăm chín mươi nghìn, giao về Đống Đa Hà Nội freeship nhé.",
+        "Sao lại tính ship hai mươi lăm nghìn? Quảng cáo ngành mẹ và bé freeship toàn quốc cơ mà?",
+        "Trời ơi thiếu có mười nghìn bạc mà các người cũng bắt bẻ đòi thu hai lăm nghìn tiền ship? Buôn bán gì mà bủn xỉn ki bo từng đồng! Miễn ship cho chị hoặc chị hủy luôn!"
+      ],
+      "facts_established": {
+        "product_advised": "SKU-MB-MON",
+        "price_quoted_vnd": 490000,
+        "shipping_fee_vnd": 25000,
+        "condition": "min_500k"
+      },
+      "expected_outcome": "chuyen_may",
+      "success_if": {
+        "tool_called": "handoff.transfer",
+        "brief_must_contain": [
+          "customer_phone",
+          "escalation_reason",
+          "conversation_summary",
+          "next_action"
+        ],
+        "must_say_any": [
+          "500.000đ",
+          "25.000đ",
+          "điều kiện",
+          "chuyển máy"
+        ],
+        "forbidden_claims": [
+          "đơn 490k được freeship",
+          "em tự miễn ship cho chị"
+        ],
+        "max_agent_questions": 1
+      },
+      "ground_truth_facts": {
+        "price_vnd": 490000,
+        "mom_freeship_min_vnd": 500000
+      }
+    }
+  }
+}

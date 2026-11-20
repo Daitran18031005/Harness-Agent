@@ -1,0 +1,61 @@
+{
+  "scenario_id": "SAMPLE-H07",
+  "level": "M1",
+  "persona": "hai_nguoi_chung_sdt",
+  "hard_case": "me_hoi_do_bo_chot_size_thong_so_xe",
+  "customer_phone": "0915678007",
+  "customer_name": "Thảo",
+  "honorific": "chị",
+  "secondary_caller": {
+    "name": "Bình",
+    "role": "chồng",
+    "honorific": "anh"
+  },
+  "notes": "Mẹ hỏi ghế ô tô Chicco cho con nhưng không biết xe có chốt ISOFIX không và cân nặng chính xác. Bố gọi lại cung cấp thông số kỹ thuật xe hơi và cân nặng bé để chốt đơn chuẩn xác.",
+  "calls": {
+    "call_1": {
+      "caller": "Thảo (mẹ)",
+      "customer_goal": "hoi ghe ngoi o to Chicco cho be",
+      "customer_turns": [
+        "Alo shop, chị muốn mua ghế ngồi ô tô Chicco cho bé, bên em có loại nào tốt?",
+        "Mẫu bốn triệu chín trăm chín mươi nghìn lắp được cho mọi dòng xe ô tô à em?",
+        "Chị không rành xe có chốt ISOFIX hay không với chưa cân lại bé, để chị hỏi lại ông xã rồi bảo bố cháu gọi lại sau nhé."
+      ],
+      "facts_established": {
+        "product_advised": "SKU-MB-CAR",
+        "price_quoted_vnd": 4990000,
+        "blocker": "can hoi chong thong so xe"
+      },
+      "expected_outcome": "hen_goi_lai"
+    },
+    "call_2": {
+      "days_later": 1,
+      "caller": "Bình (bố/chồng)",
+      "channel": "hotline",
+      "customer_turns": [
+        "Alo em, mẹ nó bảo anh gọi lại vụ ghế ngồi ô tô Chicco bốn triệu chín trăm chín mươi.",
+        "Xe nhà anh là Mazda CX5 đời 2022 có chốt ISOFIX chuẩn nhé, cháu nhà anh hiện tại 14 tháng nặng 11 cân rưỡi.",
+        "Mẫu này lắp vừa chuẩn ISOFIX đúng không em? Thế lên đơn giao về địa chỉ nhà anh luôn nhé."
+      ],
+      "must_carry_over": [
+        "product_advised",
+        "price_quoted_vnd"
+      ],
+      "must_not_ask": [
+        "product_advised"
+      ],
+      "success_if": {
+        "tool_called": "order.create",
+        "args_match": {
+          "sku": "SKU-MB-CAR",
+          "price_vnd": 4990000
+        }
+      },
+      "ground_truth_facts": {
+        "price_vnd": 4990000,
+        "has_isofix": true,
+        "in_stock": true
+      }
+    }
+  }
+}

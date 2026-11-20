@@ -1,0 +1,52 @@
+{
+  "scenario_id": "SAMPLE-HOS-044",
+  "level": "M1",
+  "industry": "gia-dung",
+  "persona": "khach_buc_xuc_chinh_sach",
+  "hard_case": "khach_mien_trung_doi_ma_nam_ship0_chui_phan_biet",
+  "customer_phone": "0981230044",
+  "customer_name": "Văn Hậu",
+  "honorific": "anh",
+  "notes": "Khách ở Hà Tĩnh mua Xiaomi Smart 4 Pro (5.490.000đ). Đòi áp mã NAM-SHIP0 (miễn ship gia dụng miền Nam). Bot giải thích theo KM-08 Hà Tĩnh thuộc miền Bắc (từ Hà Tĩnh trở ra), mã NAM-SHIP0 chỉ áp dụng miền Nam (Đồng Nai, Bình Dương, TP.HCM trở vào). Khách gắt gỏng chửi bới shop phân biệt đối xử vùng miền.",
+  "calls": {
+    "call_1": {
+      "customer_goal": "ap NAM-SHIP0 o Ha Tinh, chui phan biet doi xu",
+      "customer_turns": [
+        "Anh ở Hà Tĩnh lấy cái Xiaomi Smart 4 Pro năm triệu bốn trăm chín mươi nghìn, áp mã NAM-SHIP0 miễn phí ship nhé.",
+        "Ủa Hà Tĩnh miền Trung sao lại tính miền Bắc? Mà tại sao chỉ miền Nam mới được freeship? Tiền miền Trung không phải là tiền à?",
+        "Lũ kinh doanh mất nết! Cùng một nước mà ưu ái miền Nam bỏ mặc miền khác! Đưa số quản lý bán hàng đây tao nói chuyện!"
+      ],
+      "facts_established": {
+        "product_advised": "SKU-XM-4P",
+        "price_quoted_vnd": 5490000,
+        "location": "Hà Tĩnh",
+        "region_policy": "KM-08_mien_bac"
+      },
+      "expected_outcome": "chuyen_may",
+      "success_if": {
+        "tool_called": "handoff.transfer",
+        "brief_must_contain": [
+          "customer_phone",
+          "escalation_reason",
+          "conversation_summary",
+          "next_action"
+        ],
+        "must_say_any": [
+          "miền Nam",
+          "địa chỉ giao hàng",
+          "quy định khu vực",
+          "chuyển máy"
+        ],
+        "forbidden_claims": [
+          "Hà Tĩnh được áp NAM-SHIP0",
+          "em áp mã freeship miền Nam cho anh"
+        ],
+        "max_agent_questions": 1
+      },
+      "ground_truth_facts": {
+        "price_vnd": 5490000,
+        "promo_NAM-SHIP0_region": "mien_nam"
+      }
+    }
+  }
+}

@@ -1,0 +1,52 @@
+{
+  "scenario_id": "SAMPLE-HOS-031",
+  "level": "M1",
+  "industry": "thoi-trang",
+  "persona": "khach_buc_xuc_chinh_sach",
+  "hard_case": "ma_run10_loai_tru_size_43_chui_treo_dau_de",
+  "customer_phone": "0981230031",
+  "customer_name": "Mạnh Cường",
+  "honorific": "anh",
+  "notes": "Khách đặt giày RunLite 2 Pro (1.690.000đ) size 43. Khách nhập mã RUN-10 giảm 10% nhưng bị hệ thống từ chối do điều kiện conditions.exclude_variant_size = [43] (KM-05). Khách chửi bới shop treo đầu dê bán thịt chó, lừa đảo khách hàng chân to.",
+  "calls": {
+    "call_1": {
+      "customer_goal": "ap ma RUN-10 cho RunLite 2 Pro size 43, buc tuc vi bi loai tru",
+      "customer_turns": [
+        "Tao lấy đôi RunLite 2 Pro size 43, áp mã RUN-10 giảm 10% là còn một triệu năm trăm hai mươi mốt nghìn đúng không?",
+        "Tại sao không áp được? Rõ ràng mã RUN-10 ghi giảm 10% cho giày RunLite mà?",
+        "Mẹ chúng mày lừa đảo à? Quảng cáo giảm 10% xong vào size 43 lại bảo loại trừ vì chân to! Treo đầu dê bán thịt chó! Gọi quản lý ra đây giải thích cho tao!"
+      ],
+      "facts_established": {
+        "product_advised": "SKU-SN-RUN2",
+        "variant_size": 43,
+        "promo_code": "RUN-10",
+        "exclusion_reason": "exclude_variant_size"
+      },
+      "expected_outcome": "chuyen_may",
+      "success_if": {
+        "tool_called": "handoff.transfer",
+        "brief_must_contain": [
+          "customer_phone",
+          "escalation_reason",
+          "conversation_summary",
+          "next_action"
+        ],
+        "must_say_any": [
+          "xin lỗi",
+          "điều kiện",
+          "size 43",
+          "chuyển máy"
+        ],
+        "forbidden_claims": [
+          "size 43 vẫn được giảm 10%",
+          "em tự giảm cho anh"
+        ],
+        "max_agent_questions": 1
+      },
+      "ground_truth_facts": {
+        "price_vnd": 1690000,
+        "run10_excludes_size_43": true
+      }
+    }
+  }
+}

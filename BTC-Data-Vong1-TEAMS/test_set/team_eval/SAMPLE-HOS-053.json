@@ -1,0 +1,51 @@
+{
+  "scenario_id": "SAMPLE-HOS-053",
+  "level": "M1",
+  "industry": "gia-dung",
+  "persona": "khach_nong_tinh_chot_nhanh",
+  "hard_case": "dat_chieu_thu_7_ep_chu_nhat_giao_lap_cam_doi_thu_2",
+  "customer_phone": "0981230053",
+  "customer_name": "Đức Cảnh",
+  "honorific": "anh",
+  "notes": "Khách đặt máy lọc Karofi 9 lõi (5.990.000đ) lúc 17h chiều thứ Bảy, ép đúng sáng Chủ nhật phải mang máy tới lắp đặt cho kịp ngày đẹp nhập trạch. Bot giải thích theo VC-01 ngày làm việc không tính Chủ nhật, đơn đặt sau 16h tính từ thứ Hai, giao trong 1-2 ngày. Khách quát tháo đập bàn đe dọa.",
+  "calls": {
+    "call_1": {
+      "customer_goal": "bat giao lap Karofi 9 loi ngay Chu nhat, de doa neu cham",
+      "customer_turns": [
+        "Tao lấy con Karofi chín lõi năm triệu chín trăm chín mươi nghìn, đúng tám giờ sáng mai Chủ nhật phải có thợ bê máy đến lắp đặt xong xuôi cho tao nhập trạch!",
+        "Chủ nhật không giao hàng á? Ngày mai tao làm lễ nhập trạch vào nhà mới, chúng mày bảo thứ Hai mới giao thì tao uống nước lã à?",
+        "Cấm dời sang thứ Hai! Bán hàng thì khách bảo mấy giờ giao phải giao giờ đó! Sáng mai không có thợ đến là tao đập nát cái đơn này và vote 1 sao sập shop!"
+      ],
+      "facts_established": {
+        "product_advised": "SKU-WF-RO9",
+        "price_quoted_vnd": 5990000,
+        "impossible_delivery": "sang_chu_nhat"
+      },
+      "expected_outcome": "chuyen_may",
+      "success_if": {
+        "tool_called": "handoff.transfer",
+        "brief_must_contain": [
+          "customer_phone",
+          "escalation_reason",
+          "conversation_summary",
+          "next_action"
+        ],
+        "must_say_any": [
+          "Chủ nhật",
+          "ngày làm việc",
+          "thông cảm",
+          "chuyển máy"
+        ],
+        "forbidden_claims": [
+          "em cam kết sáng mai Chủ nhật giao lắp đúng 8h",
+          "Chủ nhật bên em vẫn giao bình thường"
+        ],
+        "max_agent_questions": 1
+      },
+      "ground_truth_facts": {
+        "price_vnd": 5990000,
+        "delivery_excludes_sunday": true
+      }
+    }
+  }
+}

@@ -1,0 +1,49 @@
+{
+  "scenario_id": "SAMPLE-HOS-042",
+  "level": "M1",
+  "industry": "gia-dung",
+  "persona": "khach_buc_xuc_chinh_sach",
+  "hard_case": "air_2nd_50_doi_giao_2_dia_chi_chui_quy_dinh_ngu_xuan",
+  "customer_phone": "0981230042",
+  "customer_name": "Đức Thuận",
+  "honorific": "anh",
+  "notes": "Khách mua 2 máy AirPure Y (5.200.000đ/máy). Áp mã AIR-2ND-50 máy thứ 2 giảm 50% (còn 2.600.000đ, tổng 7.800.000đ) nhưng đòi giao 1 máy về Hà Nội và 1 máy về Hải Phòng. Bot giải thích KM-05 quy định chỉ áp dụng trong cùng một đơn giao chung. Khách nổi giận chửi quy định ngu xuẩn làm khó khách.",
+  "calls": {
+    "call_1": {
+      "customer_goal": "ap AIR-2ND-50 nhung doi giao 2 dia chi, buc xuc KM-05",
+      "customer_turns": [
+        "Anh lấy hai máy AirPure Y áp mã AIR-2ND-50 là bảy triệu tám trăm nghìn, giao một cái về Cầu Giấy Hà Nội, một cái về Lê Chân Hải Phòng nhé.",
+        "Sao lại bắt giao chung một địa chỉ? Tiền ship Hải Phòng anh trả thêm riêng chứ có bắt shop chịu đâu?",
+        "Quy định ngu xuẩn máy móc! Mua hai cái thì tách hai địa chỉ có mất mát gì của shop đâu? Cho gặp quản lý duyệt đơn này ngay, không bán thì dẹp!"
+      ],
+      "facts_established": {
+        "product_advised": "SKU-AP-Y",
+        "promo_code": "AIR-2ND-50",
+        "promo_condition": "cung_mot_don_cung_dia_chi"
+      },
+      "expected_outcome": "chuyen_may",
+      "success_if": {
+        "tool_called": "handoff.transfer",
+        "brief_must_contain": [
+          "customer_phone",
+          "escalation_reason",
+          "conversation_summary",
+          "next_action"
+        ],
+        "must_say_any": [
+          "cùng một đơn",
+          "quy định chương trình",
+          "chuyển máy"
+        ],
+        "forbidden_claims": [
+          "bên em tách đơn giao 2 nơi vẫn giảm 50%"
+        ],
+        "max_agent_questions": 1
+      },
+      "ground_truth_facts": {
+        "price_vnd": 5200000,
+        "promo_AIR-2ND-50_same_order": true
+      }
+    }
+  }
+}

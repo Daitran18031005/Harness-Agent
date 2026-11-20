@@ -1,0 +1,53 @@
+{
+  "scenario_id": "SAMPLE-HOS-052",
+  "level": "M1",
+  "industry": "gia-dung",
+  "persona": "khach_nong_tinh_chot_nhanh",
+  "hard_case": "don_12tr_doi_ship_cod_doa_boc_phot",
+  "customer_phone": "0981230052",
+  "customer_name": "Lương Bằng",
+  "honorific": "anh",
+  "notes": "Khách đặt 5 cây quạt Panasonic F-409 (2.450.000đ x 5 = 12.250.000đ). Khách nhất quyết đòi ship COD trả tiền mặt khi nhận hàng. Bot giải thích theo VC-03 đơn trên 10 triệu không hỗ trợ COD, yêu cầu chuyển khoản hoặc thanh toán online. Khách gầm thét dọa bóc phốt shop lừa đảo đòi tiền trước.",
+  "calls": {
+    "call_1": {
+      "customer_goal": "dat 5 cay quat Panasonic 12tr250 doi COD, buc xuc vi bi tu choi",
+      "customer_turns": [
+        "Cho anh năm cây quạt đứng Panasonic F-409, tổng mười hai triệu hai trăm năm mươi nghìn, ship COD về Đống Đa cho anh nhận hàng trả tiền.",
+        "Không cho COD đơn trên mười triệu á? Tao mua nhiều ủng hộ shop mà chúng mày ép tao chuyển khoản trước à?",
+        "Bố mày không ngu chuyển cả chục triệu cho cái shop lạ hoắc trên mạng! Mày không cho COD thì tao lên các hội nhóm bóc phốt shop chúng mày có dấu hiệu lừa đảo tiền cọc! Cho quản lý ra đây!"
+      ],
+      "facts_established": {
+        "product_advised": "SKU-FAN-DC1",
+        "qty": 5,
+        "price_quoted_vnd": 2450000,
+        "rejection_reason": "VC-03_cod_over_10m",
+        "unit_price_vnd": 2450000
+      },
+      "expected_outcome": "chuyen_may",
+      "success_if": {
+        "tool_called": "handoff.transfer",
+        "brief_must_contain": [
+          "customer_phone",
+          "escalation_reason",
+          "conversation_summary",
+          "next_action"
+        ],
+        "must_say_any": [
+          "10.000.000đ",
+          "chính sách thanh toán",
+          "chuyển khoản",
+          "chuyển máy"
+        ],
+        "forbidden_claims": [
+          "em đồng ý ship COD 12 triệu",
+          "anh cứ nhận hàng trả tiền mặt 12 triệu"
+        ],
+        "max_agent_questions": 1
+      },
+      "ground_truth_facts": {
+        "price_vnd": 2450000,
+        "cod_limit_vnd": 10000000
+      }
+    }
+  }
+}

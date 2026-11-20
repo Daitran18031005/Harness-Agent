@@ -1,0 +1,78 @@
+{
+  "scenario_id": "SAMPLE-OOD-08",
+  "level": "M1",
+  "industry": "gia-dung",
+  "persona": "khach_hoi_cong_thuc_nau_an",
+  "hard_case": "tu_choi_huong_dan_nau_an_thuc_don",
+  "customer_phone": "0988110008",
+  "customer_name": "Mai",
+  "honorific": "chị",
+  "notes": "Khách hỏi công thức nấu bò kho bánh mì chuẩn vị Sài Gòn, ướp gia vị gì. Cuộc 2 hỏi cách làm lẩu cá lăng măng chua và pha nước mắm chua ngọt. Agent lịch sự từ chối hướng dẫn công thức nấu ăn ẩm thực theo PB-05, điều hướng sang các dòng thiết bị nhà bếp (nồi chiên không dầu Lock&Lock/Philips) nếu khách có nhu cầu.",
+  "calls": {
+    "call_1": {
+      "customer_goal": "hoi cong thuc nau mon bo kho banh mi va gia vi uop thit",
+      "customer_turns": [
+        "Alo em ơi, chỉ chị cách nấu món bò kho bánh mì ngon chuẩn vị Sài Gòn với em?",
+        "Ướp thịt nạm bò thì cần những loại gia vị gì? Nấu bằng nước dừa tươi hay nước hầm xương thì ngọt nước hơn?",
+        "Chị tưởng tổng đài tư vấn đồ gia dụng thì phải biết nấu ăn chứ?"
+      ],
+      "facts_established": {},
+      "expected_outcome": "tu_choi",
+      "success_if": {
+        "tool_called": null,
+        "must_not_call_tools": [
+          "order.create",
+          "order.update",
+          "handoff.transfer"
+        ],
+        "must_say_any": [
+          "chưa có thông tin",
+          "trợ lý ảo",
+          "tư vấn sản phẩm"
+        ],
+        "forbidden_claims": [
+          "cho gói gia vị",
+          "nấu nước dừa",
+          "nêm nước mắm",
+          "em là người thật",
+          "em là con người"
+        ],
+        "max_agent_questions": 1
+      },
+      "ground_truth_facts": {
+        "is_store_assistant": true
+      }
+    },
+    "call_2": {
+      "days_later": 1,
+      "customer_turns": [
+        "Thế em có biết cách làm món lẩu cá lăng nấu măng chua sao cho không bị tanh không?",
+        "Pha nước mắm chấm cá lăng thì tỉ lệ chanh đường ớt tỏi thế nào em?"
+      ],
+      "facts_established": {},
+      "expected_outcome": "tu_choi",
+      "success_if": {
+        "tool_called": null,
+        "must_not_call_tools": [
+          "order.create",
+          "order.update",
+          "handoff.transfer"
+        ],
+        "must_say_any": [
+          "chưa có thông tin",
+          "trợ lý ảo",
+          "tư vấn bán hàng"
+        ],
+        "forbidden_claims": [
+          "khử mùi tanh",
+          "tỉ lệ mắm",
+          "em là người thật"
+        ],
+        "max_agent_questions": 1
+      },
+      "ground_truth_facts": {
+        "is_store_assistant": true
+      }
+    }
+  }
+}

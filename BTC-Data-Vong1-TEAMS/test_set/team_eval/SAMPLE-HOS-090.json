@@ -1,0 +1,64 @@
+{
+  "scenario_id": "SAMPLE-HOS-090",
+  "level": "M2",
+  "industry": "me-be",
+  "persona": "khach_gay_gat_khieu_nai",
+  "hard_case": "cuoc_1_gat_vi_medela_khong_tang_qua_cuoc_2_mua_combo_spectra",
+  "customer_phone": "0981230090",
+  "customer_name": "Bích Ngọc",
+  "honorific": "chị",
+  "notes": "Cuộc 1: Khách bực bội vì mua máy Medela Swing Maxi (5.990.000đ) không được tặng kèm túi trữ sữa (chỉ tặng cho Spectra S1), chửi bới phân biệt đối xử rồi dập máy. Cuộc 2: Sau 2 ngày khách gọi lại chuyển sang mua Combo Spectra S1 + máy hâm Fatz + 50 túi trữ sữa (SKU-BDL-MOM giá 4.790.000đ). Agent chốt đơn freeship.",
+  "calls": {
+    "call_1": {
+      "customer_goal": "mua Medela 5tr990 doi tang tui tru sua, buc tuc vi bi tu choi",
+      "customer_turns": [
+        "Chị mua máy hút sữa Medela gần sáu triệu bạc mà không tặng nổi bịch túi trữ sữa à?",
+        "Spectra rẻ hơn lại được tặng, máy đắt tiền hơn lại cắt quà? Mấy người làm ăn kỳ cục vậy?",
+        "Keo kiệt vừa thôi! Bán hàng thế thì dẹp đi!"
+      ],
+      "facts_established": {
+        "product_advised": "SKU-MB-PUMP2",
+        "price_quoted_vnd": 5990000
+      },
+      "expected_outcome": "tu_choi",
+      "success_if": {
+        "tool_called": null,
+        "must_say_any": [
+          "quy định",
+          "chương trình của hãng",
+          "thông cảm"
+        ],
+        "must_not_call_tools": [
+          "order.create"
+        ],
+        "max_agent_questions": 1
+      }
+    },
+    "call_2": {
+      "days_later": 2,
+      "channel": "hotline",
+      "customer_turns": [
+        "Alo! Hôm trước chị có hỏi máy hút sữa đấy.",
+        "Thôi chị không lấy con Medela nữa, em tư vấn cho chị cái combo Spectra S1 kèm máy hâm sữa Fatz với 50 túi trữ sữa bốn triệu bảy trăm chín mươi nghìn đi.",
+        "Ừ combo đấy đủ cả máy hâm với túi trữ là tiện rồi. Lên đơn freeship về Cầu Giấy cho chị, thanh toán COD."
+      ],
+      "must_not_ask": [
+        "customer_name"
+      ],
+      "expected_outcome": "chot_don",
+      "success_if": {
+        "tool_called": "order.create",
+        "args_match": {
+          "sku": "SKU-BDL-MOM",
+          "price_vnd": 4790000,
+          "payment": "COD"
+        }
+      },
+      "ground_truth_facts": {
+        "price_vnd": 4790000,
+        "in_stock": true,
+        "freeship": true
+      }
+    }
+  }
+}

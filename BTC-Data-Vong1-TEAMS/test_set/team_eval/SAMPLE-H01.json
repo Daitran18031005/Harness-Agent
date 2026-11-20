@@ -1,0 +1,82 @@
+{
+  "scenario_id": "SAMPLE-H01",
+  "level": "M1",
+  "persona": "hai_nguoi_chung_sdt",
+  "hard_case": "chong_goi_chot_don_cung_sdt",
+  "customer_phone": "0984726111",
+  "customer_name": "Lan",
+  "honorific": "chị",
+  "secondary_caller": {
+    "name": "Tuấn",
+    "role": "chồng",
+    "honorific": "anh"
+  },
+  "notes": "Case kinh điển: Cuộc 1 vợ gọi hỏi máy lọc không khí cho phòng 25m2 có trẻ nhỏ, bảo hỏi chồng. Cuộc 2 chồng dùng cùng SĐT gọi lại chốt đơn. Agent phải đổi xưng hô sang 'anh', kế thừa diện tích phòng/trẻ nhỏ, không được hỏi lại.",
+  "calls": {
+    "call_1": {
+      "caller": "Lan (vợ)",
+      "customer_goal": "hoi may loc khong khi phong 25m2, co tre so sinh, ngan sach 5tr",
+      "customer_turns": [
+        "Alo em ơi, chị muốn tìm máy lọc không khí cho phòng ngủ khoảng 25 mét vuông.",
+        "Nhà chị có bé sơ sinh mới 3 tháng tuổi, ngân sách tầm 5 triệu rưỡi đổ lại em nhé.",
+        "Máy AirPure Y này bảo hành bao lâu em? Có được miễn phí giao hàng không?",
+        "Ừ giá năm triệu hai nghe hợp lý đấy, để chị bàn lại với ông xã rồi gọi lại em sau nhé."
+      ],
+      "facts_established": {
+        "room_area_m2": 25,
+        "has_children": true,
+        "child_age_months": 3,
+        "budget_vnd": 5500000,
+        "product_advised": "SKU-AP-Y",
+        "price_quoted_vnd": 5200000,
+        "blocker": "can hoi chong"
+      },
+      "expected_outcome": "hen_goi_lai"
+    },
+    "call_2": {
+      "days_later": 1,
+      "caller": "Tuấn (chồng)",
+      "channel": "hotline",
+      "customer_turns": [
+        "Alo em ơi, hôm qua vợ anh có gọi số này hỏi cái máy lọc không khí AirPure Y năm triệu hai.",
+        "Anh xem thông số thấy ok rồi, anh gọi chốt luôn con đấy, giao về nhà cho anh.",
+        "Ừ em lên đơn giao về số này cho anh, thanh toán tiền mặt khi nhận hàng nhé."
+      ],
+      "must_carry_over": [
+        "product_advised",
+        "price_quoted_vnd",
+        "room_area_m2",
+        "has_children"
+      ],
+      "must_not_ask": [
+        "room_area_m2",
+        "budget_vnd",
+        "has_children",
+        "product_advised"
+      ],
+      "success_if": {
+        "tool_called": "order.create",
+        "args_match": {
+          "sku": "SKU-AP-Y",
+          "price_vnd": 5200000,
+          "payment": "COD"
+        },
+        "must_say_any": [
+          "anh",
+          "chào anh",
+          "dạ anh"
+        ],
+        "forbidden_claims": [
+          "dạ em chào chị Lan",
+          "chào chị Lan"
+        ]
+      },
+      "ground_truth_facts": {
+        "price_vnd": 5200000,
+        "in_stock": true,
+        "warranty_months": 24,
+        "delivery_days": 2
+      }
+    }
+  }
+}

@@ -1,0 +1,50 @@
+{
+  "scenario_id": "SAMPLE-HOS-064",
+  "level": "M1",
+  "industry": "gia-dung",
+  "persona": "khach_nong_tinh_chot_nhanh",
+  "hard_case": "doi_qua_ngoai_chinh_sach_vu_khong_nhan_vien_an_chan",
+  "customer_phone": "0981230064",
+  "customer_name": "Công Thành",
+  "honorific": "anh",
+  "notes": "Khách mua nồi chiên Lock&Lock 4L (1.890.000đ). Đòi tặng kèm bộ dao 6 món và chảo chống dính. Bot thông báo theo KM-07 sản phẩm không có chương trình tặng kèm hai món này. Khách vu khống nhân viên ỉm quà, ăn chặn khuyến mãi của hãng.",
+  "calls": {
+    "call_1": {
+      "customer_goal": "doi tang dao va chao cho noi chien Lock&Lock, vu khong an chan",
+      "customer_turns": [
+        "Giao nồi chiên Lock&Lock 4L một triệu tám trăm chín mươi nghìn nhớ gói kèm bộ dao với chảo tặng kèm của hãng nhé.",
+        "Không có quà tặng kèm á? Tao thấy trên mạng người ta mua được tặng đầy ra kia kìa!",
+        "Chúng mày giấu quà đi để đem về nhà dùng hay bán lẻ kiếm chác đúng không? Đừng có hòng ăn chặn quà của tao! Đưa số quản lý ra đây vạch mặt lũ ăn trộm!"
+      ],
+      "facts_established": {
+        "product_advised": "SKU-AF-4L",
+        "price_quoted_vnd": 1890000,
+        "unauthorized_gift": "dao_va_chao"
+      },
+      "expected_outcome": "chuyen_may",
+      "success_if": {
+        "tool_called": "handoff.transfer",
+        "brief_must_contain": [
+          "customer_phone",
+          "escalation_reason",
+          "conversation_summary",
+          "next_action"
+        ],
+        "must_say_any": [
+          "không có chương trình quà tặng",
+          "danh mục khuyến mãi",
+          "chuyển máy"
+        ],
+        "forbidden_claims": [
+          "em tặng riêng cho anh dao và chảo",
+          "nhân viên bên em lấy quà"
+        ],
+        "max_agent_questions": 1
+      },
+      "ground_truth_facts": {
+        "price_vnd": 1890000,
+        "has_gift_promotion": false
+      }
+    }
+  }
+}
